@@ -74,7 +74,7 @@ RSO de Riot si aprueban la clave (rango y estadísticas verificados), mensajes p
 - [ ] SMTP propio en Supabase para reactivar el acceso por correo (el SMTP por defecto solo entrega a direcciones del equipo). Mientras, producción va solo con Discord (`NEXT_PUBLIC_EMAIL_LOGIN=off` en Vercel). Opción gratuita: Brevo (300 correos/día) u otro proveedor; requiere crear cuenta y pegar sus credenciales SMTP en Supabase → Authentication → Emails → SMTP; después quitar `NEXT_PUBLIC_EMAIL_LOGIN`.
 - [x] Servidor de Discord «TeamFinder (beta)» con canales de información, buscar partida y desarrollo; invitación permanente https://discord.gg/aNafKfd6SN en `NEXT_PUBLIC_DISCORD_INVITE_URL` (Vercel, Production).
 - [ ] Decidir los campos «pendiente» de privacidad y normas: responsable y contacto, plazo de conservación de denuncias, edad mínima y medidas contra cuentas (avisos/suspensiones). Revisión legal antes de abrir al público.
-- [ ] Dar de alta al menos un moderador: `insert into public.app_admins (user_id) values ('<uuid>');` en el SQL Editor de Supabase.
+- [x] Moderador: la cuenta 1Cut1Kill está en `app_admins` (más moderadores: `insert into public.app_admins (user_id) values ('<uuid>');` en el SQL Editor).
 - [ ] Prueba final: un usuario nuevo completa el recorrido entero en producción desde el móvil.
 - [x] Docker instalado y en marcha.
 - [ ] Solicitar clave de producción de Riot cuando haya una beta visible.
