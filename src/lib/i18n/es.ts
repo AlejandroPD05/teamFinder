@@ -9,6 +9,7 @@ export const es = {
     skip: "Saltar al contenido",
     login: "Entrar",
     logout: "Salir",
+    profile: "Mi perfil",
   },
   home: {
     title: "Encuentra con quién hacer stack",
@@ -38,9 +39,6 @@ export const es = {
     title: (name: string) => `Hola, ${name}`,
     lead: "Tu cuenta está creada y la sesión es real.",
     profileTitle: "Tu perfil",
-    profileHint: "Rango, roles y pool de agentes: se editan en la fase 2 (pendiente).",
-    rankLabel: "Rango VALORANT",
-    rankNone: "Sin indicar",
     riot: "Conectar cuenta Riot — integración pendiente",
   },
 } as const;

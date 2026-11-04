@@ -1,9 +1,9 @@
 # PROGRESS
 
 ## Estado
-Fase 1 con el código terminado (rama `fase-1-base`, 2026-11-04). Verificado en local: migraciones desde cero, seed (29 agentes, 25 rangos), RLS (7 tests), login real por enlace de correo y rutas protegidas (e2e en escritorio y móvil), lint y build.
-Login con Discord verificado en local (app «TeamFinder (dev)»): crea el perfil con nombre y avatar de Discord.
-Falta para cerrarla, y depende del usuario: preview en Vercel y CI en GitHub (no hay remoto todavía).
+2026-11-04 — Fase 1 fusionada en `main` (PR #1, CI verde) y desplegada en https://teamfinder-seven.vercel.app con Supabase cloud `teamfinder` (pkzgwndwwoyeaozqdpqn, París). Login con Discord verificado en local.
+Pendiente del usuario para cerrar la fase 1: activar Discord en Supabase cloud (Client ID + secreto) y la URL Configuration; luego se prueba el login en producción.
+Fase 2 (perfil) con el código terminado en la rama `fase-2-perfil`: lint, 45 tests (unit + BD) y 10 e2e en verde.
 
 ## Objetivo de la beta
 Web para encontrar gente con la que hacer stack en VALORANT: perfil → búsqueda con filtros → publicaciones «busco dúo/trío/five» con solicitudes → sala con chat → karma tras jugar. Beta con cuentas reales, público hispanohablante en servidores EU.
@@ -11,7 +11,7 @@ Web para encontrar gente con la que hacer stack en VALORANT: perfil → búsqued
 ## Fases
 Cada fase se cierra con gate (`lint`, `test`, `build` en verde), commit y actualización de este archivo.
 
-- [ ] **Fase 1 — Base técnica.** Proyecto Next.js con tokens visuales, scripts y CI. Migraciones: perfil común separado de datos por juego; roles/agentes/rangos/modos/regiones de VALORANT como seed. Login Discord + enlace por correo, logout, rutas protegidas.
+- [ ] **Fase 1 — Base técnica.** *(todo hecho salvo el login con Discord en producción)* Proyecto Next.js con tokens visuales, scripts y CI. Migraciones: perfil común separado de datos por juego; roles/agentes/rangos/modos/regiones de VALORANT como seed. Login Discord + enlace por correo, logout, rutas protegidas.
   - *Hecho cuando:* login con Discord funciona en local y en preview de Vercel; migraciones aplican desde cero; un test demuestra que un usuario no puede escribir el perfil de otro (RLS); CI en verde.
 - [ ] **Fase 2 — Perfil.** Común (nombre, avatar, idiomas, región, horarios, objetivos, voz) con visibilidad por campo (público / registrados / privado). VALORANT: rango «introducido manualmente», varios roles + etiqueta Flex, pool de agentes con estado (main, comfort, playable, flexible), botón «Conectar Riot — integración pendiente». Perfil público y perfiles incompletos con progreso.
   - *Hecho cuando:* crear/editar persiste; el servidor rechaza datos inválidos; otro usuario no ve campos privados; usable en móvil y con teclado.
@@ -41,11 +41,16 @@ RSO de Riot si aprueban la clave (rango y estadísticas verificados), mensajes p
 - 2026-11-04 — Next 16.4 con `cacheComponents` desactivado: todo depende de la sesión y simplifica el MVP. Reversible.
 - 2026-11-04 — Catálogo por juego genérico (`game_roles`, `game_characters`, `game_ranks`, `game_modes`, `game_regions`); VALORANT entra por `seed.sql`. El rango guarda su procedencia (`manual` / `verified`).
 - 2026-11-04 — El correo no se copia a `profiles`; solo vive en `auth.users`. Perfiles visibles solo para usuarios registrados hasta la visibilidad por campo (fase 2).
+- 2026-11-04 — Visibilidad por campo: las tablas base solo las lee su dueño; terceros leen vistas (`profile_cards`, `game_profile_cards`, `player_*_cards`) que enmascaran según `public` / `registered` / `private`. Por defecto `registered`. Nombre y avatar siempre visibles (mínimo para una tarjeta). La visibilidad de VALORANT es una sola para todo el perfil de juego.
+- 2026-11-04 — Región = servidor del juego (`game_profiles.region_id`), no un campo común. Horarios como 8 franjas fijas (entre semana / fin de semana × mañana, tarde, noche, madrugada) para poder filtrarlas.
+- 2026-11-04 — Roles y pool se guardan con la función `save_game_profile` (transacción, siempre sobre `auth.uid()`); como mucho un rol principal.
 - 2026-11-04 — Botón principal: fondo `#8B5CF6` con texto `#0B0C12` (4,6:1). Blanco sobre `#8B5CF6` no llega a AA (4,2:1).
 
 ## Acciones del usuario
 - [x] Aplicación OAuth de Discord «TeamFinder (dev)» (ID 1567553301656895589) con redirect local; `supabase/.env` rellenado. Para producción: añadir el redirect de Supabase cloud en esa app (o crear una app aparte).
-- [ ] Crear repo en GitHub (para la CI) y proyecto en Supabase cloud; conectar el repo a Vercel con las variables de `.env.example`.
+- [x] Repo privado en GitHub, proyecto Supabase cloud y Vercel conectado.
+- [ ] Supabase cloud → Authentication → Providers → Discord (Client ID 1567553301656895589 + secreto) y URL Configuration (Site URL `https://teamfinder-seven.vercel.app`; Redirect URLs `https://teamfinder-seven.vercel.app/auth/callback` y `https://teamfinder-*-me-myself-and-i-8b2d.vercel.app/**`).
+- [ ] SMTP propio en Supabase antes de abrir la beta (el de por defecto tiene un límite muy bajo).
 - [x] Docker instalado y en marcha.
 - [ ] Solicitar clave de producción de Riot cuando haya una beta visible.
 

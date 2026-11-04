@@ -39,14 +39,22 @@ export default async function RootLayout({ children }: LayoutProps<"/">) {
               {APP_NAME}
             </Link>
             {signedIn ? (
-              <form action={signOut}>
-                <button
-                  type="submit"
-                  className="min-h-11 rounded-md px-3 text-sm text-muted hover:bg-panel hover:text-text"
+              <div className="flex items-center gap-1">
+                <Link
+                  href="/perfil/editar"
+                  className="inline-flex min-h-11 items-center rounded-md px-3 text-sm text-muted hover:bg-panel hover:text-text"
                 >
-                  {es.nav.logout}
-                </button>
-              </form>
+                  {es.nav.profile}
+                </Link>
+                <form action={signOut}>
+                  <button
+                    type="submit"
+                    className="min-h-11 rounded-md px-3 text-sm text-muted hover:bg-panel hover:text-text"
+                  >
+                    {es.nav.logout}
+                  </button>
+                </form>
+              </div>
             ) : (
               <Link
                 href="/entrar"
