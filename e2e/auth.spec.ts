@@ -1,3 +1,4 @@
+import { createClient } from "@supabase/supabase-js";
 import { expect, test } from "@playwright/test";
 import { signIn } from "./helpers";
 
@@ -33,4 +34,19 @@ test("login real con enlace por correo, sesión y salida", async ({ page }, info
   await expect(page).toHaveURL(/\/$/);
   await page.goto("/inicio");
   await expect(page).toHaveURL(/\/entrar/);
+});
+
+test("sesión de una cuenta borrada: cierra la sesión y vuelve al login sin error", async ({ page }, info) => {
+  const email = `e2e-borrada-${info.project.name}-${Date.now()}@example.test`;
+  await signIn(page, email);
+  const db = createClient(process.env.NEXT_PUBLIC_SUPABASE_URL!, process.env.SUPABASE_SECRET_KEY!, {
+    auth: { persistSession: false },
+  });
+  const { data } = await db.auth.admin.listUsers({ perPage: 200 });
+  const user = data.users.find((u) => u.email === email)!;
+  await db.from("profiles").delete().eq("id", user.id);
+  const res = await page.goto("/inicio");
+  expect(res?.status()).toBeLessThan(500);
+  await expect(page).toHaveURL(/\/entrar/);
+  await db.auth.admin.deleteUser(user.id);
 });
