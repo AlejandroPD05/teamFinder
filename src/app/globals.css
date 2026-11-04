@@ -1,0 +1,41 @@
+@import "tailwindcss";
+
+/* Paleta de AGENTS.md. Color intenso solo en acciones, estados activos e insignias. */
+@theme {
+  --color-bg: #0b0c12;
+  --color-panel: #151722;
+  --color-panel-hover: #1c1f2e;
+  --color-line: #2a2d3e;
+  --color-text: #e7e8ef;
+  --color-muted: #9ca0b4; /* 6.9:1 sobre panel */
+  --color-accent: #8b5cf6; /* fondo de acción con texto bg: 4.6:1 */
+  --color-accent-soft: #a78bfa;
+  --color-info: #3b82f6;
+  --color-info-soft: #60a5fa;
+  --color-danger: #f87171;
+  --color-success: #4ade80;
+  --font-sans: var(--font-geist-sans), ui-sans-serif, system-ui, sans-serif;
+}
+
+:root {
+  color-scheme: dark;
+}
+
+body {
+  background: var(--color-bg);
+  color: var(--color-text);
+}
+
+:focus-visible {
+  outline: 2px solid var(--color-accent-soft);
+  outline-offset: 2px;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    transition-duration: 0.01ms !important;
+    animation-duration: 0.01ms !important;
+  }
+}
