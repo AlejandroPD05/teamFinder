@@ -7,6 +7,12 @@ test("una ruta privada sin sesión redirige a /entrar", async ({ page }) => {
   await expect(page.getByRole("heading", { level: 1 })).toContainText("Entrar");
 });
 
+test("un error de OAuth devuelto a la portada lleva al login con aviso", async ({ page }) => {
+  await page.goto("/?error=invalid_request&error_code=bad_oauth_state");
+  await expect(page).toHaveURL(/\/entrar\?error=oauth$/);
+  await expect(page.getByRole("main").getByRole("alert")).toContainText("Discord");
+});
+
 test("correo inválido muestra error accesible", async ({ page }) => {
   await page.goto("/entrar");
   await page.getByLabel("Correo electrónico").fill("no-es-correo");

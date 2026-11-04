@@ -1,8 +1,12 @@
 import Link from "next/link";
+import { redirect } from "next/navigation";
 import { es } from "@/lib/i18n/es";
 import { createClient } from "@/lib/supabase/server";
 
-export default async function Home() {
+export default async function Home({ searchParams }: PageProps<"/">) {
+  // Supabase devuelve aquí los errores de OAuth (p. ej. estado caducado): llevarlos al login con aviso.
+  if ((await searchParams).error) redirect("/entrar?error=oauth");
+
   const supabase = await createClient();
   const { data } = await supabase.auth.getClaims();
   const signedIn = Boolean(data?.claims?.sub);
