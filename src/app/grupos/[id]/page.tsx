@@ -10,8 +10,14 @@ import { loadCatalog } from "@/lib/profile/queries";
 import { createClient } from "@/lib/supabase/server";
 import { ActionForm } from "./action-form";
 import { LobbyChat } from "./lobby-chat";
+import { KarmaVote } from "../../confianza/forms";
 
 export const metadata: Metadata = { title: "Grupo" };
+
+/** ¿Se cerró hace menos de `days` días? (fuera del render para que la regla de pureza no se queje). */
+function closedWithin(iso: string | null, days: number) {
+  return iso != null && Date.parse(iso) > Date.now() - days * 86_400_000;
+}
 
 function Avatar({ name, src }: { name: string; src: string | null }) {
   return src ? (
@@ -46,6 +52,13 @@ export default async function LobbyPage({ params }: PageProps<"/grupos/[id]">) {
     : [];
   // Abrir la sala la marca como leída (en el servidor: no depende de que el navegador termine la llamada).
   if (isMember) await supabase.rpc("mark_read", { p_lobby: id });
+  // Karma: en grupos cerrados (hasta 7 días), a los compañeros que aún no has valorado.
+  const canVote =
+    isMember && lobby.status === "closed" && closedWithin(lobby.closed_at, 7);
+  const voted = canVote
+    ? new Set(((await supabase.from("karma_votes").select("target_id").eq("lobby_id", id)).data ?? []).map((v) => v.target_id))
+    : new Set<string>();
+  const toVote = canVote ? members.filter((m) => m.user_id !== me && !voted.has(m.user_id)) : [];
   const myRequest = requests.find((r) => r.user_id === me && r.status === "pending");
   const pending = requests.filter((r) => r.status === "pending");
   const modeName = catalog.modes.find((m) => m.slug === lobby.mode_slug)?.name ?? lobby.mode_slug;
@@ -140,6 +153,20 @@ export default async function LobbyPage({ params }: PageProps<"/grupos/[id]">) {
           names={Object.fromEntries([...names].map(([k, v]) => [k, v.name]))}
           closed={lobby.status === "closed"}
         />
+      )}
+
+      {canVote && (
+        <section aria-labelledby="valorar" className="flex flex-col gap-4 rounded-lg border border-line bg-panel p-5">
+          <h2 id="valorar" className="font-semibold">
+            Valora a tus compañeros
+          </h2>
+          {toVote.length === 0 ? (
+            <p className="text-sm text-muted">Ya has valorado a todos. ¡Gracias!</p>
+          ) : (
+            toVote.map((m) => <KarmaVote key={m.user_id} lobbyId={lobby.id} targetId={m.user_id} name={name(m.user_id)} />)
+          )}
+          <p className="text-xs text-muted">Una valoración por compañero y grupo. Es reputación social, no una sanción.</p>
+        </section>
       )}
 
       {!isOwner && !isMember && lobby.status === "open" && (

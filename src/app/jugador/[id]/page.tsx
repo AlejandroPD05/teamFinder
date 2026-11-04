@@ -5,7 +5,9 @@ import { notFound } from "next/navigation";
 import { z } from "zod";
 import { AVAILABILITY, CHARACTER_STATUS, GOALS, LANGUAGES, VOICE, type CharacterStatus } from "@/lib/profile/options";
 import { loadCatalog, loadPublicProfile } from "@/lib/profile/queries";
+import { KARMA_TAGS } from "@/lib/trust/options";
 import { createClient } from "@/lib/supabase/server";
+import { BlockButton, ReportForm } from "../../confianza/forms";
 
 export const metadata: Metadata = { title: "Perfil de jugador" };
 
@@ -40,7 +42,13 @@ export default async function PlayerPage({ params }: PageProps<"/jugador/[id]">)
   if (!data.profile) notFound();
 
   const { profile, game, roles, characters } = data;
-  const isOwner = claims?.claims?.sub === id;
+  const viewer = claims?.claims?.sub;
+  const isOwner = viewer === id;
+  const [{ data: karma }, { data: myBlock }] = await Promise.all([
+    viewer ? supabase.rpc("karma_summary", { p_user: id }) : Promise.resolve({ data: null }),
+    viewer && !isOwner ? supabase.from("user_blocks").select("blocked_id").eq("blocked_id", id).maybeSingle() : Promise.resolve({ data: null }),
+  ]);
+  const k = karma?.[0];
   const name = profile.display_name ?? "Jugador";
   const rank = catalog.ranks.find((r) => r.id === game?.rank_id)?.name;
   const region = catalog.regions.find((r) => r.id === game?.region_id)?.name;
@@ -86,6 +94,37 @@ export default async function PlayerPage({ params }: PageProps<"/jugador/[id]">)
             value={profile.voice ? label(VOICE, profile.voice) : <span className="text-muted">Sin indicar u oculto</span>}
           />
         </dl>
+      </section>
+
+      <section aria-labelledby="karma" className="rounded-lg border border-line bg-panel p-5">
+        <h2 id="karma" className="font-semibold">
+          Karma
+        </h2>
+        {!viewer ? (
+          <p className="mt-2 text-sm text-muted">Entra para ver el karma.</p>
+        ) : k && Number(k.positives) + Number(k.negatives) > 0 ? (
+          <>
+            <p className="mt-2 text-sm">
+              {k.positives} {Number(k.positives) === 1 ? "valoración positiva" : "valoraciones positivas"} · {k.negatives}{" "}
+              {Number(k.negatives) === 1 ? "negativa" : "negativas"}
+            </p>
+            {k.top_tags.length > 0 && (
+              <ul className="mt-2 flex flex-wrap gap-2">
+                {k.top_tags.map((t) => (
+                  <li key={t} className="rounded border border-line px-2 py-0.5 text-xs text-muted">
+                    {KARMA_TAGS[t as keyof typeof KARMA_TAGS] ?? t}
+                  </li>
+                ))}
+              </ul>
+            )}
+          </>
+        ) : (
+          <p className="mt-2 text-sm text-muted">Sin valoraciones todavía.</p>
+        )}
+        <p className="mt-3 text-xs text-muted">
+          Reputación social: tras cerrar un grupo, cada miembro puede valorar una vez a cada compañero durante 7 días. Se
+          muestran totales y etiquetas más repetidas, nunca quién votó. No es una sanción ni un ranking oficial.
+        </p>
       </section>
 
       <section aria-labelledby="valorant" className="rounded-lg border border-line bg-panel p-5">
@@ -156,6 +195,17 @@ export default async function PlayerPage({ params }: PageProps<"/jugador/[id]">)
           Cuenta Riot: no conectada (integración pendiente)
         </p>
       </section>
+
+      {viewer && !isOwner && (
+        <section aria-labelledby="seguridad" className="flex flex-col gap-2 rounded-lg border border-line bg-panel p-5">
+          <h2 id="seguridad" className="font-semibold">
+            Seguridad
+          </h2>
+          {myBlock && <p className="text-sm text-muted">Has bloqueado a este jugador: no os veréis en búsquedas ni grupos.</p>}
+          <BlockButton userId={id} blocked={Boolean(myBlock)} name={name} />
+          <ReportForm targetId={id} label="Denunciar a este jugador" />
+        </section>
+      )}
     </article>
   );
 }
