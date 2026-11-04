@@ -145,7 +145,7 @@ export default async function SearchPage({ searchParams }: PageProps<"/buscar">)
         </ul>
       ) : (
         <div className="rounded-lg border border-dashed border-line p-6 text-center">
-          <h2 className="font-semibold">No hay jugadores con estos filtros</h2>
+          <h2 className="font-semibold">{n > 0 ? "No hay jugadores con estos filtros" : "Aún no hay otros jugadores"}</h2>
           {n > 0 ? (
             <>
               <p className="mt-1 text-sm text-muted">Prueba a ampliar la búsqueda:</p>
