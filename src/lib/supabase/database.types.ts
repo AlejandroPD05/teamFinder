@@ -71,14 +71,14 @@ isOneToOne: false
                   ]
                 },"game_profiles": {
                   Row: {
-                    "created_at": string,"game_id": string,"rank_id": string | null,"rank_source": string,"region_id": string | null,"updated_at": string,"user_id": string
+                    "created_at": string,"flex": boolean,"game_id": string,"rank_id": string | null,"rank_source": string,"region_id": string | null,"updated_at": string,"user_id": string,"visibility": Database["public"]['Enums']["visibility"]
                   }
                   ComputedFields: never
                   Insert: {
-                    "created_at"?: string,"game_id": string,"rank_id"?: string | null,"rank_source"?: string,"region_id"?: string | null,"updated_at"?: string,"user_id": string
+                    "created_at"?: string,"flex"?: boolean,"game_id": string,"rank_id"?: string | null,"rank_source"?: string,"region_id"?: string | null,"updated_at"?: string,"user_id": string,"visibility"?: Database["public"]['Enums']["visibility"]
                   }
                   Update: {
-                    "created_at"?: string,"game_id"?: string,"rank_id"?: string | null,"rank_source"?: string,"region_id"?: string | null,"updated_at"?: string,"user_id"?: string
+                    "created_at"?: string,"flex"?: boolean,"game_id"?: string,"rank_id"?: string | null,"rank_source"?: string,"region_id"?: string | null,"updated_at"?: string,"user_id"?: string,"visibility"?: Database["public"]['Enums']["visibility"]
                   }
                   Relationships: [
                     {
@@ -98,6 +98,12 @@ isOneToOne: false
       columns: ["region_id"]
 isOneToOne: false
       referencedRelation: "game_regions"
+      referencedColumns: ["id"]
+    },{
+      foreignKeyName: "game_profiles_user_id_fkey"
+      columns: ["user_id"]
+isOneToOne: false
+      referencedRelation: "profile_cards"
       referencedColumns: ["id"]
     },{
       foreignKeyName: "game_profiles_user_id_fkey"
@@ -181,16 +187,80 @@ isOneToOne: false
                   Relationships: [
                     
                   ]
-                },"profiles": {
+                },"player_characters": {
                   Row: {
-                    "avatar_url": string | null,"created_at": string,"display_name": string,"id": string,"updated_at": string
+                    "character_id": string,"game_id": string,"status": Database["public"]['Enums']["character_status"],"user_id": string
                   }
                   ComputedFields: never
                   Insert: {
-                    "avatar_url"?: string | null,"created_at"?: string,"display_name": string,"id": string,"updated_at"?: string
+                    "character_id": string,"game_id": string,"status": Database["public"]['Enums']["character_status"],"user_id": string
                   }
                   Update: {
-                    "avatar_url"?: string | null,"created_at"?: string,"display_name"?: string,"id"?: string,"updated_at"?: string
+                    "character_id"?: string,"game_id"?: string,"status"?: Database["public"]['Enums']["character_status"],"user_id"?: string
+                  }
+                  Relationships: [
+                    {
+      foreignKeyName: "player_characters_character_id_fkey"
+      columns: ["character_id"]
+isOneToOne: false
+      referencedRelation: "game_characters"
+      referencedColumns: ["id"]
+    },{
+      foreignKeyName: "player_characters_user_id_game_id_fkey"
+      columns: ["user_id","game_id"]
+isOneToOne: false
+      referencedRelation: "game_profile_cards"
+      referencedColumns: ["user_id","game_id"]
+    },{
+      foreignKeyName: "player_characters_user_id_game_id_fkey"
+      columns: ["user_id","game_id"]
+isOneToOne: false
+      referencedRelation: "game_profiles"
+      referencedColumns: ["user_id","game_id"]
+    }
+                  ]
+                },"player_roles": {
+                  Row: {
+                    "game_id": string,"is_primary": boolean,"role_id": string,"user_id": string
+                  }
+                  ComputedFields: never
+                  Insert: {
+                    "game_id": string,"is_primary"?: boolean,"role_id": string,"user_id": string
+                  }
+                  Update: {
+                    "game_id"?: string,"is_primary"?: boolean,"role_id"?: string,"user_id"?: string
+                  }
+                  Relationships: [
+                    {
+      foreignKeyName: "player_roles_role_id_fkey"
+      columns: ["role_id"]
+isOneToOne: false
+      referencedRelation: "game_roles"
+      referencedColumns: ["id"]
+    },{
+      foreignKeyName: "player_roles_user_id_game_id_fkey"
+      columns: ["user_id","game_id"]
+isOneToOne: false
+      referencedRelation: "game_profile_cards"
+      referencedColumns: ["user_id","game_id"]
+    },{
+      foreignKeyName: "player_roles_user_id_game_id_fkey"
+      columns: ["user_id","game_id"]
+isOneToOne: false
+      referencedRelation: "game_profiles"
+      referencedColumns: ["user_id","game_id"]
+    }
+                  ]
+                },"profiles": {
+                  Row: {
+                    "availability": (string)[],"availability_visibility": Database["public"]['Enums']["visibility"],"avatar_url": string | null,"created_at": string,"display_name": string,"goals": (string)[],"goals_visibility": Database["public"]['Enums']["visibility"],"id": string,"languages": (string)[],"languages_visibility": Database["public"]['Enums']["visibility"],"updated_at": string,"voice": string | null,"voice_visibility": Database["public"]['Enums']["visibility"]
+                  }
+                  ComputedFields: never
+                  Insert: {
+                    "availability"?: (string)[],"availability_visibility"?: Database["public"]['Enums']["visibility"],"avatar_url"?: string | null,"created_at"?: string,"display_name": string,"goals"?: (string)[],"goals_visibility"?: Database["public"]['Enums']["visibility"],"id": string,"languages"?: (string)[],"languages_visibility"?: Database["public"]['Enums']["visibility"],"updated_at"?: string,"voice"?: string | null,"voice_visibility"?: Database["public"]['Enums']["visibility"]
+                  }
+                  Update: {
+                    "availability"?: (string)[],"availability_visibility"?: Database["public"]['Enums']["visibility"],"avatar_url"?: string | null,"created_at"?: string,"display_name"?: string,"goals"?: (string)[],"goals_visibility"?: Database["public"]['Enums']["visibility"],"id"?: string,"languages"?: (string)[],"languages_visibility"?: Database["public"]['Enums']["visibility"],"updated_at"?: string,"voice"?: string | null,"voice_visibility"?: Database["public"]['Enums']["visibility"]
                   }
                   Relationships: [
                     
@@ -198,13 +268,128 @@ isOneToOne: false
                 }
           }
           Views: {
-            [_ in never]: never
+            "game_profile_cards": {
+                  Row: {
+                    "flex": boolean,"game_id": string,"rank_id": string | null,"rank_source": string,"region_id": string | null,"updated_at": string,"user_id": string
+                  }
+                  ComputedFields: never
+                  Insert: {
+                           "flex"?: boolean | null,"game_id"?: string | null,"rank_id"?: string | null,"rank_source"?: string | null,"region_id"?: string | null,"updated_at"?: string | null,"user_id"?: string | null
+                         }
+                        Update: {
+                           "flex"?: boolean | null,"game_id"?: string | null,"rank_id"?: string | null,"rank_source"?: string | null,"region_id"?: string | null,"updated_at"?: string | null,"user_id"?: string | null
+                         }
+                        Relationships: [
+                    {
+      foreignKeyName: "game_profiles_game_id_fkey"
+      columns: ["game_id"]
+isOneToOne: false
+      referencedRelation: "games"
+      referencedColumns: ["id"]
+    },{
+      foreignKeyName: "game_profiles_rank_id_fkey"
+      columns: ["rank_id"]
+isOneToOne: false
+      referencedRelation: "game_ranks"
+      referencedColumns: ["id"]
+    },{
+      foreignKeyName: "game_profiles_region_id_fkey"
+      columns: ["region_id"]
+isOneToOne: false
+      referencedRelation: "game_regions"
+      referencedColumns: ["id"]
+    },{
+      foreignKeyName: "game_profiles_user_id_fkey"
+      columns: ["user_id"]
+isOneToOne: false
+      referencedRelation: "profile_cards"
+      referencedColumns: ["id"]
+    },{
+      foreignKeyName: "game_profiles_user_id_fkey"
+      columns: ["user_id"]
+isOneToOne: false
+      referencedRelation: "profiles"
+      referencedColumns: ["id"]
+    }
+                  ]
+                },"player_character_cards": {
+                  Row: {
+                    "character_id": string,"game_id": string,"status": Database["public"]['Enums']["character_status"],"user_id": string
+                  }
+                  ComputedFields: never
+                  Relationships: [
+                    {
+      foreignKeyName: "player_characters_character_id_fkey"
+      columns: ["character_id"]
+isOneToOne: false
+      referencedRelation: "game_characters"
+      referencedColumns: ["id"]
+    },{
+      foreignKeyName: "player_characters_user_id_game_id_fkey"
+      columns: ["user_id","game_id"]
+isOneToOne: false
+      referencedRelation: "game_profile_cards"
+      referencedColumns: ["user_id","game_id"]
+    },{
+      foreignKeyName: "player_characters_user_id_game_id_fkey"
+      columns: ["user_id","game_id"]
+isOneToOne: false
+      referencedRelation: "game_profiles"
+      referencedColumns: ["user_id","game_id"]
+    }
+                  ]
+                },"player_role_cards": {
+                  Row: {
+                    "game_id": string,"is_primary": boolean,"role_id": string,"user_id": string
+                  }
+                  ComputedFields: never
+                  Relationships: [
+                    {
+      foreignKeyName: "player_roles_role_id_fkey"
+      columns: ["role_id"]
+isOneToOne: false
+      referencedRelation: "game_roles"
+      referencedColumns: ["id"]
+    },{
+      foreignKeyName: "player_roles_user_id_game_id_fkey"
+      columns: ["user_id","game_id"]
+isOneToOne: false
+      referencedRelation: "game_profile_cards"
+      referencedColumns: ["user_id","game_id"]
+    },{
+      foreignKeyName: "player_roles_user_id_game_id_fkey"
+      columns: ["user_id","game_id"]
+isOneToOne: false
+      referencedRelation: "game_profiles"
+      referencedColumns: ["user_id","game_id"]
+    }
+                  ]
+                },"profile_cards": {
+                  Row: {
+                    "availability": (string)[] | null,"avatar_url": string | null,"created_at": string,"display_name": string,"goals": (string)[] | null,"id": string,"languages": (string)[] | null,"voice": string | null
+                  }
+                  ComputedFields: never
+                  Insert: {
+                           "availability"?: never,"avatar_url"?: string | null,"created_at"?: string | null,"display_name"?: string | null,"goals"?: never,"id"?: string | null,"languages"?: never,"voice"?: never
+                         }
+                        Update: {
+                           "availability"?: never,"avatar_url"?: string | null,"created_at"?: string | null,"display_name"?: string | null,"goals"?: never,"id"?: string | null,"languages"?: never,"voice"?: never
+                         }
+                        Relationships: [
+                    
+                  ]
+                }
           }
           Functions: {
-            [_ in never]: never
+            "can_see":
+{ Args: { "owner": string,"v": Database["public"]['Enums']["visibility"] }; Returns: boolean
+                           },
+"save_game_profile":
+{ Args: { "p_characters": Json,"p_flex": boolean,"p_game_id": string,"p_rank_id": string,"p_region_id": string,"p_roles": Json,"p_visibility": Database["public"]['Enums']["visibility"] }; Returns: undefined
+                           }
           }
           Enums: {
-            [_ in never]: never
+            "character_status": "main"|"comfort"|"playable"|"flexible","visibility": "public"|"registered"|"private"
           }
           CompositeTypes: {
             [_ in never]: never
@@ -324,7 +509,7 @@ export const Constants = {
           }
         },"public": {
           Enums: {
-            
+            "character_status": ["main", "comfort", "playable", "flexible"],"visibility": ["public", "registered", "private"]
           }
         }
 } as const
