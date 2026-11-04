@@ -2,7 +2,8 @@
 
 ## Estado
 2026-11-04 — Fases 1, 2 y 3 terminadas, fusionadas en `main` y desplegadas en https://teamfinder-seven.vercel.app (Supabase cloud `teamfinder`, pkzgwndwwoyeaozqdpqn, París; migraciones al día). Login con Discord verificado en producción.
-Fase 4 (grupos) con el código terminado en la rama `fase-4-grupos`: lint, 76 tests (unit + BD, incluida la concurrencia en la última plaza) y 26 e2e en verde. Pendiente: aplicar `20261104040000_lobbies.sql` en cloud y fusionar. Siguiente: fase 5 — chat de sala.
+Fase 4 (grupos) con el código terminado en la rama `fase-4-grupos`: lint, 76 tests (unit + BD, incluida la concurrencia en la última plaza) y 26 e2e en verde. Pendiente: aplicar `20261104040000_lobbies.sql` en cloud y fusionar. Fase 4 fusionada y desplegada.
+Fase 5 (chat) con el código terminado en la rama `fase-5-chat`: chat en tiempo real solo para miembros, límite de ritmo, bandeja /mensajes con «sin leer». Pendiente: aplicar `20261104050000_chat.sql` en cloud y fusionar. Siguiente: fase 6 — confianza y seguridad.
 
 ## Objetivo de la beta
 Web para encontrar gente con la que hacer stack en VALORANT: perfil → búsqueda con filtros → publicaciones «busco dúo/trío/five» con solicitudes → sala con chat → karma tras jugar. Beta con cuentas reales, público hispanohablante en servidores EU.
@@ -18,7 +19,7 @@ Cada fase se cierra con gate (`lint`, `test`, `build` en verde), commit y actual
   - *Hecho cuando:* tests de la lógica de filtros; filtros en la URL; carga < 2 s con datos de prueba.
 - [x] **Fase 4 — Grupos y solicitudes.** Publicación con plazas, roles que faltan, rango, horario, región, idioma y objetivo. Solicitar / aceptar / rechazar; estados abierto, completo, cerrado; sin duplicados; plazas consistentes. Lista con filtros y sugerencias orientativas de jugadores para los roles que faltan.
   - *Hecho cuando:* e2e del flujo crear → solicitar → aceptar → completo; test de dos solicitudes simultáneas a la última plaza.
-- [ ] **Fase 5 — Sala con chat.** Chat en tiempo real solo para miembros del grupo (RLS), rate limit de mensajes. Bandeja en la cabecera con las salas activas.
+- [x] **Fase 5 — Sala con chat.** Chat en tiempo real solo para miembros del grupo (RLS), rate limit de mensajes. Bandeja en la cabecera con las salas activas.
   - *Hecho cuando:* dos navegadores chatean en tiempo real; un no miembro no puede leer ni escribir (test); el spam queda limitado.
 - [ ] **Fase 6 — Confianza y seguridad.** Bloquear y denunciar usuarios y mensajes (los bloqueados desaparecen de búsquedas y salas). Panel mínimo de moderación (rol admin). Karma: al cerrar un grupo, cada miembro valora una vez a cada compañero (+/− y etiquetas); se muestra el agregado con su regla explicada. Borrado de cuenta y rate limiting en acciones sensibles.
   - *Hecho cuando:* tests de bloqueo, valoración única y acceso al panel; el borrado de cuenta elimina los datos personales.
