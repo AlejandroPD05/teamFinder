@@ -11,13 +11,14 @@ export const es = {
     logout: "Salir",
     profile: "Mi perfil",
     search: "Buscar",
+    lobbies: "Grupos",
   },
   home: {
     title: "Encuentra con quién hacer stack",
     lead: "Perfiles con rango, roles y agentes, búsqueda con filtros y grupos para DuoQ, TrioQ o FiveStack. Empezamos por VALORANT.",
     cta: "Entrar para empezar",
     ctaSignedIn: "Buscar jugadores",
-    beta: "Beta en construcción: los grupos y el chat llegan en las próximas fases.",
+    beta: "Beta en construcción: el chat de grupo llega en la próxima fase.",
   },
   login: {
     title: `Entrar en ${APP_NAME}`,
@@ -33,6 +34,7 @@ export const es = {
       rate_limited: "Demasiados intentos. Espera unos minutos y vuelve a probar.",
       oauth: "No se pudo iniciar sesión con Discord. Inténtalo de nuevo.",
       callback: "El enlace no es válido o ha caducado. Pide uno nuevo.",
+      session: "Tu sesión ya no es válida. Vuelve a entrar.",
       unknown: "Algo ha fallado. Inténtalo de nuevo.",
     },
   },

@@ -1,7 +1,8 @@
 # PROGRESS
 
 ## Estado
-2026-11-04 — Fases 1, 2 y 3 terminadas, fusionadas en `main` y desplegadas en https://teamfinder-seven.vercel.app (Supabase cloud `teamfinder`, pkzgwndwwoyeaozqdpqn, París; migraciones al día). Login con Discord verificado en producción. Siguiente: fase 4 — grupos y solicitudes.
+2026-11-04 — Fases 1, 2 y 3 terminadas, fusionadas en `main` y desplegadas en https://teamfinder-seven.vercel.app (Supabase cloud `teamfinder`, pkzgwndwwoyeaozqdpqn, París; migraciones al día). Login con Discord verificado en producción.
+Fase 4 (grupos) con el código terminado en la rama `fase-4-grupos`: lint, 76 tests (unit + BD, incluida la concurrencia en la última plaza) y 26 e2e en verde. Pendiente: aplicar `20261104040000_lobbies.sql` en cloud y fusionar. Siguiente: fase 5 — chat de sala.
 
 ## Objetivo de la beta
 Web para encontrar gente con la que hacer stack en VALORANT: perfil → búsqueda con filtros → publicaciones «busco dúo/trío/five» con solicitudes → sala con chat → karma tras jugar. Beta con cuentas reales, público hispanohablante en servidores EU.
@@ -15,7 +16,7 @@ Cada fase se cierra con gate (`lint`, `test`, `build` en verde), commit y actual
   - *Hecho cuando:* crear/editar persiste; el servidor rechaza datos inválidos; otro usuario no ve campos privados; usable en móvil y con teclado.
 - [x] **Fase 3 — Buscar jugadores.** Filtros combinables (rango mín–máx, región, rol, agente + estado, modo, idioma, horario, objetivo, voz), tarjetas, paginación, orden comprensible (actividad reciente, sin puntuación de compatibilidad), estado vacío con sugerencias.
   - *Hecho cuando:* tests de la lógica de filtros; filtros en la URL; carga < 2 s con datos de prueba.
-- [ ] **Fase 4 — Grupos y solicitudes.** Publicación con plazas, roles que faltan, rango, horario, región, idioma y objetivo. Solicitar / aceptar / rechazar; estados abierto, completo, cerrado; sin duplicados; plazas consistentes. Lista con filtros y sugerencias orientativas de jugadores para los roles que faltan.
+- [x] **Fase 4 — Grupos y solicitudes.** Publicación con plazas, roles que faltan, rango, horario, región, idioma y objetivo. Solicitar / aceptar / rechazar; estados abierto, completo, cerrado; sin duplicados; plazas consistentes. Lista con filtros y sugerencias orientativas de jugadores para los roles que faltan.
   - *Hecho cuando:* e2e del flujo crear → solicitar → aceptar → completo; test de dos solicitudes simultáneas a la última plaza.
 - [ ] **Fase 5 — Sala con chat.** Chat en tiempo real solo para miembros del grupo (RLS), rate limit de mensajes. Bandeja en la cabecera con las salas activas.
   - *Hecho cuando:* dos navegadores chatean en tiempo real; un no miembro no puede leer ni escribir (test); el spam queda limitado.
@@ -47,6 +48,12 @@ RSO de Riot si aprueban la clave (rango y estadísticas verificados), mensajes p
 - 2026-11-04 — Filtros en la URL con slugs legibles; valores desconocidos se descartan. «Agente + estado» se filtra con claves `id:estado`.
 - 2026-11-04 — Modos preferidos (DuoQ/TrioQ/FiveStack) añadidos al perfil de juego (`game_profiles.mode_slugs`, validados contra `game_modes`); faltaban en la fase 2.
 - 2026-11-04 — Datos ficticios solo locales para rendimiento: `supabase/dev/demo-players.sql` (1000 «Demo N», correos `@demo.invalid`). Nunca en cloud.
+- 2026-11-04 — Grupos: toda escritura pasa por funciones de BD que bloquean la fila del grupo (`for update`); plazas = tamaño del modo; el creador ocupa la primera. Estados abierto → completo (automático) → cerrado (creador). Una solicitud viva por persona y grupo (índice único parcial).
+- 2026-11-04 — Límites: 3 grupos abiertos por persona, 10 creados por hora, 10 solicitudes pendientes. Nota ≤ 140 y mensaje ≤ 200 caracteres.
+- 2026-11-04 — Fechas de grupos en hora peninsular española (beta EU); el navegador envía su desfase para interpretar la hora local.
+- 2026-11-04 — Sugerencias de jugadores para roles que faltan = enlace a `/buscar` con rol y modo (orientativo, sin puntuación).
+- 2026-11-04 — Sesión válida sin perfil (cuenta borrada) → `/auth/salir` cierra sesión y vuelve al login.
+- 2026-11-04 — Cabecera en móvil: marca y «Salir» arriba; navegación en una segunda fila.
 - 2026-11-04 — Botón principal: fondo `#8B5CF6` con texto `#0B0C12` (4,6:1). Blanco sobre `#8B5CF6` no llega a AA (4,2:1).
 
 ## Acciones del usuario

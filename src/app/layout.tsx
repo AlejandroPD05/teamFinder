@@ -33,34 +33,38 @@ export default async function RootLayout({ children }: LayoutProps<"/">) {
         <header className="border-b border-line">
           <nav
             aria-label="Principal"
-            className="mx-auto flex h-14 max-w-5xl items-center justify-between px-4"
+            className="mx-auto flex max-w-5xl flex-wrap items-center justify-between px-4 sm:h-14 sm:flex-nowrap"
           >
-            <Link href="/" className="text-base font-semibold tracking-tight">
+            <Link href="/" className="flex min-h-14 items-center text-base font-semibold tracking-tight">
               {APP_NAME}
             </Link>
             {signedIn ? (
-              <div className="flex items-center gap-1">
-                <Link
-                  href="/buscar"
-                  className="inline-flex min-h-11 items-center rounded-md px-3 text-sm text-muted hover:bg-panel hover:text-text"
-                >
-                  {es.nav.search}
-                </Link>
-                <Link
-                  href="/perfil/editar"
-                  className="inline-flex min-h-11 items-center rounded-md px-3 text-sm text-muted hover:bg-panel hover:text-text"
-                >
-                  {es.nav.profile}
-                </Link>
-                <form action={signOut}>
+              <>
+                {/* En móvil, segunda fila a lo ancho; en escritorio, en línea. */}
+                <div className="order-last -mx-3 flex w-full border-t border-line sm:order-none sm:mx-0 sm:ml-auto sm:w-auto sm:border-0">
+                  {[
+                    ["/buscar", es.nav.search],
+                    ["/grupos", es.nav.lobbies],
+                    ["/perfil/editar", es.nav.profile],
+                  ].map(([href, text]) => (
+                    <Link
+                      key={href}
+                      href={href}
+                      className="inline-flex min-h-11 flex-1 items-center justify-center whitespace-nowrap rounded-md px-3 text-sm text-muted hover:bg-panel hover:text-text sm:flex-none"
+                    >
+                      {text}
+                    </Link>
+                  ))}
+                </div>
+                <form action={signOut} className="sm:ml-1">
                   <button
                     type="submit"
-                    className="min-h-11 rounded-md px-3 text-sm text-muted hover:bg-panel hover:text-text"
+                    className="min-h-11 whitespace-nowrap rounded-md px-3 text-sm text-muted hover:bg-panel hover:text-text"
                   >
                     {es.nav.logout}
                   </button>
                 </form>
-              </div>
+              </>
             ) : (
               <Link
                 href="/entrar"

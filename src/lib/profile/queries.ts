@@ -1,4 +1,5 @@
 import "server-only";
+import { redirect } from "next/navigation";
 import type { createClient } from "@/lib/supabase/server";
 
 type Client = Awaited<ReturnType<typeof createClient>>;
@@ -40,6 +41,8 @@ export async function loadOwnProfile(supabase: Client, userId: string, gameId = 
     supabase.from("player_roles").select("role_id, is_primary").eq("user_id", userId).eq("game_id", gameId),
     supabase.from("player_characters").select("character_id, status").eq("user_id", userId).eq("game_id", gameId),
   ]);
+  // Sesión válida sin perfil (cuenta borrada): cerrar sesión en lugar de fallar.
+  if (profile.error?.code === "PGRST116") redirect("/auth/salir");
   if (profile.error) throw profile.error;
   return {
     profile: profile.data,
