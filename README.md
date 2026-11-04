@@ -2,6 +2,8 @@
 
 Comunidad para encontrar compañeros con quienes jugar, empezando por VALORANT: perfiles con rango, roles y pool de agentes, búsqueda con filtros y grupos para DuoQ, TrioQ o FiveStack. Preparada para añadir otros juegos más adelante.
 
+**Beta:** https://teamfinder-seven.vercel.app · **Comunidad:** https://discord.gg/aNafKfd6SN
+
 El briefing completo está en [docs/PROMPT.md](docs/PROMPT.md) y el estado en [PROGRESS.md](PROGRESS.md).
 
 ## Requisitos
