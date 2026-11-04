@@ -1,4 +1,11 @@
+import { loadEnvFile } from "node:process";
 import { defineConfig, devices } from "@playwright/test";
+
+try {
+  loadEnvFile(".env.local");
+} catch {
+  // En CI las variables llegan por entorno.
+}
 
 // Necesita Supabase local en marcha (npx supabase start). Arranca la app en producción local.
 export default defineConfig({

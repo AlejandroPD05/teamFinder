@@ -30,6 +30,7 @@ export const gameProfileSchema = z
     flex: z.boolean(),
     visibility,
     roles: z.array(uuid).max(4).refine(unique),
+    modes: z.array(z.string().regex(/^[a-z0-9-]{1,32}$/)).max(10).refine(unique),
     primary_role: optionalUuid,
     characters: z
       .array(z.object({ character_id: uuid, status: z.enum(keys(CHARACTER_STATUS)) }))
@@ -73,6 +74,7 @@ export function gameProfileFromForm(fd: FormData) {
     flex: fd.get("flex") === "on",
     visibility: fd.get("game_visibility"),
     roles: fd.getAll("roles"),
+    modes: fd.getAll("modes"),
     primary_role: fd.get("primary_role") ?? "",
     characters,
   };

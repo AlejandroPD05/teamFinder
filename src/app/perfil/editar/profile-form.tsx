@@ -28,6 +28,7 @@ export type ProfileFormValues = {
   flex: boolean;
   game_visibility: Visibility;
   roles: string[];
+  modes: string[];
   primary_role: string | null;
   characters: Record<string, string>;
 };
@@ -178,6 +179,9 @@ export function ProfileForm({ catalog, values }: { catalog: Catalog; values: Pro
             </select>
           </label>
         </div>
+
+        <p className="mt-5 text-sm font-medium">Modos que te interesan</p>
+        <Checks name="modes" options={Object.fromEntries(catalog.modes.map((m) => [m.slug, m.name]))} selected={values.modes} />
 
         <p className="mt-5 text-sm font-medium">Roles que juegas</p>
         <Checks name="roles" options={Object.fromEntries(catalog.roles.map((r) => [r.id, r.name]))} selected={values.roles} />

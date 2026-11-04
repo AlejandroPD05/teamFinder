@@ -44,6 +44,7 @@ export default async function EditProfilePage() {
           flex: game?.flex ?? false,
           game_visibility: game?.visibility ?? "registered",
           roles: roles.map((r) => r.role_id),
+          modes: game?.mode_slugs ?? [],
           primary_role: roles.find((r) => r.is_primary)?.role_id ?? null,
           characters: Object.fromEntries(characters.map((c) => [c.character_id, c.status])),
         }}
