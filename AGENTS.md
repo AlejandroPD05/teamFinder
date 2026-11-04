@@ -5,12 +5,25 @@
 - Si algo de esta guía contradice `docs/PROMPT.md`, manda el prompt; avisa de la contradicción.
 - La sección 17 de `docs/PROMPT.md` (29-10-2026) actualiza las anteriores: multijuego, estética, navegación y chat.
 
-## Stack
-- Por definir (el prompt no lo fija: stack, alojamiento, base de datos y auth siguen abiertos).
+- Las decisiones fechadas de `PROGRESS.md` concretan el prompt donde estaba abierto.
+
+## Stack (decidido 2026-11-04)
+- Next.js (App Router) + TypeScript estricto, un solo repo (front y back).
+- Supabase: Postgres con RLS, Auth (Discord OAuth + enlace por correo), Realtime para el chat de sala. Desarrollo local con Supabase CLI (requiere Docker); esquema solo por migraciones en `supabase/migrations`.
+- Tailwind con los colores de la sección «Estética» como tokens; Zod para validar en cliente y servidor.
+- Vitest (unit/integración) y Playwright (e2e). Despliegue en Vercel; CI en GitHub Actions.
+- Gestor de paquetes: npm.
 - Sin microservicios, arquitectura distribuida ni sistemas de eventos complejos en el MVP.
 
 ## Comandos
-Por definir: se fijan en la fase 1.
+Se crean en la fase 1; hasta entonces no existen.
+- `npm install` — dependencias.
+- `npm run dev` — servidor de desarrollo.
+- `npm run lint` — ESLint + typecheck.
+- `npm run test` — Vitest.
+- `npm run e2e` — Playwright (necesita Supabase local).
+- `npm run build` — build de producción.
+- `npx supabase start` / `npx supabase db reset` — Supabase local y reaplicar migraciones + seed.
 
 ## Reglas
 - VALORANT es el juego de lanzamiento, no el límite: separa campos comunes de perfil (idioma, región, horarios, objetivos, comunicación, reputación) de los datos por juego (rangos, roles, agentes, modos, servidores). Roles, agentes y rangos van como datos de configuración, no codificados.
