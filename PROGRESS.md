@@ -2,7 +2,8 @@
 
 ## Estado
 Fase 1 con el código terminado (rama `fase-1-base`, 2026-11-04). Verificado en local: migraciones desde cero, seed (29 agentes, 25 rangos), RLS (7 tests), login real por enlace de correo y rutas protegidas (e2e en escritorio y móvil), lint y build.
-Falta para cerrarla, y depende del usuario: login con Discord (aplicación OAuth), preview en Vercel y CI en GitHub (no hay remoto todavía).
+Login con Discord verificado en local (app «TeamFinder (dev)»): crea el perfil con nombre y avatar de Discord.
+Falta para cerrarla, y depende del usuario: preview en Vercel y CI en GitHub (no hay remoto todavía).
 
 ## Objetivo de la beta
 Web para encontrar gente con la que hacer stack en VALORANT: perfil → búsqueda con filtros → publicaciones «busco dúo/trío/five» con solicitudes → sala con chat → karma tras jugar. Beta con cuentas reales, público hispanohablante en servidores EU.
@@ -43,7 +44,7 @@ RSO de Riot si aprueban la clave (rango y estadísticas verificados), mensajes p
 - 2026-11-04 — Botón principal: fondo `#8B5CF6` con texto `#0B0C12` (4,6:1). Blanco sobre `#8B5CF6` no llega a AA (4,2:1).
 
 ## Acciones del usuario
-- [ ] Crear aplicación OAuth en Discord y rellenar `supabase/.env` (pasos en README).
+- [x] Aplicación OAuth de Discord «TeamFinder (dev)» (ID 1567553301656895589) con redirect local; `supabase/.env` rellenado. Para producción: añadir el redirect de Supabase cloud en esa app (o crear una app aparte).
 - [ ] Crear repo en GitHub (para la CI) y proyecto en Supabase cloud; conectar el repo a Vercel con las variables de `.env.example`.
 - [x] Docker instalado y en marcha.
 - [ ] Solicitar clave de producción de Riot cuando haya una beta visible.

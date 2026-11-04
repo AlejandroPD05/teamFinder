@@ -18,7 +18,8 @@ export async function signInWithDiscord(formData: FormData) {
   const supabase = await createClient();
   const { data, error } = await supabase.auth.signInWithOAuth({
     provider: "discord",
-    options: { redirectTo: callbackUrl(next), scopes: "identify email" },
+    // Supabase ya pide `identify email` por defecto.
+    options: { redirectTo: callbackUrl(next) },
   });
   if (error || !data.url) back({ error: "oauth", next });
   redirect(data.url);
