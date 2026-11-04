@@ -50,3 +50,13 @@ test("sesión de una cuenta borrada: cierra la sesión y vuelve al login sin err
   await expect(page).toHaveURL(/\/entrar/);
   await db.auth.admin.deleteUser(user.id);
 });
+
+test("cabeceras de seguridad", async ({ request }) => {
+  const res = await request.get("/entrar");
+  const h = res.headers();
+  expect(h["x-powered-by"]).toBeUndefined();
+  expect(h["x-frame-options"]).toBe("DENY");
+  expect(h["x-content-type-options"]).toBe("nosniff");
+  expect(h["content-security-policy"]).toContain("frame-ancestors 'none'");
+  expect(h["content-security-policy"]).toContain("object-src 'none'");
+});
