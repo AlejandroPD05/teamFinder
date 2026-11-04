@@ -51,7 +51,7 @@ test("crear grupo → solicitar → aceptar → completo → cerrar", async ({ b
     // El invitado ya es miembro; el grupo completo desaparece de la lista de abiertos.
     await guest.reload();
     await expect(guest.getByRole("button", { name: "Salir del grupo" })).toBeVisible();
-    await expect(guest.getByText("Chat del grupo: pendiente")).toBeVisible();
+    await expect(guest.getByRole("heading", { name: "Chat del grupo" })).toBeVisible();
     await guest.goto("/grupos?role=controller&lang=es");
     await expect(guest.getByRole("listitem").filter({ hasText: note })).toHaveCount(0);
 

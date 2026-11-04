@@ -20,6 +20,9 @@ export default async function RootLayout({ children }: LayoutProps<"/">) {
   const supabase = await createClient();
   const { data } = await supabase.auth.getClaims();
   const signedIn = Boolean(data?.claims?.sub);
+  const unread = signedIn
+    ? ((await supabase.rpc("my_rooms")).data ?? []).reduce((n, r) => n + Number(r.unread ?? 0), 0)
+    : 0;
 
   return (
     <html lang="es" className={`${geistSans.variable} h-full antialiased`}>
@@ -45,14 +48,21 @@ export default async function RootLayout({ children }: LayoutProps<"/">) {
                   {[
                     ["/buscar", es.nav.search],
                     ["/grupos", es.nav.lobbies],
+                    ["/mensajes", es.nav.inbox],
                     ["/perfil/editar", es.nav.profile],
                   ].map(([href, text]) => (
                     <Link
                       key={href}
                       href={href}
-                      className="inline-flex min-h-11 flex-1 items-center justify-center whitespace-nowrap rounded-md px-3 text-sm text-muted hover:bg-panel hover:text-text sm:flex-none"
+                      className="inline-flex min-h-11 flex-1 items-center justify-center gap-1 whitespace-nowrap rounded-md px-2 text-sm text-muted hover:bg-panel hover:text-text sm:flex-none sm:px-3"
                     >
                       {text}
+                      {href === "/mensajes" && unread > 0 && (
+                        <span className="rounded-full bg-accent px-1.5 text-xs font-semibold text-bg">
+                          {unread > 99 ? "99+" : unread}
+                          <span className="sr-only"> sin leer</span>
+                        </span>
+                      )}
                     </Link>
                   ))}
                 </div>

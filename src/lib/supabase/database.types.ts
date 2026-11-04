@@ -287,6 +287,44 @@ isOneToOne: false
       referencedColumns: ["id"]
     }
                   ]
+                },"lobby_messages": {
+                  Row: {
+                    "body": string,"created_at": string,"id": number,"lobby_id": string,"user_id": string
+                  }
+                  ComputedFields: never
+                  Insert: {
+                    "body": string,"created_at"?: string,"id"?: never,"lobby_id": string,"user_id": string
+                  }
+                  Update: {
+                    "body"?: string,"created_at"?: string,"id"?: never,"lobby_id"?: string,"user_id"?: string
+                  }
+                  Relationships: [
+                    {
+      foreignKeyName: "lobby_messages_lobby_id_fkey"
+      columns: ["lobby_id"]
+isOneToOne: false
+      referencedRelation: "lobbies"
+      referencedColumns: ["id"]
+    },{
+      foreignKeyName: "lobby_messages_user_id_fkey"
+      columns: ["user_id"]
+isOneToOne: false
+      referencedRelation: "player_search"
+      referencedColumns: ["user_id"]
+    },{
+      foreignKeyName: "lobby_messages_user_id_fkey"
+      columns: ["user_id"]
+isOneToOne: false
+      referencedRelation: "profile_cards"
+      referencedColumns: ["id"]
+    },{
+      foreignKeyName: "lobby_messages_user_id_fkey"
+      columns: ["user_id"]
+isOneToOne: false
+      referencedRelation: "profiles"
+      referencedColumns: ["id"]
+    }
+                  ]
                 },"lobby_needed_roles": {
                   Row: {
                     "lobby_id": string,"role_id": string
@@ -310,6 +348,44 @@ isOneToOne: false
       columns: ["role_id"]
 isOneToOne: false
       referencedRelation: "game_roles"
+      referencedColumns: ["id"]
+    }
+                  ]
+                },"lobby_reads": {
+                  Row: {
+                    "last_read_id": number,"lobby_id": string,"user_id": string
+                  }
+                  ComputedFields: never
+                  Insert: {
+                    "last_read_id"?: number,"lobby_id": string,"user_id": string
+                  }
+                  Update: {
+                    "last_read_id"?: number,"lobby_id"?: string,"user_id"?: string
+                  }
+                  Relationships: [
+                    {
+      foreignKeyName: "lobby_reads_lobby_id_fkey"
+      columns: ["lobby_id"]
+isOneToOne: false
+      referencedRelation: "lobbies"
+      referencedColumns: ["id"]
+    },{
+      foreignKeyName: "lobby_reads_user_id_fkey"
+      columns: ["user_id"]
+isOneToOne: false
+      referencedRelation: "player_search"
+      referencedColumns: ["user_id"]
+    },{
+      foreignKeyName: "lobby_reads_user_id_fkey"
+      columns: ["user_id"]
+isOneToOne: false
+      referencedRelation: "profile_cards"
+      referencedColumns: ["id"]
+    },{
+      foreignKeyName: "lobby_reads_user_id_fkey"
+      columns: ["user_id"]
+isOneToOne: false
+      referencedRelation: "profiles"
       referencedColumns: ["id"]
     }
                   ]
@@ -595,6 +671,14 @@ isOneToOne: false
 "lobby_refresh_status":
 { Args: { "p_lobby": string }; Returns: undefined
                            },
+"mark_read":
+{ Args: { "p_lobby": string }; Returns: undefined
+                           },
+"my_rooms":
+{ Args: Record<PropertyKey, never>; Returns: {
+              "last_at": string,"last_body": string,"last_user_id": string,"lobby_id": string,"mode_slug": string,"owner_id": string,"status": Database["public"]['Enums']["lobby_status"],"unread": number
+            }[]
+                           },
 "request_join":
 { Args: { "p_lobby": string,"p_message": string }; Returns: string
                            },
@@ -603,6 +687,9 @@ isOneToOne: false
                            },
 "save_game_profile":
 { Args: { "p_characters": Json,"p_flex": boolean,"p_game_id": string,"p_modes"?: (string)[],"p_rank_id": string,"p_region_id": string,"p_roles": Json,"p_visibility": Database["public"]['Enums']["visibility"] }; Returns: undefined
+                           },
+"send_message":
+{ Args: { "p_body": string,"p_lobby": string }; Returns: number
                            },
 "withdraw_request":
 { Args: { "p_lobby": string }; Returns: undefined

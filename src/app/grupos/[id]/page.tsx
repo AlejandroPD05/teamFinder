@@ -9,6 +9,7 @@ import { GOALS, LANGUAGES } from "@/lib/profile/options";
 import { loadCatalog } from "@/lib/profile/queries";
 import { createClient } from "@/lib/supabase/server";
 import { ActionForm } from "./action-form";
+import { LobbyChat } from "./lobby-chat";
 
 export const metadata: Metadata = { title: "Grupo" };
 
@@ -39,6 +40,12 @@ export default async function LobbyPage({ params }: PageProps<"/grupos/[id]">) {
 
   const isOwner = lobby.owner_id === me;
   const isMember = members.some((m) => m.user_id === me);
+  // Últimos 50 mensajes (la RLS solo los devuelve a miembros).
+  const messages = isMember
+    ? ((await supabase.from("lobby_messages").select("id, user_id, body, created_at").eq("lobby_id", id).order("id", { ascending: false }).limit(50)).data ?? []).reverse()
+    : [];
+  // Abrir la sala la marca como leída (en el servidor: no depende de que el navegador termine la llamada).
+  if (isMember) await supabase.rpc("mark_read", { p_lobby: id });
   const myRequest = requests.find((r) => r.user_id === me && r.status === "pending");
   const pending = requests.filter((r) => r.status === "pending");
   const modeName = catalog.modes.find((m) => m.slug === lobby.mode_slug)?.name ?? lobby.mode_slug;
@@ -123,12 +130,17 @@ export default async function LobbyPage({ params }: PageProps<"/grupos/[id]">) {
             </li>
           ))}
         </ul>
-        {isMember && (
-          <p className="mt-4 rounded border border-line px-3 py-2 text-sm text-muted">
-            Chat del grupo: pendiente (llega en la fase 5). Mientras, coordinaos por vuestros canales.
-          </p>
-        )}
       </section>
+
+      {isMember && (
+        <LobbyChat
+          lobbyId={lobby.id}
+          me={me}
+          initial={messages}
+          names={Object.fromEntries([...names].map(([k, v]) => [k, v.name]))}
+          closed={lobby.status === "closed"}
+        />
+      )}
 
       {!isOwner && !isMember && lobby.status === "open" && (
         <section aria-labelledby="unirse" className="rounded-lg border border-line bg-panel p-5">
