@@ -63,14 +63,16 @@ RSO de Riot si aprueban la clave (rango y estadísticas verificados), mensajes p
 - 2026-11-04 — Borrado de cuenta desde `/ajustes` (escribir BORRAR): borra `auth.users` y en cascada todo lo suyo; las denuncias se conservan anonimizadas.
 - 2026-11-04 — Accesibilidad: test e2e con axe (WCAG 2.1 A/AA) sobre las páginas principales en escritorio y móvil; los enlaces dentro de texto van siempre subrayados. Es una comprobación automática: no sustituye a una revisión manual con lector de pantalla.
 - 2026-11-04 — Discord: enlace solo si `NEXT_PUBLIC_DISCORD_INVITE_URL` es una invitación https de Discord; sin ella no se muestra nada.
+- 2026-11-04 — Producción solo con Discord hasta tener SMTP propio: `NEXT_PUBLIC_EMAIL_LOGIN=off` oculta el acceso por correo y la acción del servidor lo rechaza. Local y CI siguen con correo (Mailpit).
+- 2026-11-04 — Edad mínima provisional: 16 años (no verificada). Moderación: avisos, cierre de grupos y, en casos graves, eliminación de la cuenta; sin suspensiones temporales todavía.
 - 2026-11-04 — Botón principal: fondo `#8B5CF6` con texto `#0B0C12` (4,6:1). Blanco sobre `#8B5CF6` no llega a AA (4,2:1).
 
 ## Acciones del usuario
 - [x] Aplicación OAuth de Discord «TeamFinder (dev)» (ID 1567553301656895589) con redirects local y de Supabase cloud; `supabase/.env` rellenado.
 - [x] Repo privado en GitHub, proyecto Supabase cloud y Vercel conectado.
 - [x] Supabase cloud: Discord activado y URL Configuration (Site URL `https://teamfinder-seven.vercel.app`; Redirect URLs `/auth/callback` de producción y `https://teamfinder-*-me-myself-and-i-8b2d.vercel.app/**`).
-- [ ] SMTP propio en Supabase antes de abrir la beta (el de por defecto tiene un límite muy bajo).
-- [ ] Enlace de invitación al Discord de la comunidad → variable `NEXT_PUBLIC_DISCORD_INVITE_URL` en Vercel.
+- [ ] SMTP propio en Supabase para reactivar el acceso por correo (el SMTP por defecto solo entrega a direcciones del equipo). Mientras, producción va solo con Discord (`NEXT_PUBLIC_EMAIL_LOGIN=off` en Vercel). Opción gratuita: Brevo (300 correos/día) u otro proveedor; requiere crear cuenta y pegar sus credenciales SMTP en Supabase → Authentication → Emails → SMTP; después quitar `NEXT_PUBLIC_EMAIL_LOGIN`.
+- [x] Servidor de Discord «TeamFinder (beta)» con canales de información, buscar partida y desarrollo; invitación permanente https://discord.gg/aNafKfd6SN en `NEXT_PUBLIC_DISCORD_INVITE_URL` (Vercel, Production).
 - [ ] Decidir los campos «pendiente» de privacidad y normas: responsable y contacto, plazo de conservación de denuncias, edad mínima y medidas contra cuentas (avisos/suspensiones). Revisión legal antes de abrir al público.
 - [ ] Dar de alta al menos un moderador: `insert into public.app_admins (user_id) values ('<uuid>');` en el SQL Editor de Supabase.
 - [ ] Prueba final: un usuario nuevo completa el recorrido entero en producción desde el móvil.

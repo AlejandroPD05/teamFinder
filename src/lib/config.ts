@@ -6,6 +6,12 @@ export const PROTECTED_PREFIXES = ["/inicio", "/perfil", "/buscar", "/grupos", "
 
 export const DEFAULT_AFTER_LOGIN = "/inicio";
 
+// Acceso por enlace de correo. Se apaga con NEXT_PUBLIC_EMAIL_LOGIN=off mientras no haya un SMTP propio:
+// el SMTP por defecto de Supabase solo entrega a direcciones del equipo del proyecto.
+export function emailLoginEnabled(): boolean {
+  return process.env.NEXT_PUBLIC_EMAIL_LOGIN !== "off";
+}
+
 // Invitación oficial al Discord de la comunidad (opcional). Solo se muestra si es un enlace de invitación de Discord.
 export function discordInvite(): string | null {
   const url = process.env.NEXT_PUBLIC_DISCORD_INVITE_URL?.trim();

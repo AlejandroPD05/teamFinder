@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import Link from "next/link";
 import { safeNextPath } from "@/lib/auth";
+import { emailLoginEnabled } from "@/lib/config";
 import { es, loginError } from "@/lib/i18n/es";
 import { signInWithDiscord, signInWithEmail } from "./actions";
 
@@ -17,7 +18,7 @@ export default async function LoginPage({ searchParams }: PageProps<"/entrar">) 
     <section className="mx-auto flex max-w-sm flex-col gap-6">
       <div className="flex flex-col gap-2">
         <h1 className="text-2xl font-semibold tracking-tight">{es.login.title}</h1>
-        <p className="text-muted">{es.login.lead}</p>
+        <p className="text-muted">{emailLoginEnabled() ? es.login.lead : es.login.leadDiscordOnly}</p>
         <p className="text-sm text-muted">
           Antes de entrar, lee las{" "}
           <Link href="/normas" className="text-accent-soft underline underline-offset-4">
@@ -52,6 +53,8 @@ export default async function LoginPage({ searchParams }: PageProps<"/entrar">) 
         </button>
       </form>
 
+      {emailLoginEnabled() ? (
+        <>
       <div className="flex items-center gap-3 text-sm text-muted" aria-hidden="true">
         <span className="h-px flex-1 bg-line" />
         {es.login.or}
@@ -84,6 +87,10 @@ export default async function LoginPage({ searchParams }: PageProps<"/entrar">) 
           {es.login.emailSubmit}
         </button>
       </form>
+        </>
+      ) : (
+        <p className="text-sm text-muted">{es.login.emailOff}</p>
+      )}
     </section>
   );
 }

@@ -2,6 +2,7 @@
 
 import { redirect } from "next/navigation";
 import { emailSchema, safeNextPath } from "@/lib/auth";
+import { emailLoginEnabled } from "@/lib/config";
 import { siteUrl } from "@/lib/supabase/env";
 import { createClient } from "@/lib/supabase/server";
 
@@ -27,6 +28,7 @@ export async function signInWithDiscord(formData: FormData) {
 
 export async function signInWithEmail(formData: FormData) {
   const next = safeNextPath(formData.get("next")?.toString());
+  if (!emailLoginEnabled()) back({ error: "email_off", next });
   const parsed = emailSchema.safeParse(formData.get("email"));
   if (!parsed.success) back({ error: "invalid_email", next });
 

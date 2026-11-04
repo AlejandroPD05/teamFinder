@@ -16,3 +16,15 @@ describe("discordInvite", () => {
     }
   });
 });
+
+describe("emailLoginEnabled", () => {
+  afterEach(() => {
+    delete process.env.NEXT_PUBLIC_EMAIL_LOGIN;
+  });
+  it("activo por defecto y apagado solo con off", async () => {
+    const { emailLoginEnabled } = await import("@/lib/config");
+    expect(emailLoginEnabled()).toBe(true);
+    process.env.NEXT_PUBLIC_EMAIL_LOGIN = "off";
+    expect(emailLoginEnabled()).toBe(false);
+  });
+});
