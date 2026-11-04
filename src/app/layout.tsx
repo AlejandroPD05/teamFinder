@@ -1,7 +1,7 @@
 import type { Metadata, Viewport } from "next";
 import { Geist } from "next/font/google";
 import Link from "next/link";
-import { APP_NAME } from "@/lib/config";
+import { APP_NAME, discordInvite } from "@/lib/config";
 import { es } from "@/lib/i18n/es";
 import { createClient } from "@/lib/supabase/server";
 import { signOut } from "./auth/salir/actions";
@@ -88,6 +88,22 @@ export default async function RootLayout({ children }: LayoutProps<"/">) {
         <main id="contenido" className="mx-auto w-full max-w-5xl flex-1 px-4 py-10">
           {children}
         </main>
+        <footer className="border-t border-line">
+          <nav aria-label="Pie" className="mx-auto flex max-w-5xl flex-wrap items-center gap-x-4 px-4 py-3 text-sm text-muted">
+            <span>{APP_NAME} · beta</span>
+            <Link href="/normas" className="inline-flex min-h-11 items-center hover:text-text">
+              Normas
+            </Link>
+            <Link href="/privacidad" className="inline-flex min-h-11 items-center hover:text-text">
+              Privacidad
+            </Link>
+            {discordInvite() && (
+              <a href={discordInvite()!} rel="noopener noreferrer" target="_blank" className="inline-flex min-h-11 items-center hover:text-text">
+                Discord de la comunidad<span className="sr-only"> (se abre en otra pestaña)</span>
+              </a>
+            )}
+          </nav>
+        </footer>
       </body>
     </html>
   );

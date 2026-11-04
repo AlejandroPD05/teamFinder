@@ -124,7 +124,7 @@ export default async function SearchPage({ searchParams }: PageProps<"/buscar">)
               Buscar
             </button>
             {n > 0 && (
-              <Link href="/buscar" className="min-h-11 py-3 text-sm text-accent-soft underline-offset-4 hover:underline">
+              <Link href="/buscar" className="min-h-11 py-3 text-sm text-accent-soft underline underline-offset-4">
                 Quitar filtros
               </Link>
             )}
