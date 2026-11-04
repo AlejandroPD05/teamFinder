@@ -54,7 +54,7 @@ export default function PrivacyPage() {
         <ul>
           <li>Supabase: base de datos y autenticación, alojadas en la UE (París).</li>
           <li>Vercel: alojamiento de la web.</li>
-          <li>Discord: solo si eliges entrar con Discord.</li>
+          <li>Discord: para entrar con tu cuenta de Discord y para el servidor de la comunidad.</li>
         </ul>
       </Section>
 

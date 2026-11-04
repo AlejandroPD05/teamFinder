@@ -43,8 +43,15 @@ export default function RulesPage() {
           sabe quién la denunció.
         </p>
         <p>
-          El equipo de moderación revisa las denuncias. Las medidas contra cuentas (avisos, suspensiones) y la edad mínima
-          para usar el servicio están <strong>pendientes</strong> de definir.
+          El equipo de moderación revisa las denuncias. Según la gravedad puede avisar a la persona, cerrar grupos o, en
+          casos graves o repetidos, eliminar la cuenta. No hay todavía suspensiones temporales automáticas.
+        </p>
+      </Section>
+
+      <Section title="Edad mínima">
+        <p>
+          Para usar el servicio debes tener al menos <strong>16 años</strong>. Es una decisión provisional pendiente de
+          revisión legal; por ahora no se verifica la edad.
         </p>
       </Section>
     </article>
