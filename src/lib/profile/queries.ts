@@ -7,24 +7,26 @@ export const GAME_ID = "valorant";
 
 /** Catálogo del juego (datos de configuración). */
 export async function loadCatalog(supabase: Client, gameId = GAME_ID) {
-  const [roles, characters, ranks, regions] = await Promise.all([
+  const [roles, characters, ranks, regions, modes] = await Promise.all([
     supabase.from("game_roles").select("id, slug, name").eq("game_id", gameId).eq("active", true).order("sort"),
     supabase
       .from("game_characters")
-      .select("id, name, role_id")
+      .select("id, slug, name, role_id")
       .eq("game_id", gameId)
       .eq("active", true)
       .order("name"),
-    supabase.from("game_ranks").select("id, name, tier").eq("game_id", gameId).eq("active", true).order("tier"),
-    supabase.from("game_regions").select("id, name").eq("game_id", gameId).eq("active", true).order("sort"),
+    supabase.from("game_ranks").select("id, slug, name, tier").eq("game_id", gameId).eq("active", true).order("tier"),
+    supabase.from("game_regions").select("id, slug, name").eq("game_id", gameId).eq("active", true).order("sort"),
+    supabase.from("game_modes").select("slug, name, party_size").eq("game_id", gameId).eq("active", true).order("sort"),
   ]);
-  const error = roles.error ?? characters.error ?? ranks.error ?? regions.error;
+  const error = roles.error ?? characters.error ?? ranks.error ?? regions.error ?? modes.error;
   if (error) throw error;
   return {
     roles: roles.data ?? [],
     characters: characters.data ?? [],
     ranks: ranks.data ?? [],
     regions: regions.data ?? [],
+    modes: modes.data ?? [],
   };
 }
 

@@ -3,7 +3,8 @@
 ## Estado
 2026-11-04 — Fase 1 fusionada en `main` (PR #1, CI verde) y desplegada en https://teamfinder-seven.vercel.app con Supabase cloud `teamfinder` (pkzgwndwwoyeaozqdpqn, París). Login con Discord verificado en local.
 Pendiente del usuario para cerrar la fase 1: activar Discord en Supabase cloud (Client ID + secreto) y la URL Configuration; luego se prueba el login en producción.
-Fase 2 (perfil) con el código terminado en la rama `fase-2-perfil`: lint, 45 tests (unit + BD) y 10 e2e en verde.
+Fase 2 (perfil): PR #2 con CI verde y su migración ya aplicada en cloud; pendiente de fusionar (requiere aprobación del usuario).
+Fase 3 (búsqueda) con el código terminado en la rama `fase-3-busqueda`: lint, 59 tests (unit + BD) y 16 e2e en verde; `/buscar` responde en < 2 s con 1000 jugadores ficticios en local. Su migración (`20261104030000_search.sql`) aún no está en cloud.
 
 ## Objetivo de la beta
 Web para encontrar gente con la que hacer stack en VALORANT: perfil → búsqueda con filtros → publicaciones «busco dúo/trío/five» con solicitudes → sala con chat → karma tras jugar. Beta con cuentas reales, público hispanohablante en servidores EU.
@@ -44,6 +45,11 @@ RSO de Riot si aprueban la clave (rango y estadísticas verificados), mensajes p
 - 2026-11-04 — Visibilidad por campo: las tablas base solo las lee su dueño; terceros leen vistas (`profile_cards`, `game_profile_cards`, `player_*_cards`) que enmascaran según `public` / `registered` / `private`. Por defecto `registered`. Nombre y avatar siempre visibles (mínimo para una tarjeta). La visibilidad de VALORANT es una sola para todo el perfil de juego.
 - 2026-11-04 — Región = servidor del juego (`game_profiles.region_id`), no un campo común. Horarios como 8 franjas fijas (entre semana / fin de semana × mañana, tarde, noche, madrugada) para poder filtrarlas.
 - 2026-11-04 — Roles y pool se guardan con la función `save_game_profile` (transacción, siempre sobre `auth.uid()`); como mucho un rol principal.
+- 2026-11-04 — Búsqueda solo con sesión (`/buscar` protegida): con la visibilidad por defecto «registrados», un anónimo apenas vería nada y así se reduce el scraping.
+- 2026-11-04 — Búsqueda sobre la vista `player_search`, que ya aplica la visibilidad: filtrar por un campo oculto nunca devuelve a quien lo oculta. Orden: perfil actualizado más recientemente (no hay «última conexión» real todavía). Sin puntuación de compatibilidad.
+- 2026-11-04 — Filtros en la URL con slugs legibles; valores desconocidos se descartan. «Agente + estado» se filtra con claves `id:estado`.
+- 2026-11-04 — Modos preferidos (DuoQ/TrioQ/FiveStack) añadidos al perfil de juego (`game_profiles.mode_slugs`, validados contra `game_modes`); faltaban en la fase 2.
+- 2026-11-04 — Datos ficticios solo locales para rendimiento: `supabase/dev/demo-players.sql` (1000 «Demo N», correos `@demo.invalid`). Nunca en cloud.
 - 2026-11-04 — Botón principal: fondo `#8B5CF6` con texto `#0B0C12` (4,6:1). Blanco sobre `#8B5CF6` no llega a AA (4,2:1).
 
 ## Acciones del usuario

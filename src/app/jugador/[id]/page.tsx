@@ -108,6 +108,16 @@ export default async function PlayerPage({ params }: PageProps<"/jugador/[id]">)
             />
             <Row title="Servidor" value={region ?? <span className="text-muted">Sin indicar</span>} />
             <Row
+              title="Modos"
+              value={
+                game.mode_slugs?.length ? (
+                  game.mode_slugs.map((s) => catalog.modes.find((m) => m.slug === s)?.name ?? s).join(" · ")
+                ) : (
+                  <span className="text-muted">Sin indicar</span>
+                )
+              }
+            />
+            <Row
               title="Roles"
               value={
                 roles.length ? (

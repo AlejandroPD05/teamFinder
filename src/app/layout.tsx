@@ -41,6 +41,12 @@ export default async function RootLayout({ children }: LayoutProps<"/">) {
             {signedIn ? (
               <div className="flex items-center gap-1">
                 <Link
+                  href="/buscar"
+                  className="inline-flex min-h-11 items-center rounded-md px-3 text-sm text-muted hover:bg-panel hover:text-text"
+                >
+                  {es.nav.search}
+                </Link>
+                <Link
                   href="/perfil/editar"
                   className="inline-flex min-h-11 items-center rounded-md px-3 text-sm text-muted hover:bg-panel hover:text-text"
                 >

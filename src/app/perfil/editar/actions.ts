@@ -48,6 +48,7 @@ export async function saveProfile(_prev: SaveState, fd: FormData): Promise<SaveS
     p_visibility: g.visibility,
     p_roles: g.roles.map((role_id) => ({ role_id, is_primary: role_id === g.primary_role })),
     p_characters: g.characters,
+    p_modes: g.modes,
   });
   if (gameError) return { ok: false, message: "No se pudo guardar tu perfil de VALORANT. Inténtalo de nuevo." };
 

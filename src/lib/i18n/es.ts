@@ -10,13 +10,14 @@ export const es = {
     login: "Entrar",
     logout: "Salir",
     profile: "Mi perfil",
+    search: "Buscar",
   },
   home: {
     title: "Encuentra con quién hacer stack",
     lead: "Perfiles con rango, roles y agentes, búsqueda con filtros y grupos para DuoQ, TrioQ o FiveStack. Empezamos por VALORANT.",
     cta: "Entrar para empezar",
-    ctaSignedIn: "Ir a mi inicio",
-    beta: "Beta en construcción: la búsqueda y los grupos llegan en las próximas fases.",
+    ctaSignedIn: "Buscar jugadores",
+    beta: "Beta en construcción: los grupos y el chat llegan en las próximas fases.",
   },
   login: {
     title: `Entrar en ${APP_NAME}`,

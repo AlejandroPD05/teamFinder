@@ -13,7 +13,7 @@ export default async function Home() {
       <p className="text-lg text-muted">{es.home.lead}</p>
       <div>
         <Link
-          href={signedIn ? "/inicio" : "/entrar"}
+          href={signedIn ? "/buscar" : "/entrar"}
           className="inline-flex min-h-11 items-center rounded-md bg-accent px-6 font-semibold text-bg hover:bg-accent-soft"
         >
           {signedIn ? es.home.ctaSignedIn : es.home.cta}
