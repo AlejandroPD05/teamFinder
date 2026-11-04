@@ -10,6 +10,10 @@ export function supabaseEnv() {
   return { url, key };
 }
 
+// Prioridad: URL fijada (producción) → URL del despliegue de Vercel (previews) → local.
 export function siteUrl(): string {
-  return (process.env.NEXT_PUBLIC_SITE_URL ?? "http://127.0.0.1:3000").replace(/\/$/, "");
+  const explicit = process.env.NEXT_PUBLIC_SITE_URL;
+  const vercel = process.env.VERCEL_URL;
+  const url = explicit || (vercel ? `https://${vercel}` : "http://127.0.0.1:3000");
+  return url.replace(/\/$/, "");
 }
