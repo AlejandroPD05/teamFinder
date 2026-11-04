@@ -1,0 +1,19 @@
+# Dependencias y builds (stack por definir)
+node_modules/
+dist/
+build/
+coverage/
+.venv/
+target/
+
+# Entorno y secretos
+.env
+.env.*
+!.env.example
+
+# Logs y sistema
+*.log
+.DS_Store
+Thumbs.db
+.vscode/
+.idea/
