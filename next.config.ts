@@ -1,6 +1,23 @@
 import type { NextConfig } from "next";
 
+// CSP prudente: bloquea plugins, <base> ajenos, incrustar la web en iframes y enviar formularios a otros dominios
+// (salvo el login de Supabase/Discord). No restringe scripts para no romper la hidratación de Next sin nonces.
+const supabaseOrigin = (() => {
+  try {
+    return new URL(process.env.NEXT_PUBLIC_SUPABASE_URL ?? "").origin;
+  } catch {
+    return "";
+  }
+})();
+const csp = [
+  "object-src 'none'",
+  "base-uri 'self'",
+  "frame-ancestors 'none'",
+  `form-action 'self' ${supabaseOrigin} https://discord.com`.trim(),
+].join("; ");
+
 const securityHeaders = [
+  { key: "Content-Security-Policy", value: csp },
   { key: "X-Frame-Options", value: "DENY" },
   { key: "X-Content-Type-Options", value: "nosniff" },
   { key: "Referrer-Policy", value: "strict-origin-when-cross-origin" },
@@ -8,6 +25,7 @@ const securityHeaders = [
 ];
 
 const nextConfig: NextConfig = {
+  poweredByHeader: false,
   turbopack: {
     rules: {
       "*.css": {

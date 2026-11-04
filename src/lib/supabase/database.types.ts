@@ -912,9 +912,6 @@ isOneToOne: false
             "block_user":
 { Args: { "p_user": string }; Returns: undefined
                            },
-"blocked_with":
-{ Args: { "other": string }; Returns: boolean
-                           },
 "can_see":
 { Args: { "owner": string,"v": Database["public"]['Enums']["visibility"] }; Returns: boolean
                            },

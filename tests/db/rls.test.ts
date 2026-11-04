@@ -83,12 +83,13 @@ describe("RLS de perfiles", () => {
   });
 
   it("un usuario crea su perfil de juego con rango manual", async () => {
-    const { data, error } = await a
-      .from("game_profiles")
-      .insert({ user_id: aId, game_id: "valorant" })
-      .select("rank_source")
-      .single();
+    const nil = null as unknown as string;
+    const { error } = await a.rpc("save_game_profile", {
+      p_game_id: "valorant", p_rank_id: nil, p_region_id: nil, p_flex: false, p_visibility: "registered",
+      p_roles: [], p_characters: [], p_modes: [],
+    });
     expect(error).toBeNull();
+    const { data } = await a.from("game_profiles").select("rank_source").eq("user_id", aId).single();
     expect(data?.rank_source).toBe("manual");
   });
 

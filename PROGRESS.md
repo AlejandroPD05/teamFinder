@@ -65,6 +65,7 @@ RSO de Riot si aprueban la clave (rango y estadísticas verificados), mensajes p
 - 2026-11-04 — Discord: enlace solo si `NEXT_PUBLIC_DISCORD_INVITE_URL` es una invitación https de Discord; sin ella no se muestra nada.
 - 2026-11-04 — Producción solo con Discord hasta tener SMTP propio: `NEXT_PUBLIC_EMAIL_LOGIN=off` oculta el acceso por correo y la acción del servidor lo rechaza. Local y CI siguen con correo (Mailpit).
 - 2026-11-04 — Edad mínima provisional: 16 años (no verificada). Moderación: avisos, cierre de grupos y, en casos graves, eliminación de la cuenta; sin suspensiones temporales todavía.
+- 2026-11-04 — Pentest (tests/db/security.test.ts). Corregido: escritura directa de perfiles de juego (rango «verificado» y fecha futura falsos), oráculo de bloqueo por RPC, miembros de grupos cerrados o con bloqueo visibles, enumeración anónima de usuarios, avatar con cualquier URL, nombres con caracteres invisibles o de inversión, funciones internas por RPC, escritura del catálogo, cabecera X-Powered-By y falta de CSP. Funciones auxiliares de RLS no expuestas viven en el esquema `private`.
 - 2026-11-04 — Botón principal: fondo `#8B5CF6` con texto `#0B0C12` (4,6:1). Blanco sobre `#8B5CF6` no llega a AA (4,2:1).
 
 ## Acciones del usuario
