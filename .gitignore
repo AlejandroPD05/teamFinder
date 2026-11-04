@@ -1,4 +1,4 @@
-# Dependencias y builds (stack por definir)
+# Dependencias y builds
 node_modules/
 dist/
 build/
@@ -17,3 +17,16 @@ target/
 Thumbs.db
 .vscode/
 .idea/
+
+# Next.js
+/.next/
+/out/
+next-env.d.ts
+*.tsbuildinfo
+.vercel
+*.pem
+
+# Playwright
+/test-results/
+/playwright-report/
+/playwright/.cache/

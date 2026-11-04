@@ -16,14 +16,16 @@
 - Sin microservicios, arquitectura distribuida ni sistemas de eventos complejos en el MVP.
 
 ## Comandos
-Se crean en la fase 1; hasta entonces no existen.
+Requieren Docker en marcha y `npx supabase start` para `test` y `e2e`.
 - `npm install` — dependencias.
-- `npm run dev` — servidor de desarrollo.
-- `npm run lint` — ESLint + typecheck.
-- `npm run test` — Vitest.
-- `npm run e2e` — Playwright (necesita Supabase local).
+- `npm run dev` — servidor de desarrollo (http://127.0.0.1:3000).
+- `npm run lint` — ESLint + tipos de rutas de Next + `tsc --noEmit`.
+- `npm run test` — Vitest: unitarios (`tests/unit`) y RLS contra Supabase local (`tests/db`).
+- `npm run e2e` — Playwright, escritorio y móvil (`e2e/`).
 - `npm run build` — build de producción.
+- `npm run db:types` — regenerar tipos tras cada migración (la CI falla si no están al día).
 - `npx supabase start` / `npx supabase db reset` — Supabase local y reaplicar migraciones + seed.
+- Next 16: el middleware es `src/proxy.ts`. `cacheComponents` desactivado a propósito (todas las páginas dependen de la sesión).
 
 ## Reglas
 - VALORANT es el juego de lanzamiento, no el límite: separa campos comunes de perfil (idioma, región, horarios, objetivos, comunicación, reputación) de los datos por juego (rangos, roles, agentes, modos, servidores). Roles, agentes y rangos van como datos de configuración, no codificados.
@@ -42,7 +44,7 @@ Se crean en la fase 1; hasta entonces no existen.
 - Sin secretos en el repo; usa `.env` (ignorado) y documenta las variables en `.env.example`.
 
 ## Gate antes de commitear
-- `lint`, `test` y `build` en verde. Si falla, no se commitea.
+- `lint`, `test` y `build` en verde. Si falla, no se commitea. Si el cambio toca flujos de usuario, también `e2e`.
 
 ## Forma de trabajar
 - Fase a fase, según `PROGRESS.md`. Al cerrar una fase: gate, commit y actualizar `PROGRESS.md`.
