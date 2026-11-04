@@ -3,7 +3,8 @@
 ## Estado
 2026-11-04 — Fases 1, 2 y 3 terminadas, fusionadas en `main` y desplegadas en https://teamfinder-seven.vercel.app (Supabase cloud `teamfinder`, pkzgwndwwoyeaozqdpqn, París; migraciones al día). Login con Discord verificado en producción.
 Fase 4 (grupos) con el código terminado en la rama `fase-4-grupos`: lint, 76 tests (unit + BD, incluida la concurrencia en la última plaza) y 26 e2e en verde. Pendiente: aplicar `20261104040000_lobbies.sql` en cloud y fusionar. Fase 4 fusionada y desplegada.
-Fase 5 (chat) con el código terminado en la rama `fase-5-chat`: chat en tiempo real solo para miembros, límite de ritmo, bandeja /mensajes con «sin leer». Pendiente: aplicar `20261104050000_chat.sql` en cloud y fusionar. Siguiente: fase 6 — confianza y seguridad.
+Fase 5 (chat) con el código terminado en la rama `fase-5-chat`: chat en tiempo real solo para miembros, límite de ritmo, bandeja /mensajes con «sin leer». Pendiente: aplicar `20261104050000_chat.sql` en cloud y fusionar.
+Fase 6 (confianza) con el código terminado en la rama `fase-6-confianza`: bloqueo, denuncias, panel de moderación, karma y borrado de cuenta. Pendiente: aplicar `20261104060000_trust.sql` en cloud y fusionar. Siguiente: fase 7 — lanzamiento de la beta.
 
 ## Objetivo de la beta
 Web para encontrar gente con la que hacer stack en VALORANT: perfil → búsqueda con filtros → publicaciones «busco dúo/trío/five» con solicitudes → sala con chat → karma tras jugar. Beta con cuentas reales, público hispanohablante en servidores EU.
@@ -21,7 +22,7 @@ Cada fase se cierra con gate (`lint`, `test`, `build` en verde), commit y actual
   - *Hecho cuando:* e2e del flujo crear → solicitar → aceptar → completo; test de dos solicitudes simultáneas a la última plaza.
 - [x] **Fase 5 — Sala con chat.** Chat en tiempo real solo para miembros del grupo (RLS), rate limit de mensajes. Bandeja en la cabecera con las salas activas.
   - *Hecho cuando:* dos navegadores chatean en tiempo real; un no miembro no puede leer ni escribir (test); el spam queda limitado.
-- [ ] **Fase 6 — Confianza y seguridad.** Bloquear y denunciar usuarios y mensajes (los bloqueados desaparecen de búsquedas y salas). Panel mínimo de moderación (rol admin). Karma: al cerrar un grupo, cada miembro valora una vez a cada compañero (+/− y etiquetas); se muestra el agregado con su regla explicada. Borrado de cuenta y rate limiting en acciones sensibles.
+- [x] **Fase 6 — Confianza y seguridad.** Bloquear y denunciar usuarios y mensajes (los bloqueados desaparecen de búsquedas y salas). Panel mínimo de moderación (rol admin). Karma: al cerrar un grupo, cada miembro valora una vez a cada compañero (+/− y etiquetas); se muestra el agregado con su regla explicada. Borrado de cuenta y rate limiting en acciones sensibles.
   - *Hecho cuando:* tests de bloqueo, valoración única y acceso al panel; el borrado de cuenta elimina los datos personales.
 - [ ] **Fase 7 — Lanzamiento de la beta.** Auditoría de accesibilidad y móvil; e2e de flujos críticos en CI; borradores de privacidad y normas marcados «pendiente de revisión legal»; enlace al Discord; despliegue en producción.
   - *Hecho cuando:* un usuario real nuevo completa el recorrido entero en producción desde el móvil.
@@ -55,6 +56,11 @@ RSO de Riot si aprueban la clave (rango y estadísticas verificados), mensajes p
 - 2026-11-04 — Sugerencias de jugadores para roles que faltan = enlace a `/buscar` con rol y modo (orientativo, sin puntuación).
 - 2026-11-04 — Sesión válida sin perfil (cuenta borrada) → `/auth/salir` cierra sesión y vuelve al login.
 - 2026-11-04 — Cabecera en móvil: marca y «Salir» arriba; navegación en una segunda fila.
+- 2026-11-04 — Bloqueo bidireccional en búsqueda y grupos (el bloqueado no ve los grupos de quien le bloqueó ni puede pedir unirse); en una sala compartida, quien bloquea deja de ver los mensajes del bloqueado. El bloqueado no sabe que lo está.
+- 2026-11-04 — Denuncias de usuario o de mensaje (se guarda copia del mensaje); 10 al día por persona. Las ven quien denuncia y moderación. Resolución «actuada / descartada» con registro en `moderation_log`.
+- 2026-11-04 — Moderadores: tabla `app_admins`, alta solo por SQL desde el panel de Supabase. `/moderacion` da 404 a quien no lo es.
+- 2026-11-04 — Karma: +1/−1 y hasta 3 etiquetas cerradas, una vez por compañero y grupo, solo en grupos cerrados y hasta 7 días después. Se muestran totales y etiquetas más repetidas, nunca quién votó. Visible solo con sesión.
+- 2026-11-04 — Borrado de cuenta desde `/ajustes` (escribir BORRAR): borra `auth.users` y en cascada todo lo suyo; las denuncias se conservan anonimizadas.
 - 2026-11-04 — Botón principal: fondo `#8B5CF6` con texto `#0B0C12` (4,6:1). Blanco sobre `#8B5CF6` no llega a AA (4,2:1).
 
 ## Acciones del usuario

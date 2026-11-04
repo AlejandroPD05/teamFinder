@@ -5,7 +5,9 @@ import { createClient } from "@/lib/supabase/server";
 
 export default async function Home({ searchParams }: PageProps<"/">) {
   // Supabase devuelve aquí los errores de OAuth (p. ej. estado caducado): llevarlos al login con aviso.
-  if ((await searchParams).error) redirect("/entrar?error=oauth");
+  const sp = await searchParams;
+  if (sp.error) redirect("/entrar?error=oauth");
+  const deleted = sp.cuenta === "borrada";
 
   const supabase = await createClient();
   const { data } = await supabase.auth.getClaims();
@@ -13,6 +15,11 @@ export default async function Home({ searchParams }: PageProps<"/">) {
 
   return (
     <section className="mx-auto flex max-w-2xl flex-col gap-6 py-10 text-center sm:py-20">
+      {deleted && (
+        <p role="status" className="rounded-md border border-success/40 bg-panel p-3 text-sm text-success">
+          Tu cuenta y tus datos se han borrado.
+        </p>
+      )}
       <h1 className="text-3xl font-semibold tracking-tight sm:text-5xl">{es.home.title}</h1>
       <p className="text-lg text-muted">{es.home.lead}</p>
       <div>

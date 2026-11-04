@@ -2,6 +2,7 @@
 
 import { useEffect, useRef, useState } from "react";
 import { browserClient } from "@/lib/supabase/client";
+import { ReportForm } from "../../confianza/forms";
 
 export type ChatMessage = { id: number; user_id: string; body: string; created_at: string };
 
@@ -138,6 +139,7 @@ export function LobbyChat({
             >
               {m.body}
             </p>
+            {m.user_id !== me && <ReportForm targetId={m.user_id} messageId={m.id} lobbyId={lobbyId} label="Denunciar mensaje" />}
           </li>
         ))}
       </ol>

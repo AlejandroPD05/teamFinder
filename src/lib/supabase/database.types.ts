@@ -23,7 +23,39 @@ export type Database = {
           }
         },"public": {
           Tables: {
-            "game_characters": {
+            "app_admins": {
+                  Row: {
+                    "created_at": string,"user_id": string
+                  }
+                  ComputedFields: never
+                  Insert: {
+                    "created_at"?: string,"user_id": string
+                  }
+                  Update: {
+                    "created_at"?: string,"user_id"?: string
+                  }
+                  Relationships: [
+                    {
+      foreignKeyName: "app_admins_user_id_fkey"
+      columns: ["user_id"]
+isOneToOne: true
+      referencedRelation: "player_search"
+      referencedColumns: ["user_id"]
+    },{
+      foreignKeyName: "app_admins_user_id_fkey"
+      columns: ["user_id"]
+isOneToOne: true
+      referencedRelation: "profile_cards"
+      referencedColumns: ["id"]
+    },{
+      foreignKeyName: "app_admins_user_id_fkey"
+      columns: ["user_id"]
+isOneToOne: true
+      referencedRelation: "profiles"
+      referencedColumns: ["id"]
+    }
+                  ]
+                },"game_characters": {
                   Row: {
                     "active": boolean,"game_id": string,"id": string,"name": string,"role_id": string | null,"slug": string
                   }
@@ -193,16 +225,72 @@ isOneToOne: false
                   Relationships: [
                     
                   ]
-                },"lobbies": {
+                },"karma_votes": {
                   Row: {
-                    "created_at": string,"game_id": string,"goal": string | null,"id": string,"language": string | null,"mode_slug": string,"note": string | null,"owner_id": string,"rank_max_id": string | null,"rank_min_id": string | null,"region_id": string | null,"slots": number,"starts_at": string | null,"status": Database["public"]['Enums']["lobby_status"],"updated_at": string
+                    "created_at": string,"lobby_id": string,"tags": (string)[],"target_id": string,"value": number,"voter_id": string
                   }
                   ComputedFields: never
                   Insert: {
-                    "created_at"?: string,"game_id": string,"goal"?: string | null,"id"?: string,"language"?: string | null,"mode_slug": string,"note"?: string | null,"owner_id": string,"rank_max_id"?: string | null,"rank_min_id"?: string | null,"region_id"?: string | null,"slots": number,"starts_at"?: string | null,"status"?: Database["public"]['Enums']["lobby_status"],"updated_at"?: string
+                    "created_at"?: string,"lobby_id": string,"tags"?: (string)[],"target_id": string,"value": number,"voter_id": string
                   }
                   Update: {
-                    "created_at"?: string,"game_id"?: string,"goal"?: string | null,"id"?: string,"language"?: string | null,"mode_slug"?: string,"note"?: string | null,"owner_id"?: string,"rank_max_id"?: string | null,"rank_min_id"?: string | null,"region_id"?: string | null,"slots"?: number,"starts_at"?: string | null,"status"?: Database["public"]['Enums']["lobby_status"],"updated_at"?: string
+                    "created_at"?: string,"lobby_id"?: string,"tags"?: (string)[],"target_id"?: string,"value"?: number,"voter_id"?: string
+                  }
+                  Relationships: [
+                    {
+      foreignKeyName: "karma_votes_lobby_id_fkey"
+      columns: ["lobby_id"]
+isOneToOne: false
+      referencedRelation: "lobbies"
+      referencedColumns: ["id"]
+    },{
+      foreignKeyName: "karma_votes_target_id_fkey"
+      columns: ["target_id"]
+isOneToOne: false
+      referencedRelation: "player_search"
+      referencedColumns: ["user_id"]
+    },{
+      foreignKeyName: "karma_votes_target_id_fkey"
+      columns: ["target_id"]
+isOneToOne: false
+      referencedRelation: "profile_cards"
+      referencedColumns: ["id"]
+    },{
+      foreignKeyName: "karma_votes_target_id_fkey"
+      columns: ["target_id"]
+isOneToOne: false
+      referencedRelation: "profiles"
+      referencedColumns: ["id"]
+    },{
+      foreignKeyName: "karma_votes_voter_id_fkey"
+      columns: ["voter_id"]
+isOneToOne: false
+      referencedRelation: "player_search"
+      referencedColumns: ["user_id"]
+    },{
+      foreignKeyName: "karma_votes_voter_id_fkey"
+      columns: ["voter_id"]
+isOneToOne: false
+      referencedRelation: "profile_cards"
+      referencedColumns: ["id"]
+    },{
+      foreignKeyName: "karma_votes_voter_id_fkey"
+      columns: ["voter_id"]
+isOneToOne: false
+      referencedRelation: "profiles"
+      referencedColumns: ["id"]
+    }
+                  ]
+                },"lobbies": {
+                  Row: {
+                    "closed_at": string | null,"created_at": string,"game_id": string,"goal": string | null,"id": string,"language": string | null,"mode_slug": string,"note": string | null,"owner_id": string,"rank_max_id": string | null,"rank_min_id": string | null,"region_id": string | null,"slots": number,"starts_at": string | null,"status": Database["public"]['Enums']["lobby_status"],"updated_at": string
+                  }
+                  ComputedFields: never
+                  Insert: {
+                    "closed_at"?: string | null,"created_at"?: string,"game_id": string,"goal"?: string | null,"id"?: string,"language"?: string | null,"mode_slug": string,"note"?: string | null,"owner_id": string,"rank_max_id"?: string | null,"rank_min_id"?: string | null,"region_id"?: string | null,"slots": number,"starts_at"?: string | null,"status"?: Database["public"]['Enums']["lobby_status"],"updated_at"?: string
+                  }
+                  Update: {
+                    "closed_at"?: string | null,"created_at"?: string,"game_id"?: string,"goal"?: string | null,"id"?: string,"language"?: string | null,"mode_slug"?: string,"note"?: string | null,"owner_id"?: string,"rank_max_id"?: string | null,"rank_min_id"?: string | null,"region_id"?: string | null,"slots"?: number,"starts_at"?: string | null,"status"?: Database["public"]['Enums']["lobby_status"],"updated_at"?: string
                   }
                   Relationships: [
                     {
@@ -427,6 +515,44 @@ isOneToOne: false
       referencedColumns: ["id"]
     }
                   ]
+                },"moderation_log": {
+                  Row: {
+                    "action": string,"admin_id": string | null,"created_at": string,"id": number,"note": string | null,"report_id": string | null
+                  }
+                  ComputedFields: never
+                  Insert: {
+                    "action": string,"admin_id"?: string | null,"created_at"?: string,"id"?: never,"note"?: string | null,"report_id"?: string | null
+                  }
+                  Update: {
+                    "action"?: string,"admin_id"?: string | null,"created_at"?: string,"id"?: never,"note"?: string | null,"report_id"?: string | null
+                  }
+                  Relationships: [
+                    {
+      foreignKeyName: "moderation_log_admin_id_fkey"
+      columns: ["admin_id"]
+isOneToOne: false
+      referencedRelation: "player_search"
+      referencedColumns: ["user_id"]
+    },{
+      foreignKeyName: "moderation_log_admin_id_fkey"
+      columns: ["admin_id"]
+isOneToOne: false
+      referencedRelation: "profile_cards"
+      referencedColumns: ["id"]
+    },{
+      foreignKeyName: "moderation_log_admin_id_fkey"
+      columns: ["admin_id"]
+isOneToOne: false
+      referencedRelation: "profiles"
+      referencedColumns: ["id"]
+    },{
+      foreignKeyName: "moderation_log_report_id_fkey"
+      columns: ["report_id"]
+isOneToOne: false
+      referencedRelation: "reports"
+      referencedColumns: ["id"]
+    }
+                  ]
                 },"player_characters": {
                   Row: {
                     "character_id": string,"game_id": string,"status": Database["public"]['Enums']["character_status"],"user_id": string
@@ -504,6 +630,136 @@ isOneToOne: false
                   }
                   Relationships: [
                     
+                  ]
+                },"reports": {
+                  Row: {
+                    "created_at": string,"details": string | null,"id": string,"lobby_id": string | null,"message_id": number | null,"message_snapshot": string | null,"reason": Database["public"]['Enums']["report_reason"],"reporter_id": string | null,"resolution": string | null,"reviewed_at": string | null,"reviewed_by": string | null,"status": Database["public"]['Enums']["report_status"],"target_user_id": string | null
+                  }
+                  ComputedFields: never
+                  Insert: {
+                    "created_at"?: string,"details"?: string | null,"id"?: string,"lobby_id"?: string | null,"message_id"?: number | null,"message_snapshot"?: string | null,"reason": Database["public"]['Enums']["report_reason"],"reporter_id"?: string | null,"resolution"?: string | null,"reviewed_at"?: string | null,"reviewed_by"?: string | null,"status"?: Database["public"]['Enums']["report_status"],"target_user_id"?: string | null
+                  }
+                  Update: {
+                    "created_at"?: string,"details"?: string | null,"id"?: string,"lobby_id"?: string | null,"message_id"?: number | null,"message_snapshot"?: string | null,"reason"?: Database["public"]['Enums']["report_reason"],"reporter_id"?: string | null,"resolution"?: string | null,"reviewed_at"?: string | null,"reviewed_by"?: string | null,"status"?: Database["public"]['Enums']["report_status"],"target_user_id"?: string | null
+                  }
+                  Relationships: [
+                    {
+      foreignKeyName: "reports_lobby_id_fkey"
+      columns: ["lobby_id"]
+isOneToOne: false
+      referencedRelation: "lobbies"
+      referencedColumns: ["id"]
+    },{
+      foreignKeyName: "reports_message_id_fkey"
+      columns: ["message_id"]
+isOneToOne: false
+      referencedRelation: "lobby_messages"
+      referencedColumns: ["id"]
+    },{
+      foreignKeyName: "reports_reporter_id_fkey"
+      columns: ["reporter_id"]
+isOneToOne: false
+      referencedRelation: "player_search"
+      referencedColumns: ["user_id"]
+    },{
+      foreignKeyName: "reports_reporter_id_fkey"
+      columns: ["reporter_id"]
+isOneToOne: false
+      referencedRelation: "profile_cards"
+      referencedColumns: ["id"]
+    },{
+      foreignKeyName: "reports_reporter_id_fkey"
+      columns: ["reporter_id"]
+isOneToOne: false
+      referencedRelation: "profiles"
+      referencedColumns: ["id"]
+    },{
+      foreignKeyName: "reports_reviewed_by_fkey"
+      columns: ["reviewed_by"]
+isOneToOne: false
+      referencedRelation: "player_search"
+      referencedColumns: ["user_id"]
+    },{
+      foreignKeyName: "reports_reviewed_by_fkey"
+      columns: ["reviewed_by"]
+isOneToOne: false
+      referencedRelation: "profile_cards"
+      referencedColumns: ["id"]
+    },{
+      foreignKeyName: "reports_reviewed_by_fkey"
+      columns: ["reviewed_by"]
+isOneToOne: false
+      referencedRelation: "profiles"
+      referencedColumns: ["id"]
+    },{
+      foreignKeyName: "reports_target_user_id_fkey"
+      columns: ["target_user_id"]
+isOneToOne: false
+      referencedRelation: "player_search"
+      referencedColumns: ["user_id"]
+    },{
+      foreignKeyName: "reports_target_user_id_fkey"
+      columns: ["target_user_id"]
+isOneToOne: false
+      referencedRelation: "profile_cards"
+      referencedColumns: ["id"]
+    },{
+      foreignKeyName: "reports_target_user_id_fkey"
+      columns: ["target_user_id"]
+isOneToOne: false
+      referencedRelation: "profiles"
+      referencedColumns: ["id"]
+    }
+                  ]
+                },"user_blocks": {
+                  Row: {
+                    "blocked_id": string,"blocker_id": string,"created_at": string
+                  }
+                  ComputedFields: never
+                  Insert: {
+                    "blocked_id": string,"blocker_id": string,"created_at"?: string
+                  }
+                  Update: {
+                    "blocked_id"?: string,"blocker_id"?: string,"created_at"?: string
+                  }
+                  Relationships: [
+                    {
+      foreignKeyName: "user_blocks_blocked_id_fkey"
+      columns: ["blocked_id"]
+isOneToOne: false
+      referencedRelation: "player_search"
+      referencedColumns: ["user_id"]
+    },{
+      foreignKeyName: "user_blocks_blocked_id_fkey"
+      columns: ["blocked_id"]
+isOneToOne: false
+      referencedRelation: "profile_cards"
+      referencedColumns: ["id"]
+    },{
+      foreignKeyName: "user_blocks_blocked_id_fkey"
+      columns: ["blocked_id"]
+isOneToOne: false
+      referencedRelation: "profiles"
+      referencedColumns: ["id"]
+    },{
+      foreignKeyName: "user_blocks_blocker_id_fkey"
+      columns: ["blocker_id"]
+isOneToOne: false
+      referencedRelation: "player_search"
+      referencedColumns: ["user_id"]
+    },{
+      foreignKeyName: "user_blocks_blocker_id_fkey"
+      columns: ["blocker_id"]
+isOneToOne: false
+      referencedRelation: "profile_cards"
+      referencedColumns: ["id"]
+    },{
+      foreignKeyName: "user_blocks_blocker_id_fkey"
+      columns: ["blocker_id"]
+isOneToOne: false
+      referencedRelation: "profiles"
+      referencedColumns: ["id"]
+    }
                   ]
                 }
           }
@@ -653,7 +909,13 @@ isOneToOne: false
                 }
           }
           Functions: {
-            "can_see":
+            "block_user":
+{ Args: { "p_user": string }; Returns: undefined
+                           },
+"blocked_with":
+{ Args: { "other": string }; Returns: boolean
+                           },
+"can_see":
 { Args: { "owner": string,"v": Database["public"]['Enums']["visibility"] }; Returns: boolean
                            },
 "close_lobby":
@@ -662,8 +924,19 @@ isOneToOne: false
 "create_lobby":
 { Args: { "p_game_id": string,"p_goal": string,"p_language": string,"p_mode_slug": string,"p_note": string,"p_rank_max": string,"p_rank_min": string,"p_region": string,"p_roles": (string)[],"p_starts_at": string }; Returns: string
                            },
+"delete_my_account":
+{ Args: Record<PropertyKey, never>; Returns: undefined
+                           },
+"is_admin":
+{ Args: Record<PropertyKey, never>; Returns: boolean
+                           },
 "is_lobby_member":
 { Args: { "p_lobby": string }; Returns: boolean
+                           },
+"karma_summary":
+{ Args: { "p_user": string }; Returns: {
+              "negatives": number,"positives": number,"top_tags": (string)[]
+            }[]
                            },
 "leave_lobby":
 { Args: { "p_lobby": string }; Returns: undefined
@@ -679,8 +952,14 @@ isOneToOne: false
               "last_at": string,"last_body": string,"last_user_id": string,"lobby_id": string,"mode_slug": string,"owner_id": string,"status": Database["public"]['Enums']["lobby_status"],"unread": number
             }[]
                            },
+"report_user":
+{ Args: { "p_details": string,"p_lobby"?: string,"p_message"?: number,"p_reason": Database["public"]['Enums']["report_reason"],"p_target": string }; Returns: string
+                           },
 "request_join":
 { Args: { "p_lobby": string,"p_message": string }; Returns: string
+                           },
+"resolve_report":
+{ Args: { "p_note": string,"p_report": string,"p_status": Database["public"]['Enums']["report_status"] }; Returns: undefined
                            },
 "respond_request":
 { Args: { "p_accept": boolean,"p_request": string }; Returns: undefined
@@ -691,12 +970,18 @@ isOneToOne: false
 "send_message":
 { Args: { "p_body": string,"p_lobby": string }; Returns: number
                            },
+"unblock_user":
+{ Args: { "p_user": string }; Returns: undefined
+                           },
+"vote_karma":
+{ Args: { "p_lobby": string,"p_tags": (string)[],"p_target": string,"p_value": number }; Returns: undefined
+                           },
 "withdraw_request":
 { Args: { "p_lobby": string }; Returns: undefined
                            }
           }
           Enums: {
-            "character_status": "main"|"comfort"|"playable"|"flexible","lobby_status": "open"|"full"|"closed","request_status": "pending"|"accepted"|"rejected"|"withdrawn","visibility": "public"|"registered"|"private"
+            "character_status": "main"|"comfort"|"playable"|"flexible","lobby_status": "open"|"full"|"closed","report_reason": "spam"|"harassment"|"sexual"|"impersonation"|"cheating"|"other","report_status": "open"|"actioned"|"dismissed","request_status": "pending"|"accepted"|"rejected"|"withdrawn","visibility": "public"|"registered"|"private"
           }
           CompositeTypes: {
             [_ in never]: never
@@ -816,7 +1101,7 @@ export const Constants = {
           }
         },"public": {
           Enums: {
-            "character_status": ["main", "comfort", "playable", "flexible"],"lobby_status": ["open", "full", "closed"],"request_status": ["pending", "accepted", "rejected", "withdrawn"],"visibility": ["public", "registered", "private"]
+            "character_status": ["main", "comfort", "playable", "flexible"],"lobby_status": ["open", "full", "closed"],"report_reason": ["spam", "harassment", "sexual", "impersonation", "cheating", "other"],"report_status": ["open", "actioned", "dismissed"],"request_status": ["pending", "accepted", "rejected", "withdrawn"],"visibility": ["public", "registered", "private"]
           }
         }
 } as const

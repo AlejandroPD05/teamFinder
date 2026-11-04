@@ -19,7 +19,7 @@ export const es = {
     lead: "Perfiles con rango, roles y agentes, búsqueda con filtros y grupos para DuoQ, TrioQ o FiveStack. Empezamos por VALORANT.",
     cta: "Entrar para empezar",
     ctaSignedIn: "Buscar jugadores",
-    beta: "Beta en construcción: karma, bloqueo y denuncias llegan en la próxima fase.",
+    beta: "Beta en pruebas: puede haber errores.",
   },
   login: {
     title: `Entrar en ${APP_NAME}`,

@@ -15,7 +15,10 @@ export default async function Dashboard() {
   const userId = claims?.claims?.sub;
   if (!userId) redirect("/entrar?next=/inicio");
 
-  const { profile, game, roles, characters } = await loadOwnProfile(supabase, userId);
+  const [{ profile, game, roles, characters }, { data: isAdmin }] = await Promise.all([
+    loadOwnProfile(supabase, userId),
+    supabase.rpc("is_admin"),
+  ]);
   const name = profile.display_name;
   const completion = profileCompletion({
     languages: profile.languages,
@@ -78,6 +81,17 @@ export default async function Dashboard() {
         </div>
         <p className="mt-4 inline-block rounded border border-line px-2 py-1 text-xs text-muted">{es.dashboard.riot}</p>
       </div>
+
+      <nav aria-label="Cuenta" className="flex flex-wrap gap-3 text-sm">
+        <Link href="/ajustes" className="inline-flex min-h-11 items-center rounded-md border border-line px-4 hover:bg-panel-hover">
+          Ajustes, bloqueados y borrar cuenta
+        </Link>
+        {isAdmin && (
+          <Link href="/moderacion" className="inline-flex min-h-11 items-center rounded-md border border-line px-4 hover:bg-panel-hover">
+            Moderación
+          </Link>
+        )}
+      </nav>
     </section>
   );
 }
