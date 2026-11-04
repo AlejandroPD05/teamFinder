@@ -23,7 +23,7 @@ export default async function EditProfilePage() {
           <h1 className="text-2xl font-semibold tracking-tight">Editar perfil</h1>
           <p className="text-muted">Ningún campo es obligatorio: complétalo a tu ritmo.</p>
         </div>
-        <Link href={`/jugador/${userId}`} className="min-h-11 py-3 text-sm text-accent-soft underline-offset-4 hover:underline">
+        <Link href={`/jugador/${userId}`} className="min-h-11 py-3 text-sm text-accent-soft underline underline-offset-4">
           Ver mi perfil público
         </Link>
       </div>

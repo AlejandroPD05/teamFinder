@@ -21,7 +21,7 @@ export default async function SettingsPage() {
         <h1 className="text-2xl font-semibold tracking-tight">Ajustes</h1>
         <p className="text-muted">
           La visibilidad de cada dato se cambia en{" "}
-          <Link href="/perfil/editar" className="text-accent-soft underline-offset-4 hover:underline">
+          <Link href="/perfil/editar" className="text-accent-soft underline underline-offset-4">
             Editar perfil
           </Link>
           .
@@ -40,7 +40,7 @@ export default async function SettingsPage() {
               const n = names.get(b.blocked_id)?.name ?? "Jugador";
               return (
                 <li key={b.blocked_id} className="flex flex-wrap items-center justify-between gap-2">
-                  <Link href={`/jugador/${b.blocked_id}`} className="underline-offset-4 hover:underline">
+                  <Link href={`/jugador/${b.blocked_id}`} className="underline underline-offset-4">
                     {n}
                   </Link>
                   <BlockButton userId={b.blocked_id} blocked name={n} />

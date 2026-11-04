@@ -1,4 +1,5 @@
 import type { Metadata } from "next";
+import Link from "next/link";
 import { safeNextPath } from "@/lib/auth";
 import { es, loginError } from "@/lib/i18n/es";
 import { signInWithDiscord, signInWithEmail } from "./actions";
@@ -17,6 +18,17 @@ export default async function LoginPage({ searchParams }: PageProps<"/entrar">) 
       <div className="flex flex-col gap-2">
         <h1 className="text-2xl font-semibold tracking-tight">{es.login.title}</h1>
         <p className="text-muted">{es.login.lead}</p>
+        <p className="text-sm text-muted">
+          Antes de entrar, lee las{" "}
+          <Link href="/normas" className="text-accent-soft underline underline-offset-4">
+            normas
+          </Link>{" "}
+          y la{" "}
+          <Link href="/privacidad" className="text-accent-soft underline underline-offset-4">
+            privacidad
+          </Link>
+          .
+        </p>
       </div>
 
       {error && (

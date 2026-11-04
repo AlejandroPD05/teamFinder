@@ -71,7 +71,7 @@ export default async function LobbyPage({ params }: PageProps<"/grupos/[id]">) {
       <header className="flex flex-wrap items-start justify-between gap-3">
         <div>
           <p className="text-sm text-muted">
-            <Link href="/grupos" className="underline-offset-4 hover:underline">
+            <Link href="/grupos" className="underline underline-offset-4">
               Grupos
             </Link>{" "}
             / {modeName}
@@ -130,7 +130,7 @@ export default async function LobbyPage({ params }: PageProps<"/grupos/[id]">) {
           {members.map((m) => (
             <li key={m.user_id} className="flex items-center gap-3">
               <Avatar name={name(m.user_id)} src={names.get(m.user_id)?.avatar ?? null} />
-              <Link href={`/jugador/${m.user_id}`} className="underline-offset-4 hover:underline">
+              <Link href={`/jugador/${m.user_id}`} className="underline underline-offset-4">
                 {name(m.user_id)}
               </Link>
               {m.user_id === lobby.owner_id && <span className="text-xs text-muted">creador</span>}
@@ -204,7 +204,7 @@ export default async function LobbyPage({ params }: PageProps<"/grupos/[id]">) {
                 <li key={r.id} className="flex flex-col gap-2 border-t border-line pt-3 first:border-0 first:pt-0">
                   <div className="flex items-center gap-3">
                     <Avatar name={name(r.user_id)} src={names.get(r.user_id)?.avatar ?? null} />
-                    <Link href={`/jugador/${r.user_id}`} className="font-medium underline-offset-4 hover:underline">
+                    <Link href={`/jugador/${r.user_id}`} className="font-medium underline underline-offset-4">
                       {name(r.user_id)}
                     </Link>
                   </div>

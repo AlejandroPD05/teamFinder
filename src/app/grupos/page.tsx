@@ -68,7 +68,7 @@ export default async function LobbiesPage({ searchParams }: PageProps<"/grupos">
             Filtrar
           </button>
           {filtered && (
-            <Link href="/grupos" className="min-h-11 py-3 text-sm text-accent-soft underline-offset-4 hover:underline">
+            <Link href="/grupos" className="min-h-11 py-3 text-sm text-accent-soft underline underline-offset-4">
               Quitar
             </Link>
           )}

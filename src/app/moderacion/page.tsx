@@ -45,7 +45,7 @@ export default async function ModerationPage() {
               <p className="text-sm">
                 Denunciado:{" "}
                 {r.target_user_id ? (
-                  <Link href={`/jugador/${r.target_user_id}`} className="underline-offset-4 hover:underline">
+                  <Link href={`/jugador/${r.target_user_id}`} className="underline underline-offset-4">
                     {names.get(r.target_user_id)?.name ?? "Jugador"}
                   </Link>
                 ) : (
@@ -55,7 +55,7 @@ export default async function ModerationPage() {
                   <>
                     {" "}
                     · en{" "}
-                    <Link href={`/grupos/${r.lobby_id}`} className="underline-offset-4 hover:underline">
+                    <Link href={`/grupos/${r.lobby_id}`} className="underline underline-offset-4">
                       un grupo
                     </Link>
                   </>

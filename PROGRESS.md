@@ -3,8 +3,8 @@
 ## Estado
 2026-11-04 — Fases 1, 2 y 3 terminadas, fusionadas en `main` y desplegadas en https://teamfinder-seven.vercel.app (Supabase cloud `teamfinder`, pkzgwndwwoyeaozqdpqn, París; migraciones al día). Login con Discord verificado en producción.
 Fase 4 (grupos) con el código terminado en la rama `fase-4-grupos`: lint, 76 tests (unit + BD, incluida la concurrencia en la última plaza) y 26 e2e en verde. Pendiente: aplicar `20261104040000_lobbies.sql` en cloud y fusionar. Fase 4 fusionada y desplegada.
-Fase 5 (chat) con el código terminado en la rama `fase-5-chat`: chat en tiempo real solo para miembros, límite de ritmo, bandeja /mensajes con «sin leer». Pendiente: aplicar `20261104050000_chat.sql` en cloud y fusionar.
-Fase 6 (confianza) con el código terminado en la rama `fase-6-confianza`: bloqueo, denuncias, panel de moderación, karma y borrado de cuenta. Pendiente: aplicar `20261104060000_trust.sql` en cloud y fusionar. Siguiente: fase 7 — lanzamiento de la beta.
+Fase 5 (chat) con el código terminado en la rama `fase-5-chat`: chat en tiempo real solo para miembros, límite de ritmo, bandeja /mensajes con «sin leer». Fase 6 (confianza) con el código terminado en la rama `fase-6-confianza`: bloqueo, denuncias, panel de moderación, karma y borrado de cuenta. Fases 5 y 6 fusionadas y desplegadas (migraciones aplicadas en cloud).
+Fase 7 (beta) con el código en la rama `fase-7-beta`: auditoría WCAG A/AA automática (axe) sin infracciones en 11 páginas, borradores de privacidad y normas marcados «pendiente de revisión legal», pie con enlaces y Discord opcional, 404 propio. Para cerrarla faltan las tareas del usuario de abajo y la prueba de un usuario real desde el móvil.
 
 ## Objetivo de la beta
 Web para encontrar gente con la que hacer stack en VALORANT: perfil → búsqueda con filtros → publicaciones «busco dúo/trío/five» con solicitudes → sala con chat → karma tras jugar. Beta con cuentas reales, público hispanohablante en servidores EU.
@@ -61,6 +61,8 @@ RSO de Riot si aprueban la clave (rango y estadísticas verificados), mensajes p
 - 2026-11-04 — Moderadores: tabla `app_admins`, alta solo por SQL desde el panel de Supabase. `/moderacion` da 404 a quien no lo es.
 - 2026-11-04 — Karma: +1/−1 y hasta 3 etiquetas cerradas, una vez por compañero y grupo, solo en grupos cerrados y hasta 7 días después. Se muestran totales y etiquetas más repetidas, nunca quién votó. Visible solo con sesión.
 - 2026-11-04 — Borrado de cuenta desde `/ajustes` (escribir BORRAR): borra `auth.users` y en cascada todo lo suyo; las denuncias se conservan anonimizadas.
+- 2026-11-04 — Accesibilidad: test e2e con axe (WCAG 2.1 A/AA) sobre las páginas principales en escritorio y móvil; los enlaces dentro de texto van siempre subrayados. Es una comprobación automática: no sustituye a una revisión manual con lector de pantalla.
+- 2026-11-04 — Discord: enlace solo si `NEXT_PUBLIC_DISCORD_INVITE_URL` es una invitación https de Discord; sin ella no se muestra nada.
 - 2026-11-04 — Botón principal: fondo `#8B5CF6` con texto `#0B0C12` (4,6:1). Blanco sobre `#8B5CF6` no llega a AA (4,2:1).
 
 ## Acciones del usuario
@@ -68,6 +70,10 @@ RSO de Riot si aprueban la clave (rango y estadísticas verificados), mensajes p
 - [x] Repo privado en GitHub, proyecto Supabase cloud y Vercel conectado.
 - [x] Supabase cloud: Discord activado y URL Configuration (Site URL `https://teamfinder-seven.vercel.app`; Redirect URLs `/auth/callback` de producción y `https://teamfinder-*-me-myself-and-i-8b2d.vercel.app/**`).
 - [ ] SMTP propio en Supabase antes de abrir la beta (el de por defecto tiene un límite muy bajo).
+- [ ] Enlace de invitación al Discord de la comunidad → variable `NEXT_PUBLIC_DISCORD_INVITE_URL` en Vercel.
+- [ ] Decidir los campos «pendiente» de privacidad y normas: responsable y contacto, plazo de conservación de denuncias, edad mínima y medidas contra cuentas (avisos/suspensiones). Revisión legal antes de abrir al público.
+- [ ] Dar de alta al menos un moderador: `insert into public.app_admins (user_id) values ('<uuid>');` en el SQL Editor de Supabase.
+- [ ] Prueba final: un usuario nuevo completa el recorrido entero en producción desde el móvil.
 - [x] Docker instalado y en marcha.
 - [ ] Solicitar clave de producción de Riot cuando haya una beta visible.
 
