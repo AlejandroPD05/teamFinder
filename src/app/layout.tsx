@@ -2,7 +2,7 @@ import type { Metadata, Viewport } from "next";
 import { Chakra_Petch, Geist } from "next/font/google";
 import { ExternalLink, LogIn, LogOut } from "lucide-react";
 import Link from "next/link";
-import { APP_NAME, discordInvite } from "@/lib/config";
+import { APP_NAME, discordInvite, GOOGLE_SITE_VERIFICATION } from "@/lib/config";
 import { es } from "@/lib/i18n/es";
 import { createClient } from "@/lib/supabase/server";
 import { signOut } from "./auth/salir/actions";
@@ -25,8 +25,8 @@ export const metadata: Metadata = {
   openGraph: { type: "website", siteName: APP_NAME, locale: "es_ES", title: es.meta.title, description: es.meta.description },
   twitter: { card: "summary_large_image" },
   robots: indexable() ? undefined : { index: false, follow: false },
-  // Código de verificación de Google Search Console (meta etiqueta). Opcional.
-  verification: process.env.GOOGLE_SITE_VERIFICATION ? { google: process.env.GOOGLE_SITE_VERIFICATION } : undefined,
+  // Verificación de Google Search Console (meta etiqueta). No es secreto: Google lo lee del HTML público.
+  verification: { google: process.env.GOOGLE_SITE_VERIFICATION || GOOGLE_SITE_VERIFICATION },
 };
 
 export const viewport: Viewport = { themeColor: "#0b0c12" };

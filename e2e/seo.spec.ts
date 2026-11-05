@@ -14,6 +14,7 @@ test("robots, sitemap y metadatos para buscadores", async ({ page, request }) =>
   await expect(page).toHaveTitle(/busca equipo para VALORANT, CS2 y Apex Legends/);
   await expect(page.locator('link[rel="canonical"]')).toHaveAttribute("href", /^https?:\/\/[^/]+\/?$/);
   expect(await page.locator('script[type="application/ld+json"]').textContent()).toContain('"WebSite"');
+  await expect(page.locator('meta[name="google-site-verification"]')).toHaveAttribute("content", /.+/);
 
   // Página pública por juego, enlazada desde la portada.
   const apexLink = page.getByRole("link", { name: "Equipo para Apex Legends" });
