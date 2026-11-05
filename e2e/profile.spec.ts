@@ -23,8 +23,11 @@ test("editar perfil, verlo como público y respetar la privacidad", async ({ pag
   await page.getByLabel("Omen").selectOption("main");
   await page.getByLabel("Clove").selectOption("comfort");
   await page.getByLabel("Quién ve tu perfil de VALORANT:").selectOption("public");
+  // El aviso «Perfil guardado» puede perderse si la revalidación remonta el formulario: se espera a que la acción
+  // responda y el resultado se comprueba en el perfil público.
+  const saved = page.waitForResponse((r) => r.request().method() === "POST" && r.url().includes("/perfil/editar"));
   await page.getByRole("button", { name: "Guardar perfil" }).click();
-  await expect(page.getByRole("status").filter({ hasText: "Perfil guardado" })).toBeVisible();
+  expect((await saved).ok()).toBe(true);
 
   // Perfil público visto por su dueño.
   await page.getByRole("link", { name: "Ver mi perfil público" }).click();

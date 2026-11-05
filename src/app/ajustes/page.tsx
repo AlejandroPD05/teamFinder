@@ -51,7 +51,7 @@ export default async function SettingsPage() {
         )}
       </section>
 
-      <section aria-labelledby="borrar" className="rounded-lg border border-danger/40 bg-panel p-5">
+      <section aria-labelledby="borrar" className="rounded-lg border border-danger bg-panel p-5">
         <h2 id="borrar" className="font-semibold">
           Borrar mi cuenta
         </h2>

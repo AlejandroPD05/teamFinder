@@ -87,7 +87,7 @@ export default async function LobbyPage({ params }: PageProps<"/grupos/[id]">) {
           {lobby.note && <p className="mt-1">{lobby.note}</p>}
         </div>
         <span
-          className={`rounded border px-2 py-1 text-sm ${lobby.status === "open" ? "border-success/50 text-success" : "border-line text-muted"}`}
+          className={`text-sm font-medium ${lobby.status === "open" ? "text-success" : "text-muted"}`}
         >
           {STATUS_LABEL[lobby.status]} · {members.length}/{lobby.slots} plazas
         </span>
@@ -104,7 +104,7 @@ export default async function LobbyPage({ params }: PageProps<"/grupos/[id]">) {
               {neededRoles.length
                 ? neededRoles.map((r) => (
                     <span key={r} className="chip">
-                      <RoleIcon slug={roleOf(r)?.slug} className="size-3.5 text-accent-soft" />
+                      <RoleIcon slug={roleOf(r)?.slug} className="size-3.5 text-muted" />
                       {roleOf(r)?.name}
                     </span>
                   ))

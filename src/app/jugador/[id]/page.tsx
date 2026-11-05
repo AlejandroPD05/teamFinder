@@ -74,7 +74,7 @@ export default async function PlayerPage({ params }: PageProps<"/jugador/[id]">)
         <div className="flex-1">
           <h1 className="font-display text-3xl font-semibold">{name}</h1>
           {game?.flex && (
-            <span className="mt-1 inline-block rounded border border-info/50 px-2 py-0.5 text-xs text-info-soft">Flex</span>
+            <span className="mt-1 inline-block text-sm font-medium text-info-soft">Flex</span>
           )}
         </div>
         {isOwner && (
@@ -182,7 +182,7 @@ export default async function PlayerPage({ params }: PageProps<"/jugador/[id]">)
                   <ul className="flex flex-col gap-3">
                     {byStatus.map((g) => (
                       <li key={g.s} className="flex flex-col gap-1.5">
-                        <span className="eyebrow text-muted">{CHARACTER_STATUS[g.s]}</span>
+                        <span className="text-sm text-muted">{CHARACTER_STATUS[g.s]}</span>
                         <ul className="flex flex-wrap gap-3">
                           {g.chars.map((c) => (
                             <li key={c!.id} className="flex items-center gap-2">

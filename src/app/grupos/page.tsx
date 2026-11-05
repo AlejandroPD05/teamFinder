@@ -6,6 +6,7 @@ import { formatStart } from "@/lib/lobbies/format";
 import { listOpenLobbies, loadNames } from "@/lib/lobbies/queries";
 import { GOALS, LANGUAGES } from "@/lib/profile/options";
 import { loadCatalog } from "@/lib/profile/queries";
+import type { CSSProperties } from "react";
 import { RoleIcon } from "@/components/game-icons";
 import { createClient } from "@/lib/supabase/server";
 
@@ -93,19 +94,19 @@ export default async function LobbiesPage({ searchParams }: PageProps<"/grupos">
         </div>
       ) : (
         <ul className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
-          {lobbies.map((l) => {
+          {lobbies.map((l, i) => {
             const taken = l.lobby_members[0]?.count ?? 0;
             const modeName = catalog.modes.find((m) => m.slug === l.mode_slug)?.name ?? l.mode_slug;
             const ranks = [label(catalog.ranks, l.rank_min_id), label(catalog.ranks, l.rank_max_id)];
             const owner = names.get(l.owner_id)?.name ?? "Jugador";
             return (
-              <li key={l.id} className="surface surface-interactive flex flex-col gap-3 p-4">
+              <li key={l.id} className="surface surface-interactive enter flex flex-col gap-3 p-4" style={{ "--i": i } as CSSProperties}>
                 <div className="flex items-start justify-between gap-2">
                   <div>
                     <h2 className="font-display text-lg font-semibold">{modeName}</h2>
                     <p className="text-sm text-muted">de {owner}</p>
                   </div>
-                  <span className="rounded border border-accent/50 px-2 py-0.5 text-xs text-accent-soft">
+                  <span className="whitespace-nowrap text-sm font-medium tabular-nums">
                     {taken}/{l.slots} plazas
                   </span>
                 </div>
@@ -119,7 +120,7 @@ export default async function LobbiesPage({ searchParams }: PageProps<"/grupos">
                             const role = catalog.roles.find((x) => x.id === r.role_id);
                             return (
                               <span key={r.role_id} className="chip">
-                                <RoleIcon slug={role?.slug} className="size-3.5 text-accent-soft" />
+                                <RoleIcon slug={role?.slug} className="size-3.5 text-muted" />
                                 {role?.name}
                               </span>
                             );

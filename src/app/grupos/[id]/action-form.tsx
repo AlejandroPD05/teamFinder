@@ -6,7 +6,7 @@ import { lobbyAction, type ActionState } from "../actions";
 const styles = {
   primary: "bg-accent font-semibold text-bg hover:bg-accent-soft",
   neutral: "border border-line hover:bg-panel-hover",
-  danger: "border border-danger/50 text-danger hover:bg-danger/10",
+  danger: "border border-danger text-danger hover:bg-panel-hover",
 } as const;
 
 /** Formulario de una acción del grupo con su propio estado accesible (éxito o error). */

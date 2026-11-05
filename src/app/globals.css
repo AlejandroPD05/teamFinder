@@ -1,8 +1,9 @@
 @import "tailwindcss";
 
 /*
- * Sistema visual «arena nocturna»: base oscura común a todos los juegos (AGENTS.md), morado y azul solo en
- * acciones, estados activos e insignias. Profundidad con brillos suaves y bordes finos, no con efectos pesados.
+ * Sistema visual «arena nocturna»: base oscura común a todos los juegos (AGENTS.md), color intenso solo en
+ * acciones, estados activos e insignias. Profundidad por tonos de superficie: sin degradados, brillos ni
+ * bordes decorativos.
  */
 @theme {
   --color-bg: #0b0c12;
@@ -23,6 +24,7 @@
   --font-sans: var(--font-geist-sans), ui-sans-serif, system-ui, sans-serif;
   --font-display: var(--font-chakra), var(--font-geist-sans), ui-sans-serif, sans-serif;
   --radius-card: 0.875rem;
+  --ease-out: cubic-bezier(0.23, 1, 0.32, 1);
 }
 
 :root {
@@ -30,12 +32,8 @@
 }
 
 body {
+  /* Fondo liso. El tono de cada juego llega por las variables de color (ver src/lib/games.ts), sin degradados. */
   background-color: var(--color-bg);
-  /* Brillos de fondo fijos y sutiles: morado arriba a la izquierda, azul a la derecha. */
-  background-image:
-    radial-gradient(60rem 30rem at 10% -10%, var(--glow-a, rgb(139 92 246 / 0.12)), transparent 60%),
-    radial-gradient(50rem 28rem at 110% 10%, var(--glow-b, rgb(59 130 246 / 0.08)), transparent 60%);
-  background-attachment: fixed;
   color: var(--color-text);
 }
 
@@ -45,7 +43,7 @@ body {
 }
 
 ::selection {
-  background: color-mix(in srgb, var(--color-accent) 35%, transparent);
+  background: var(--color-panel-hover);
 }
 
 @layer components {
@@ -55,40 +53,22 @@ body {
     letter-spacing: 0.01em;
   }
 
-  /* Etiqueta pequeña en mayúsculas para secciones y metadatos. */
-  .eyebrow {
-    font-family: var(--font-display);
-    font-size: 0.75rem;
-    font-weight: 600;
-    letter-spacing: 0.14em;
-    text-transform: uppercase;
-    color: var(--color-accent-soft);
-  }
-
-  /* Superficie de tarjeta con borde fino y brillo superior. */
+  /* Superficie de tarjeta: se separa del fondo por el tono, no por un borde. */
   .surface {
     position: relative;
-    border: 1px solid var(--color-line);
     border-radius: var(--radius-card);
-    background: linear-gradient(180deg, rgb(255 255 255 / 0.025), transparent 40%), var(--color-panel);
+    background: var(--color-panel);
   }
 
-  /* Tarjeta interactiva: el borde se ilumina en degradado al pasar el ratón o con foco dentro. */
   .surface-interactive {
-    transition:
-      border-color 200ms ease,
-      transform 200ms ease,
-      box-shadow 200ms ease;
+    transition: background-color 150ms var(--ease-out);
   }
   .surface-interactive:hover,
   .surface-interactive:focus-within {
-    border-color: color-mix(in srgb, var(--color-accent) 55%, transparent);
-    box-shadow:
-      0 0 0 1px color-mix(in srgb, var(--color-accent) 15%, transparent),
-      0 12px 40px -18px color-mix(in srgb, var(--color-accent) 45%, transparent);
+    background: var(--color-panel-hover);
   }
 
-  /* Botón principal con esquina cortada (detalle competitivo, sin imitar a ningún juego). */
+  /* Botón principal con esquina cortada (detalle propio, sin imitar a ningún juego). */
   .btn-primary {
     display: inline-flex;
     min-height: 2.75rem;
@@ -100,12 +80,14 @@ body {
     font-weight: 600;
     letter-spacing: 0.02em;
     color: var(--color-bg);
-    background: linear-gradient(135deg, var(--color-accent-soft), var(--color-accent));
+    background: var(--color-accent);
     clip-path: polygon(0 0, calc(100% - 10px) 0, 100% 10px, 100% 100%, 10px 100%, 0 calc(100% - 10px));
-    transition: filter 150ms ease;
+    transition:
+      background-color 150ms var(--ease-out),
+      transform 100ms var(--ease-out);
   }
   .btn-primary:hover {
-    filter: brightness(1.1);
+    background: var(--color-accent-soft);
   }
   .btn-primary:disabled {
     opacity: 0.6;
@@ -122,33 +104,40 @@ body {
     border-radius: 0.5rem;
     font-size: 0.875rem;
     transition:
-      background-color 150ms ease,
-      border-color 150ms ease;
+      background-color 150ms var(--ease-out),
+      transform 100ms var(--ease-out);
   }
   .btn-ghost:hover {
     background-color: var(--color-panel-hover);
-    border-color: color-mix(in srgb, var(--color-accent) 50%, transparent);
   }
 
-  /* Chip/insignia neutra. */
+  /* Al pulsar, el botón cede un poco: confirma el toque sin rebotes. */
+  .btn-primary:active:not(:disabled),
+  .btn-ghost:active {
+    transform: scale(0.97);
+  }
+
+  /* Elemento de una lista de datos (roles, modos, motivos): texto con icono, sin cápsula. */
   .chip {
     display: inline-flex;
     align-items: center;
     gap: 0.375rem;
-    border: 1px solid var(--color-line);
-    border-radius: 999px;
-    background: rgb(255 255 255 / 0.03);
-    padding: 0.125rem 0.625rem;
-    font-size: 0.75rem;
+    font-size: 0.8125rem;
     color: var(--color-text);
     white-space: nowrap;
   }
 
-  /* Línea de acento bajo títulos. */
-  .accent-rule {
-    height: 2px;
-    width: 3rem;
-    background: linear-gradient(90deg, var(--color-accent), var(--color-info));
+  /* Entrada de listas: aparece desde 4px más abajo, escalonada 30 ms por fila (--i), con salida rápida. */
+  .enter {
+    animation: enter 220ms var(--ease-out) both;
+    animation-delay: calc(min(var(--i, 0), 10) * 30ms);
+  }
+}
+
+@keyframes enter {
+  from {
+    opacity: 0;
+    transform: translateY(4px);
   }
 }
 

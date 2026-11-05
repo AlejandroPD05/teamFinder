@@ -82,7 +82,7 @@ export function ReportForm({
         <textarea id={`${id}-details`} name="details" maxLength={500} rows={3} className={`${control} py-2`} />
         <p className="text-xs text-muted">La persona denunciada no sabrá quién la ha denunciado.</p>
         <div className="flex flex-wrap items-center gap-3">
-          <button type="submit" disabled={pending} className={`${btn} border border-danger/50 text-danger hover:bg-danger/10`}>
+          <button type="submit" disabled={pending} className={`${btn} border border-danger text-danger hover:bg-panel-hover`}>
             Enviar denuncia
           </button>
           <Status state={state} />
@@ -154,7 +154,7 @@ export function DeleteAccountForm() {
       </label>
       <input id="confirm" name="confirm" autoComplete="off" className={`${control} sm:w-60`} />
       <div className="flex flex-wrap items-center gap-3">
-        <button type="submit" disabled={pending} className={`${btn} border border-danger/50 text-danger hover:bg-danger/10`}>
+        <button type="submit" disabled={pending} className={`${btn} border border-danger text-danger hover:bg-panel-hover`}>
           Borrar mi cuenta
         </button>
         <Status state={state} />

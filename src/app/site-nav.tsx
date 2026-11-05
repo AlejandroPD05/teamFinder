@@ -38,7 +38,7 @@ export function SiteNav({ unread }: { unread: number }) {
             {active && (
               <span
                 aria-hidden="true"
-                className="absolute inset-x-3 bottom-0 h-0.5 bg-gradient-to-r from-accent to-info sm:-bottom-[0.6rem]"
+                className="absolute inset-x-3 bottom-0 h-0.5 bg-accent sm:-bottom-[0.6rem]"
               />
             )}
           </Link>

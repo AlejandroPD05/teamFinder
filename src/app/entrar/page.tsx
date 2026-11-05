@@ -33,12 +33,12 @@ export default async function LoginPage({ searchParams }: PageProps<"/entrar">) 
       </div>
 
       {error && (
-        <p role="alert" className="rounded-md border border-danger/40 bg-panel p-3 text-sm text-danger">
+        <p role="alert" className="rounded-md border border-danger bg-panel p-3 text-sm text-danger">
           {error}
         </p>
       )}
       {sent && (
-        <p role="status" className="rounded-md border border-success/40 bg-panel p-3 text-sm text-success">
+        <p role="status" className="rounded-md border border-success bg-panel p-3 text-sm text-success">
           {es.login.sent}
         </p>
       )}

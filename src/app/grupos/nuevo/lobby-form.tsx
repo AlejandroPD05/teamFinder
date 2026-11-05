@@ -7,7 +7,7 @@ import { createLobby, type ActionState } from "../actions";
 
 const control = "min-h-11 w-full rounded-md border border-line bg-bg px-3 text-text focus:border-accent";
 const chip =
-  "flex min-h-11 cursor-pointer items-center gap-2 rounded-md border border-line px-3 text-sm has-[:checked]:border-accent has-[:checked]:bg-accent/10";
+  "flex min-h-11 cursor-pointer items-center gap-2 rounded-md border border-line px-3 text-sm has-[:checked]:border-accent has-[:checked]:bg-panel-hover";
 
 function Err({ id, text }: { id: string; text?: string }) {
   return text ? (

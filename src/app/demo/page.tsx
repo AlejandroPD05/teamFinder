@@ -66,7 +66,7 @@ export default async function DemoPage() {
     <div className="flex flex-col gap-12" style={themeStyle(valorant)}>
       <div
         role="note"
-        className="flex flex-wrap items-start gap-3 rounded-xl border border-warning/50 bg-warning/10 p-4 text-sm"
+        className="flex flex-wrap items-start gap-3 rounded-xl border border-warning p-4 text-sm"
       >
         <FlaskConical aria-hidden="true" className="mt-0.5 size-5 shrink-0 text-warning" />
         <p>
@@ -77,21 +77,20 @@ export default async function DemoPage() {
       </div>
 
       <header className="flex flex-col gap-3">
-        <p className="eyebrow">Recorrido</p>
         <h1 className="font-display text-3xl font-bold sm:text-4xl">Así se encuentra un stack en TeamFinder</h1>
         <p className="max-w-2xl text-muted">
-          1) Buscas jugadores con filtros, 2) te unes a un grupo, 3) os coordináis en la sala y 4) al terminar os dais
+          Buscas jugadores con filtros, te unes a un grupo, os coordináis en la sala y al terminar os dais
           reconocimientos. Abajo tienes cada paso con datos de ejemplo.
         </p>
       </header>
 
       <section aria-labelledby="d-buscar" className="flex flex-col gap-4">
         <h2 id="d-buscar" className="font-display text-2xl font-semibold">
-          1 · Buscar jugadores
+          Buscar jugadores
         </h2>
         <p className="text-sm text-muted">
           Filtros: Controlador · Europa · Oro 1 a Platino 3 · Español (ejemplo). Cada tarjeta muestra el rango, los roles y
-          el pool de agentes; el marco de color indica <em>main</em> y el azul <em>comfort pick</em>.
+          el pool de agentes; el marco de color indica main y el azul comfort pick.
         </p>
         <ul className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
           {rows.map((p) => (
@@ -103,20 +102,20 @@ export default async function DemoPage() {
       <section aria-labelledby="d-grupo" className="grid gap-4 lg:grid-cols-2">
         <div className="surface flex flex-col gap-4 p-5">
           <h2 id="d-grupo" className="font-display text-2xl font-semibold">
-            2 · Unirse a un grupo
+            Unirse a un grupo
           </h2>
           <div className="flex items-start justify-between gap-3">
             <div>
               <p className="font-display text-lg font-semibold">TrioQ de Ficticio · Nébula</p>
               <p className="text-sm">Buscamos iniciador para subir a Platino esta noche</p>
             </div>
-            <span className="chip border-success/50 text-success">Abierto · 2/3</span>
+            <span className="text-sm font-medium text-success">Abierto · 2/3</span>
           </div>
           <dl className="grid gap-2 text-sm">
             <div className="flex flex-wrap items-center gap-2">
               <dt className="text-muted">Buscan:</dt>
               <dd className="chip">
-                <RoleIcon slug="initiator" className="size-3.5 text-accent-soft" />
+                <RoleIcon slug="initiator" className="size-3.5 text-muted" />
                 {role("initiator")?.name}
               </dd>
             </div>
@@ -140,7 +139,7 @@ export default async function DemoPage() {
 
         <div className="surface flex flex-col gap-3 p-5">
           <h2 className="font-display flex items-center gap-2 text-2xl font-semibold">
-            <MessagesSquare aria-hidden="true" className="size-6 text-info-soft" />3 · Sala del grupo
+            <MessagesSquare aria-hidden="true" className="size-6 text-info-soft" />Sala del grupo
           </h2>
           <p className="text-sm text-muted">Chat en tiempo real, solo para los miembros del grupo.</p>
           <ol aria-label="Mensajes de ejemplo" className="flex flex-col gap-2 rounded-md bg-bg p-3 text-sm">
@@ -151,7 +150,7 @@ export default async function DemoPage() {
             ].map(([who, text, me]) => (
               <li key={String(text)} className={`flex flex-col ${me ? "items-end" : "items-start"}`}>
                 <span className="text-xs text-muted">{who}</span>
-                <p className={`max-w-[85%] rounded-lg px-3 py-2 ${me ? "bg-accent/20" : "bg-panel"}`}>{text}</p>
+                <p className={`max-w-[85%] rounded-lg px-3 py-2 ${me ? "bg-panel-hover" : "bg-bg-raised"}`}>{text}</p>
               </li>
             ))}
           </ol>
@@ -161,7 +160,7 @@ export default async function DemoPage() {
       <section aria-labelledby="d-perfil" className="grid gap-4 lg:grid-cols-2">
         <div className="surface flex flex-col gap-3 p-5">
           <h2 id="d-perfil" className="font-display text-2xl font-semibold">
-            4 · Reconocimientos
+            Reconocimientos
           </h2>
           <p className="text-sm text-muted">
             Al cerrar el grupo, cada miembro puede reconocer a sus compañeros (solo positivo, sin puntuaciones negativas).
@@ -190,7 +189,7 @@ export default async function DemoPage() {
           </p>
           <div className="flex flex-wrap items-center gap-3 text-sm">
             {verifiedRank && <RankBadge name={verifiedRank.name} src={verifiedRank.icon_url} manual={false} size={28} />}
-            <span className="chip border-success/50 text-success">verificado (ejemplo)</span>
+            <span className="text-sm font-medium text-success">verificado (ejemplo)</span>
             {agent("omen") && <CharacterIcon name="Omen" src={agent("omen")!.icon_url} size={32} decorative={false} />}
           </div>
         </div>
