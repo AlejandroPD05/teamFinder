@@ -141,11 +141,4 @@ body {
   }
 }
 
-@media (prefers-reduced-motion: reduce) {
-  *,
-  *::before,
-  *::after {
-    transition-duration: 0.01ms !important;
-    animation-duration: 0.01ms !important;
-  }
-}
+/* Las animaciones se muestran siempre, también con «reducir movimiento» activado (decisión del usuario, PROGRESS.md). */
