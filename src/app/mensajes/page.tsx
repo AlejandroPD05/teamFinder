@@ -22,7 +22,7 @@ export default async function InboxPage() {
   return (
     <section className="flex flex-col gap-6">
       <div>
-        <h1 className="text-2xl font-semibold tracking-tight">Mensajes</h1>
+        <h1 className="font-display text-3xl font-semibold">Mensajes</h1>
         <p className="text-muted">Salas de los grupos en los que estás. Los mensajes privados entre jugadores llegarán más adelante.</p>
       </div>
 
@@ -30,7 +30,7 @@ export default async function InboxPage() {
         <div className="rounded-lg border border-dashed border-line p-6 text-center">
           <h2 className="font-semibold">No estás en ningún grupo activo</h2>
           <p className="mt-1 text-sm text-muted">Únete a un grupo o crea uno para chatear con tu stack.</p>
-          <Link href="/grupos" className="mt-3 inline-flex min-h-11 items-center rounded-md border border-line px-4 text-sm hover:bg-panel-hover">
+          <Link href="/grupos" className="mt-3 btn-ghost">
             Ver grupos
           </Link>
         </div>
@@ -44,7 +44,7 @@ export default async function InboxPage() {
               <li key={r.lobby_id}>
                 <Link
                   href={`/grupos/${r.lobby_id}`}
-                  className="flex items-center gap-4 rounded-lg border border-line bg-panel p-4 hover:bg-panel-hover"
+                  className="flex items-center gap-4 surface p-4 hover:bg-panel-hover"
                 >
                   <div className="min-w-0 flex-1">
                     <p className="font-semibold">

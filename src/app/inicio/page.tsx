@@ -42,12 +42,12 @@ export default async function Dashboard() {
           </span>
         )}
         <div>
-          <h1 className="text-2xl font-semibold tracking-tight">{es.dashboard.title(name)}</h1>
+          <h1 className="font-display text-3xl font-semibold">{es.dashboard.title(name)}</h1>
           <p className="text-muted">{es.dashboard.lead}</p>
         </div>
       </div>
 
-      <div className="rounded-lg border border-line bg-panel p-5">
+      <div className="surface p-5">
         <div className="flex flex-wrap items-center justify-between gap-3">
           <h2 className="font-semibold">{es.dashboard.profileTitle}</h2>
           <span className="text-sm text-muted">{completion.percent}% completado</span>
@@ -68,13 +68,13 @@ export default async function Dashboard() {
         <div className="mt-4 flex flex-wrap gap-3">
           <Link
             href="/perfil/editar"
-            className="inline-flex min-h-11 items-center rounded-md bg-accent px-5 font-semibold text-bg hover:bg-accent-soft"
+            className="btn-primary"
           >
             {completion.percent === 100 ? "Editar perfil" : "Completar perfil"}
           </Link>
           <Link
             href={`/jugador/${userId}`}
-            className="inline-flex min-h-11 items-center rounded-md border border-line px-5 text-sm hover:bg-panel-hover"
+            className="btn-ghost"
           >
             Ver mi perfil público
           </Link>

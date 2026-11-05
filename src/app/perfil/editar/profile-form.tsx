@@ -10,6 +10,7 @@ import {
   VOICE,
   type Visibility,
 } from "@/lib/profile/options";
+import { CharacterIcon, RoleIcon } from "@/components/game-icons";
 import type { Catalog } from "@/lib/profile/queries";
 import { saveProfile, type SaveState } from "./actions";
 
@@ -33,7 +34,7 @@ export type ProfileFormValues = {
   characters: Record<string, string>;
 };
 
-const box = "rounded-lg border border-line bg-panel p-5";
+const box = "surface p-5";
 const legend = "text-base font-semibold";
 const control =
   "min-h-11 rounded-md border border-line bg-bg px-3 text-text focus:border-accent";
@@ -217,14 +218,20 @@ export function ProfileForm({ catalog, values }: { catalog: Catalog; values: Pro
           <div className="mt-2 grid gap-6 sm:grid-cols-2">
             {catalog.roles.map((role) => (
               <div key={role.id}>
-                <p className="text-sm text-muted">{roleName.get(role.id)}</p>
+                <p className="eyebrow flex items-center gap-1.5 text-muted">
+                  <RoleIcon slug={role.slug} className="size-3.5" />
+                  {roleName.get(role.id)}
+                </p>
                 <ul className="mt-2 flex flex-col gap-2">
                   {catalog.characters
                     .filter((c) => c.role_id === role.id)
                     .map((c) => (
                       <li key={c.id}>
                         <label className="flex items-center justify-between gap-3 text-sm">
-                          {c.name}
+                          <span className="flex items-center gap-2">
+                            <CharacterIcon name={c.name} src={c.icon_url} size={32} />
+                            {c.name}
+                          </span>
                           <select
                             name={`char:${c.id}`}
                             defaultValue={values.characters[c.id] ?? ""}
@@ -253,7 +260,7 @@ export function ProfileForm({ catalog, values }: { catalog: Catalog; values: Pro
         <button
           type="submit"
           disabled={pending}
-          className="min-h-11 rounded-md bg-accent px-6 font-semibold text-bg hover:bg-accent-soft disabled:opacity-60"
+          className="btn-primary"
         >
           {pending ? "Guardando…" : "Guardar perfil"}
         </button>

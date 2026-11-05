@@ -26,3 +26,16 @@ export async function signIn(page: Page, email: string) {
   await page.goto(await latestMagicLink(email));
   await expect(page).toHaveURL(/\/inicio$/);
 }
+
+/** Id de un usuario por correo (pagina: en local puede haber miles de usuarios de demo). */
+export async function userIdByEmail(email: string): Promise<string> {
+  const { createClient } = await import("@supabase/supabase-js");
+  const db = createClient(process.env.NEXT_PUBLIC_SUPABASE_URL!, process.env.SUPABASE_SECRET_KEY!, { auth: { persistSession: false } });
+  for (let page = 1; page <= 200; page++) {
+    const { data } = await db.auth.admin.listUsers({ page, perPage: 100 });
+    const u = data.users.find((x) => x.email === email);
+    if (u) return u.id;
+    if (data.users.length === 0) break;
+  }
+  throw new Error(`Usuario no encontrado: ${email}`);
+}

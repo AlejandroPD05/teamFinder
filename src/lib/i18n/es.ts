@@ -14,6 +14,12 @@ export const es = {
     lobbies: "Grupos",
     inbox: "Mensajes",
   },
+  legal: {
+    // Texto exigido por la política «Legal Jibber Jabber» de Riot Games (en inglés, literal) y su traducción.
+    riot: `TeamFinder was created under Riot Games' "Legal Jibber Jabber" policy using assets owned by Riot Games. Riot Games does not endorse or sponsor this project.`,
+    riotEs:
+      "TeamFinder se ha creado bajo la política «Legal Jibber Jabber» de Riot Games usando recursos propiedad de Riot Games. Riot Games no respalda ni patrocina este proyecto. Proyecto de fans sin ánimo de lucro.",
+  },
   home: {
     title: "Encuentra con quién hacer stack",
     lead: "Perfiles con rango, roles y agentes, búsqueda con filtros y grupos para DuoQ, TrioQ o FiveStack. Empezamos por VALORANT.",

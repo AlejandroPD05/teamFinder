@@ -30,7 +30,7 @@ export function LobbyForm({ catalog }: { catalog: Catalog }) {
   return (
     <form action={action} className="flex flex-col gap-6" noValidate>
       <input ref={tzRef} type="hidden" name="tz" defaultValue="0" />
-      <fieldset className="rounded-lg border border-line bg-panel p-5">
+      <fieldset className="surface p-5">
         <legend className="font-semibold">Modo</legend>
         <div className="mt-3 flex flex-wrap gap-2">
           {catalog.modes.map((m, i) => (
@@ -43,7 +43,7 @@ export function LobbyForm({ catalog }: { catalog: Catalog }) {
         <Err id="mode-error" text={err.mode} />
       </fieldset>
 
-      <fieldset className="rounded-lg border border-line bg-panel p-5">
+      <fieldset className="surface p-5">
         <legend className="font-semibold">Roles que buscáis</legend>
         <p className="mt-1 text-sm text-muted">Orientativo: no hay una composición obligatoria.</p>
         <div className="mt-3 flex flex-wrap gap-2">
@@ -56,7 +56,7 @@ export function LobbyForm({ catalog }: { catalog: Catalog }) {
         </div>
       </fieldset>
 
-      <fieldset className="grid gap-4 rounded-lg border border-line bg-panel p-5 sm:grid-cols-2">
+      <fieldset className="grid gap-4 surface p-5 sm:grid-cols-2">
         <legend className="font-semibold">Requisitos (opcionales)</legend>
         {[
           ["rank_min", "Rango mínimo", catalog.ranks.map((r) => [r.id, r.name]), "Sin mínimo"],
@@ -79,7 +79,7 @@ export function LobbyForm({ catalog }: { catalog: Catalog }) {
         ))}
       </fieldset>
 
-      <fieldset className="rounded-lg border border-line bg-panel p-5">
+      <fieldset className="surface p-5">
         <legend className="font-semibold">Cuándo</legend>
         <div className="mt-3 flex flex-wrap gap-2">
           <label className={chip}>
@@ -107,7 +107,7 @@ export function LobbyForm({ catalog }: { catalog: Catalog }) {
         )}
       </fieldset>
 
-      <div className="flex flex-col gap-2 rounded-lg border border-line bg-panel p-5 text-sm font-medium">
+      <div className="flex flex-col gap-2 surface p-5 text-sm font-medium">
         <label htmlFor="note">Nota (opcional)</label>
         <input
           id="note"
@@ -125,7 +125,7 @@ export function LobbyForm({ catalog }: { catalog: Catalog }) {
         <button
           type="submit"
           disabled={pending}
-          className="min-h-11 rounded-md bg-accent px-6 font-semibold text-bg hover:bg-accent-soft disabled:opacity-60"
+          className="btn-primary"
         >
           {pending ? "Creando…" : "Crear grupo"}
         </button>

@@ -75,13 +75,13 @@ export default async function SearchPage({ searchParams }: PageProps<"/buscar">)
   return (
     <section className="flex flex-col gap-6">
       <div>
-        <h1 className="text-2xl font-semibold tracking-tight">Buscar jugadores</h1>
+        <h1 className="font-display text-3xl font-semibold">Buscar jugadores</h1>
         <p className="text-muted">
           VALORANT · Solo ves lo que cada jugador ha decidido mostrar. Los rangos son introducidos por cada jugador.
         </p>
       </div>
 
-      <details open={n === 0} className="rounded-lg border border-line bg-panel p-4">
+      <details open={n === 0} className="surface p-4">
         <summary className="min-h-11 cursor-pointer py-2 font-semibold">Filtros{n ? ` (${n})` : ""}</summary>
         <form method="get" action="/buscar" className="mt-3 grid grid-cols-2 gap-3 sm:gap-4 lg:grid-cols-4">
           <Select name="rmin" label="Rango mínimo" value={filters.rmin} options={ranks} any="Sin mínimo" />
@@ -120,7 +120,7 @@ export default async function SearchPage({ searchParams }: PageProps<"/buscar">)
             </div>
           </fieldset>
           <div className="col-span-2 flex flex-wrap items-center gap-3 lg:col-span-4">
-            <button type="submit" className="min-h-11 rounded-md bg-accent px-6 font-semibold text-bg hover:bg-accent-soft">
+            <button type="submit" className="btn-primary">
               Buscar
             </button>
             {n > 0 && (
@@ -152,7 +152,7 @@ export default async function SearchPage({ searchParams }: PageProps<"/buscar">)
               <ul className="mt-3 flex flex-wrap justify-center gap-2">
                 {widenSuggestions(filters).map((s) => (
                   <li key={s.label}>
-                    <Link href={href(s.filters)} className="inline-flex min-h-11 items-center rounded-md border border-line px-4 text-sm hover:bg-panel-hover">
+                    <Link href={href(s.filters)} className="btn-ghost">
                       {s.label}
                     </Link>
                   </li>
@@ -170,12 +170,12 @@ export default async function SearchPage({ searchParams }: PageProps<"/buscar">)
       {pages > 1 && (
         <nav aria-label="Paginación" className="flex items-center justify-center gap-3">
           {filters.page > 1 && (
-            <Link href={href({ ...filters, page: filters.page - 1 })} className="inline-flex min-h-11 items-center rounded-md border border-line px-4 text-sm hover:bg-panel-hover">
+            <Link href={href({ ...filters, page: filters.page - 1 })} className="btn-ghost">
               Anterior
             </Link>
           )}
           {filters.page < pages && (
-            <Link href={href({ ...filters, page: filters.page + 1 })} className="inline-flex min-h-11 items-center rounded-md border border-line px-4 text-sm hover:bg-panel-hover">
+            <Link href={href({ ...filters, page: filters.page + 1 })} className="btn-ghost">
               Siguiente
             </Link>
           )}

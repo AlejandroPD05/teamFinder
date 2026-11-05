@@ -6,6 +6,7 @@ import { z } from "zod";
 import { AVAILABILITY, CHARACTER_STATUS, GOALS, LANGUAGES, VOICE, type CharacterStatus } from "@/lib/profile/options";
 import { loadCatalog, loadPublicProfile } from "@/lib/profile/queries";
 import { KARMA_TAGS } from "@/lib/trust/options";
+import { CharacterIcon } from "@/components/game-icons";
 import { createClient } from "@/lib/supabase/server";
 import { BlockButton, ReportForm } from "../../confianza/forms";
 
@@ -50,13 +51,14 @@ export default async function PlayerPage({ params }: PageProps<"/jugador/[id]">)
   ]);
   const k = karma?.[0];
   const name = profile.display_name ?? "Jugador";
-  const rank = catalog.ranks.find((r) => r.id === game?.rank_id)?.name;
+  const rankRow = catalog.ranks.find((r) => r.id === game?.rank_id);
+  const rank = rankRow?.name;
   const region = catalog.regions.find((r) => r.id === game?.region_id)?.name;
   const roleName = new Map(catalog.roles.map((r) => [r.id, r.name]));
-  const charName = new Map(catalog.characters.map((c) => [c.id, c.name]));
+  const charById = new Map(catalog.characters.map((c) => [c.id, c]));
   const byStatus = (Object.keys(CHARACTER_STATUS) as CharacterStatus[])
-    .map((s) => ({ s, names: characters.filter((c) => c.status === s).map((c) => charName.get(c.character_id!)) }))
-    .filter((g) => g.names.length > 0);
+    .map((s) => ({ s, chars: characters.filter((c) => c.status === s).map((c) => charById.get(c.character_id!)).filter(Boolean) }))
+    .filter((g) => g.chars.length > 0);
 
   return (
     <article className="flex flex-col gap-6">
@@ -69,19 +71,19 @@ export default async function PlayerPage({ params }: PageProps<"/jugador/[id]">)
           </span>
         )}
         <div className="flex-1">
-          <h1 className="text-2xl font-semibold tracking-tight">{name}</h1>
+          <h1 className="font-display text-3xl font-semibold">{name}</h1>
           {game?.flex && (
             <span className="mt-1 inline-block rounded border border-info/50 px-2 py-0.5 text-xs text-info-soft">Flex</span>
           )}
         </div>
         {isOwner && (
-          <Link href="/perfil/editar" className="inline-flex min-h-11 items-center rounded-md border border-line px-4 text-sm hover:bg-panel-hover">
+          <Link href="/perfil/editar" className="btn-ghost">
             Editar perfil
           </Link>
         )}
       </header>
 
-      <section aria-labelledby="sobre" className="rounded-lg border border-line bg-panel p-5">
+      <section aria-labelledby="sobre" className="surface p-5">
         <h2 id="sobre" className="font-semibold">
           Sobre {isOwner ? "ti" : "este jugador"}
         </h2>
@@ -96,7 +98,7 @@ export default async function PlayerPage({ params }: PageProps<"/jugador/[id]">)
         </dl>
       </section>
 
-      <section aria-labelledby="karma" className="rounded-lg border border-line bg-panel p-5">
+      <section aria-labelledby="karma" className="surface p-5">
         <h2 id="karma" className="font-semibold">
           Karma
         </h2>
@@ -127,7 +129,7 @@ export default async function PlayerPage({ params }: PageProps<"/jugador/[id]">)
         </p>
       </section>
 
-      <section aria-labelledby="valorant" className="rounded-lg border border-line bg-panel p-5">
+      <section aria-labelledby="valorant" className="surface p-5">
         <h2 id="valorant" className="font-semibold">
           VALORANT
         </h2>
@@ -137,9 +139,13 @@ export default async function PlayerPage({ params }: PageProps<"/jugador/[id]">)
               title="Rango"
               value={
                 rank ? (
-                  <>
-                    {rank} <span className="text-muted">· introducido manualmente</span>
-                  </>
+                  <span className="inline-flex items-center gap-2">
+                    {rankRow?.icon_url && <Image src={rankRow.icon_url} alt="" width={28} height={28} />}
+                    <span>
+                      <span>{rank}</span>{" "}
+                      <span className="text-muted">· introducido manualmente</span>
+                    </span>
+                  </span>
                 ) : (
                   <span className="text-muted">Sin indicar</span>
                 )
@@ -173,10 +179,18 @@ export default async function PlayerPage({ params }: PageProps<"/jugador/[id]">)
               title="Agentes"
               value={
                 byStatus.length ? (
-                  <ul className="flex flex-col gap-1">
+                  <ul className="flex flex-col gap-3">
                     {byStatus.map((g) => (
-                      <li key={g.s}>
-                        <span className="text-muted">{CHARACTER_STATUS[g.s]}:</span> {g.names.join(", ")}
+                      <li key={g.s} className="flex flex-col gap-1.5">
+                        <span className="eyebrow text-muted">{CHARACTER_STATUS[g.s]}</span>
+                        <ul className="flex flex-wrap gap-3">
+                          {g.chars.map((c) => (
+                            <li key={c!.id} className="flex items-center gap-2">
+                              <CharacterIcon name={c!.name} src={c!.icon_url} size={36} ring={g.s === "main" ? "main" : g.s === "comfort" ? "comfort" : null} />
+                              <span>{c!.name}</span>
+                            </li>
+                          ))}
+                        </ul>
                       </li>
                     ))}
                   </ul>
@@ -197,7 +211,7 @@ export default async function PlayerPage({ params }: PageProps<"/jugador/[id]">)
       </section>
 
       {viewer && !isOwner && (
-        <section aria-labelledby="seguridad" className="flex flex-col gap-2 rounded-lg border border-line bg-panel p-5">
+        <section aria-labelledby="seguridad" className="flex flex-col gap-2 surface p-5">
           <h2 id="seguridad" className="font-semibold">
             Seguridad
           </h2>

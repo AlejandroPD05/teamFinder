@@ -17,7 +17,7 @@ export default async function LoginPage({ searchParams }: PageProps<"/entrar">) 
   return (
     <section className="mx-auto flex max-w-sm flex-col gap-6">
       <div className="flex flex-col gap-2">
-        <h1 className="text-2xl font-semibold tracking-tight">{es.login.title}</h1>
+        <h1 className="font-display text-3xl font-semibold">{es.login.title}</h1>
         <p className="text-muted">{emailLoginEnabled() ? es.login.lead : es.login.leadDiscordOnly}</p>
         <p className="text-sm text-muted">
           Antes de entrar, lee las{" "}
@@ -47,7 +47,7 @@ export default async function LoginPage({ searchParams }: PageProps<"/entrar">) 
         <input type="hidden" name="next" value={next} />
         <button
           type="submit"
-          className="min-h-11 w-full rounded-md bg-accent px-4 font-semibold text-bg hover:bg-accent-soft"
+          className="btn-primary w-full"
         >
           {es.login.discord}
         </button>
@@ -82,7 +82,7 @@ export default async function LoginPage({ searchParams }: PageProps<"/entrar">) 
         </p>
         <button
           type="submit"
-          className="min-h-11 rounded-md border border-line px-4 font-medium hover:bg-panel-hover"
+          className="btn-ghost"
         >
           {es.login.emailSubmit}
         </button>

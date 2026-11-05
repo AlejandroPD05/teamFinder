@@ -57,14 +57,14 @@ isOneToOne: true
                   ]
                 },"game_characters": {
                   Row: {
-                    "active": boolean,"game_id": string,"id": string,"name": string,"role_id": string | null,"slug": string
+                    "active": boolean,"game_id": string,"icon_url": string | null,"id": string,"name": string,"role_id": string | null,"slug": string
                   }
                   ComputedFields: never
                   Insert: {
-                    "active"?: boolean,"game_id": string,"id"?: string,"name": string,"role_id"?: string | null,"slug": string
+                    "active"?: boolean,"game_id": string,"icon_url"?: string | null,"id"?: string,"name": string,"role_id"?: string | null,"slug": string
                   }
                   Update: {
-                    "active"?: boolean,"game_id"?: string,"id"?: string,"name"?: string,"role_id"?: string | null,"slug"?: string
+                    "active"?: boolean,"game_id"?: string,"icon_url"?: string | null,"id"?: string,"name"?: string,"role_id"?: string | null,"slug"?: string
                   }
                   Relationships: [
                     {
@@ -153,14 +153,14 @@ isOneToOne: false
                   ]
                 },"game_ranks": {
                   Row: {
-                    "active": boolean,"game_id": string,"id": string,"name": string,"slug": string,"tier": number
+                    "active": boolean,"color": string | null,"game_id": string,"icon_url": string | null,"id": string,"name": string,"slug": string,"tier": number
                   }
                   ComputedFields: never
                   Insert: {
-                    "active"?: boolean,"game_id": string,"id"?: string,"name": string,"slug": string,"tier": number
+                    "active"?: boolean,"color"?: string | null,"game_id": string,"icon_url"?: string | null,"id"?: string,"name": string,"slug": string,"tier": number
                   }
                   Update: {
-                    "active"?: boolean,"game_id"?: string,"id"?: string,"name"?: string,"slug"?: string,"tier"?: number
+                    "active"?: boolean,"color"?: string | null,"game_id"?: string,"icon_url"?: string | null,"id"?: string,"name"?: string,"slug"?: string,"tier"?: number
                   }
                   Relationships: [
                     {
