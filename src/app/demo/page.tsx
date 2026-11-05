@@ -2,6 +2,7 @@ import { FlaskConical, Lock, MessagesSquare } from "lucide-react";
 import type { Metadata } from "next";
 import Link from "next/link";
 import { CharacterIcon, RankBadge, RoleIcon } from "@/components/game-icons";
+import { loadGames, themeStyle } from "@/lib/games";
 import { loadCatalog } from "@/lib/profile/queries";
 import type { PlayerRow } from "@/lib/search/query";
 import { createClient } from "@/lib/supabase/server";
@@ -29,7 +30,9 @@ const PLAYERS: Demo[] = [
 
 export default async function DemoPage() {
   const supabase = await createClient();
-  const catalog = await loadCatalog(supabase);
+  // La demo es siempre de VALORANT (la usan los revisores de Riot): usa su tema aunque se haya elegido otro juego.
+  const [catalog, games] = await Promise.all([loadCatalog(supabase), loadGames(supabase)]);
+  const valorant = games.find((g) => g.id === "valorant");
   const bySlug = <T extends { slug: string; id: string }>(list: T[], slug: string) => list.find((x) => x.slug === slug);
 
   const rows: PlayerRow[] = PLAYERS.map((d) => ({
@@ -60,7 +63,7 @@ export default async function DemoPage() {
   const verifiedRank = ranks("gold-3");
 
   return (
-    <div className="flex flex-col gap-12">
+    <div className="flex flex-col gap-12" style={themeStyle(valorant)}>
       <div
         role="note"
         className="flex flex-wrap items-start gap-3 rounded-xl border border-warning/50 bg-warning/10 p-4 text-sm"
@@ -68,7 +71,8 @@ export default async function DemoPage() {
         <FlaskConical aria-hidden="true" className="mt-0.5 size-5 shrink-0 text-warning" />
         <p>
           <strong>Demostración con datos ficticios.</strong> Los jugadores, el grupo y los mensajes de esta página no existen:
-          sirven para enseñar cómo funciona TeamFinder sin crear una cuenta. La versión real necesita entrar con Discord.
+          sirven para enseñar cómo funciona TeamFinder sin crear una cuenta. La demo usa VALORANT; la versión real también
+          tiene Counter-Strike 2 y Apex Legends y necesita entrar con Discord.
         </p>
       </div>
 
@@ -87,7 +91,7 @@ export default async function DemoPage() {
         </h2>
         <p className="text-sm text-muted">
           Filtros: Controlador · Europa · Oro 1 a Platino 3 · Español (ejemplo). Cada tarjeta muestra el rango, los roles y
-          el pool de agentes; el marco morado indica <em>main</em> y el azul <em>comfort pick</em>.
+          el pool de agentes; el marco de color indica <em>main</em> y el azul <em>comfort pick</em>.
         </p>
         <ul className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
           {rows.map((p) => (
