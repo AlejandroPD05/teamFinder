@@ -81,7 +81,7 @@ RSO de Riot si aprueban la clave (rango y estadísticas verificados), mensajes p
 - [x] Moderador: la cuenta 1Cut1Kill está en `app_admins` (más moderadores: `insert into public.app_admins (user_id) values ('<uuid>');` en el SQL Editor).
 - [ ] Prueba final: un usuario nuevo completa el recorrido entero en producción desde el móvil.
 - [x] Docker instalado y en marcha.
-- [ ] Solicitar clave de producción de Riot cuando haya una beta visible.
+- [x] Solicitada la clave de producción de Riot (2026-11-05, app 902996, «Pending Review»; URL verificada con `public/riot.txt`; demo pública en `/demo`). Si se aprueba: implementar RSO en menos de 30 días o se pierde la clave.
 
 ## Riesgos
 - Riot rechaza la clave → el rango sigue siendo manual (ya contemplado).
