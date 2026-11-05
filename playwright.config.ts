@@ -9,6 +9,8 @@ try {
 
 // Necesita Supabase local en marcha (npx supabase start). Arranca la app en producción local.
 export default defineConfig({
+  // Los flujos e2e recorren varias páginas contra Supabase local: 60 s de margen cuando la máquina va cargada.
+  timeout: 60_000,
   testDir: "e2e",
   fullyParallel: false,
   forbidOnly: !!process.env.CI,

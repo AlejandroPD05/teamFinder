@@ -11,7 +11,8 @@ import { CharacterIcon } from "@/components/game-icons";
 import { createClient } from "@/lib/supabase/server";
 import { BlockButton, ReportForm } from "../../confianza/forms";
 
-export const metadata: Metadata = { title: "Perfil de jugador" };
+// Perfiles: datos personales, fuera de los buscadores aunque sean públicos.
+export const metadata: Metadata = { title: "Perfil de jugador", robots: { index: false, follow: false } };
 
 const label = <T extends Record<string, string>>(o: T, k: string) => (o as Record<string, string>)[k] ?? k;
 

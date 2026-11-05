@@ -59,8 +59,11 @@ test("perfil de Apex: guarda clases y leyendas", async ({ page }, info) => {
   await page.getByLabel("Wraith").selectOption("main");
   await expect(page.getByText(/Pool de leyendas \(1 elegido\)/)).toBeVisible();
   await page.getByLabel("Quién ve tu perfil de Apex Legends:").selectOption("public");
+  // Se espera a la respuesta de la acción (el aviso puede perderse si la revalidación llega antes); el resultado se
+  // comprueba después en el resumen y al volver al editor.
+  const saved = page.waitForResponse((r) => r.request().method() === "POST" && r.url().includes("/perfil/editar"));
   await page.getByRole("button", { name: "Guardar perfil" }).click();
-  await expect(page.getByRole("status")).toContainText("Perfil guardado");
+  expect((await saved).ok()).toBe(true);
   await page.goto("/perfil");
   await expect(page.getByText("Wraith")).toBeVisible();
   // Icono oficial de EA servido por el optimizador de imágenes.

@@ -5,7 +5,7 @@ import { emailLoginEnabled } from "@/lib/config";
 import { es, loginError } from "@/lib/i18n/es";
 import { signInWithDiscord, signInWithEmail } from "./actions";
 
-export const metadata: Metadata = { title: es.nav.login };
+export const metadata: Metadata = { title: es.nav.login, robots: { index: false } };
 
 export default async function LoginPage({ searchParams }: PageProps<"/entrar">) {
   const params = await searchParams;

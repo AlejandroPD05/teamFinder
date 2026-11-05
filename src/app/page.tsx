@@ -1,9 +1,12 @@
 import { HeartHandshake, MessagesSquare, ShieldCheck, SlidersHorizontal, Swords, UsersRound } from "lucide-react";
 import Link from "next/link";
 import type { CSSProperties } from "react";
+import type { Metadata } from "next";
 import { redirect } from "next/navigation";
 import { CharacterIcon } from "@/components/game-icons";
 import { currentGame } from "@/lib/games";
+import { APP_NAME } from "@/lib/config";
+import { siteUrl } from "@/lib/supabase/env";
 import { es } from "@/lib/i18n/es";
 import { createClient } from "@/lib/supabase/server";
 
@@ -32,6 +35,8 @@ const FEATURES = [
   },
 ] as const;
 
+export const metadata: Metadata = { alternates: { canonical: "/" } };
+
 export default async function Home({ searchParams }: PageProps<"/">) {
   // Supabase devuelve aquí los errores de OAuth (p. ej. estado caducado): llevarlos al login con aviso.
   const sp = await searchParams;
@@ -39,7 +44,7 @@ export default async function Home({ searchParams }: PageProps<"/">) {
   const deleted = sp.cuenta === "borrada";
 
   const supabase = await createClient();
-  const { game } = await currentGame();
+  const { game, games } = await currentGame();
   const [{ data: claims }, { data: agents }] = await Promise.all([
     supabase.auth.getClaims(),
     supabase.from("game_characters").select("id, name, icon_url").eq("game_id", game.id).eq("active", true).order("name"),
@@ -79,6 +84,37 @@ export default async function Home({ searchParams }: PageProps<"/">) {
           </ul>
         )}
       </section>
+
+      <script
+        type="application/ld+json"
+        // Datos estructurados para buscadores: el sitio y lo que ofrece.
+        dangerouslySetInnerHTML={{
+          __html: JSON.stringify({
+            "@context": "https://schema.org",
+            "@type": "WebSite",
+            name: APP_NAME,
+            url: siteUrl(),
+            inLanguage: "es",
+            description: es.meta.description,
+          }),
+        }}
+      />
+
+      <nav aria-labelledby="juegos" className="flex flex-col gap-4">
+        <h2 id="juegos" className="font-display text-2xl font-semibold sm:text-3xl">
+          Busca equipo por juego
+        </h2>
+        <ul className="grid gap-4 sm:grid-cols-3">
+          {games.map((g) => (
+            <li key={g.id}>
+              <Link href={`/equipos/${g.id}`} className="surface surface-interactive flex min-h-11 flex-col gap-1 p-5">
+                <span className="font-display text-lg font-semibold">Equipo para {g.name}</span>
+                <span className="text-sm text-muted">Roles, rangos, modos y servidores</span>
+              </Link>
+            </li>
+          ))}
+        </ul>
+      </nav>
 
       <section aria-labelledby="como" className="flex flex-col gap-8">
         <h2 id="como" className="font-display text-2xl font-semibold sm:text-3xl">

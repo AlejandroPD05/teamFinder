@@ -3,7 +3,9 @@ import { cookies } from "next/headers";
 import { cache } from "react";
 import { createClient } from "@/lib/supabase/server";
 
-export const GAME_COOKIE = "tf_game";
+import { GAME_COOKIE } from "@/lib/config";
+
+export { GAME_COOKIE };
 export const DEFAULT_GAME = "valorant";
 
 export type Game = {

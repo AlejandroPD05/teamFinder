@@ -3,7 +3,8 @@ import { APP_NAME } from "../config";
 // Textos de la UI. Un solo idioma por ahora; añadir otros con la misma forma.
 export const es = {
   meta: {
-    description: "Encuentra compañeros para hacer stack en VALORANT, Counter-Strike 2 y Apex Legends.",
+    title: "TeamFinder: busca equipo para VALORANT, CS2 y Apex Legends",
+    description: "Encuentra compañeros y equipo para VALORANT, Counter-Strike 2 y Apex Legends: filtra por rango, rol, idioma y horario, y únete a grupos. Gratis.",
   },
   nav: {
     skip: "Saltar al contenido",
