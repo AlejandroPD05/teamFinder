@@ -104,11 +104,10 @@ export default async function PlayerPage({ params }: PageProps<"/jugador/[id]">)
         </h2>
         {!viewer ? (
           <p className="mt-2 text-sm text-muted">Entra para ver el karma.</p>
-        ) : k && Number(k.positives) + Number(k.negatives) > 0 ? (
+        ) : k && Number(k.positives) > 0 ? (
           <>
             <p className="mt-2 text-sm">
-              {k.positives} {Number(k.positives) === 1 ? "valoración positiva" : "valoraciones positivas"} · {k.negatives}{" "}
-              {Number(k.negatives) === 1 ? "negativa" : "negativas"}
+              {k.positives} {Number(k.positives) === 1 ? "reconocimiento" : "reconocimientos"} de compañeros
             </p>
             {k.top_tags.length > 0 && (
               <ul className="mt-2 flex flex-wrap gap-2">
@@ -124,8 +123,8 @@ export default async function PlayerPage({ params }: PageProps<"/jugador/[id]">)
           <p className="mt-2 text-sm text-muted">Sin valoraciones todavía.</p>
         )}
         <p className="mt-3 text-xs text-muted">
-          Reputación social: tras cerrar un grupo, cada miembro puede valorar una vez a cada compañero durante 7 días. Se
-          muestran totales y etiquetas más repetidas, nunca quién votó. No es una sanción ni un ranking oficial.
+          Reputación social: tras cerrar un grupo, cada miembro puede reconocer una vez a cada compañero durante 7 días. Solo hay
+          reconocimientos positivos: se muestran el total y los motivos más repetidos, nunca quién los dio. No es un ranking oficial.
         </p>
       </section>
 

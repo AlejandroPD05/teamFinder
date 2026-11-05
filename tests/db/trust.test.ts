@@ -138,8 +138,10 @@ describe("karma", () => {
 
   it("una vez por compañero, solo entre miembros y con etiquetas válidas", async () => {
     expect((await vote(owner, mate.id, 1, ["buen_companero", "comunicativo"])).error).toBeNull();
-    expect((await vote(owner, mate.id, -1)).error?.hint).toBe("duplicate");
-    expect((await vote(stranger, mate.id, -1)).error?.hint).toBe("not_member");
+    expect((await vote(owner, mate.id, 1)).error?.hint).toBe("duplicate");
+    expect((await vote(stranger, mate.id, 1)).error?.hint).toBe("not_member");
+    expect((await vote(mate, owner.id, -1)).error).not.toBeNull(); // no hay votos negativos
+    expect((await vote(mate, owner.id, 1, ["toxico"])).error).not.toBeNull();
     expect((await vote(mate, owner.id, 1, ["inventada"])).error).not.toBeNull();
     expect((await vote(mate, mate.id, 1)).error).not.toBeNull();
   });

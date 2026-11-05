@@ -93,14 +93,13 @@ test("karma tras cerrar el grupo y denuncia de mensaje revisada por moderación"
     await owner.page.getByRole("button", { name: "Cerrar grupo" }).click();
     await expect(owner.page.getByText(/Cerrado · 2\/2 plazas/)).toBeVisible();
     await guest.page.goto(url);
-    await guest.page.getByLabel("Positiva").check();
     await guest.page.getByLabel("Comunicativo").check();
-    await guest.page.getByRole("button", { name: "Guardar valoración" }).click();
-    await expect(guest.page.getByText("Ya has valorado a todos")).toBeVisible();
+    await guest.page.getByRole("button", { name: "Dar reconocimiento" }).click();
+    await expect(guest.page.getByText("Ya has reconocido a todos")).toBeVisible();
     await guest.page.reload();
-    await expect(guest.page.getByRole("button", { name: "Guardar valoración" })).toHaveCount(0);
+    await expect(guest.page.getByRole("button", { name: "Dar reconocimiento" })).toHaveCount(0);
     await guest.page.goto(`/jugador/${owner.id}`);
-    await expect(guest.page.getByText("1 valoración positiva · 0 negativas")).toBeVisible();
+    await expect(guest.page.getByText("1 reconocimiento de compañeros")).toBeVisible();
     await expect(guest.page.getByText("Comunicativo")).toBeVisible();
 
     // Moderación: solo la ve quien es admin.

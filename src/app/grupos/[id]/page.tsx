@@ -177,14 +177,14 @@ export default async function LobbyPage({ params }: PageProps<"/grupos/[id]">) {
       {canVote && (
         <section aria-labelledby="valorar" className="flex flex-col gap-4 surface p-5">
           <h2 id="valorar" className="font-semibold">
-            Valora a tus compañeros
+            Reconoce a tus compañeros
           </h2>
           {toVote.length === 0 ? (
-            <p className="text-sm text-muted">Ya has valorado a todos. ¡Gracias!</p>
+            <p className="text-sm text-muted">Ya has reconocido a todos. ¡Gracias!</p>
           ) : (
             toVote.map((m) => <KarmaVote key={m.user_id} lobbyId={lobby.id} targetId={m.user_id} name={name(m.user_id)} />)
           )}
-          <p className="text-xs text-muted">Una valoración por compañero y grupo. Es reputación social, no una sanción.</p>
+          <p className="text-xs text-muted">Opcional: un reconocimiento por compañero y grupo. Solo positivo; aquí no se puntúa mal a nadie.</p>
         </section>
       )}
 

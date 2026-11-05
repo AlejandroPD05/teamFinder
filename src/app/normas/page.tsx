@@ -30,8 +30,9 @@ export default function RulesPage() {
 
       <Section title="Karma">
         <p>
-          Tras cerrar un grupo, cada miembro puede valorar una vez a cada compañero durante 7 días, con una valoración
-          positiva o negativa y hasta tres etiquetas. Se muestran los totales y las etiquetas más repetidas. Es reputación
+          Tras cerrar un grupo, cada miembro puede reconocer una vez a cada compañero durante 7 días, con hasta tres
+          motivos. Solo hay reconocimientos positivos: aquí no se puntúa mal a nadie. Se muestran el total y los motivos más
+          repetidos. Es reputación
           social: no es una sanción ni un ranking oficial. No pidas ni cambies valoraciones a cambio de nada.
         </p>
       </Section>

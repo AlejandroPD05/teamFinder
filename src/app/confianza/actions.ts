@@ -66,7 +66,7 @@ export async function reportAction(_p: TrustState, fd: FormData): Promise<TrustS
 const voteSchema = z.object({
   lobby: uuid,
   target: uuid,
-  value: z.enum(["1", "-1"]),
+  value: z.literal("1"),
   tags: z.array(z.enum(keys(KARMA_TAGS))).max(3, "Como mucho 3 etiquetas."),
 });
 

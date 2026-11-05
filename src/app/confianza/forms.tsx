@@ -99,22 +99,10 @@ export function KarmaVote({ lobbyId, targetId, name }: { lobbyId: string; target
     <form action={action} className="flex flex-col gap-2">
       <input type="hidden" name="lobby_id" value={lobbyId} />
       <input type="hidden" name="target" value={targetId} />
+      <input type="hidden" name="value" value="1" />
+      <p className="text-sm font-medium">¿Quieres reconocer a {name}?</p>
       <fieldset>
-        <legend className="text-sm font-medium">¿Qué tal con {name}?</legend>
-        <div className="mt-2 flex flex-wrap gap-2">
-          {[
-            ["1", "Positiva"],
-            ["-1", "Negativa"],
-          ].map(([v, l]) => (
-            <label key={v} className="flex min-h-11 items-center gap-2 rounded-md border border-line px-3 text-sm has-[:checked]:border-accent">
-              <input type="radio" name="value" value={v} required className="size-4 accent-accent" />
-              {l}
-            </label>
-          ))}
-        </div>
-      </fieldset>
-      <fieldset>
-        <legend className="text-sm text-muted">Etiquetas (hasta 3, opcional)</legend>
+        <legend className="text-sm text-muted">Por qué (hasta 3, opcional)</legend>
         <div className="mt-2 flex flex-wrap gap-2">
           {Object.entries(KARMA_TAGS).map(([k, v]) => (
             <label key={k} className="flex min-h-11 items-center gap-2 rounded-md border border-line px-3 text-sm has-[:checked]:border-accent">
@@ -126,7 +114,7 @@ export function KarmaVote({ lobbyId, targetId, name }: { lobbyId: string; target
       </fieldset>
       <div className="flex flex-wrap items-center gap-3">
         <button type="submit" disabled={pending} className={`${btn} bg-accent font-semibold text-bg hover:bg-accent-soft`}>
-          Guardar valoración
+          Dar reconocimiento
         </button>
         <Status state={state} />
       </div>
