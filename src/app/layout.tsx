@@ -10,14 +10,23 @@ import { GameSwitcher } from "./game-switcher";
 import { Logo } from "./logo";
 import { currentGame, themeStyle } from "@/lib/games";
 import { SiteNav } from "./site-nav";
+import { indexable } from "@/lib/seo";
+import { siteUrl } from "@/lib/supabase/env";
 import "./globals.css";
 
 const geistSans = Geist({ variable: "--font-geist-sans", subsets: ["latin"] });
 const chakra = Chakra_Petch({ variable: "--font-chakra", subsets: ["latin"], weight: ["500", "600", "700"] });
 
 export const metadata: Metadata = {
-  title: { default: APP_NAME, template: `%s · ${APP_NAME}` },
+  metadataBase: new URL(siteUrl()),
+  title: { default: es.meta.title, template: `%s · ${APP_NAME}` },
   description: es.meta.description,
+  applicationName: APP_NAME,
+  openGraph: { type: "website", siteName: APP_NAME, locale: "es_ES", title: es.meta.title, description: es.meta.description },
+  twitter: { card: "summary_large_image" },
+  robots: indexable() ? undefined : { index: false, follow: false },
+  // Código de verificación de Google Search Console (meta etiqueta). Opcional.
+  verification: process.env.GOOGLE_SITE_VERIFICATION ? { google: process.env.GOOGLE_SITE_VERIFICATION } : undefined,
 };
 
 export const viewport: Viewport = { themeColor: "#0b0c12" };

@@ -11,6 +11,7 @@ import { PlayerCard } from "../buscar/player-card";
 export const metadata: Metadata = {
   title: "Demostración",
   description: "Recorrido público por TeamFinder con datos ficticios.",
+  alternates: { canonical: "/demo" },
 };
 
 // Demostración pública: TODOS los jugadores, grupos y mensajes de esta página son ficticios y no existen en la base de datos.

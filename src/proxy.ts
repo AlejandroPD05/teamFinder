@@ -1,10 +1,15 @@
 import { createServerClient } from "@supabase/ssr";
 import { NextResponse, type NextRequest } from "next/server";
 import { isProtectedPath } from "@/lib/auth";
+import { GAME_COOKIE, GAME_COOKIE_MAX_AGE, gameFromPath } from "@/lib/config";
 import { supabaseEnv } from "@/lib/supabase/env";
 
 // Refresca la sesión en cada petición y protege las rutas privadas.
 export async function proxy(request: NextRequest) {
+  // En /equipos/<juego> la web entera (cabecera, colores) pasa a ese juego, también para quien llega desde un buscador.
+  // Sin redirección: el juego se inyecta en esta petición y se recuerda para las siguientes. El layout lo valida.
+  const pathGame = gameFromPath(request.nextUrl.pathname);
+  if (pathGame) request.cookies.set(GAME_COOKIE, pathGame);
   let response = NextResponse.next({ request });
   const { url, key } = supabaseEnv();
 
@@ -38,6 +43,9 @@ export async function proxy(request: NextRequest) {
     home.pathname = "/inicio";
     home.search = "";
     return NextResponse.redirect(home);
+  }
+  if (pathGame) {
+    response.cookies.set(GAME_COOKIE, pathGame, { path: "/", maxAge: GAME_COOKIE_MAX_AGE, sameSite: "lax", httpOnly: true });
   }
   return response;
 }

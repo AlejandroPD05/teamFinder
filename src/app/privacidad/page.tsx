@@ -3,7 +3,7 @@ import Link from "next/link";
 import { APP_NAME } from "@/lib/config";
 import { DraftNotice, Section } from "../legal-draft";
 
-export const metadata: Metadata = { title: "Privacidad" };
+export const metadata: Metadata = { title: "Privacidad", alternates: { canonical: "/privacidad" } };
 
 export default function PrivacyPage() {
   return (

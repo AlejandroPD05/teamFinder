@@ -13,11 +13,8 @@ async function audit(page: Page, path: string) {
   expect(summary, `${path}`).toEqual([]);
 }
 
-// Recorre varias páginas: más margen que el límite por defecto cuando la máquina va cargada.
-test.describe.configure({ timeout: 60_000 });
-
 test("páginas públicas sin infracciones WCAG A/AA", async ({ page }) => {
-  for (const path of ["/", "/entrar", "/privacidad", "/normas", "/demo"]) await audit(page, path);
+  for (const path of ["/", "/entrar", "/privacidad", "/normas", "/demo", "/equipos/valorant", "/equipos/apex"]) await audit(page, path);
 });
 
 test("páginas con sesión sin infracciones WCAG A/AA", async ({ page }, info) => {

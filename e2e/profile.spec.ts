@@ -1,8 +1,6 @@
 import { expect, test } from "@playwright/test";
 import { signIn } from "./helpers";
 
-// Flujo largo: más margen que el límite por defecto cuando la máquina va cargada.
-test.describe.configure({ timeout: 60_000 });
 
 test("editar perfil, verlo como público y respetar la privacidad", async ({ page, browser }, info) => {
   await signIn(page, `e2e-perfil-${info.project.name}-${Date.now()}@example.test`);

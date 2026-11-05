@@ -2,6 +2,7 @@
 
 import { usePathname, useRouter } from "next/navigation";
 import { useEffect, useLayoutEffect, useOptimistic, useRef, useTransition, type MouseEvent } from "react";
+import { gameFromPath } from "@/lib/config";
 import { themeStyle, type GameTheme } from "@/lib/game-theme";
 import { chooseGame, selectGame } from "./juego/actions";
 
@@ -12,6 +13,13 @@ type SwitcherGame = GameTheme & { id: string; name: string; short_name: string |
  * Con JavaScript, el color cambia al instante (con transición) mientras el servidor prepara el nuevo catálogo;
  * sin JavaScript sigue funcionando como formulario.
  */
+/** Tema inmediato: las variables de color están registradas con @property y se animan. */
+function applyTheme(game: SwitcherGame) {
+  const root = document.documentElement;
+  for (const [k, v] of Object.entries(themeStyle(game))) root.style.setProperty(k, String(v));
+  root.setAttribute("data-game", game.id);
+}
+
 export function GameSwitcher({ games, current }: { games: SwitcherGame[]; current: string }) {
   const pathname = usePathname();
   const router = useRouter();
@@ -30,6 +38,19 @@ export function GameSwitcher({ games, current }: { games: SwitcherGame[]; curren
     group.current.setAttribute("data-ready", "");
   }, [active]);
 
+  // Al entrar en /equipos/<otro juego> navegando dentro de la web, el proxy ya ha cambiado la cookie, pero el layout
+  // (cabecera y colores) no se vuelve a pintar solo: se aplica el tema al momento y se refresca.
+  const pathGame = gameFromPath(pathname);
+  useEffect(() => {
+    const game = games.find((g) => g.id === pathGame);
+    if (!game || game.id === current) return;
+    applyTheme(game);
+    startTransition(() => {
+      setActive(game.id);
+      router.refresh();
+    });
+  }, [pathGame, current, games, router, setActive]);
+
   // Mientras llega la página del nuevo juego, el contenido se atenúa (ver globals.css).
   useEffect(() => {
     const root = document.documentElement;
@@ -42,10 +63,7 @@ export function GameSwitcher({ games, current }: { games: SwitcherGame[]; curren
   function choose(e: MouseEvent<HTMLButtonElement>, game: SwitcherGame) {
     e.preventDefault();
     if (game.id === active) return;
-    // Tema inmediato: las variables de color están registradas con @property y se animan.
-    const root = document.documentElement;
-    for (const [k, v] of Object.entries(themeStyle(game))) root.style.setProperty(k, String(v));
-    root.setAttribute("data-game", game.id);
+    applyTheme(game);
     const query = window.location.search;
     startTransition(async () => {
       setActive(game.id);

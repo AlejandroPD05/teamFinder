@@ -1,7 +1,7 @@
 import type { Metadata } from "next";
 import { DraftNotice, Section } from "../legal-draft";
 
-export const metadata: Metadata = { title: "Normas de la comunidad" };
+export const metadata: Metadata = { title: "Normas de la comunidad", alternates: { canonical: "/normas" } };
 
 export default function RulesPage() {
   return (

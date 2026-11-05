@@ -1,5 +1,5 @@
 import { afterEach, describe, expect, it } from "vitest";
-import { discordInvite } from "@/lib/config";
+import { discordInvite, gameFromPath } from "@/lib/config";
 
 describe("discordInvite", () => {
   afterEach(() => {
@@ -26,5 +26,15 @@ describe("emailLoginEnabled", () => {
     expect(emailLoginEnabled()).toBe(true);
     process.env.NEXT_PUBLIC_EMAIL_LOGIN = "off";
     expect(emailLoginEnabled()).toBe(false);
+  });
+});
+
+describe("gameFromPath", () => {
+  it("lee el juego de las páginas públicas por juego", () => {
+    expect(gameFromPath("/equipos/apex")).toBe("apex");
+    expect(gameFromPath("/equipos/cs2")).toBe("cs2");
+    expect(gameFromPath("/equipos/apex/otra")).toBeNull();
+    expect(gameFromPath("/equipos/APEX")).toBeNull();
+    expect(gameFromPath("/buscar")).toBeNull();
   });
 });
