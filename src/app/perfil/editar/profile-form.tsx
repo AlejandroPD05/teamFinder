@@ -1,6 +1,6 @@
 "use client";
 
-import { useActionState } from "react";
+import { useActionState, useState, type FormEvent } from "react";
 import {
   AVAILABILITY,
   CHARACTER_STATUS,
@@ -102,6 +102,12 @@ export function ProfileForm({
   const [state, action, pending] = useActionState<SaveState, FormData>(saveProfile, null);
   const err = state?.fieldErrors ?? {};
   const roleName = new Map(catalog.roles.map((r) => [r.id, r.name]));
+  // Cuántos personajes hay elegidos ahora mismo en el formulario (no solo los guardados al cargar la página).
+  const [picked, setPicked] = useState(Object.keys(values.characters).length);
+  const countPicked = (e: FormEvent<HTMLElement>) =>
+    setPicked(
+      [...e.currentTarget.querySelectorAll<HTMLSelectElement>('select[name^="char:"]')].filter((s) => s.value !== "").length,
+    );
 
   return (
     <form action={action} className="flex flex-col gap-6" noValidate>
@@ -222,9 +228,9 @@ export function ProfileForm({
         </div>
 
         {characterLabel && catalog.characters.length > 0 && (
-        <details className="mt-5" open={Object.keys(values.characters).length > 0}>
+        <details className="mt-5" open={Object.keys(values.characters).length > 0} onChange={countPicked}>
           <summary className="min-h-11 cursor-pointer py-2 text-sm font-medium">
-            Pool de {characterLabel.toLowerCase()} ({Object.keys(values.characters).length} elegidos)
+            Pool de {characterLabel.toLowerCase()} ({picked} {picked === 1 ? "elegido" : "elegidos"})
           </summary>
           <div className="mt-2 grid gap-6 sm:grid-cols-2">
             {catalog.roles.map((role) => (

@@ -30,6 +30,7 @@ export default async function EditProfilePage() {
         </Link>
       </div>
       <ProfileForm
+        key={active.id}
         gameName={active.name}
         characterLabel={active.character_label}
         catalog={catalog}

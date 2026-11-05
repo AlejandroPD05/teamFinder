@@ -19,7 +19,8 @@ import Image from "next/image";
 import { useState } from "react";
 
 // Iconos de juego. Los de agentes y rangos son recursos de Riot Games (política «Legal Jibber Jabber»),
-// servidos desde valorant-api.com a través del optimizador de Next. Si fallan, se muestra un sustituto con iniciales.
+// servidos desde valorant-api.com a través del optimizador de Next. Las leyendas de Apex vienen de la web oficial de EA
+// (cuerpo entero): se amplían hacia la cara. Si fallan, se muestra un sustituto con iniciales.
 
 const ROLE_ICONS: Record<string, LucideIcon> = {
   duelist: Crosshair,
@@ -44,6 +45,9 @@ export function RoleIcon({ slug, className = "size-4" }: { slug?: string | null;
   const Icon = (slug && ROLE_ICONS[slug]) || Crosshair;
   return <Icon aria-hidden="true" className={className} />;
 }
+
+/** Imágenes de cuerpo entero (web oficial de EA): hay que recortar hacia la cara. */
+const fullBody = (src: string) => src.startsWith("https://drop-assets.ea.com/");
 
 function Fallback({ label, size }: { label: string; size: number }) {
   return (
@@ -87,7 +91,7 @@ export function CharacterIcon({
           width={size}
           height={size}
           sizes={`${size}px`}
-          className="size-full object-cover"
+          className={`size-full object-cover ${fullBody(src) ? "origin-[50%_24%] scale-[1.9]" : ""}`}
           onError={() => setFailed(true)}
         />
       ) : (

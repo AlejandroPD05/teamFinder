@@ -38,6 +38,8 @@ const nextConfig: NextConfig = {
     remotePatterns: [
       { protocol: "https", hostname: "cdn.discordapp.com" },
       { protocol: "https", hostname: "media.valorant-api.com" },
+      // Leyendas de Apex Legends desde la web oficial de EA (ver migración 20261105040000_apex_icons.sql).
+      { protocol: "https", hostname: "drop-assets.ea.com", pathname: "/images/**" },
     ],
   },
   async headers() {
