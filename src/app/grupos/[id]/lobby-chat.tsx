@@ -108,7 +108,7 @@ export function LobbyChat({
   }
 
   return (
-    <section aria-labelledby="chat" className="flex flex-col gap-3 rounded-lg border border-line bg-panel p-5">
+    <section aria-labelledby="chat" className="flex flex-col gap-3 surface p-5">
       <div className="flex flex-wrap items-center justify-between gap-2">
         <h2 id="chat" className="font-semibold">
           Chat del grupo
@@ -165,7 +165,7 @@ export function LobbyChat({
             <button
               type="submit"
               disabled={sending}
-              className="min-h-11 rounded-md bg-accent px-4 font-semibold text-bg hover:bg-accent-soft disabled:opacity-60"
+              className="btn-primary"
             >
               Enviar
             </button>

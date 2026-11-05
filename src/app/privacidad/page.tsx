@@ -8,7 +8,7 @@ export const metadata: Metadata = { title: "Privacidad" };
 export default function PrivacyPage() {
   return (
     <article className="mx-auto flex max-w-2xl flex-col gap-6">
-      <h1 className="text-2xl font-semibold tracking-tight">Privacidad</h1>
+      <h1 className="font-display text-3xl font-semibold">Privacidad</h1>
       <DraftNotice />
 
       <Section title="Responsable">

@@ -48,7 +48,7 @@ test("buscar con filtros combinados encuentra al jugador y la URL los conserva",
     await page.getByLabel("Rango máximo").selectOption({ label: "Platino 1" });
     await page.getByLabel("Servidor").selectOption({ label: "Europa" });
     await page.getByLabel("Rol", { exact: true }).selectOption({ label: "Controlador" });
-    await page.getByLabel("Agente").selectOption({ label: "Omen" });
+    await page.getByLabel("Agente", { exact: true }).selectOption({ label: "Omen" });
     await page.getByLabel("Main").check();
     await page.getByLabel("Idioma").selectOption({ label: "Español" });
     await page.getByLabel("Modo").selectOption({ label: "DuoQ" });
@@ -68,12 +68,12 @@ test("buscar con filtros combinados encuentra al jugador y la URL los conserva",
     });
     const card = page.getByRole("listitem").filter({ hasText: name });
     await expect(card).toBeVisible();
-    await expect(card).toContainText("Platino 1 · manual");
+    await expect(card).toContainText(/Platino 1\s*· manual/);
     await expect(card).toContainText("Omen (Main)");
 
     // Recargar con la URL mantiene los filtros.
     await page.reload();
-    await expect(page.getByLabel("Agente")).toHaveValue("omen");
+    await expect(page.getByLabel("Agente", { exact: true })).toHaveValue("omen");
     await expect(card).toBeVisible();
 
     // Un filtro incompatible lo excluye.

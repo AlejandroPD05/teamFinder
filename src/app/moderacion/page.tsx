@@ -29,7 +29,7 @@ export default async function ModerationPage() {
   return (
     <section className="flex flex-col gap-6">
       <div>
-        <h1 className="text-2xl font-semibold tracking-tight">Moderación</h1>
+        <h1 className="font-display text-3xl font-semibold">Moderación</h1>
         <p className="text-muted">Denuncias abiertas, más antiguas primero. Cada resolución queda registrada.</p>
       </div>
       {list.length === 0 ? (
@@ -37,7 +37,7 @@ export default async function ModerationPage() {
       ) : (
         <ul className="flex flex-col gap-4">
           {list.map((r) => (
-            <li key={r.id} className="flex flex-col gap-3 rounded-lg border border-line bg-panel p-5">
+            <li key={r.id} className="flex flex-col gap-3 surface p-5">
               <div className="flex flex-wrap items-baseline justify-between gap-2">
                 <h2 className="font-semibold">{REPORT_REASONS[r.reason]}</h2>
                 <span className="text-xs text-muted">{when.format(new Date(r.created_at))}</span>

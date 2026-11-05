@@ -1,5 +1,7 @@
+import { Clock3, Languages, Mic } from "lucide-react";
 import Image from "next/image";
 import Link from "next/link";
+import { CharacterIcon, RankBadge, RoleIcon } from "@/components/game-icons";
 import { CHARACTER_STATUS, GOALS, LANGUAGES, VOICE } from "@/lib/profile/options";
 import type { Catalog } from "@/lib/profile/queries";
 import type { PlayerRow } from "@/lib/search/query";
@@ -17,82 +19,112 @@ const STATUS_ORDER = ["main", "comfort", "playable", "flexible"] as const;
 
 export function PlayerCard({ p, catalog }: { p: PlayerRow; catalog: Catalog }) {
   const name = p.display_name ?? "Jugador";
-  const rank = catalog.ranks.find((r) => r.id === p.rank_id)?.name;
+  const rank = catalog.ranks.find((r) => r.id === p.rank_id);
   const region = catalog.regions.find((r) => r.id === p.region_id)?.name;
-  const roleName = (id: string) => catalog.roles.find((r) => r.id === id)?.name ?? "";
+  const role = (id: string) => catalog.roles.find((r) => r.id === id);
   const roles = [...(p.role_ids ?? [])].sort((a, b) => Number(b === p.primary_role_id) - Number(a === p.primary_role_id));
   const agents = (p.char_keys ?? [])
     .map((k) => {
       const [id, status] = k.split(":");
-      return { name: catalog.characters.find((c) => c.id === id)?.name, status: status as (typeof STATUS_ORDER)[number] };
+      return { c: catalog.characters.find((x) => x.id === id), status: status as (typeof STATUS_ORDER)[number] };
     })
-    .filter((a) => a.name)
+    .filter((a) => a.c)
     .sort((a, b) => STATUS_ORDER.indexOf(a.status) - STATUS_ORDER.indexOf(b.status))
-    .slice(0, 4);
+    .slice(0, 5);
   const modes = (p.mode_slugs ?? []).map((s) => catalog.modes.find((m) => m.slug === s)?.name ?? s);
+  const langs = (p.languages ?? []).map((l) => LANGUAGES[l as keyof typeof LANGUAGES] ?? l);
+  const goals = (p.goals ?? []).map((g) => GOALS[g as keyof typeof GOALS] ?? g);
 
   return (
-    <li className="flex flex-col gap-3 rounded-lg border border-line bg-panel p-4">
-      <div className="flex items-center gap-3">
+    <li className="surface surface-interactive flex flex-col gap-4 p-4">
+      <div className="flex items-start gap-3">
         {p.avatar_url ? (
-          <Image src={p.avatar_url} alt="" width={44} height={44} className="rounded-full" />
+          <Image src={p.avatar_url} alt="" width={48} height={48} className="rounded-full ring-1 ring-line" />
         ) : (
-          <span aria-hidden="true" className="flex size-11 items-center justify-center rounded-full bg-bg font-semibold">
+          <span aria-hidden="true" className="flex size-12 items-center justify-center rounded-full bg-bg-raised font-display text-lg font-semibold ring-1 ring-line">
             {name.charAt(0).toUpperCase()}
           </span>
         )}
         <div className="min-w-0 flex-1">
-          <h2 className="truncate font-semibold">{name}</h2>
-          <p className="text-sm text-muted">
-            {rank ? `${rank} · manual` : "Rango sin indicar"}
-            {region ? ` · ${region}` : ""}
-          </p>
+          <h2 className="font-display truncate text-lg font-semibold">{name}</h2>
+          <div className="mt-0.5 flex flex-wrap items-center gap-x-2 text-sm">
+            {rank ? <RankBadge name={rank.name} src={rank.icon_url} color={rank.color} size={20} /> : <span className="text-muted">Rango sin indicar</span>}
+            {region && <span className="text-muted">· {region}</span>}
+          </div>
         </div>
-        {p.flex && <span className="rounded border border-info/50 px-2 py-0.5 text-xs text-info-soft">Flex</span>}
+        {p.flex && <span className="chip border-info/50 text-info-soft">Flex</span>}
       </div>
 
-      <dl className="grid gap-1 text-sm">
-        <div className="flex gap-2">
-          <dt className="text-muted">Roles:</dt>
-          <dd>
-            {roles.length
-              ? roles.map((id) => `${roleName(id)}${id === p.primary_role_id ? " (principal)" : ""}`).join(", ")
-              : "—"}
-          </dd>
-        </div>
-        <div className="flex gap-2">
-          <dt className="text-muted">Agentes:</dt>
-          <dd>{agents.length ? agents.map((a) => `${a.name} (${CHARACTER_STATUS[a.status]})`).join(", ") : "—"}</dd>
-        </div>
+      {roles.length > 0 && (
+        <ul aria-label="Roles" className="flex flex-wrap gap-1.5">
+          {roles.map((id) => {
+            const r = role(id);
+            return (
+              <li key={id} className={`chip ${id === p.primary_role_id ? "border-accent/60 bg-accent/10" : ""}`}>
+                <RoleIcon slug={r?.slug} className="size-3.5 text-accent-soft" />
+                {r?.name}
+                {id === p.primary_role_id && <span className="sr-only"> (principal)</span>}
+              </li>
+            );
+          })}
+        </ul>
+      )}
+
+      {agents.length > 0 ? (
+        <ul aria-label="Agentes" className="flex flex-wrap gap-2">
+          {agents.map(({ c, status }) => (
+            <li key={c!.id} className="flex flex-col items-center gap-1">
+              <CharacterIcon name={c!.name} src={c!.icon_url} size={40} ring={status === "main" ? "main" : status === "comfort" ? "comfort" : null} />
+              <span className="text-[0.65rem] leading-none text-muted">
+                {c!.name}
+                <span className="sr-only"> ({CHARACTER_STATUS[status]})</span>
+              </span>
+            </li>
+          ))}
+        </ul>
+      ) : (
+        <p className="text-sm text-muted">Sin agentes indicados</p>
+      )}
+
+      <dl className="grid gap-1.5 text-sm">
         {modes.length > 0 && (
-          <div className="flex gap-2">
-            <dt className="text-muted">Modos:</dt>
-            <dd>{modes.join(", ")}</dd>
+          <div className="flex items-center gap-2">
+            <dt className="sr-only">Modos</dt>
+            <dd className="flex flex-wrap gap-1.5">
+              {modes.map((m) => (
+                <span key={m} className="chip">
+                  {m}
+                </span>
+              ))}
+            </dd>
           </div>
         )}
-        {(p.languages?.length || p.goals?.length || p.voice) && (
-          <div className="flex gap-2">
-            <dt className="text-muted">Estilo:</dt>
-            <dd>
-              {[
-                ...(p.languages ?? []).map((l) => LANGUAGES[l as keyof typeof LANGUAGES] ?? l),
-                ...(p.goals ?? []).map((g) => GOALS[g as keyof typeof GOALS] ?? g),
-                p.voice ? VOICE[p.voice as keyof typeof VOICE] : null,
-              ]
-                .filter(Boolean)
-                .join(" · ")}
-            </dd>
+        {(langs.length > 0 || goals.length > 0) && (
+          <div className="flex items-start gap-2 text-muted">
+            <dt>
+              <Languages aria-hidden="true" className="mt-0.5 size-4" />
+              <span className="sr-only">Idiomas y objetivos</span>
+            </dt>
+            <dd>{[...langs, ...goals].join(" · ")}</dd>
+          </div>
+        )}
+        {p.voice && (
+          <div className="flex items-center gap-2 text-muted">
+            <dt>
+              <Mic aria-hidden="true" className="size-4" />
+              <span className="sr-only">Comunicación</span>
+            </dt>
+            <dd>{VOICE[p.voice as keyof typeof VOICE]}</dd>
           </div>
         )}
       </dl>
 
-      <div className="mt-auto flex items-center justify-between gap-2 pt-1">
-        <span className="text-xs text-muted">Perfil actualizado {ago(p.updated_at)}</span>
-        <Link
-          href={`/jugador/${p.user_id}`}
-          className="inline-flex min-h-11 items-center rounded-md border border-line px-4 text-sm hover:bg-panel-hover"
-          aria-label={`Ver perfil de ${name}`}
-        >
+      <div className="mt-auto flex items-center justify-between gap-2 border-t border-line pt-3">
+        <span className="inline-flex items-center gap-1.5 text-xs text-muted">
+          <Clock3 aria-hidden="true" className="size-3.5" />
+          Actualizado {ago(p.updated_at)}
+        </span>
+        <Link href={`/jugador/${p.user_id}`} className="btn-ghost" aria-label={`Ver perfil de ${name}`}>
           Ver perfil
         </Link>
       </div>

@@ -1,6 +1,6 @@
 import { createClient } from "@supabase/supabase-js";
 import { expect, test } from "@playwright/test";
-import { signIn } from "./helpers";
+import { signIn, userIdByEmail } from "./helpers";
 
 test("una ruta privada sin sesión redirige a /entrar", async ({ page }) => {
   await page.goto("/inicio");
@@ -42,8 +42,7 @@ test("sesión de una cuenta borrada: cierra la sesión y vuelve al login sin err
   const db = createClient(process.env.NEXT_PUBLIC_SUPABASE_URL!, process.env.SUPABASE_SECRET_KEY!, {
     auth: { persistSession: false },
   });
-  const { data } = await db.auth.admin.listUsers({ perPage: 200 });
-  const user = data.users.find((u) => u.email === email)!;
+  const user = { id: await userIdByEmail(email) };
   await db.from("profiles").delete().eq("id", user.id);
   const res = await page.goto("/inicio");
   expect(res?.status()).toBeLessThan(500);

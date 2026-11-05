@@ -6,7 +6,7 @@ export const metadata: Metadata = { title: "Normas de la comunidad" };
 export default function RulesPage() {
   return (
     <article className="mx-auto flex max-w-2xl flex-col gap-6">
-      <h1 className="text-2xl font-semibold tracking-tight">Normas de la comunidad</h1>
+      <h1 className="font-display text-3xl font-semibold">Normas de la comunidad</h1>
       <DraftNotice />
 
       <Section title="Lo básico">

@@ -11,6 +11,7 @@ import { createClient } from "@/lib/supabase/server";
 import { ActionForm } from "./action-form";
 import { LobbyChat } from "./lobby-chat";
 import { KarmaVote } from "../../confianza/forms";
+import { RankBadge, RoleIcon } from "@/components/game-icons";
 
 export const metadata: Metadata = { title: "Grupo" };
 
@@ -62,7 +63,10 @@ export default async function LobbyPage({ params }: PageProps<"/grupos/[id]">) {
   const myRequest = requests.find((r) => r.user_id === me && r.status === "pending");
   const pending = requests.filter((r) => r.status === "pending");
   const modeName = catalog.modes.find((m) => m.slug === lobby.mode_slug)?.name ?? lobby.mode_slug;
-  const rank = (rid: string | null) => catalog.ranks.find((r) => r.id === rid)?.name;
+  const rankRow = (rid: string | null) => {
+    const r = catalog.ranks.find((x) => x.id === rid);
+    return r ? { name: r.name, src: r.icon_url, color: r.color } : null;
+  };
   const roleOf = (rid: string) => catalog.roles.find((r) => r.id === rid);
   const free = lobby.slots - members.length;
 
@@ -76,7 +80,7 @@ export default async function LobbyPage({ params }: PageProps<"/grupos/[id]">) {
             </Link>{" "}
             / {modeName}
           </p>
-          <h1 className="text-2xl font-semibold tracking-tight">
+          <h1 className="font-display text-3xl font-semibold">
             {modeName} de {name(lobby.owner_id)}
           </h1>
           {lobby.note && <p className="mt-1">{lobby.note}</p>}
@@ -88,21 +92,36 @@ export default async function LobbyPage({ params }: PageProps<"/grupos/[id]">) {
         </span>
       </header>
 
-      <section aria-labelledby="detalles" className="rounded-lg border border-line bg-panel p-5">
+      <section aria-labelledby="detalles" className="surface p-5">
         <h2 id="detalles" className="font-semibold">
           Detalles
         </h2>
         <dl className="mt-3 grid gap-2 text-sm sm:grid-cols-2">
           <div>
             <dt className="text-muted">Buscan</dt>
-            <dd>{neededRoles.map((r) => roleOf(r)?.name).join(", ") || "Cualquier rol"}</dd>
+            <dd className="mt-1 flex flex-wrap gap-1.5">
+              {neededRoles.length
+                ? neededRoles.map((r) => (
+                    <span key={r} className="chip">
+                      <RoleIcon slug={roleOf(r)?.slug} className="size-3.5 text-accent-soft" />
+                      {roleOf(r)?.name}
+                    </span>
+                  ))
+                : "Cualquier rol"}
+            </dd>
           </div>
           <div>
             <dt className="text-muted">Rango</dt>
             <dd>
-              {rank(lobby.rank_min_id) || rank(lobby.rank_max_id)
-                ? `${rank(lobby.rank_min_id) ?? "—"} a ${rank(lobby.rank_max_id) ?? "—"}`
-                : "Cualquiera"}
+              {lobby.rank_min_id || lobby.rank_max_id ? (
+                <span className="inline-flex flex-wrap items-center gap-2">
+                  {rankRow(lobby.rank_min_id) ? <RankBadge {...rankRow(lobby.rank_min_id)!} manual={false} size={20} /> : "—"}
+                  <span className="text-muted">a</span>
+                  {rankRow(lobby.rank_max_id) ? <RankBadge {...rankRow(lobby.rank_max_id)!} manual={false} size={20} /> : "—"}
+                </span>
+              ) : (
+                "Cualquiera"
+              )}
             </dd>
           </div>
           <div>
@@ -122,7 +141,7 @@ export default async function LobbyPage({ params }: PageProps<"/grupos/[id]">) {
         </dl>
       </section>
 
-      <section aria-labelledby="miembros" className="rounded-lg border border-line bg-panel p-5">
+      <section aria-labelledby="miembros" className="surface p-5">
         <h2 id="miembros" className="font-semibold">
           Miembros ({members.length}/{lobby.slots})
         </h2>
@@ -156,7 +175,7 @@ export default async function LobbyPage({ params }: PageProps<"/grupos/[id]">) {
       )}
 
       {canVote && (
-        <section aria-labelledby="valorar" className="flex flex-col gap-4 rounded-lg border border-line bg-panel p-5">
+        <section aria-labelledby="valorar" className="flex flex-col gap-4 surface p-5">
           <h2 id="valorar" className="font-semibold">
             Valora a tus compañeros
           </h2>
@@ -170,7 +189,7 @@ export default async function LobbyPage({ params }: PageProps<"/grupos/[id]">) {
       )}
 
       {!isOwner && !isMember && lobby.status === "open" && (
-        <section aria-labelledby="unirse" className="rounded-lg border border-line bg-panel p-5">
+        <section aria-labelledby="unirse" className="surface p-5">
           <h2 id="unirse" className="font-semibold">
             Unirse
           </h2>
@@ -192,7 +211,7 @@ export default async function LobbyPage({ params }: PageProps<"/grupos/[id]">) {
       )}
 
       {isOwner && (
-        <section aria-labelledby="solicitudes" className="rounded-lg border border-line bg-panel p-5">
+        <section aria-labelledby="solicitudes" className="surface p-5">
           <h2 id="solicitudes" className="font-semibold">
             Solicitudes pendientes ({pending.length})
           </h2>
@@ -228,7 +247,7 @@ export default async function LobbyPage({ params }: PageProps<"/grupos/[id]">) {
                   const qs = new URLSearchParams({ role: role.slug, mode: lobby.mode_slug });
                   return (
                     <li key={rid}>
-                      <Link href={`/buscar?${qs}`} className="inline-flex min-h-11 items-center rounded-md border border-line px-4 text-sm hover:bg-panel-hover">
+                      <Link href={`/buscar?${qs}`} className="btn-ghost">
                         Buscar {role.name}
                       </Link>
                     </li>

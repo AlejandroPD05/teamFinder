@@ -12,11 +12,11 @@ export async function loadCatalog(supabase: Client, gameId = GAME_ID) {
     supabase.from("game_roles").select("id, slug, name").eq("game_id", gameId).eq("active", true).order("sort"),
     supabase
       .from("game_characters")
-      .select("id, slug, name, role_id")
+      .select("id, slug, name, role_id, icon_url")
       .eq("game_id", gameId)
       .eq("active", true)
       .order("name"),
-    supabase.from("game_ranks").select("id, slug, name, tier").eq("game_id", gameId).eq("active", true).order("tier"),
+    supabase.from("game_ranks").select("id, slug, name, tier, icon_url, color").eq("game_id", gameId).eq("active", true).order("tier"),
     supabase.from("game_regions").select("id, slug, name").eq("game_id", gameId).eq("active", true).order("sort"),
     supabase.from("game_modes").select("slug, name, party_size").eq("game_id", gameId).eq("active", true).order("sort"),
   ]);

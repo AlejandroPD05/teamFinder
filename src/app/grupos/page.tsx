@@ -5,6 +5,7 @@ import { formatStart } from "@/lib/lobbies/format";
 import { listOpenLobbies, loadNames } from "@/lib/lobbies/queries";
 import { GOALS, LANGUAGES } from "@/lib/profile/options";
 import { loadCatalog } from "@/lib/profile/queries";
+import { RoleIcon } from "@/components/game-icons";
 import { createClient } from "@/lib/supabase/server";
 
 export const metadata: Metadata = { title: "Grupos" };
@@ -33,18 +34,18 @@ export default async function LobbiesPage({ searchParams }: PageProps<"/grupos">
     <section className="flex flex-col gap-6">
       <div className="flex flex-wrap items-end justify-between gap-3">
         <div>
-          <h1 className="text-2xl font-semibold tracking-tight">Grupos</h1>
+          <h1 className="font-display text-3xl font-semibold">Grupos</h1>
           <p className="text-muted">Grupos de VALORANT buscando gente ahora o para más tarde.</p>
         </div>
         <Link
           href="/grupos/nuevo"
-          className="inline-flex min-h-11 items-center rounded-md bg-accent px-5 font-semibold text-bg hover:bg-accent-soft"
+          className="btn-primary"
         >
           Crear grupo
         </Link>
       </div>
 
-      <form method="get" action="/grupos" className="grid grid-cols-2 gap-3 rounded-lg border border-line bg-panel p-4 lg:grid-cols-5">
+      <form method="get" action="/grupos" className="grid grid-cols-2 gap-3 surface p-4 lg:grid-cols-5">
         {[
           ["mode", "Modo", catalog.modes.map((m) => [m.slug, m.name]), mode],
           ["role", "Buscan rol", catalog.roles.map((r) => [r.slug, r.name]), role?.slug],
@@ -64,7 +65,7 @@ export default async function LobbiesPage({ searchParams }: PageProps<"/grupos">
           </div>
         ))}
         <div className="col-span-2 flex items-end gap-3 lg:col-span-1">
-          <button type="submit" className="min-h-11 rounded-md border border-line px-5 text-sm font-medium hover:bg-panel-hover">
+          <button type="submit" className="btn-ghost">
             Filtrar
           </button>
           {filtered && (
@@ -80,10 +81,10 @@ export default async function LobbiesPage({ searchParams }: PageProps<"/grupos">
           <h2 className="font-semibold">{filtered ? "No hay grupos con estos filtros" : "No hay grupos abiertos ahora mismo"}</h2>
           <p className="mt-1 text-sm text-muted">Crea uno y deja que te encuentren, o busca jugadores directamente.</p>
           <div className="mt-3 flex flex-wrap justify-center gap-3">
-            <Link href="/grupos/nuevo" className="inline-flex min-h-11 items-center rounded-md border border-line px-4 text-sm hover:bg-panel-hover">
+            <Link href="/grupos/nuevo" className="btn-ghost">
               Crear grupo
             </Link>
-            <Link href="/buscar" className="inline-flex min-h-11 items-center rounded-md border border-line px-4 text-sm hover:bg-panel-hover">
+            <Link href="/buscar" className="btn-ghost">
               Buscar jugadores
             </Link>
           </div>
@@ -96,10 +97,10 @@ export default async function LobbiesPage({ searchParams }: PageProps<"/grupos">
             const ranks = [label(catalog.ranks, l.rank_min_id), label(catalog.ranks, l.rank_max_id)];
             const owner = names.get(l.owner_id)?.name ?? "Jugador";
             return (
-              <li key={l.id} className="flex flex-col gap-3 rounded-lg border border-line bg-panel p-4">
+              <li key={l.id} className="surface surface-interactive flex flex-col gap-3 p-4">
                 <div className="flex items-start justify-between gap-2">
                   <div>
-                    <h2 className="font-semibold">{modeName}</h2>
+                    <h2 className="font-display text-lg font-semibold">{modeName}</h2>
                     <p className="text-sm text-muted">de {owner}</p>
                   </div>
                   <span className="rounded border border-accent/50 px-2 py-0.5 text-xs text-accent-soft">
@@ -110,7 +111,19 @@ export default async function LobbiesPage({ searchParams }: PageProps<"/grupos">
                 <dl className="grid gap-1 text-sm">
                   <div className="flex gap-2">
                     <dt className="text-muted">Buscan:</dt>
-                    <dd>{l.lobby_needed_roles.map((r) => label(catalog.roles, r.role_id)).join(", ") || "Cualquier rol"}</dd>
+                    <dd className="flex flex-wrap gap-1.5">
+                      {l.lobby_needed_roles.length
+                        ? l.lobby_needed_roles.map((r) => {
+                            const role = catalog.roles.find((x) => x.id === r.role_id);
+                            return (
+                              <span key={r.role_id} className="chip">
+                                <RoleIcon slug={role?.slug} className="size-3.5 text-accent-soft" />
+                                {role?.name}
+                              </span>
+                            );
+                          })
+                        : "Cualquier rol"}
+                    </dd>
                   </div>
                   <div className="flex gap-2">
                     <dt className="text-muted">Rango:</dt>

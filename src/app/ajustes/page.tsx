@@ -18,7 +18,7 @@ export default async function SettingsPage() {
   return (
     <section className="flex flex-col gap-6">
       <div>
-        <h1 className="text-2xl font-semibold tracking-tight">Ajustes</h1>
+        <h1 className="font-display text-3xl font-semibold">Ajustes</h1>
         <p className="text-muted">
           La visibilidad de cada dato se cambia en{" "}
           <Link href="/perfil/editar" className="text-accent-soft underline underline-offset-4">
@@ -28,7 +28,7 @@ export default async function SettingsPage() {
         </p>
       </div>
 
-      <section aria-labelledby="bloqueados" className="rounded-lg border border-line bg-panel p-5">
+      <section aria-labelledby="bloqueados" className="surface p-5">
         <h2 id="bloqueados" className="font-semibold">
           Jugadores bloqueados
         </h2>

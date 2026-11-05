@@ -20,7 +20,7 @@ export default async function EditProfilePage() {
     <section className="flex flex-col gap-6">
       <div className="flex flex-wrap items-end justify-between gap-3">
         <div>
-          <h1 className="text-2xl font-semibold tracking-tight">Editar perfil</h1>
+          <h1 className="font-display text-3xl font-semibold">Editar perfil</h1>
           <p className="text-muted">Ningún campo es obligatorio: complétalo a tu ritmo.</p>
         </div>
         <Link href={`/jugador/${userId}`} className="min-h-11 py-3 text-sm text-accent-soft underline underline-offset-4">

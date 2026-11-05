@@ -1,13 +1,17 @@
 import type { Metadata, Viewport } from "next";
-import { Geist } from "next/font/google";
+import { Chakra_Petch, Geist } from "next/font/google";
+import { ExternalLink, LogIn, LogOut } from "lucide-react";
 import Link from "next/link";
 import { APP_NAME, discordInvite } from "@/lib/config";
 import { es } from "@/lib/i18n/es";
 import { createClient } from "@/lib/supabase/server";
 import { signOut } from "./auth/salir/actions";
+import { Logo } from "./logo";
+import { SiteNav } from "./site-nav";
 import "./globals.css";
 
 const geistSans = Geist({ variable: "--font-geist-sans", subsets: ["latin"] });
+const chakra = Chakra_Petch({ variable: "--font-chakra", subsets: ["latin"], weight: ["500", "600", "700"] });
 
 export const metadata: Metadata = {
   title: { default: APP_NAME, template: `%s · ${APP_NAME}` },
@@ -25,7 +29,7 @@ export default async function RootLayout({ children }: LayoutProps<"/">) {
     : 0;
 
   return (
-    <html lang="es" className={`${geistSans.variable} h-full antialiased`}>
+    <html lang="es" className={`${geistSans.variable} ${chakra.variable} h-full antialiased`}>
       <body className="flex min-h-full flex-col font-sans">
         <a
           href="#contenido"
@@ -33,76 +37,61 @@ export default async function RootLayout({ children }: LayoutProps<"/">) {
         >
           {es.nav.skip}
         </a>
-        <header className="border-b border-line">
+        <header className="sticky top-0 z-40 border-b border-line bg-bg/80 backdrop-blur-md">
           <nav
             aria-label="Principal"
-            className="mx-auto flex max-w-5xl flex-wrap items-center justify-between px-4 sm:h-14 sm:flex-nowrap"
+            className="mx-auto flex max-w-6xl flex-wrap items-center justify-between px-4 sm:h-16 sm:flex-nowrap sm:gap-4"
           >
-            <Link href="/" className="flex min-h-14 items-center text-base font-semibold tracking-tight">
-              {APP_NAME}
+            <Link href={signedIn ? "/inicio" : "/"} className="flex min-h-14 items-center" aria-label={`${APP_NAME}, inicio`}>
+              <Logo />
             </Link>
             {signedIn ? (
               <>
-                {/* En móvil, segunda fila a lo ancho; en escritorio, en línea. */}
-                <div className="order-last -mx-3 flex w-full border-t border-line sm:order-none sm:mx-0 sm:ml-auto sm:w-auto sm:border-0">
-                  {[
-                    ["/buscar", es.nav.search],
-                    ["/grupos", es.nav.lobbies],
-                    ["/mensajes", es.nav.inbox],
-                    ["/perfil/editar", es.nav.profile],
-                  ].map(([href, text]) => (
-                    <Link
-                      key={href}
-                      href={href}
-                      className="inline-flex min-h-11 flex-1 items-center justify-center gap-1 whitespace-nowrap rounded-md px-2 text-sm text-muted hover:bg-panel hover:text-text sm:flex-none sm:px-3"
-                    >
-                      {text}
-                      {href === "/mensajes" && unread > 0 && (
-                        <span className="rounded-full bg-accent px-1.5 text-xs font-semibold text-bg">
-                          {unread > 99 ? "99+" : unread}
-                          <span className="sr-only"> sin leer</span>
-                        </span>
-                      )}
-                    </Link>
-                  ))}
-                </div>
-                <form action={signOut} className="sm:ml-1">
+                <SiteNav unread={unread} />
+                <form action={signOut}>
                   <button
                     type="submit"
-                    className="min-h-11 whitespace-nowrap rounded-md px-3 text-sm text-muted hover:bg-panel hover:text-text"
+                    className="inline-flex min-h-11 items-center gap-2 whitespace-nowrap rounded-md px-3 text-sm text-muted hover:bg-panel hover:text-text"
                   >
+                    <LogOut aria-hidden="true" className="size-4" />
                     {es.nav.logout}
                   </button>
                 </form>
               </>
             ) : (
-              <Link
-                href="/entrar"
-                className="inline-flex min-h-11 items-center rounded-md px-3 text-sm text-muted hover:bg-panel hover:text-text"
-              >
+              <Link href="/entrar" className="btn-ghost">
+                <LogIn aria-hidden="true" className="size-4" />
                 {es.nav.login}
               </Link>
             )}
           </nav>
         </header>
-        <main id="contenido" className="mx-auto w-full max-w-5xl flex-1 px-4 py-10">
+        <main id="contenido" className="mx-auto w-full max-w-6xl flex-1 px-4 py-8 sm:py-12">
           {children}
         </main>
-        <footer className="border-t border-line">
-          <nav aria-label="Pie" className="mx-auto flex max-w-5xl flex-wrap items-center gap-x-4 px-4 py-3 text-sm text-muted">
-            <span>{APP_NAME} · beta</span>
-            <Link href="/normas" className="inline-flex min-h-11 items-center hover:text-text">
-              Normas
-            </Link>
-            <Link href="/privacidad" className="inline-flex min-h-11 items-center hover:text-text">
-              Privacidad
-            </Link>
-            {discordInvite() && (
-              <a href={discordInvite()!} rel="noopener noreferrer" target="_blank" className="inline-flex min-h-11 items-center hover:text-text">
-                Discord de la comunidad<span className="sr-only"> (se abre en otra pestaña)</span>
-              </a>
-            )}
-          </nav>
+        <footer className="mt-12 border-t border-line bg-bg-raised/60">
+          <div className="mx-auto flex max-w-6xl flex-col gap-3 px-4 py-6 text-sm text-muted">
+            <nav aria-label="Pie" className="flex flex-wrap items-center gap-x-5">
+              <span className="font-display text-text">{APP_NAME} · beta</span>
+              <Link href="/normas" className="inline-flex min-h-11 items-center hover:text-text">
+                Normas
+              </Link>
+              <Link href="/privacidad" className="inline-flex min-h-11 items-center hover:text-text">
+                Privacidad
+              </Link>
+              {discordInvite() && (
+                <a href={discordInvite()!} rel="noopener noreferrer" target="_blank" className="inline-flex min-h-11 items-center gap-1.5 hover:text-text">
+                  Discord de la comunidad
+                  <ExternalLink aria-hidden="true" className="size-3.5" />
+                  <span className="sr-only"> (se abre en otra pestaña)</span>
+                </a>
+              )}
+            </nav>
+            <p lang="en" className="max-w-3xl text-xs leading-relaxed">
+              {es.legal.riot}
+            </p>
+            <p className="max-w-3xl text-xs leading-relaxed">{es.legal.riotEs}</p>
+          </div>
         </footer>
       </body>
     </html>

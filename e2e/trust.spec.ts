@@ -1,14 +1,10 @@
 import { createClient } from "@supabase/supabase-js";
 import { expect, test, type Browser, type Page } from "@playwright/test";
-import { signIn } from "./helpers";
+import { signIn, userIdByEmail } from "./helpers";
 
 const db = () =>
   createClient(process.env.NEXT_PUBLIC_SUPABASE_URL!, process.env.SUPABASE_SECRET_KEY!, { auth: { persistSession: false } });
 
-async function userIdByEmail(email: string) {
-  const { data } = await db().auth.admin.listUsers({ perPage: 500 });
-  return data.users.find((u) => u.email === email)!.id;
-}
 
 async function makePublic(userId: string, name: string) {
   await db().from("profiles").update({ display_name: name }).eq("id", userId);
