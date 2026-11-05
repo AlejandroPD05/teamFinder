@@ -39,7 +39,7 @@ export default async function Home({ searchParams }: PageProps<"/">) {
   const deleted = sp.cuenta === "borrada";
 
   const supabase = await createClient();
-  const { game } = await currentGame(supabase);
+  const { game } = await currentGame();
   const [{ data: claims }, { data: agents }] = await Promise.all([
     supabase.auth.getClaims(),
     supabase.from("game_characters").select("id, name, icon_url").eq("game_id", game.id).eq("active", true).order("name"),

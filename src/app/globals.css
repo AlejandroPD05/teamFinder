@@ -25,10 +25,66 @@
   --font-display: var(--font-chakra), var(--font-geist-sans), ui-sans-serif, sans-serif;
   --radius-card: 0.875rem;
   --ease-out: cubic-bezier(0.23, 1, 0.32, 1);
+  --ease-in-out: cubic-bezier(0.77, 0, 0.175, 1);
 }
 
 :root {
   color-scheme: dark;
+}
+
+/*
+ * Cambio de juego: las variables de color están registradas para que el navegador pueda interpolarlas.
+ * Así el acento y el tinte de fondo pasan de un juego a otro con una transición en lugar de saltar.
+ */
+@property --color-accent {
+  syntax: "<color>";
+  inherits: true;
+  initial-value: #8b5cf6;
+}
+@property --color-accent-soft {
+  syntax: "<color>";
+  inherits: true;
+  initial-value: #a78bfa;
+}
+@property --color-bg {
+  syntax: "<color>";
+  inherits: true;
+  initial-value: #0b0c12;
+}
+@property --color-bg-raised {
+  syntax: "<color>";
+  inherits: true;
+  initial-value: #10111a;
+}
+@property --color-panel {
+  syntax: "<color>";
+  inherits: true;
+  initial-value: #151722;
+}
+@property --color-panel-hover {
+  syntax: "<color>";
+  inherits: true;
+  initial-value: #1c1f2e;
+}
+@property --color-line {
+  syntax: "<color>";
+  inherits: true;
+  initial-value: #2a2d3e;
+}
+
+html {
+  transition-property: --color-accent, --color-accent-soft, --color-bg, --color-bg-raised, --color-panel, --color-panel-hover, --color-line;
+  transition-duration: 400ms;
+  transition-timing-function: var(--ease-in-out);
+}
+
+/* Mientras llega la página del nuevo juego, el contenido se atenúa rápido y vuelve con calma. */
+main {
+  transition: opacity 220ms var(--ease-out);
+}
+html[data-switching] main {
+  opacity: 0.45;
+  transition-duration: 120ms;
 }
 
 body {

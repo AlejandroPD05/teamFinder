@@ -38,8 +38,8 @@ export default async function PlayerPage({ params }: PageProps<"/jugador/[id]">)
   const supabase = await createClient();
   const [{ data: claims }, catalog, data] = await Promise.all([
     supabase.auth.getClaims(),
-    currentGame(supabase).then(({ game }) => loadCatalog(supabase, game.id).then((c) => ({ ...c, game }))),
-    currentGame(supabase).then(({ game }) => loadPublicProfile(supabase, id, game.id)),
+    currentGame().then(({ game }) => loadCatalog(supabase, game.id).then((c) => ({ ...c, game }))),
+    currentGame().then(({ game }) => loadPublicProfile(supabase, id, game.id)),
   ]);
   if (!data.profile) notFound();
 

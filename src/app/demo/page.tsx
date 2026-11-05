@@ -31,7 +31,7 @@ const PLAYERS: Demo[] = [
 export default async function DemoPage() {
   const supabase = await createClient();
   // La demo es siempre de VALORANT (la usan los revisores de Riot): usa su tema aunque se haya elegido otro juego.
-  const [catalog, games] = await Promise.all([loadCatalog(supabase), loadGames(supabase)]);
+  const [catalog, games] = await Promise.all([loadCatalog(supabase), loadGames()]);
   const valorant = games.find((g) => g.id === "valorant");
   const bySlug = <T extends { slug: string; id: string }>(list: T[], slug: string) => list.find((x) => x.slug === slug);
 

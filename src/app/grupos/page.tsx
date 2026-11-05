@@ -20,7 +20,7 @@ export default async function LobbiesPage({ searchParams }: PageProps<"/grupos">
   const { data: claims } = await supabase.auth.getClaims();
   if (!claims?.claims?.sub) redirect("/entrar?next=/grupos");
 
-  const { game } = await currentGame(supabase);
+  const { game } = await currentGame();
   const catalog = await loadCatalog(supabase, game.id);
   const sp = await searchParams;
   const mode = catalog.modes.find((m) => m.slug === one(sp.mode))?.slug;

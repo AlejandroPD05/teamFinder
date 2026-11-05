@@ -26,7 +26,7 @@ export default async function RootLayout({ children }: LayoutProps<"/">) {
   const supabase = await createClient();
   const { data } = await supabase.auth.getClaims();
   const signedIn = Boolean(data?.claims?.sub);
-  const { game, games } = await currentGame(supabase);
+  const { game, games } = await currentGame();
   const unread = signedIn
     ? ((await supabase.rpc("my_rooms")).data ?? []).reduce((n, r) => n + Number(r.unread ?? 0), 0)
     : 0;
