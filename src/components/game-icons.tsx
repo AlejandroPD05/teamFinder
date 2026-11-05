@@ -48,6 +48,7 @@ export function RoleIcon({ slug, className = "size-4" }: { slug?: string | null;
 
 /** Imágenes de cuerpo entero (web oficial de EA): hay que recortar hacia la cara. */
 const fullBody = (src: string) => src.startsWith("https://drop-assets.ea.com/");
+const FULL_BODY_ZOOM = 1.9;
 
 function Fallback({ label, size }: { label: string; size: number }) {
   return (
@@ -76,6 +77,8 @@ export function CharacterIcon({
   ring?: "main" | "comfort" | null;
 }) {
   const [failed, setFailed] = useState(false);
+  // Las imágenes de cuerpo entero se amplían 1,9 veces: se pide una versión mayor para que no se vean borrosas.
+  const zoom = src && fullBody(src) ? FULL_BODY_ZOOM : 1;
   const ringClass =
     ring === "main" ? "ring-2 ring-accent" : ring === "comfort" ? "ring-2 ring-info/70" : "ring-1 ring-line";
   return (
@@ -88,10 +91,10 @@ export function CharacterIcon({
         <Image
           src={src}
           alt={decorative ? "" : name}
-          width={size}
-          height={size}
-          sizes={`${size}px`}
-          className={`size-full object-cover ${fullBody(src) ? "origin-[50%_24%] scale-[1.9]" : ""}`}
+          width={Math.round(size * zoom)}
+          height={Math.round(size * zoom)}
+          sizes={`${Math.round(size * zoom)}px`}
+          className={`size-full object-cover ${zoom > 1 ? "origin-[50%_24%] scale-[1.9]" : ""}`}
           onError={() => setFailed(true)}
         />
       ) : (

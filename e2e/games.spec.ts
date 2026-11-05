@@ -40,6 +40,7 @@ test("cambiar de juego cambia el tema y el catálogo", async ({ page }, info) =>
   await expect(page.getByText("Crear grupo de Counter-Strike 2")).toBeVisible();
   await page.goto("/perfil/editar");
   await expect(page.getByText(/Pool de/)).toHaveCount(0);
+  await page.evaluate(() => Promise.all(document.getAnimations().map((a) => a.finished)));
   const result = await new AxeBuilder({ page }).withTags(["wcag2a", "wcag2aa", "wcag21a", "wcag21aa"]).analyze();
   expect(result.violations.map((v) => v.id)).toEqual([]);
 });
