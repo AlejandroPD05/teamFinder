@@ -29,7 +29,7 @@ export async function createLobby(_prev: ActionState, fd: FormData): Promise<Act
   }
   const v = parsed.data;
   const { data, error } = await supabase.rpc("create_lobby", {
-    p_game_id: (await currentGame(supabase)).game.id,
+    p_game_id: (await currentGame()).game.id,
     p_mode_slug: v.mode,
     p_note: v.note,
     p_rank_min: v.rank_min ?? nil,

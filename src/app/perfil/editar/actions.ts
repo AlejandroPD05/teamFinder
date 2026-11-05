@@ -39,7 +39,7 @@ export async function saveProfile(_prev: SaveState, fd: FormData): Promise<SaveS
   const { error: profileError } = await supabase.from("profiles").update(common.data).eq("id", userId);
   if (profileError) return { ok: false, message: "No se pudo guardar el perfil. Inténtalo de nuevo." };
 
-  const { game } = await currentGame(supabase);
+  const { game } = await currentGame();
   const g = gameParsed.data;
   const { error: gameError } = await supabase.rpc("save_game_profile", {
     p_game_id: game.id,

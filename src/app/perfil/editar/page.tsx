@@ -14,7 +14,7 @@ export default async function EditProfilePage() {
   const userId = claims?.claims?.sub;
   if (!userId) redirect("/entrar?next=/perfil/editar");
 
-  const { game: active } = await currentGame(supabase);
+  const { game: active } = await currentGame();
   const [catalog, own] = await Promise.all([loadCatalog(supabase, active.id), loadOwnProfile(supabase, userId, active.id)]);
   const { profile, game, roles, characters } = own;
 

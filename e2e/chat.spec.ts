@@ -10,6 +10,9 @@ async function createTrio(page: Page, note: string) {
   return page.url();
 }
 
+// Flujo largo: más margen que el límite por defecto cuando la máquina va cargada.
+test.describe.configure({ timeout: 60_000 });
+
 test("dos miembros chatean en tiempo real; alguien de fuera no ve la sala", async ({ browser }, info) => {
   const stamp = `${info.project.name}-${Date.now()}`;
   const [ownerCtx, guestCtx, outsiderCtx] = await Promise.all([browser.newContext(), browser.newContext(), browser.newContext()]);

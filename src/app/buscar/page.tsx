@@ -59,7 +59,7 @@ export default async function SearchPage({ searchParams }: PageProps<"/buscar">)
   const userId = claims?.claims?.sub;
   if (!userId) redirect("/entrar?next=/buscar");
 
-  const { game } = await currentGame(supabase);
+  const { game } = await currentGame();
   const catalog = await loadCatalog(supabase, game.id);
   const raw = await searchParams;
   const filters = parseFilters(raw, catalog);

@@ -16,7 +16,7 @@ export default async function Dashboard() {
   const userId = claims?.claims?.sub;
   if (!userId) redirect("/entrar?next=/inicio");
 
-  const { game: current } = await currentGame(supabase);
+  const { game: current } = await currentGame();
   const [{ profile, game, roles, characters }, { data: isAdmin }] = await Promise.all([
     loadOwnProfile(supabase, userId, current.id),
     supabase.rpc("is_admin"),

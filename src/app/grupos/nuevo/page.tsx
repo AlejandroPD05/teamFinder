@@ -11,7 +11,7 @@ export default async function NewLobbyPage() {
   const supabase = await createClient();
   const { data: claims } = await supabase.auth.getClaims();
   if (!claims?.claims?.sub) redirect("/entrar?next=/grupos/nuevo");
-  const { game } = await currentGame(supabase);
+  const { game } = await currentGame();
   const catalog = await loadCatalog(supabase, game.id);
 
   return (
