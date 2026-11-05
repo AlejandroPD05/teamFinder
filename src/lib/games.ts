@@ -37,18 +37,24 @@ export async function currentGame(supabase: Client): Promise<{ game: Game; games
   return { game, games };
 }
 
-const rgb = (hex: string) => {
-  const n = Number.parseInt(hex.slice(1), 16);
-  return `${(n >> 16) & 255} ${(n >> 8) & 255} ${n & 255}`;
-};
+const tint = (hex: string, pct: number, base: string) => `color-mix(in srgb, ${hex} ${pct}%, ${base})`;
 
-/** Variables CSS del tema del juego: acento y brillos. La base oscura es común a todos (prompt §17). */
+/**
+ * Variables CSS del tema del juego: el acento y un tinte liso del fondo y los paneles con el tono oscuro del juego
+ * (azul marino, pizarra…). Sin degradados. La paleta base es común a todos (prompt §17).
+ */
 export function themeStyle(game?: Game | null): CSSProperties {
   if (!game?.theme_accent) return {};
+  const t = game.theme_glow_b;
   return {
     "--color-accent": game.theme_accent,
     "--color-accent-soft": game.theme_accent_soft ?? game.theme_accent,
-    "--glow-a": `rgb(${rgb(game.theme_glow_a ?? game.theme_accent)} / 0.14)`,
-    "--glow-b": `rgb(${rgb(game.theme_glow_b ?? "#3b82f6")} / 0.22)`,
+    ...(t && {
+      "--color-bg": tint(t, 12, "#0b0c12"),
+      "--color-bg-raised": tint(t, 12, "#10111a"),
+      "--color-panel": tint(t, 14, "#151722"),
+      "--color-panel-hover": tint(t, 16, "#1c1f2e"),
+      "--color-line": tint(t, 16, "#2a2d3e"),
+    }),
   } as CSSProperties;
 }

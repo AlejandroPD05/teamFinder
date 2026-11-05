@@ -10,7 +10,7 @@ export function GameSwitcher({ games, current }: { games: { id: string; name: st
   return (
     <form action={selectGame} className="flex items-center" aria-label="Juego">
       <input type="hidden" name="next" value={pathname} />
-      <fieldset className="flex rounded-lg border border-line bg-bg-raised/70 p-0.5">
+      <fieldset className="flex rounded-lg border border-line bg-bg-raised p-0.5">
         <legend className="sr-only">Juego</legend>
         {games.map((g) => {
           const active = g.id === current;
@@ -21,7 +21,7 @@ export function GameSwitcher({ games, current }: { games: { id: string; name: st
               name="game"
               value={g.id}
               aria-pressed={active}
-              className={`font-display min-h-9 whitespace-nowrap rounded-md px-2.5 text-xs font-semibold tracking-wide sm:text-sm ${
+              className={`font-display min-h-9 whitespace-nowrap rounded-md transition-colors duration-150 ease-out px-2.5 text-xs font-semibold tracking-wide sm:text-sm ${
                 active ? "bg-accent text-bg" : "text-muted hover:text-text"
               }`}
             >

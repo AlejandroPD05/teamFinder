@@ -1,6 +1,7 @@
 import { Clock3, Languages, Mic } from "lucide-react";
 import Image from "next/image";
 import Link from "next/link";
+import type { CSSProperties } from "react";
 import { CharacterIcon, RankBadge, RoleIcon } from "@/components/game-icons";
 import { CHARACTER_STATUS, GOALS, LANGUAGES, VOICE } from "@/lib/profile/options";
 import type { Catalog } from "@/lib/profile/queries";
@@ -22,11 +23,14 @@ export function PlayerCard({
   catalog,
   profileHref,
   characterLabel = "Agentes",
+  index = 0,
 }: {
   p: PlayerRow;
   catalog: Catalog;
   profileHref?: string | null;
   characterLabel?: string | null;
+  /** Posición en la lista, para escalonar la entrada. */
+  index?: number;
 }) {
   const name = p.display_name ?? "Jugador";
   const rank = catalog.ranks.find((r) => r.id === p.rank_id);
@@ -46,7 +50,7 @@ export function PlayerCard({
   const goals = (p.goals ?? []).map((g) => GOALS[g as keyof typeof GOALS] ?? g);
 
   return (
-    <li className="surface surface-interactive flex flex-col gap-4 p-4">
+    <li className="surface surface-interactive enter flex flex-col gap-4 p-4" style={{ "--i": index } as CSSProperties}>
       <div className="flex items-start gap-3">
         {p.avatar_url ? (
           <Image src={p.avatar_url} alt="" width={48} height={48} className="rounded-full ring-1 ring-line" />
@@ -62,7 +66,7 @@ export function PlayerCard({
             {region && <span className="text-muted">· {region}</span>}
           </div>
         </div>
-        {p.flex && <span className="chip border-info/50 text-info-soft">Flex</span>}
+        {p.flex && <span className="text-sm font-medium text-info-soft">Flex</span>}
       </div>
 
       {roles.length > 0 && (
@@ -70,8 +74,8 @@ export function PlayerCard({
           {roles.map((id) => {
             const r = role(id);
             return (
-              <li key={id} className={`chip ${id === p.primary_role_id ? "border-accent/60 bg-accent/10" : ""}`}>
-                <RoleIcon slug={r?.slug} className="size-3.5 text-accent-soft" />
+              <li key={id} className={`chip ${id === p.primary_role_id ? "font-semibold" : "text-muted"}`}>
+                <RoleIcon slug={r?.slug} className="size-3.5 text-muted" />
                 {r?.name}
                 {id === p.primary_role_id && <span className="sr-only"> (principal)</span>}
               </li>
@@ -100,13 +104,7 @@ export function PlayerCard({
         {modes.length > 0 && (
           <div className="flex items-center gap-2">
             <dt className="sr-only">Modos</dt>
-            <dd className="flex flex-wrap gap-1.5">
-              {modes.map((m) => (
-                <span key={m} className="chip">
-                  {m}
-                </span>
-              ))}
-            </dd>
+            <dd>{modes.join(" · ")}</dd>
           </div>
         )}
         {(langs.length > 0 || goals.length > 0) && (

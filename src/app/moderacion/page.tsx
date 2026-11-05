@@ -62,7 +62,7 @@ export default async function ModerationPage() {
                 )}
               </p>
               {r.message_snapshot && (
-                <blockquote className="rounded border-l-2 border-danger/60 bg-bg px-3 py-2 text-sm">«{r.message_snapshot}»</blockquote>
+                <blockquote className="rounded border-l-2 border-danger bg-bg px-3 py-2 text-sm">«{r.message_snapshot}»</blockquote>
               )}
               {r.details && <p className="text-sm text-muted">Detalles: {r.details}</p>}
               <ResolveForm reportId={r.id} />

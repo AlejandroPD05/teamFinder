@@ -40,7 +40,7 @@ export default async function RootLayout({ children }: LayoutProps<"/">) {
         >
           {es.nav.skip}
         </a>
-        <header className="sticky top-0 z-40 border-b border-line bg-bg/80 backdrop-blur-md">
+        <header className="sticky top-0 z-40 border-b border-line bg-bg">
           <nav
             aria-label="Principal"
             className="mx-auto flex max-w-6xl flex-wrap items-center justify-between px-4 sm:h-16 sm:flex-nowrap sm:gap-4"
@@ -75,7 +75,7 @@ export default async function RootLayout({ children }: LayoutProps<"/">) {
         <main id="contenido" className="mx-auto w-full max-w-6xl flex-1 px-4 py-8 sm:py-12">
           {children}
         </main>
-        <footer className="mt-12 border-t border-line bg-bg-raised/60">
+        <footer className="mt-12 border-t border-line bg-bg-raised">
           <div className="mx-auto flex max-w-6xl flex-col gap-3 px-4 py-6 text-sm text-muted">
             <nav aria-label="Pie" className="flex flex-wrap items-center gap-x-5">
               <span className="font-display text-text">{APP_NAME} · beta</span>
@@ -99,11 +99,10 @@ export default async function RootLayout({ children }: LayoutProps<"/">) {
             <p lang="en" className="max-w-3xl text-xs leading-relaxed">
               {es.legal.riot}
             </p>
-            <p className="max-w-3xl text-xs leading-relaxed">{es.legal.riotEs}</p>
             <p lang="en" className="max-w-3xl text-xs leading-relaxed">
               {es.legal.valve} {es.legal.ea}
             </p>
-            <p className="max-w-3xl text-xs leading-relaxed">{es.legal.othersEs}</p>
+            <p className="max-w-3xl text-xs leading-relaxed">{es.legal.fan}</p>
           </div>
         </footer>
       </body>

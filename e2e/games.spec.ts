@@ -29,6 +29,7 @@ test("cambiar de juego cambia el tema y el catálogo", async ({ page }, info) =>
   for (const path of ["/perfil/editar", "/grupos/nuevo"]) {
     await page.goto(path);
     await expect(page.locator("html")).toHaveAttribute("data-game", "apex");
+    await page.evaluate(() => Promise.all(document.getAnimations().map((a) => a.finished)));
     const result = await new AxeBuilder({ page }).withTags(["wcag2a", "wcag2aa", "wcag21a", "wcag21aa"]).analyze();
     expect(result.violations.map((v) => v.id), path).toEqual([]);
   }

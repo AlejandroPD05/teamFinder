@@ -148,8 +148,8 @@ export default async function SearchPage({ searchParams }: PageProps<"/buscar">)
 
       {players.length > 0 ? (
         <ul className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
-          {players.map((p) => (
-            <PlayerCard key={p.user_id} p={p} catalog={catalog} characterLabel={game.character_label} />
+          {players.map((p, i) => (
+            <PlayerCard key={p.user_id} p={p} index={i} catalog={catalog} characterLabel={game.character_label} />
           ))}
         </ul>
       ) : (

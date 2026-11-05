@@ -39,7 +39,7 @@ const legend = "text-base font-semibold";
 const control =
   "min-h-11 rounded-md border border-line bg-bg px-3 text-text focus:border-accent";
 const chip =
-  "flex min-h-11 cursor-pointer items-center gap-2 rounded-md border border-line px-3 text-sm has-[:checked]:border-accent has-[:checked]:bg-accent/10";
+  "flex min-h-11 cursor-pointer items-center gap-2 rounded-md border border-line px-3 text-sm has-[:checked]:border-accent has-[:checked]:bg-panel-hover";
 
 function FieldError({ id, error }: { id: string; error?: string }) {
   if (!error) return null;
@@ -229,7 +229,7 @@ export function ProfileForm({
           <div className="mt-2 grid gap-6 sm:grid-cols-2">
             {catalog.roles.map((role) => (
               <div key={role.id}>
-                <p className="eyebrow flex items-center gap-1.5 text-muted">
+                <p className="flex items-center gap-1.5 text-sm font-medium text-muted">
                   <RoleIcon slug={role.slug} className="size-3.5" />
                   {roleName.get(role.id)}
                 </p>
@@ -268,7 +268,7 @@ export function ProfileForm({
         <VisibilitySelect name="game_visibility" value={values.game_visibility} label={`tu perfil de ${gameName}`} />
       </fieldset>
 
-      <div className="sticky bottom-0 -mx-4 flex flex-wrap items-center gap-4 border-t border-line bg-bg/95 px-4 py-3">
+      <div className="sticky bottom-0 -mx-4 flex flex-wrap items-center gap-4 border-t border-line bg-bg px-4 py-3">
         <button
           type="submit"
           disabled={pending}
