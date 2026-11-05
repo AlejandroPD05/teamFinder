@@ -26,7 +26,7 @@ export default function PrivacyPage() {
             y agentes). El rango lo introduces tú: no está verificado con Riot.
           </li>
           <li>
-            <strong>Actividad:</strong> grupos que creas, solicitudes, mensajes de las salas de grupo, valoraciones de karma,
+            <strong>Actividad:</strong> grupos que creas, solicitudes, mensajes de las salas de grupo, reconocimientos de karma,
             bloqueos y denuncias.
           </li>
         </ul>
@@ -45,7 +45,7 @@ export default function PrivacyPage() {
             .
           </li>
           <li>Los mensajes de una sala solo los ven los miembros actuales de ese grupo.</li>
-          <li>Del karma solo se publican totales y etiquetas; nunca quién votó.</li>
+          <li>Del karma solo se publican el total de reconocimientos y los motivos; nunca quién los dio.</li>
           <li>Las denuncias solo las ven quien denuncia y el equipo de moderación.</li>
         </ul>
       </Section>

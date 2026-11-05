@@ -9,7 +9,7 @@ const STEPS = [
   { Icon: Swords, title: "Elige modo", text: "DuoQ, TrioQ o FiveStack, ahora o a una hora concreta." },
   { Icon: SlidersHorizontal, title: "Encuentra a tu gente", text: "Filtra por rango, rol, agente, idioma y horario." },
   { Icon: MessagesSquare, title: "Coordinaos", text: "Solicita unirte y habla en la sala del grupo en tiempo real." },
-  { Icon: HeartHandshake, title: "Jugad y valorad", text: "Al cerrar el grupo, deja karma a tus compañeros." },
+  { Icon: HeartHandshake, title: "Jugad y reconoced", text: "Al cerrar el grupo, reconoce a los compañeros que lo hicieron bien." },
 ] as const;
 
 const FEATURES = [

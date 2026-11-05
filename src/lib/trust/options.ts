@@ -14,8 +14,6 @@ export const KARMA_TAGS = {
   comunicativo: "Comunicativo",
   buen_ambiente: "Buen ambiente",
   puntual: "Puntual",
-  toxico: "Tóxico",
-  no_aparecio: "No apareció",
 } as const;
 
 export const TRUST_ERRORS: Record<string, string> = {
