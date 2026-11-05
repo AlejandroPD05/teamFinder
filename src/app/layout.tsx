@@ -45,7 +45,7 @@ export default async function RootLayout({ children }: LayoutProps<"/">) {
             aria-label="Principal"
             className="mx-auto flex max-w-6xl flex-wrap items-center justify-between px-4 sm:h-16 sm:flex-nowrap sm:gap-4"
           >
-            <Link href={signedIn ? "/inicio" : "/"} className="flex min-h-14 items-center" aria-label={`${APP_NAME}, inicio`}>
+            <Link href="/" className="flex min-h-14 items-center" aria-label={`${APP_NAME}, inicio`}>
               <Logo />
             </Link>
             <div className="order-[60] flex w-full justify-center pb-2 sm:order-none sm:w-auto sm:pb-0">

@@ -30,6 +30,13 @@ test("login real con enlace por correo, sesión y salida", async ({ page }, info
   await page.goto("/entrar");
   await expect(page).toHaveURL(/\/inicio$/);
 
+  // El logotipo lleva siempre a la portada, también con sesión.
+  await page.getByRole("link", { name: "TeamFinder, inicio" }).click();
+  await expect(page).toHaveURL(/\/$/);
+  await expect(page.getByRole("link", { name: "Buscar jugadores" }).first()).toBeVisible();
+
+  // Salir desde otra página para que el cambio de URL a la portada confirme el cierre de sesión.
+  await page.goto("/inicio");
   await page.getByRole("button", { name: "Salir" }).click();
   await expect(page).toHaveURL(/\/$/);
   await page.goto("/inicio");
