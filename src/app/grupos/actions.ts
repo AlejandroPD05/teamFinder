@@ -4,7 +4,7 @@ import { revalidatePath } from "next/cache";
 import { redirect } from "next/navigation";
 import { z } from "zod";
 import { createLobbyFromForm, createLobbySchema, lobbyError, requestMessageSchema } from "@/lib/lobbies/schema";
-import { GAME_ID } from "@/lib/profile/queries";
+import { currentGame } from "@/lib/games";
 import { createClient } from "@/lib/supabase/server";
 
 export type ActionState = { ok: boolean; message: string; fieldErrors?: Record<string, string> } | null;
@@ -29,7 +29,7 @@ export async function createLobby(_prev: ActionState, fd: FormData): Promise<Act
   }
   const v = parsed.data;
   const { data, error } = await supabase.rpc("create_lobby", {
-    p_game_id: GAME_ID,
+    p_game_id: (await currentGame(supabase)).game.id,
     p_mode_slug: v.mode,
     p_note: v.note,
     p_rank_min: v.rank_min ?? nil,

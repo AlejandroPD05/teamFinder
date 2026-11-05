@@ -1,3 +1,4 @@
+import { currentGame } from "@/lib/games";
 import type { Metadata } from "next";
 import Link from "next/link";
 import { redirect } from "next/navigation";
@@ -13,7 +14,8 @@ export default async function EditProfilePage() {
   const userId = claims?.claims?.sub;
   if (!userId) redirect("/entrar?next=/perfil/editar");
 
-  const [catalog, own] = await Promise.all([loadCatalog(supabase), loadOwnProfile(supabase, userId)]);
+  const { game: active } = await currentGame(supabase);
+  const [catalog, own] = await Promise.all([loadCatalog(supabase, active.id), loadOwnProfile(supabase, userId, active.id)]);
   const { profile, game, roles, characters } = own;
 
   return (
@@ -28,6 +30,8 @@ export default async function EditProfilePage() {
         </Link>
       </div>
       <ProfileForm
+        gameName={active.name}
+        characterLabel={active.character_label}
         catalog={catalog}
         values={{
           display_name: profile.display_name,

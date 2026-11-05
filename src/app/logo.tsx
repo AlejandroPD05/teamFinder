@@ -7,8 +7,8 @@ export function Logo() {
       <svg aria-hidden="true" viewBox="0 0 32 32" className="size-7 shrink-0">
         <defs>
           <linearGradient id="tf-g" x1="0" y1="0" x2="1" y2="1">
-            <stop offset="0" stopColor="#b39dfb" />
-            <stop offset="1" stopColor="#3b82f6" />
+            <stop offset="0" style={{ stopColor: "var(--color-accent-soft)" }} />
+            <stop offset="1" style={{ stopColor: "var(--color-info)" }} />
           </linearGradient>
         </defs>
         <path d="M4 6 L16 14 L28 6 L28 12 L16 20 L4 12 Z" fill="url(#tf-g)" />

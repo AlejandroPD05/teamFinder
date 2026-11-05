@@ -1,3 +1,4 @@
+import { currentGame } from "@/lib/games";
 import type { Metadata } from "next";
 import Image from "next/image";
 import Link from "next/link";
@@ -37,8 +38,8 @@ export default async function PlayerPage({ params }: PageProps<"/jugador/[id]">)
   const supabase = await createClient();
   const [{ data: claims }, catalog, data] = await Promise.all([
     supabase.auth.getClaims(),
-    loadCatalog(supabase),
-    loadPublicProfile(supabase, id),
+    currentGame(supabase).then(({ game }) => loadCatalog(supabase, game.id).then((c) => ({ ...c, game }))),
+    currentGame(supabase).then(({ game }) => loadPublicProfile(supabase, id, game.id)),
   ]);
   if (!data.profile) notFound();
 
@@ -130,7 +131,7 @@ export default async function PlayerPage({ params }: PageProps<"/jugador/[id]">)
 
       <section aria-labelledby="valorant" className="surface p-5">
         <h2 id="valorant" className="font-semibold">
-          VALORANT
+          {catalog.game.name}
         </h2>
         {game ? (
           <dl className="mt-4 flex flex-col gap-3">
@@ -175,7 +176,7 @@ export default async function PlayerPage({ params }: PageProps<"/jugador/[id]">)
               }
             />
             <Row
-              title="Agentes"
+              title={catalog.game.character_label ?? "Personajes"}
               value={
                 byStatus.length ? (
                   <ul className="flex flex-col gap-3">
@@ -201,12 +202,14 @@ export default async function PlayerPage({ params }: PageProps<"/jugador/[id]">)
           </dl>
         ) : (
           <p className="mt-3 text-sm text-muted">
-            {isOwner ? "Aún no has rellenado tu perfil de VALORANT." : "Sin datos de VALORANT visibles."}
+            {isOwner ? `Aún no has rellenado tu perfil de ${catalog.game.name}.` : `Sin datos de ${catalog.game.name} visibles.`}
           </p>
         )}
-        <p className="mt-4 inline-block rounded border border-line px-2 py-1 text-xs text-muted">
-          Cuenta Riot: no conectada (integración pendiente)
-        </p>
+        {catalog.game.id === "valorant" && (
+          <p className="mt-4 inline-block rounded border border-line px-2 py-1 text-xs text-muted">
+            Cuenta Riot: no conectada (integración pendiente)
+          </p>
+        )}
       </section>
 
       {viewer && !isOwner && (

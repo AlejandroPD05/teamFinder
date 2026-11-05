@@ -2,7 +2,7 @@
 
 import { revalidatePath } from "next/cache";
 import { redirect } from "next/navigation";
-import { GAME_ID } from "@/lib/profile/queries";
+import { currentGame } from "@/lib/games";
 import { gameProfileFromForm, gameProfileSchema, profileFromForm, profileSchema } from "@/lib/profile/schema";
 import { createClient } from "@/lib/supabase/server";
 
@@ -24,14 +24,14 @@ export async function saveProfile(_prev: SaveState, fd: FormData): Promise<SaveS
   if (!userId) redirect("/entrar?next=/perfil/editar");
 
   const common = profileSchema.safeParse(profileFromForm(fd));
-  const game = gameProfileSchema.safeParse(gameProfileFromForm(fd));
-  if (!common.success || !game.success) {
+  const gameParsed = gameProfileSchema.safeParse(gameProfileFromForm(fd));
+  if (!common.success || !gameParsed.success) {
     return {
       ok: false,
       message: "Revisa los campos marcados.",
       fieldErrors: {
         ...(common.success ? {} : firstErrors(common.error.issues)),
-        ...(game.success ? {} : firstErrors(game.error.issues)),
+        ...(gameParsed.success ? {} : firstErrors(gameParsed.error.issues)),
       },
     };
   }
@@ -39,9 +39,10 @@ export async function saveProfile(_prev: SaveState, fd: FormData): Promise<SaveS
   const { error: profileError } = await supabase.from("profiles").update(common.data).eq("id", userId);
   if (profileError) return { ok: false, message: "No se pudo guardar el perfil. Inténtalo de nuevo." };
 
-  const g = game.data;
+  const { game } = await currentGame(supabase);
+  const g = gameParsed.data;
   const { error: gameError } = await supabase.rpc("save_game_profile", {
-    p_game_id: GAME_ID,
+    p_game_id: game.id,
     p_rank_id: g.rank_id as string,
     p_region_id: g.region_id as string,
     p_flex: g.flex,
@@ -50,7 +51,7 @@ export async function saveProfile(_prev: SaveState, fd: FormData): Promise<SaveS
     p_characters: g.characters,
     p_modes: g.modes,
   });
-  if (gameError) return { ok: false, message: "No se pudo guardar tu perfil de VALORANT. Inténtalo de nuevo." };
+  if (gameError) return { ok: false, message: `No se pudo guardar tu perfil de ${game.name}. Inténtalo de nuevo.` };
 
   revalidatePath("/inicio");
   revalidatePath(`/jugador/${userId}`);

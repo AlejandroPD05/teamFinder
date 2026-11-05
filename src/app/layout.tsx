@@ -6,7 +6,9 @@ import { APP_NAME, discordInvite } from "@/lib/config";
 import { es } from "@/lib/i18n/es";
 import { createClient } from "@/lib/supabase/server";
 import { signOut } from "./auth/salir/actions";
+import { GameSwitcher } from "./game-switcher";
 import { Logo } from "./logo";
+import { currentGame, themeStyle } from "@/lib/games";
 import { SiteNav } from "./site-nav";
 import "./globals.css";
 
@@ -24,12 +26,13 @@ export default async function RootLayout({ children }: LayoutProps<"/">) {
   const supabase = await createClient();
   const { data } = await supabase.auth.getClaims();
   const signedIn = Boolean(data?.claims?.sub);
+  const { game, games } = await currentGame(supabase);
   const unread = signedIn
     ? ((await supabase.rpc("my_rooms")).data ?? []).reduce((n, r) => n + Number(r.unread ?? 0), 0)
     : 0;
 
   return (
-    <html lang="es" className={`${geistSans.variable} ${chakra.variable} h-full antialiased`}>
+    <html lang="es" data-game={game?.id} style={themeStyle(game)} className={`${geistSans.variable} ${chakra.variable} h-full antialiased`}>
       <body className="flex min-h-full flex-col font-sans">
         <a
           href="#contenido"
@@ -45,6 +48,9 @@ export default async function RootLayout({ children }: LayoutProps<"/">) {
             <Link href={signedIn ? "/inicio" : "/"} className="flex min-h-14 items-center" aria-label={`${APP_NAME}, inicio`}>
               <Logo />
             </Link>
+            <div className="order-[60] flex w-full justify-center pb-2 sm:order-none sm:w-auto sm:pb-0">
+              <GameSwitcher games={games} current={game?.id ?? ""} />
+            </div>
             {signedIn ? (
               <>
                 <SiteNav unread={unread} />
@@ -94,6 +100,10 @@ export default async function RootLayout({ children }: LayoutProps<"/">) {
               {es.legal.riot}
             </p>
             <p className="max-w-3xl text-xs leading-relaxed">{es.legal.riotEs}</p>
+            <p lang="en" className="max-w-3xl text-xs leading-relaxed">
+              {es.legal.valve} {es.legal.ea}
+            </p>
+            <p className="max-w-3xl text-xs leading-relaxed">{es.legal.othersEs}</p>
           </div>
         </footer>
       </body>

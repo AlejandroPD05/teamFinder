@@ -23,14 +23,14 @@ export default function PrivacyPage() {
           </li>
           <li>
             <strong>Perfil:</strong> lo que tú rellenas (idiomas, horarios, objetivos, comunicación, rango, servidor, roles, modos
-            y agentes). El rango lo introduces tú: no está verificado con Riot.
+            y personajes de cada juego). El rango lo introduces tú: no está verificado con ningún juego.
           </li>
           <li>
             <strong>Actividad:</strong> grupos que creas, solicitudes, mensajes de las salas de grupo, reconocimientos de karma,
             bloqueos y denuncias.
           </li>
         </ul>
-        <p>No hay integración con Riot ni leemos estadísticas de partidas.</p>
+        <p>No hay integración con Riot, Valve ni EA, ni leemos estadísticas de partidas.</p>
       </Section>
 
       <Section title="Quién puede verlos">

@@ -1,5 +1,4 @@
 import "server-only";
-import { GAME_ID } from "@/lib/profile/queries";
 import type { createClient } from "@/lib/supabase/server";
 import { PAGE_SIZE, type Condition } from "./filters";
 
@@ -11,11 +10,11 @@ const OPS = { gte: "gte", lte: "lte", eq: "eq", contains: "cs", overlaps: "ov" }
 const encode = (c: Condition) => (Array.isArray(c.value) ? `{${c.value.join(",")}}` : String(c.value));
 
 /** Busca jugadores en la vista `player_search` (la privacidad ya viene aplicada en la vista). */
-export async function searchPlayers(supabase: Client, viewerId: string, conditions: Condition[], page: number) {
+export async function searchPlayers(supabase: Client, viewerId: string, conditions: Condition[], page: number, gameId: string) {
   let q = supabase
     .from("player_search")
     .select("*", { count: "exact" })
-    .eq("game_id", GAME_ID)
+    .eq("game_id", gameId)
     .neq("user_id", viewerId);
   for (const c of conditions) q = q.filter(c.column, OPS[c.op], encode(c));
   const from = (page - 1) * PAGE_SIZE;

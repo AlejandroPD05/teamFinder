@@ -1,6 +1,20 @@
 "use client";
 
-import { Crosshair, Radar, Shield, Wind, type LucideIcon } from "lucide-react";
+import {
+  Anchor,
+  Crosshair,
+  EyeOff,
+  Footprints,
+  HeartHandshake,
+  Megaphone,
+  Radar,
+  Shield,
+  Swords,
+  Target,
+  Wind,
+  Zap,
+  type LucideIcon,
+} from "lucide-react";
 import Image from "next/image";
 import { useState } from "react";
 
@@ -12,6 +26,18 @@ const ROLE_ICONS: Record<string, LucideIcon> = {
   initiator: Radar,
   controller: Wind,
   sentinel: Shield,
+  // CS2 (roles de comunidad)
+  entry: Zap,
+  awper: Target,
+  igl: Megaphone,
+  support: HeartHandshake,
+  lurker: EyeOff,
+  rifler: Swords,
+  anchor: Anchor,
+  // Apex Legends (clases)
+  assault: Swords,
+  skirmisher: Footprints,
+  recon: Radar,
 };
 
 export function RoleIcon({ slug, className = "size-4" }: { slug?: string | null; className?: string }) {

@@ -118,3 +118,8 @@ from (values
   ('radiant', 'https://media.valorant-api.com/competitivetiers/03621f52-342b-cf4e-4f86-9350a49c6d04/27/smallicon.png', '#ffffaa')
 ) as v(slug, url, color)
 where r.game_id = 'valorant' and r.slug = v.slug;
+
+-- Tema y textos por juego (repetido de la migración 20261105020000_game_themes.sql: el seed va después de las migraciones).
+update public.games set short_name = 'VALORANT', character_label = 'Agentes',
+  theme_accent = '#ff6b6b', theme_accent_soft = '#ff9e9e', theme_glow_a = '#ff6b6b', theme_glow_b = '#1e3a6e'
+where id = 'valorant';

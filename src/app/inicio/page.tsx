@@ -1,3 +1,4 @@
+import { currentGame } from "@/lib/games";
 import type { Metadata } from "next";
 import Image from "next/image";
 import Link from "next/link";
@@ -15,8 +16,9 @@ export default async function Dashboard() {
   const userId = claims?.claims?.sub;
   if (!userId) redirect("/entrar?next=/inicio");
 
+  const { game: current } = await currentGame(supabase);
   const [{ profile, game, roles, characters }, { data: isAdmin }] = await Promise.all([
-    loadOwnProfile(supabase, userId),
+    loadOwnProfile(supabase, userId, current.id),
     supabase.rpc("is_admin"),
   ]);
   const name = profile.display_name;
@@ -28,7 +30,8 @@ export default async function Dashboard() {
     rank_id: game?.rank_id ?? null,
     region_id: game?.region_id ?? null,
     roles: roles.length,
-    characters: characters.length,
+    characters: current.character_label ? characters.length : null,
+    characterLabel: current.character_label ?? undefined,
   });
 
   return (
@@ -79,7 +82,9 @@ export default async function Dashboard() {
             Ver mi perfil público
           </Link>
         </div>
-        <p className="mt-4 inline-block rounded border border-line px-2 py-1 text-xs text-muted">{es.dashboard.riot}</p>
+        {current.id === "valorant" && (
+          <p className="mt-4 inline-block rounded border border-line px-2 py-1 text-xs text-muted">{es.dashboard.riot}</p>
+        )}
       </div>
 
       <nav aria-label="Cuenta" className="flex flex-wrap gap-3 text-sm">

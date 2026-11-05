@@ -2,12 +2,13 @@ import { HeartHandshake, MessagesSquare, ShieldCheck, SlidersHorizontal, Swords,
 import Link from "next/link";
 import { redirect } from "next/navigation";
 import { CharacterIcon } from "@/components/game-icons";
+import { currentGame } from "@/lib/games";
 import { es } from "@/lib/i18n/es";
 import { createClient } from "@/lib/supabase/server";
 
 const STEPS = [
   { Icon: Swords, title: "Elige modo", text: "DuoQ, TrioQ o FiveStack, ahora o a una hora concreta." },
-  { Icon: SlidersHorizontal, title: "Encuentra a tu gente", text: "Filtra por rango, rol, agente, idioma y horario." },
+  { Icon: SlidersHorizontal, title: "Encuentra a tu gente", text: "Filtra por rango, rol, personaje, idioma y horario." },
   { Icon: MessagesSquare, title: "Coordinaos", text: "Solicita unirte y habla en la sala del grupo en tiempo real." },
   { Icon: HeartHandshake, title: "Jugad y reconoced", text: "Al cerrar el grupo, reconoce a los compañeros que lo hicieron bien." },
 ] as const;
@@ -16,7 +17,7 @@ const FEATURES = [
   {
     Icon: UsersRound,
     title: "Perfiles que dicen cómo juegas",
-    text: "Roles, pool de agentes con main y comfort picks, modos, idiomas y horarios.",
+    text: "Roles, pool de personajes con main y comfort picks, modos, idiomas y horarios.",
   },
   {
     Icon: ShieldCheck,
@@ -37,9 +38,10 @@ export default async function Home({ searchParams }: PageProps<"/">) {
   const deleted = sp.cuenta === "borrada";
 
   const supabase = await createClient();
+  const { game } = await currentGame(supabase);
   const [{ data: claims }, { data: agents }] = await Promise.all([
     supabase.auth.getClaims(),
-    supabase.from("game_characters").select("id, name, icon_url").eq("game_id", "valorant").eq("active", true).order("name"),
+    supabase.from("game_characters").select("id, name, icon_url").eq("game_id", game.id).eq("active", true).order("name"),
   ]);
   const signedIn = Boolean(claims?.claims?.sub);
   const cta = signedIn ? { href: "/buscar", text: es.home.ctaSignedIn } : { href: "/entrar", text: es.home.cta };
@@ -53,7 +55,7 @@ export default async function Home({ searchParams }: PageProps<"/">) {
       )}
 
       <section className="relative flex flex-col items-center gap-7 pt-6 text-center sm:pt-14">
-        <p className="eyebrow">VALORANT · beta abierta</p>
+        <p className="eyebrow">{game.name} · beta abierta</p>
         <h1 className="font-display max-w-3xl text-4xl font-bold leading-[1.05] sm:text-6xl">
           Encuentra con quién <span className="bg-gradient-to-r from-accent-soft to-info-soft bg-clip-text text-transparent">hacer stack</span>
         </h1>
@@ -68,7 +70,7 @@ export default async function Home({ searchParams }: PageProps<"/">) {
         </div>
 
         {agents && agents.some((a) => a.icon_url) && (
-          <ul aria-label="Agentes disponibles en los perfiles" className="mt-6 flex max-w-4xl flex-wrap justify-center gap-2 opacity-90">
+          <ul aria-label={`${game.character_label ?? "Personajes"} disponibles en los perfiles`} className="mt-6 flex max-w-4xl flex-wrap justify-center gap-2 opacity-90">
             {agents.map((a) => (
               <li key={a.id}>
                 <CharacterIcon name={a.name} src={a.icon_url} size={40} decorative={false} />

@@ -17,7 +17,17 @@ function ago(iso: string | null) {
 
 const STATUS_ORDER = ["main", "comfort", "playable", "flexible"] as const;
 
-export function PlayerCard({ p, catalog, profileHref }: { p: PlayerRow; catalog: Catalog; profileHref?: string | null }) {
+export function PlayerCard({
+  p,
+  catalog,
+  profileHref,
+  characterLabel = "Agentes",
+}: {
+  p: PlayerRow;
+  catalog: Catalog;
+  profileHref?: string | null;
+  characterLabel?: string | null;
+}) {
   const name = p.display_name ?? "Jugador";
   const rank = catalog.ranks.find((r) => r.id === p.rank_id);
   const region = catalog.regions.find((r) => r.id === p.region_id)?.name;
@@ -71,7 +81,7 @@ export function PlayerCard({ p, catalog, profileHref }: { p: PlayerRow; catalog:
       )}
 
       {agents.length > 0 ? (
-        <ul aria-label="Agentes" className="flex flex-wrap gap-2">
+        <ul aria-label={characterLabel ?? "Personajes"} className="flex flex-wrap gap-2">
           {agents.map(({ c, status }) => (
             <li key={c!.id} className="flex flex-col items-center gap-1">
               <CharacterIcon name={c!.name} src={c!.icon_url} size={40} ring={status === "main" ? "main" : status === "comfort" ? "comfort" : null} />
@@ -82,9 +92,9 @@ export function PlayerCard({ p, catalog, profileHref }: { p: PlayerRow; catalog:
             </li>
           ))}
         </ul>
-      ) : (
-        <p className="text-sm text-muted">Sin agentes indicados</p>
-      )}
+      ) : characterLabel ? (
+        <p className="text-sm text-muted">Sin {characterLabel.toLowerCase()} indicados</p>
+      ) : null}
 
       <dl className="grid gap-1.5 text-sm">
         {modes.length > 0 && (

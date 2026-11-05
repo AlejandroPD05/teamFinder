@@ -87,4 +87,10 @@ describe("profileCompletion", () => {
     expect(c.percent).toBe(38);
     expect(c.missing).toEqual(["Horarios", "Objetivos", "Comunicación", "Servidor", "Agentes"]);
   });
+
+  it("no cuenta personajes en juegos sin ellos y usa la etiqueta del juego", () => {
+    const base = { languages: ["es"], availability: ["night"], goals: ["ranked"], voice: "voice", rank_id: A, region_id: A, roles: 1 };
+    expect(profileCompletion({ ...base, characters: null }).percent).toBe(100);
+    expect(profileCompletion({ ...base, characters: 0, characterLabel: "Leyendas" }).missing).toEqual(["Leyendas"]);
+  });
 });

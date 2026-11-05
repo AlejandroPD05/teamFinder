@@ -33,8 +33,8 @@ body {
   background-color: var(--color-bg);
   /* Brillos de fondo fijos y sutiles: morado arriba a la izquierda, azul a la derecha. */
   background-image:
-    radial-gradient(60rem 30rem at 10% -10%, rgb(139 92 246 / 0.12), transparent 60%),
-    radial-gradient(50rem 28rem at 110% 10%, rgb(59 130 246 / 0.08), transparent 60%);
+    radial-gradient(60rem 30rem at 10% -10%, var(--glow-a, rgb(139 92 246 / 0.12)), transparent 60%),
+    radial-gradient(50rem 28rem at 110% 10%, var(--glow-b, rgb(59 130 246 / 0.08)), transparent 60%);
   background-attachment: fixed;
   color: var(--color-text);
 }
@@ -45,7 +45,7 @@ body {
 }
 
 ::selection {
-  background: rgb(139 92 246 / 0.35);
+  background: color-mix(in srgb, var(--color-accent) 35%, transparent);
 }
 
 @layer components {
@@ -82,10 +82,10 @@ body {
   }
   .surface-interactive:hover,
   .surface-interactive:focus-within {
-    border-color: rgb(139 92 246 / 0.55);
+    border-color: color-mix(in srgb, var(--color-accent) 55%, transparent);
     box-shadow:
-      0 0 0 1px rgb(139 92 246 / 0.15),
-      0 12px 40px -18px rgb(139 92 246 / 0.45);
+      0 0 0 1px color-mix(in srgb, var(--color-accent) 15%, transparent),
+      0 12px 40px -18px color-mix(in srgb, var(--color-accent) 45%, transparent);
   }
 
   /* Botón principal con esquina cortada (detalle competitivo, sin imitar a ningún juego). */
@@ -100,7 +100,7 @@ body {
     font-weight: 600;
     letter-spacing: 0.02em;
     color: var(--color-bg);
-    background: linear-gradient(135deg, #b39dfb, var(--color-accent));
+    background: linear-gradient(135deg, var(--color-accent-soft), var(--color-accent));
     clip-path: polygon(0 0, calc(100% - 10px) 0, 100% 10px, 100% 100%, 10px 100%, 0 calc(100% - 10px));
     transition: filter 150ms ease;
   }
@@ -127,7 +127,7 @@ body {
   }
   .btn-ghost:hover {
     background-color: var(--color-panel-hover);
-    border-color: rgb(139 92 246 / 0.5);
+    border-color: color-mix(in srgb, var(--color-accent) 50%, transparent);
   }
 
   /* Chip/insignia neutra. */

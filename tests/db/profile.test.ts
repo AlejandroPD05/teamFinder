@@ -17,7 +17,7 @@ describe("perfil: visibilidad y datos de juego", () => {
     const db = admin();
     const { data: roles } = await db.from("game_roles").select("id, slug").eq("game_id", "valorant");
     roleIds = Object.fromEntries((roles ?? []).map((r) => [r.slug, r.id]));
-    const { data: chars } = await db.from("game_characters").select("id, slug").in("slug", ["omen", "clove", "sage"]);
+    const { data: chars } = await db.from("game_characters").select("id, slug").eq("game_id", "valorant").in("slug", ["omen", "clove", "sage"]);
     const bySlug = Object.fromEntries((chars ?? []).map((c) => [c.slug, c.id]));
     omen = bySlug.omen;
     clove = bySlug.clove;
