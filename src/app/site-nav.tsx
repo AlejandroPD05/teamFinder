@@ -8,7 +8,7 @@ const LINKS = [
   { href: "/buscar", label: "Buscar", Icon: Search, match: "/buscar" },
   { href: "/grupos", label: "Grupos", Icon: UsersRound, match: "/grupos" },
   { href: "/mensajes", label: "Mensajes", Icon: MessagesSquare, match: "/mensajes" },
-  { href: "/perfil/editar", label: "Mi perfil", Icon: UserRound, match: "/perfil" },
+  { href: "/perfil", label: "Mi perfil", Icon: UserRound, match: "/perfil" },
 ] as const;
 
 /** Navegación principal con estado activo. En móvil ocupa una segunda fila a lo ancho. */

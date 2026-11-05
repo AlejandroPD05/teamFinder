@@ -38,6 +38,14 @@ test("editar perfil, verlo como público y respetar la privacidad", async ({ pag
   await expect(page.getByText("Español")).toBeVisible();
   const profileUrl = page.url();
 
+  // «Mi perfil» abre el resumen, y desde ahí se edita.
+  await page.getByRole("link", { name: "Mi perfil" }).click();
+  await expect(page).toHaveURL(/\/perfil$/);
+  await expect(page.getByRole("link", { name: "Mi perfil" })).toHaveAttribute("aria-current", "page");
+  await expect(page.getByRole("heading", { level: 1 })).toHaveText("Smoker E2E");
+  await page.getByRole("link", { name: "Editar perfil" }).click();
+  await expect(page).toHaveURL(/\/perfil\/editar$/);
+
   // Visto por un anónimo: VALORANT es público, idiomas solo para registrados.
   const guest = await browser.newContext();
   const guestPage = await guest.newPage();
