@@ -6,6 +6,9 @@ export const PROTECTED_PREFIXES = ["/inicio", "/perfil", "/buscar", "/grupos", "
 
 export const DEFAULT_AFTER_LOGIN = "/inicio";
 
+// Propiedad de Google Search Console de https://teamfinder-seven.vercel.app (método «etiqueta HTML»).
+export const GOOGLE_SITE_VERIFICATION = "RN-BBIIeqlq23AQBfeTiO0Uu6D8tRBW79dmF4fVEwsQ";
+
 // Juego activo (tema y catálogo). Lo fija el selector o la página pública de cada juego (/equipos/<juego>).
 export const GAME_COOKIE = "tf_game";
 export const GAME_COOKIE_MAX_AGE = 60 * 60 * 24 * 365;
