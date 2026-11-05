@@ -88,7 +88,17 @@ function Checks({
   );
 }
 
-export function ProfileForm({ catalog, values }: { catalog: Catalog; values: ProfileFormValues }) {
+export function ProfileForm({
+  catalog,
+  values,
+  gameName,
+  characterLabel,
+}: {
+  catalog: Catalog;
+  values: ProfileFormValues;
+  gameName: string;
+  characterLabel: string | null;
+}) {
   const [state, action, pending] = useActionState<SaveState, FormData>(saveProfile, null);
   const err = state?.fieldErrors ?? {};
   const roleName = new Map(catalog.roles.map((r) => [r.id, r.name]));
@@ -154,7 +164,7 @@ export function ProfileForm({ catalog, values }: { catalog: Catalog; values: Pro
       </fieldset>
 
       <fieldset className={box}>
-        <legend className={legend}>VALORANT</legend>
+        <legend className={legend}>{gameName}</legend>
         <div className="mt-3 grid gap-4 sm:grid-cols-2">
           <label className="flex flex-col gap-2 text-sm font-medium">
             Rango actual
@@ -166,7 +176,7 @@ export function ProfileForm({ catalog, values }: { catalog: Catalog; values: Pro
                 </option>
               ))}
             </select>
-            <span className="font-normal text-muted">Introducido manualmente: no está verificado con Riot.</span>
+            <span className="font-normal text-muted">Introducido manualmente: no está verificado con el juego.</span>
           </label>
           <label className="flex flex-col gap-2 text-sm font-medium">
             Servidor
@@ -211,9 +221,10 @@ export function ProfileForm({ catalog, values }: { catalog: Catalog; values: Pro
           </label>
         </div>
 
+        {characterLabel && catalog.characters.length > 0 && (
         <details className="mt-5" open={Object.keys(values.characters).length > 0}>
           <summary className="min-h-11 cursor-pointer py-2 text-sm font-medium">
-            Pool de agentes ({Object.keys(values.characters).length} elegidos)
+            Pool de {characterLabel.toLowerCase()} ({Object.keys(values.characters).length} elegidos)
           </summary>
           <div className="mt-2 grid gap-6 sm:grid-cols-2">
             {catalog.roles.map((role) => (
@@ -252,8 +263,9 @@ export function ProfileForm({ catalog, values }: { catalog: Catalog; values: Pro
             ))}
           </div>
         </details>
+        )}
 
-        <VisibilitySelect name="game_visibility" value={values.game_visibility} label="tu perfil de VALORANT" />
+        <VisibilitySelect name="game_visibility" value={values.game_visibility} label={`tu perfil de ${gameName}`} />
       </fieldset>
 
       <div className="sticky bottom-0 -mx-4 flex flex-wrap items-center gap-4 border-t border-line bg-bg/95 px-4 py-3">

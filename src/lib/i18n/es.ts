@@ -3,7 +3,7 @@ import { APP_NAME } from "../config";
 // Textos de la UI. Un solo idioma por ahora; añadir otros con la misma forma.
 export const es = {
   meta: {
-    description: "Encuentra compañeros para hacer stack en VALORANT.",
+    description: "Encuentra compañeros para hacer stack en VALORANT, Counter-Strike 2 y Apex Legends.",
   },
   nav: {
     skip: "Saltar al contenido",
@@ -19,10 +19,16 @@ export const es = {
     riot: `TeamFinder was created under Riot Games' "Legal Jibber Jabber" policy using assets owned by Riot Games. Riot Games does not endorse or sponsor this project.`,
     riotEs:
       "TeamFinder se ha creado bajo la política «Legal Jibber Jabber» de Riot Games usando recursos propiedad de Riot Games. Riot Games no respalda ni patrocina este proyecto. Proyecto de fans sin ánimo de lucro.",
+    // Aviso que exige la política de contenido de EA a los sitios de fans (literal).
+    ea: "This website is not endorsed by or affiliated with EA or its licensors.",
+    // Valve no publica un aviso oficial para webs; este es el habitual.
+    valve: "Not affiliated with or endorsed by Valve Corporation. Counter-Strike is a trademark of Valve Corporation.",
+    othersEs:
+      "Sin relación con Valve Corporation ni con Electronic Arts, que no respaldan este proyecto. Counter-Strike es una marca de Valve Corporation; Apex Legends es una marca de Electronic Arts.",
   },
   home: {
     title: "Encuentra con quién hacer stack",
-    lead: "Perfiles con rango, roles y agentes, búsqueda con filtros y grupos para DuoQ, TrioQ o FiveStack. Empezamos por VALORANT.",
+    lead: "Perfiles con rango, roles y personajes, búsqueda con filtros y grupos para jugar en dúo, trío o equipo completo. VALORANT, Counter-Strike 2 y Apex Legends.",
     cta: "Entrar para empezar",
     ctaSignedIn: "Buscar jugadores",
     beta: "Beta en pruebas: puede haber errores.",

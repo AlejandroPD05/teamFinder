@@ -1,3 +1,4 @@
+import { currentGame } from "@/lib/games";
 import type { Metadata } from "next";
 import Link from "next/link";
 import { redirect } from "next/navigation";
@@ -58,7 +59,8 @@ export default async function SearchPage({ searchParams }: PageProps<"/buscar">)
   const userId = claims?.claims?.sub;
   if (!userId) redirect("/entrar?next=/buscar");
 
-  const catalog = await loadCatalog(supabase);
+  const { game } = await currentGame(supabase);
+  const catalog = await loadCatalog(supabase, game.id);
   const raw = await searchParams;
   const filters = parseFilters(raw, catalog);
 
@@ -67,9 +69,12 @@ export default async function SearchPage({ searchParams }: PageProps<"/buscar">)
     Object.entries(raw).flatMap(([k, v]) => (Array.isArray(v) ? v : [v ?? ""]).map((x) => [k, x])),
   ).toString();
   if (current !== toSearchParams(filters).toString()) redirect(href(filters));
-  const { players, total } = await searchPlayers(supabase, userId, toConditions(filters, catalog), filters.page);
+  const { players, total } = await searchPlayers(supabase, userId, toConditions(filters, catalog), filters.page, game.id);
   const pages = Math.max(1, Math.ceil(total / PAGE_SIZE));
   const n = activeCount(filters);
+  // Etiqueta en singular del filtro de personaje (Agente, Leyenda…); null si el juego no tiene personajes.
+  const character =
+    game.character_label && catalog.characters.length > 0 ? game.character_label.replace(/s$/, "") : null;
   const ranks = catalog.ranks.map((r) => [r.slug, r.name] as [string, string]);
 
   return (
@@ -77,7 +82,7 @@ export default async function SearchPage({ searchParams }: PageProps<"/buscar">)
       <div>
         <h1 className="font-display text-3xl font-semibold">Buscar jugadores</h1>
         <p className="text-muted">
-          VALORANT · Solo ves lo que cada jugador ha decidido mostrar. Los rangos son introducidos por cada jugador.
+          {game.name} · Solo ves lo que cada jugador ha decidido mostrar. Los rangos son introducidos por cada jugador.
         </p>
       </div>
 
@@ -89,9 +94,11 @@ export default async function SearchPage({ searchParams }: PageProps<"/buscar">)
           <Select name="region" label="Servidor" value={filters.region} options={catalog.regions.map((r) => [r.slug, r.name])} />
           <Select name="mode" label="Modo" value={filters.mode} options={catalog.modes.map((m) => [m.slug, m.name])} />
           <Select name="role" label="Rol" value={filters.role} options={catalog.roles.map((r) => [r.slug, r.name])} />
-          <Select name="agent" label="Agente" value={filters.agent} options={catalog.characters.map((c) => [c.slug, c.name])} />
+          {character && (
+          <>
+          <Select name="agent" label={character} value={filters.agent} options={catalog.characters.map((c) => [c.slug, c.name])} />
           <fieldset className="col-span-2 text-sm">
-            <legend className="font-medium">Cómo juega ese agente</legend>
+            <legend className="font-medium">Cómo lo juega</legend>
             <div className="mt-1 flex flex-wrap gap-2">
               {Object.entries(CHARACTER_STATUS).map(([k, v]) => (
                 <label key={k} className="flex min-h-11 items-center gap-2 rounded-md border border-line px-3 has-[:checked]:border-accent">
@@ -101,6 +108,8 @@ export default async function SearchPage({ searchParams }: PageProps<"/buscar">)
               ))}
             </div>
           </fieldset>
+          </>
+          )}
           <Select name="lang" label="Idioma" value={filters.lang} options={Object.entries(LANGUAGES)} />
           <Select name="goal" label="Objetivo" value={filters.goal} options={Object.entries(GOALS)} />
           <Select name="voice" label="Comunicación" value={filters.voice} options={Object.entries(VOICE)} />
@@ -140,7 +149,7 @@ export default async function SearchPage({ searchParams }: PageProps<"/buscar">)
       {players.length > 0 ? (
         <ul className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
           {players.map((p) => (
-            <PlayerCard key={p.user_id} p={p} catalog={catalog} />
+            <PlayerCard key={p.user_id} p={p} catalog={catalog} characterLabel={game.character_label} />
           ))}
         </ul>
       ) : (
@@ -161,7 +170,7 @@ export default async function SearchPage({ searchParams }: PageProps<"/buscar">)
             </>
           ) : (
             <p className="mt-1 text-sm text-muted">
-              Todavía no hay otros jugadores con perfil de VALORANT visible. Completa el tuyo para que te encuentren.
+              Todavía no hay otros jugadores con perfil de {game.name} visible. Completa el tuyo para que te encuentren.
             </p>
           )}
         </div>

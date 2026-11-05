@@ -39,8 +39,9 @@ export default async function LobbyPage({ params }: PageProps<"/grupos/[id]">) {
   const me = claims?.claims?.sub;
   if (!me) redirect(`/entrar?next=/grupos/${id}`);
 
-  const [catalog, data] = await Promise.all([loadCatalog(supabase), loadLobby(supabase, id)]);
+  const data = await loadLobby(supabase, id);
   if (!data) notFound();
+  const catalog = await loadCatalog(supabase, data.lobby.game_id);
   const { lobby, members, neededRoles, requests } = data;
   const names = await loadNames(supabase, [lobby.owner_id, ...members.map((m) => m.user_id), ...requests.map((r) => r.user_id)]);
   const name = (uid: string) => names.get(uid)?.name ?? "Jugador";

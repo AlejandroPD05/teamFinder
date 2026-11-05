@@ -35,7 +35,7 @@ export const gameProfileSchema = z
     characters: z
       .array(z.object({ character_id: uuid, status: z.enum(keys(CHARACTER_STATUS)) }))
       .max(40)
-      .refine((a) => unique(a.map((c) => c.character_id)), "Agente repetido."),
+      .refine((a) => unique(a.map((c) => c.character_id)), "Personaje repetido."),
   })
   .refine((v) => !v.primary_role || v.roles.includes(v.primary_role), {
     message: "El rol principal tiene que estar entre tus roles.",
@@ -89,7 +89,9 @@ export function profileCompletion(p: {
   rank_id: string | null;
   region_id: string | null;
   roles: number;
-  characters: number;
+  /** null: el juego no tiene personajes (p. ej. CS2) y no cuenta para el porcentaje. */
+  characters: number | null;
+  characterLabel?: string;
 }) {
   const checks = {
     Idiomas: p.languages.length > 0,
@@ -99,7 +101,7 @@ export function profileCompletion(p: {
     Rango: p.rank_id != null,
     Servidor: p.region_id != null,
     Roles: p.roles > 0,
-    Agentes: p.characters > 0,
+    ...(p.characters == null ? {} : { [p.characterLabel ?? "Agentes"]: p.characters > 0 }),
   };
   const done = Object.values(checks).filter(Boolean).length;
   const missing = Object.entries(checks)

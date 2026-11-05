@@ -1,3 +1,4 @@
+import { currentGame } from "@/lib/games";
 import type { Metadata } from "next";
 import Link from "next/link";
 import { redirect } from "next/navigation";
@@ -18,14 +19,15 @@ export default async function LobbiesPage({ searchParams }: PageProps<"/grupos">
   const { data: claims } = await supabase.auth.getClaims();
   if (!claims?.claims?.sub) redirect("/entrar?next=/grupos");
 
-  const catalog = await loadCatalog(supabase);
+  const { game } = await currentGame(supabase);
+  const catalog = await loadCatalog(supabase, game.id);
   const sp = await searchParams;
   const mode = catalog.modes.find((m) => m.slug === one(sp.mode))?.slug;
   const region = catalog.regions.find((r) => r.slug === one(sp.region));
   const role = catalog.roles.find((r) => r.slug === one(sp.role));
   const lang = one(sp.lang) && one(sp.lang)! in LANGUAGES ? one(sp.lang) : undefined;
 
-  const lobbies = await listOpenLobbies(supabase, { mode, regionId: region?.id, roleId: role?.id, lang });
+  const lobbies = await listOpenLobbies(supabase, { gameId: game.id, mode, regionId: region?.id, roleId: role?.id, lang });
   const names = await loadNames(supabase, lobbies.map((l) => l.owner_id));
   const label = (list: { id: string; name: string }[], id: string | null) => list.find((x) => x.id === id)?.name;
   const filtered = Boolean(mode || region || role || lang);
@@ -35,7 +37,7 @@ export default async function LobbiesPage({ searchParams }: PageProps<"/grupos">
       <div className="flex flex-wrap items-end justify-between gap-3">
         <div>
           <h1 className="font-display text-3xl font-semibold">Grupos</h1>
-          <p className="text-muted">Grupos de VALORANT buscando gente ahora o para más tarde.</p>
+          <p className="text-muted">Grupos de {game.name} buscando gente ahora o para más tarde.</p>
         </div>
         <Link
           href="/grupos/nuevo"

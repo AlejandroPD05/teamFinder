@@ -1,5 +1,4 @@
 import "server-only";
-import { GAME_ID } from "@/lib/profile/queries";
 import type { createClient } from "@/lib/supabase/server";
 
 type Client = Awaited<ReturnType<typeof createClient>>;
@@ -7,17 +6,17 @@ type Client = Awaited<ReturnType<typeof createClient>>;
 export type LobbyFilters = { mode?: string; region?: string; role?: string; lang?: string };
 
 const LOBBY_FIELDS =
-  "id, owner_id, mode_slug, slots, note, rank_min_id, rank_max_id, region_id, language, goal, starts_at, status, created_at, closed_at";
+  "id, game_id, owner_id, mode_slug, slots, note, rank_min_id, rank_max_id, region_id, language, goal, starts_at, status, created_at, closed_at";
 
 /** Grupos abiertos, más recientes primero. `regionId` y `roleId` ya resueltos desde slugs. */
 export async function listOpenLobbies(
   supabase: Client,
-  f: { mode?: string; regionId?: string; roleId?: string; lang?: string },
+  f: { gameId: string; mode?: string; regionId?: string; roleId?: string; lang?: string },
 ) {
   const select = f.roleId
     ? `${LOBBY_FIELDS}, lobby_members(count), lobby_needed_roles!inner(role_id)`
     : `${LOBBY_FIELDS}, lobby_members(count), lobby_needed_roles(role_id)`;
-  let q = supabase.from("lobbies").select(select).eq("game_id", GAME_ID).eq("status", "open");
+  let q = supabase.from("lobbies").select(select).eq("game_id", f.gameId).eq("status", "open");
   if (f.mode) q = q.eq("mode_slug", f.mode);
   if (f.regionId) q = q.eq("region_id", f.regionId);
   if (f.lang) q = q.eq("language", f.lang);

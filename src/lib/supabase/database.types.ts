@@ -213,14 +213,14 @@ isOneToOne: false
                   ]
                 },"games": {
                   Row: {
-                    "active": boolean,"id": string,"name": string,"sort": number
+                    "active": boolean,"character_label": string | null,"id": string,"name": string,"short_name": string | null,"sort": number,"theme_accent": string | null,"theme_accent_soft": string | null,"theme_glow_a": string | null,"theme_glow_b": string | null
                   }
                   ComputedFields: never
                   Insert: {
-                    "active"?: boolean,"id": string,"name": string,"sort"?: number
+                    "active"?: boolean,"character_label"?: string | null,"id": string,"name": string,"short_name"?: string | null,"sort"?: number,"theme_accent"?: string | null,"theme_accent_soft"?: string | null,"theme_glow_a"?: string | null,"theme_glow_b"?: string | null
                   }
                   Update: {
-                    "active"?: boolean,"id"?: string,"name"?: string,"sort"?: number
+                    "active"?: boolean,"character_label"?: string | null,"id"?: string,"name"?: string,"short_name"?: string | null,"sort"?: number,"theme_accent"?: string | null,"theme_accent_soft"?: string | null,"theme_glow_a"?: string | null,"theme_glow_b"?: string | null
                   }
                   Relationships: [
                     

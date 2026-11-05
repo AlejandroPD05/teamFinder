@@ -34,10 +34,10 @@ describe("búsqueda de jugadores", () => {
     ]);
     ids = [viewer.id, open.id, secret.id, hiddenLang.id];
     const db = admin();
-    const { data: ranks } = await db.from("game_ranks").select("id, slug").in("slug", ["gold-2", "platinum-1"]);
+    const { data: ranks } = await db.from("game_ranks").select("id, slug").eq("game_id", "valorant").in("slug", ["gold-2", "platinum-1"]);
     gold2 = ranks!.find((r) => r.slug === "gold-2")!.id;
     plat1 = ranks!.find((r) => r.slug === "platinum-1")!.id;
-    omen = (await db.from("game_characters").select("id").eq("slug", "omen").single()).data!.id;
+    omen = (await db.from("game_characters").select("id").eq("game_id", "valorant").eq("slug", "omen").single()).data!.id;
     controller = (await db.from("game_roles").select("id").eq("game_id", "valorant").eq("slug", "controller").single()).data!.id;
 
     await save(viewer, "public", gold2, []);
