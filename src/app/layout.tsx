@@ -73,6 +73,9 @@ export default async function RootLayout({ children }: LayoutProps<"/">) {
           <div className="mx-auto flex max-w-6xl flex-col gap-3 px-4 py-6 text-sm text-muted">
             <nav aria-label="Pie" className="flex flex-wrap items-center gap-x-5">
               <span className="font-display text-text">{APP_NAME} · beta</span>
+              <Link href="/demo" className="inline-flex min-h-11 items-center hover:text-text">
+                Demo
+              </Link>
               <Link href="/normas" className="inline-flex min-h-11 items-center hover:text-text">
                 Normas
               </Link>

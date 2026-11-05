@@ -17,7 +17,7 @@ function ago(iso: string | null) {
 
 const STATUS_ORDER = ["main", "comfort", "playable", "flexible"] as const;
 
-export function PlayerCard({ p, catalog }: { p: PlayerRow; catalog: Catalog }) {
+export function PlayerCard({ p, catalog, profileHref }: { p: PlayerRow; catalog: Catalog; profileHref?: string | null }) {
   const name = p.display_name ?? "Jugador";
   const rank = catalog.ranks.find((r) => r.id === p.rank_id);
   const region = catalog.regions.find((r) => r.id === p.region_id)?.name;
@@ -124,9 +124,11 @@ export function PlayerCard({ p, catalog }: { p: PlayerRow; catalog: Catalog }) {
           <Clock3 aria-hidden="true" className="size-3.5" />
           Actualizado {ago(p.updated_at)}
         </span>
-        <Link href={`/jugador/${p.user_id}`} className="btn-ghost" aria-label={`Ver perfil de ${name}`}>
-          Ver perfil
-        </Link>
+        {profileHref !== null && (
+          <Link href={profileHref ?? `/jugador/${p.user_id}`} className="btn-ghost" aria-label={`Ver perfil de ${name}`}>
+            Ver perfil
+          </Link>
+        )}
       </div>
     </li>
   );
