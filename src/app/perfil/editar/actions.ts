@@ -54,6 +54,8 @@ export async function saveProfile(_prev: SaveState, fd: FormData): Promise<SaveS
   if (gameError) return { ok: false, message: `No se pudo guardar tu perfil de ${game.name}. Inténtalo de nuevo.` };
 
   revalidatePath("/inicio");
+  revalidatePath("/perfil");
+  revalidatePath("/perfil/editar");
   revalidatePath(`/jugador/${userId}`);
   return { ok: true, message: "Perfil guardado." };
 }

@@ -43,3 +43,27 @@ test("cambiar de juego cambia el tema y el catálogo", async ({ page }, info) =>
   const result = await new AxeBuilder({ page }).withTags(["wcag2a", "wcag2aa", "wcag21a", "wcag21aa"]).analyze();
   expect(result.violations.map((v) => v.id)).toEqual([]);
 });
+
+test("perfil de Apex: guarda clases y leyendas", async ({ page }, info) => {
+  await signIn(page, `e2e-apex-${info.project.name}-${Date.now()}@example.test`);
+  // Se cambia de juego estando ya en el editor (el formulario tiene que rehacerse con el catálogo de Apex).
+  await page.goto("/perfil/editar");
+  await page.getByLabel("Rango actual").selectOption({ label: "Oro 2" });
+  await page.getByRole("button", { name: "APEX" }).click();
+  await expect(page.getByRole("group", { name: "Apex Legends" })).toBeVisible();
+  await page.getByLabel("Nombre visible").fill("Apex E2E");
+  await page.getByLabel("Hostigador", { exact: true }).check();
+  await page.getByLabel("Rol principal").selectOption({ label: "Hostigador" });
+  await page.getByText(/Pool de leyendas/).click();
+  await page.getByLabel("Wraith").selectOption("main");
+  await expect(page.getByText(/Pool de leyendas \(1 elegido\)/)).toBeVisible();
+  await page.getByLabel("Quién ve tu perfil de Apex Legends:").selectOption("public");
+  await page.getByRole("button", { name: "Guardar perfil" }).click();
+  await expect(page.getByRole("status")).toContainText("Perfil guardado");
+  await page.goto("/perfil");
+  await expect(page.getByText("Wraith")).toBeVisible();
+  // Icono oficial de EA servido por el optimizador de imágenes.
+  await expect(page.locator('img[src*="drop-assets.ea.com"]').first()).toBeVisible();
+  await page.goto("/perfil/editar");
+  await expect(page.getByLabel("Wraith")).toHaveValue("main");
+});
