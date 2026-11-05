@@ -59,3 +59,11 @@ test("cabeceras de seguridad", async ({ request }) => {
   expect(h["content-security-policy"]).toContain("frame-ancestors 'none'");
   expect(h["content-security-policy"]).toContain("object-src 'none'");
 });
+
+test("la demo pública se ve sin cuenta y avisa de que es ficticia", async ({ page }) => {
+  await page.goto("/demo");
+  await expect(page).toHaveURL(/\/demo$/);
+  await expect(page.getByRole("note").filter({ hasText: "Demostración con datos ficticios" })).toBeVisible();
+  await expect(page.getByRole("heading", { name: /Buscar jugadores/ })).toBeVisible();
+  await expect(page.getByText("Ficticio · Nébula").first()).toBeVisible();
+});

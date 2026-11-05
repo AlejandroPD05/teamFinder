@@ -62,8 +62,8 @@ export default async function Home({ searchParams }: PageProps<"/">) {
           <Link href={cta.href} className="btn-primary">
             {cta.text}
           </Link>
-          <Link href={signedIn ? "/grupos" : "/normas"} className="btn-ghost">
-            {signedIn ? "Ver grupos abiertos" : "Leer las normas"}
+          <Link href={signedIn ? "/grupos" : "/demo"} className="btn-ghost">
+            {signedIn ? "Ver grupos abiertos" : "Ver la demo sin cuenta"}
           </Link>
         </div>
 
