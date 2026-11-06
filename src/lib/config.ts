@@ -13,6 +13,9 @@ export const GOOGLE_SITE_VERIFICATION = "RN-BBIIeqlq23AQBfeTiO0Uu6D8tRBW79dmF4fV
 export const GAME_COOKIE = "tf_game";
 export const GAME_COOKIE_MAX_AGE = 60 * 60 * 24 * 365;
 
+/** Cabecera interna (proxy → servidor) con el juego de la URL en /equipos/<juego>. */
+export const PATH_GAME_HEADER = "x-tf-path-game";
+
 /** Juego de la URL en las páginas públicas por juego. */
 export function gameFromPath(pathname: string): string | null {
   return /^\/equipos\/([a-z0-9-]{2,32})$/.exec(pathname)?.[1] ?? null;

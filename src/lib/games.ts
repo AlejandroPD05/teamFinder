@@ -1,9 +1,9 @@
 import "server-only";
-import { cookies } from "next/headers";
+import { cookies, headers } from "next/headers";
 import { cache } from "react";
 import { createClient } from "@/lib/supabase/server";
 
-import { GAME_COOKIE } from "@/lib/config";
+import { GAME_COOKIE, PATH_GAME_HEADER } from "@/lib/config";
 
 export { GAME_COOKIE };
 export const DEFAULT_GAME = "valorant";
@@ -35,12 +35,17 @@ export async function loadGames(): Promise<Game[]> {
   return gamesForRequest();
 }
 
-/** Juego elegido por quien navega (cookie), validado contra los juegos activos. */
-export async function currentGame(): Promise<{ game: Game; games: Game[] }> {
+/**
+ * Juego con el que se pinta la petición: el de la URL en /equipos/<juego> y, si no, el elegido (cookie).
+ * `saved` es el elegido y guardado, que el selector usa para guardar el de /equipos al visitarla de verdad.
+ */
+export async function currentGame(): Promise<{ game: Game; games: Game[]; saved: string | null }> {
   const games = await loadGames();
-  const wanted = (await cookies()).get(GAME_COOKIE)?.value;
-  const game = games.find((g) => g.id === wanted) ?? games.find((g) => g.id === DEFAULT_GAME) ?? games[0];
-  return { game, games };
+  const valid = (id: string | null | undefined) => games.find((g) => g.id === id);
+  const saved = valid((await cookies()).get(GAME_COOKIE)?.value)?.id ?? null;
+  const fromPath = (await headers()).get(PATH_GAME_HEADER);
+  const game = valid(fromPath) ?? valid(saved) ?? valid(DEFAULT_GAME) ?? games[0];
+  return { game, games, saved };
 }
 
 export { themeStyle } from "./game-theme";

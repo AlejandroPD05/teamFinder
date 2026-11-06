@@ -1,15 +1,17 @@
 import { createServerClient } from "@supabase/ssr";
 import { NextResponse, type NextRequest } from "next/server";
 import { isProtectedPath } from "@/lib/auth";
-import { GAME_COOKIE, GAME_COOKIE_MAX_AGE, gameFromPath } from "@/lib/config";
+import { gameFromPath, PATH_GAME_HEADER } from "@/lib/config";
 import { supabaseEnv } from "@/lib/supabase/env";
 
 // Refresca la sesión en cada petición y protege las rutas privadas.
 export async function proxy(request: NextRequest) {
-  // En /equipos/<juego> la web entera (cabecera, colores) pasa a ese juego, también para quien llega desde un buscador.
-  // Sin redirección: el juego se inyecta en esta petición y se recuerda para las siguientes. El layout lo valida.
+  // En /equipos/<juego> la página se pinta con ese juego (también para quien llega desde un buscador) sin tocar la
+  // cookie: aquí no se distingue una visita de una precarga de enlace (Next quita esas cabeceras antes del proxy), y
+  // guardar la elección en una precarga cambiaba el juego al pasar por la portada. El selector la guarda en el cliente.
+  request.headers.delete(PATH_GAME_HEADER);
   const pathGame = gameFromPath(request.nextUrl.pathname);
-  if (pathGame) request.cookies.set(GAME_COOKIE, pathGame);
+  if (pathGame) request.headers.set(PATH_GAME_HEADER, pathGame);
   let response = NextResponse.next({ request });
   const { url, key } = supabaseEnv();
 
@@ -43,9 +45,6 @@ export async function proxy(request: NextRequest) {
     home.pathname = "/inicio";
     home.search = "";
     return NextResponse.redirect(home);
-  }
-  if (pathGame) {
-    response.cookies.set(GAME_COOKIE, pathGame, { path: "/", maxAge: GAME_COOKIE_MAX_AGE, sameSite: "lax", httpOnly: true });
   }
   return response;
 }
