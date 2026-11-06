@@ -1049,6 +1049,11 @@ isOneToOne: false
 "delete_my_account":
 { Args: Record<PropertyKey, never>; Returns: undefined
                            },
+"game_player_counts":
+{ Args: Record<PropertyKey, never>; Returns: {
+              "game_id": string,"players": number
+            }[]
+                           },
 "is_admin":
 { Args: Record<PropertyKey, never>; Returns: boolean
                            },

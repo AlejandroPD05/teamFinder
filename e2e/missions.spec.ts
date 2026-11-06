@@ -1,7 +1,7 @@
 import { createClient } from "@supabase/supabase-js";
 import AxeBuilder from "@axe-core/playwright";
 import { expect, test } from "@playwright/test";
-import { signIn, userIdByEmail } from "./helpers";
+import { pickGame, signIn, userIdByEmail } from "./helpers";
 
 const db = createClient(process.env.NEXT_PUBLIC_SUPABASE_URL!, process.env.SUPABASE_SECRET_KEY!, {
   auth: { persistSession: false },
@@ -44,7 +44,8 @@ test("misiones y colección: progreso, cartas bloqueadas y conseguidas", async (
   await expect(jett).not.toContainText("bloqueada");
 
   // CS2 aún no tiene cartas ni misiones: lo dice con claridad.
-  await page.getByRole("button", { name: "CS2", exact: true }).click();
+  await pickGame(page, "cs2");
+  await page.goto("/coleccion");
   await expect(page.getByRole("heading", { level: 1 })).toHaveText("Colección de Counter-Strike 2");
   await expect(page.getByText("Aún no hay cartas de Counter-Strike 2.")).toBeVisible();
   await page.goto("/misiones");

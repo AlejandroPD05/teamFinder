@@ -1,9 +1,8 @@
 import { Gamepad2, HeartHandshake, MessagesSquare, ShieldCheck, SlidersHorizontal, Swords, UsersRound } from "lucide-react";
 import Link from "next/link";
-import type { CSSProperties } from "react";
 import type { Metadata } from "next";
 import { redirect } from "next/navigation";
-import { CharacterIcon } from "@/components/game-icons";
+import { GamePicker } from "./game-switcher";
 import { currentGame } from "@/lib/games";
 import { APP_NAME } from "@/lib/config";
 import { siteUrl } from "@/lib/supabase/env";
@@ -45,9 +44,9 @@ export default async function Home({ searchParams }: PageProps<"/">) {
 
   const supabase = await createClient();
   const { game, games } = await currentGame();
-  const [{ data: claims }, { data: agents }] = await Promise.all([
+  const [{ data: claims }, { data: counts }] = await Promise.all([
     supabase.auth.getClaims(),
-    supabase.from("game_characters").select("id, name, icon_url").eq("game_id", game.id).eq("active", true).order("name"),
+    supabase.rpc("game_player_counts"),
   ]);
   const signedIn = Boolean(claims?.claims?.sub);
   const cta = signedIn ? { href: "/buscar", text: es.home.ctaSignedIn } : { href: "/entrar", text: es.home.cta };
@@ -74,15 +73,13 @@ export default async function Home({ searchParams }: PageProps<"/">) {
           </Link>
         </div>
 
-        {agents && agents.some((a) => a.icon_url) && (
-          <ul aria-label={`${game.character_label ?? "Personajes"} disponibles en los perfiles`} className="mt-6 flex max-w-4xl flex-wrap justify-center gap-2">
-            {agents.map((a, i) => (
-              <li key={a.id} className="enter" style={{ "--i": i } as CSSProperties}>
-                <CharacterIcon name={a.name} src={a.icon_url} size={40} decorative={false} />
-              </li>
-            ))}
-          </ul>
-        )}
+        <div className="mt-4 flex w-full justify-center">
+          <GamePicker
+            games={games}
+            current={game.id}
+            counts={Object.fromEntries((counts ?? []).map((c) => [c.game_id, c.players]))}
+          />
+        </div>
       </section>
 
       <script

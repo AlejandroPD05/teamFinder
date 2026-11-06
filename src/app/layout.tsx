@@ -6,7 +6,7 @@ import { APP_NAME, discordInvite, GOOGLE_SITE_VERIFICATION } from "@/lib/config"
 import { es } from "@/lib/i18n/es";
 import { createClient } from "@/lib/supabase/server";
 import { signOut } from "./auth/salir/actions";
-import { GameSwitcher } from "./game-switcher";
+import { GameSync } from "./game-switcher";
 import { Logo } from "./logo";
 import { currentGame, themeStyle } from "@/lib/games";
 import { SiteNav } from "./site-nav";
@@ -57,9 +57,7 @@ export default async function RootLayout({ children }: LayoutProps<"/">) {
             <Link href="/" className="flex min-h-14 items-center" aria-label={`${APP_NAME}, inicio`}>
               <Logo />
             </Link>
-            <div className="order-[60] flex w-full justify-center pb-2 sm:order-none sm:w-auto sm:pb-0">
-              <GameSwitcher games={games} current={game?.id ?? ""} saved={saved} />
-            </div>
+            <GameSync games={games} current={game?.id ?? ""} saved={saved} />
             {signedIn ? (
               <>
                 <SiteNav unread={unread} />
