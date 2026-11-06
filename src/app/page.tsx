@@ -1,4 +1,4 @@
-import { HeartHandshake, MessagesSquare, ShieldCheck, SlidersHorizontal, Swords, UsersRound } from "lucide-react";
+import { Gamepad2, HeartHandshake, MessagesSquare, ShieldCheck, SlidersHorizontal, Swords, UsersRound } from "lucide-react";
 import Link from "next/link";
 import type { CSSProperties } from "react";
 import type { Metadata } from "next";
@@ -29,9 +29,9 @@ const FEATURES = [
     text: "Decides qué ve todo el mundo, solo la comunidad o solo tú. Bloquea y denuncia cuando haga falta.",
   },
   {
-    Icon: MessagesSquare,
-    title: "Salas de grupo en directo",
-    text: "Cada grupo tiene su chat, solo para sus miembros, con límites contra el spam.",
+    Icon: Gamepad2,
+    title: "Un perfil por juego",
+    text: "VALORANT, Counter-Strike 2 y Apex Legends, cada uno con sus rangos, roles y personajes. Cambia de juego desde la cabecera.",
   },
 ] as const;
 
@@ -116,32 +116,33 @@ export default async function Home({ searchParams }: PageProps<"/">) {
         </ul>
       </nav>
 
-      <section aria-labelledby="como" className="flex flex-col gap-8">
+      <section aria-labelledby="como" className="flex flex-col gap-10">
         <h2 id="como" className="font-display text-2xl font-semibold sm:text-3xl">
           De la cola en solitario a tu stack
         </h2>
-        <ol className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
+        {/* Pasos: un recorrido, no tarjetas. El orden lo da la lista. */}
+        <ol className="grid gap-x-8 gap-y-8 sm:grid-cols-2 lg:grid-cols-4">
           {STEPS.map(({ Icon, title, text }) => (
-            <li key={title} className="surface flex flex-col gap-3 p-5">
-              <Icon aria-hidden="true" className="size-6 text-muted" />
+            <li key={title} className="flex flex-col gap-2 border-t border-line pt-5">
+              <Icon aria-hidden="true" className="size-5 text-muted" />
               <h3 className="font-display text-lg font-semibold">{title}</h3>
               <p className="text-sm text-muted">{text}</p>
             </li>
           ))}
         </ol>
-      </section>
 
-      <section aria-labelledby="funciones" className="grid gap-4 md:grid-cols-3">
-        <h2 id="funciones" className="sr-only">
-          Funciones
-        </h2>
-        {FEATURES.map(({ Icon, title, text }) => (
-          <div key={title} className="surface flex flex-col gap-3 p-6">
-            <Icon aria-hidden="true" className="size-6 text-muted" />
-            <h3 className="font-display text-lg font-semibold">{title}</h3>
-            <p className="text-sm text-muted">{text}</p>
-          </div>
-        ))}
+        <h3 id="funciones" className="sr-only">
+          Qué incluye
+        </h3>
+        <ul aria-labelledby="funciones" className="mt-4 grid gap-4 md:grid-cols-3">
+          {FEATURES.map(({ Icon, title, text }) => (
+            <li key={title} className="surface flex flex-col gap-3 p-6">
+              <Icon aria-hidden="true" className="size-6 text-muted" />
+              <h4 className="font-display text-lg font-semibold">{title}</h4>
+              <p className="text-sm text-muted">{text}</p>
+            </li>
+          ))}
+        </ul>
       </section>
 
       <section className="surface flex flex-col items-center gap-4 px-6 py-12 text-center">
