@@ -20,7 +20,7 @@ function applyTheme(game: SwitcherGame) {
   root.setAttribute("data-game", game.id);
 }
 
-export function GameSwitcher({ games, current }: { games: SwitcherGame[]; current: string }) {
+export function GameSwitcher({ games, current, saved }: { games: SwitcherGame[]; current: string; saved: string | null }) {
   const pathname = usePathname();
   const router = useRouter();
   const [pending, startTransition] = useTransition();
@@ -38,18 +38,18 @@ export function GameSwitcher({ games, current }: { games: SwitcherGame[]; curren
     group.current.setAttribute("data-ready", "");
   }, [active]);
 
-  // Al entrar en /equipos/<otro juego> navegando dentro de la web, el proxy ya ha cambiado la cookie, pero el layout
-  // (cabecera y colores) no se vuelve a pintar solo: se aplica el tema al momento y se refresca.
+  // Visitar de verdad /equipos/<juego> (no una precarga del enlace) elige ese juego para el resto de la web. Navegando
+  // dentro de la web el layout no se vuelve a pintar solo: se aplica el tema al momento y la acción lo refresca.
   const pathGame = gameFromPath(pathname);
   useEffect(() => {
     const game = games.find((g) => g.id === pathGame);
-    if (!game || game.id === current) return;
-    applyTheme(game);
-    startTransition(() => {
+    if (!game || game.id === saved) return;
+    if (game.id !== current) applyTheme(game);
+    startTransition(async () => {
       setActive(game.id);
-      router.refresh();
+      await chooseGame(game.id, pathname);
     });
-  }, [pathGame, current, games, router, setActive]);
+  }, [pathGame, saved, current, games, pathname, setActive]);
 
   // Mientras llega la página del nuevo juego, el contenido se atenúa (ver globals.css).
   useEffect(() => {
