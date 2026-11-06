@@ -123,3 +123,17 @@ where r.game_id = 'valorant' and r.slug = v.slug;
 update public.games set short_name = 'VALORANT', character_label = 'Agentes',
   theme_accent = '#ff6b6b', theme_accent_soft = '#ff9e9e', theme_glow_a = '#ff6b6b', theme_glow_b = '#1e3a6e'
 where id = 'valorant';
+
+-- Misión y cartas coleccionables de VALORANT (repetido de la migración 20261106000000_missions_cards.sql: allí aún no hay
+-- iconos de agentes porque el seed se ejecuta después de las migraciones).
+insert into public.collectible_cards (game_id, slug, name, image_url, rarity, credit, sort)
+select c.game_id, c.slug, c.name, replace(c.icon_url, 'displayicon.png', 'fullportrait.png'),
+  private.card_rarity_for(c.game_id || ':' || c.slug), 'Arte oficial de Riot Games', 0
+from public.game_characters c
+where c.active and c.icon_url is not null and c.game_id = 'valorant'
+on conflict (game_id, slug) do nothing;
+
+insert into public.missions (game_id, slug, title, description, kind, target, sort)
+values ('valorant', 'llenar-grupos', 'Llena 10 grupos',
+  'Crea grupos de VALORANT, llénalos y ciérralos al terminar de jugar. Cuenta uno al día.', 'fill_lobbies', 10, 1)
+on conflict (game_id, slug) do nothing;

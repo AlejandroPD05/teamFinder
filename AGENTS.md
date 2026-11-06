@@ -33,7 +33,8 @@ Requieren Docker en marcha y `npx supabase start` para `test` y `e2e`.
 - Honestidad funcional: no simules login, persistencia, mensajería, ranking, sincronización ni subida de clips. Lo no conectado se muestra como «no conectado», «integración pendiente» o «introducido manualmente». Los datos de demo van marcados como ficticios.
 - No inventes resultados de APIs, estadísticas, perfiles ni usuarios. No asumas acceso a la API de Riot ni hagas scraping: verifica antes documentación y condiciones oficiales.
 - Rango oficial ≠ ranking comunitario ≠ rating propio. No calcules rating competitivo con estadísticas no verificadas. No inventes una puntuación de compatibilidad sin definir y probar cómo se calcula.
-- Fuera de la primera versión: tarjetas coleccionables, economía, minijuegos, e-dating, integración Riot, estadísticas automáticas, competición PRO, bot de Discord. Deja puntos de extensión, no los implementes.
+- Fuera de la primera versión: economía, minijuegos, e-dating, integración Riot, estadísticas automáticas, competición PRO, bot de Discord. Deja puntos de extensión, no los implementes.
+- Cartas coleccionables: solo como recompensa de misiones (decisión 2026-11-06), con arte oficial de uso permitido o fanart con permiso del artista. Sin compra, venta ni intercambio.
 - El karma es reputación social, no sanción ni clasificación oficial. El e-dating, cuando llegue, será solo para adultos.
 - Prioridad de la experiencia: elegir juego/modo → encontrar jugadores o búsquedas → conversar/unirse → jugar. No satures la pantalla inicial.
 - Estética: fondo `#0B0C12`, paneles `#151722`, acento morado `#8B5CF6`, azul `#3B82F6`, texto `#E7E8EF`. Color intenso solo en acciones, estados activos e insignias. Responsive (móvil primero) y accesible: contraste, teclado, etiquetas, objetivos táctiles.

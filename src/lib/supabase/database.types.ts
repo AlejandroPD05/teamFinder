@@ -55,6 +55,26 @@ isOneToOne: true
       referencedColumns: ["id"]
     }
                   ]
+                },"collectible_cards": {
+                  Row: {
+                    "active": boolean,"credit": string,"game_id": string,"id": string,"image_url": string,"name": string,"rarity": Database["public"]['Enums']["card_rarity"],"slug": string,"sort": number,"source": string
+                  }
+                  ComputedFields: never
+                  Insert: {
+                    "active"?: boolean,"credit": string,"game_id": string,"id"?: string,"image_url": string,"name": string,"rarity"?: Database["public"]['Enums']["card_rarity"],"slug": string,"sort"?: number,"source"?: string
+                  }
+                  Update: {
+                    "active"?: boolean,"credit"?: string,"game_id"?: string,"id"?: string,"image_url"?: string,"name"?: string,"rarity"?: Database["public"]['Enums']["card_rarity"],"slug"?: string,"sort"?: number,"source"?: string
+                  }
+                  Relationships: [
+                    {
+      foreignKeyName: "collectible_cards_game_id_fkey"
+      columns: ["game_id"]
+isOneToOne: false
+      referencedRelation: "games"
+      referencedColumns: ["id"]
+    }
+                  ]
                 },"game_characters": {
                   Row: {
                     "active": boolean,"game_id": string,"icon_url": string | null,"id": string,"name": string,"role_id": string | null,"slug": string
@@ -283,14 +303,14 @@ isOneToOne: false
                   ]
                 },"lobbies": {
                   Row: {
-                    "closed_at": string | null,"created_at": string,"game_id": string,"goal": string | null,"id": string,"language": string | null,"mode_slug": string,"note": string | null,"owner_id": string,"rank_max_id": string | null,"rank_min_id": string | null,"region_id": string | null,"slots": number,"starts_at": string | null,"status": Database["public"]['Enums']["lobby_status"],"updated_at": string
+                    "closed_at": string | null,"created_at": string,"filled_at": string | null,"game_id": string,"goal": string | null,"id": string,"language": string | null,"mode_slug": string,"note": string | null,"owner_id": string,"rank_max_id": string | null,"rank_min_id": string | null,"region_id": string | null,"slots": number,"starts_at": string | null,"status": Database["public"]['Enums']["lobby_status"],"updated_at": string
                   }
                   ComputedFields: never
                   Insert: {
-                    "closed_at"?: string | null,"created_at"?: string,"game_id": string,"goal"?: string | null,"id"?: string,"language"?: string | null,"mode_slug": string,"note"?: string | null,"owner_id": string,"rank_max_id"?: string | null,"rank_min_id"?: string | null,"region_id"?: string | null,"slots": number,"starts_at"?: string | null,"status"?: Database["public"]['Enums']["lobby_status"],"updated_at"?: string
+                    "closed_at"?: string | null,"created_at"?: string,"filled_at"?: string | null,"game_id": string,"goal"?: string | null,"id"?: string,"language"?: string | null,"mode_slug": string,"note"?: string | null,"owner_id": string,"rank_max_id"?: string | null,"rank_min_id"?: string | null,"region_id"?: string | null,"slots": number,"starts_at"?: string | null,"status"?: Database["public"]['Enums']["lobby_status"],"updated_at"?: string
                   }
                   Update: {
-                    "closed_at"?: string | null,"created_at"?: string,"game_id"?: string,"goal"?: string | null,"id"?: string,"language"?: string | null,"mode_slug"?: string,"note"?: string | null,"owner_id"?: string,"rank_max_id"?: string | null,"rank_min_id"?: string | null,"region_id"?: string | null,"slots"?: number,"starts_at"?: string | null,"status"?: Database["public"]['Enums']["lobby_status"],"updated_at"?: string
+                    "closed_at"?: string | null,"created_at"?: string,"filled_at"?: string | null,"game_id"?: string,"goal"?: string | null,"id"?: string,"language"?: string | null,"mode_slug"?: string,"note"?: string | null,"owner_id"?: string,"rank_max_id"?: string | null,"rank_min_id"?: string | null,"region_id"?: string | null,"slots"?: number,"starts_at"?: string | null,"status"?: Database["public"]['Enums']["lobby_status"],"updated_at"?: string
                   }
                   Relationships: [
                     {
@@ -512,6 +532,70 @@ isOneToOne: false
       columns: ["user_id"]
 isOneToOne: false
       referencedRelation: "profiles"
+      referencedColumns: ["id"]
+    }
+                  ]
+                },"mission_claims": {
+                  Row: {
+                    "card_id": string | null,"claimed_at": string,"id": string,"mission_id": string,"user_id": string
+                  }
+                  ComputedFields: never
+                  Insert: {
+                    "card_id"?: string | null,"claimed_at"?: string,"id"?: string,"mission_id": string,"user_id": string
+                  }
+                  Update: {
+                    "card_id"?: string | null,"claimed_at"?: string,"id"?: string,"mission_id"?: string,"user_id"?: string
+                  }
+                  Relationships: [
+                    {
+      foreignKeyName: "mission_claims_card_id_fkey"
+      columns: ["card_id"]
+isOneToOne: false
+      referencedRelation: "collectible_cards"
+      referencedColumns: ["id"]
+    },{
+      foreignKeyName: "mission_claims_mission_id_fkey"
+      columns: ["mission_id"]
+isOneToOne: false
+      referencedRelation: "missions"
+      referencedColumns: ["id"]
+    },{
+      foreignKeyName: "mission_claims_user_id_fkey"
+      columns: ["user_id"]
+isOneToOne: false
+      referencedRelation: "player_search"
+      referencedColumns: ["user_id"]
+    },{
+      foreignKeyName: "mission_claims_user_id_fkey"
+      columns: ["user_id"]
+isOneToOne: false
+      referencedRelation: "profile_cards"
+      referencedColumns: ["id"]
+    },{
+      foreignKeyName: "mission_claims_user_id_fkey"
+      columns: ["user_id"]
+isOneToOne: false
+      referencedRelation: "profiles"
+      referencedColumns: ["id"]
+    }
+                  ]
+                },"missions": {
+                  Row: {
+                    "active": boolean,"description": string,"game_id": string,"id": string,"kind": string,"max_per_day": number,"min_member_age": string,"slug": string,"sort": number,"target": number,"title": string
+                  }
+                  ComputedFields: never
+                  Insert: {
+                    "active"?: boolean,"description": string,"game_id": string,"id"?: string,"kind": string,"max_per_day"?: number,"min_member_age"?: string,"slug": string,"sort"?: number,"target": number,"title": string
+                  }
+                  Update: {
+                    "active"?: boolean,"description"?: string,"game_id"?: string,"id"?: string,"kind"?: string,"max_per_day"?: number,"min_member_age"?: string,"slug"?: string,"sort"?: number,"target"?: number,"title"?: string
+                  }
+                  Relationships: [
+                    {
+      foreignKeyName: "missions_game_id_fkey"
+      columns: ["game_id"]
+isOneToOne: false
+      referencedRelation: "games"
       referencedColumns: ["id"]
     }
                   ]
@@ -761,6 +845,44 @@ isOneToOne: false
       referencedColumns: ["id"]
     }
                   ]
+                },"user_cards": {
+                  Row: {
+                    "card_id": string,"obtained_at": string,"user_id": string
+                  }
+                  ComputedFields: never
+                  Insert: {
+                    "card_id": string,"obtained_at"?: string,"user_id": string
+                  }
+                  Update: {
+                    "card_id"?: string,"obtained_at"?: string,"user_id"?: string
+                  }
+                  Relationships: [
+                    {
+      foreignKeyName: "user_cards_card_id_fkey"
+      columns: ["card_id"]
+isOneToOne: false
+      referencedRelation: "collectible_cards"
+      referencedColumns: ["id"]
+    },{
+      foreignKeyName: "user_cards_user_id_fkey"
+      columns: ["user_id"]
+isOneToOne: false
+      referencedRelation: "player_search"
+      referencedColumns: ["user_id"]
+    },{
+      foreignKeyName: "user_cards_user_id_fkey"
+      columns: ["user_id"]
+isOneToOne: false
+      referencedRelation: "profile_cards"
+      referencedColumns: ["id"]
+    },{
+      foreignKeyName: "user_cards_user_id_fkey"
+      columns: ["user_id"]
+isOneToOne: false
+      referencedRelation: "profiles"
+      referencedColumns: ["id"]
+    }
+                  ]
                 }
           }
           Views: {
@@ -915,6 +1037,9 @@ isOneToOne: false
 "can_see":
 { Args: { "owner": string,"v": Database["public"]['Enums']["visibility"] }; Returns: boolean
                            },
+"claim_mission":
+{ Args: { "p_mission": string }; Returns: string
+                           },
 "close_lobby":
 { Args: { "p_lobby": string }; Returns: undefined
                            },
@@ -943,6 +1068,11 @@ isOneToOne: false
                            },
 "mark_read":
 { Args: { "p_lobby": string }; Returns: undefined
+                           },
+"my_missions":
+{ Args: { "p_game": string }; Returns: {
+              "cards_owned": number,"cards_total": number,"claimable": boolean,"claims": number,"description": string,"id": string,"progress": number,"slug": string,"target": number,"title": string
+            }[]
                            },
 "my_rooms":
 { Args: Record<PropertyKey, never>; Returns: {
@@ -978,7 +1108,7 @@ isOneToOne: false
                            }
           }
           Enums: {
-            "character_status": "main"|"comfort"|"playable"|"flexible","lobby_status": "open"|"full"|"closed","report_reason": "spam"|"harassment"|"sexual"|"impersonation"|"cheating"|"other","report_status": "open"|"actioned"|"dismissed","request_status": "pending"|"accepted"|"rejected"|"withdrawn","visibility": "public"|"registered"|"private"
+            "card_rarity": "common"|"rare"|"epic"|"legendary","character_status": "main"|"comfort"|"playable"|"flexible","lobby_status": "open"|"full"|"closed","report_reason": "spam"|"harassment"|"sexual"|"impersonation"|"cheating"|"other","report_status": "open"|"actioned"|"dismissed","request_status": "pending"|"accepted"|"rejected"|"withdrawn","visibility": "public"|"registered"|"private"
           }
           CompositeTypes: {
             [_ in never]: never
@@ -1098,7 +1228,7 @@ export const Constants = {
           }
         },"public": {
           Enums: {
-            "character_status": ["main", "comfort", "playable", "flexible"],"lobby_status": ["open", "full", "closed"],"report_reason": ["spam", "harassment", "sexual", "impersonation", "cheating", "other"],"report_status": ["open", "actioned", "dismissed"],"request_status": ["pending", "accepted", "rejected", "withdrawn"],"visibility": ["public", "registered", "private"]
+            "card_rarity": ["common", "rare", "epic", "legendary"],"character_status": ["main", "comfort", "playable", "flexible"],"lobby_status": ["open", "full", "closed"],"report_reason": ["spam", "harassment", "sexual", "impersonation", "cheating", "other"],"report_status": ["open", "actioned", "dismissed"],"request_status": ["pending", "accepted", "rejected", "withdrawn"],"visibility": ["public", "registered", "private"]
           }
         }
 } as const
