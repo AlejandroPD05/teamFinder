@@ -39,3 +39,25 @@ export async function userIdByEmail(email: string): Promise<string> {
   }
   throw new Error(`Usuario no encontrado: ${email}`);
 }
+
+const SHORT_NAMES = { valorant: "VALORANT", cs2: "CS2", apex: "APEX" } as const;
+export type GameId = keyof typeof SHORT_NAMES;
+
+/** Recuadro del juego en el selector de la portada (su nombre accesible incluye el contador de jugadores). */
+export function gameTile(page: Page, id: GameId) {
+  return page.getByRole("button", { name: new RegExp(`^${SHORT_NAMES[id]}\\b`) });
+}
+
+/** Elige juego desde la portada (el selector solo está allí) y espera a que la web cambie. */
+export async function pickGame(page: Page, id: GameId) {
+  if (new URL(page.url()).pathname !== "/") {
+    await page.goto("/");
+    await page.waitForLoadState("networkidle");
+  }
+  // El color y el recuadro cambian al instante; se espera a que la acción guarde la elección en el servidor.
+  const saved = page.waitForResponse((r) => r.request().method() === "POST" && new URL(r.url()).pathname === "/");
+  await gameTile(page, id).click();
+  expect((await saved).ok()).toBe(true);
+  await expect(page.locator("html")).toHaveAttribute("data-game", id);
+  await expect(gameTile(page, id)).toHaveAttribute("aria-pressed", "true");
+}

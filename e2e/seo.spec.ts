@@ -1,4 +1,5 @@
 import { expect, test } from "@playwright/test";
+import { gameTile } from "./helpers";
 
 test("robots, sitemap y metadatos para buscadores", async ({ page, request }) => {
   const robots = await (await request.get("/robots.txt")).text();
@@ -26,13 +27,18 @@ test("robots, sitemap y metadatos para buscadores", async ({ page, request }) =>
   await expect(page.getByRole("heading", { level: 1 })).toHaveText("Encuentra equipo para Apex Legends");
   await expect(page).toHaveTitle(/Buscar equipo para Apex Legends/);
   await expect(page.getByText("Hostigador")).toBeVisible();
-  // La web entera pasa a Apex (cabecera y colores) y lo recuerda.
+  // La web entera pasa a Apex (colores) y lo recuerda.
   await expect(page.locator("html")).toHaveAttribute("data-game", "apex");
-  await expect(page.getByRole("button", { name: "APEX" })).toHaveAttribute("aria-pressed", "true");
   await page.waitForLoadState("networkidle");
-  await page.getByRole("button", { name: "CS2" }).click();
+  // Al abrir de verdad /equipos/cs2, el selector guarda la elección con una acción en el servidor.
+  const saved = page.waitForResponse((r) => r.request().method() === "POST" && r.url().includes("/equipos/cs2"));
+  await page.getByRole("navigation", { name: "Otros juegos" }).getByRole("link", { name: "Equipo para Counter-Strike 2" }).click();
   await expect(page).toHaveURL(/\/equipos\/cs2$/, { timeout: 15_000 });
   await expect(page.getByRole("heading", { level: 1 })).toHaveText("Encuentra equipo para Counter-Strike 2");
+  await expect(page.locator("html")).toHaveAttribute("data-game", "cs2");
+  expect((await saved).ok()).toBe(true);
+  await page.goto("/");
+  await expect(gameTile(page, "cs2")).toHaveAttribute("aria-pressed", "true");
 
   expect((await request.get("/equipos/no-existe")).status()).toBe(404);
   expect((await request.get("/opengraph-image")).headers()["content-type"]).toContain("image/png");
