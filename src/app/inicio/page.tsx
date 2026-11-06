@@ -87,6 +87,17 @@ export default async function Dashboard() {
         )}
       </div>
 
+      <nav aria-label="Misiones y colección" className="grid gap-4 sm:grid-cols-2">
+        <Link href="/misiones" className="surface surface-interactive flex min-h-11 flex-col gap-1 p-5">
+          <span className="font-display text-lg font-semibold">Misiones</span>
+          <span className="text-sm text-muted">Llena grupos y gana cartas de {current.name}.</span>
+        </Link>
+        <Link href="/coleccion" className="surface surface-interactive flex min-h-11 flex-col gap-1 p-5">
+          <span className="font-display text-lg font-semibold">Mi colección</span>
+          <span className="text-sm text-muted">Las cartas que has conseguido.</span>
+        </Link>
+      </nav>
+
       <nav aria-label="Cuenta" className="flex flex-wrap gap-3 text-sm">
         <Link href="/ajustes" className="inline-flex min-h-11 items-center rounded-md border border-line px-4 hover:bg-panel-hover">
           Ajustes, bloqueados y borrar cuenta
