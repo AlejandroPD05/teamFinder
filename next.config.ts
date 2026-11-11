@@ -14,6 +14,8 @@ const csp = [
   "base-uri 'self'",
   "frame-ancestors 'none'",
   `form-action 'self' ${supabaseOrigin} https://discord.com`.trim(),
+  // Reproductores de clips: solo estos proveedores pueden ir en un iframe (ver src/lib/clips/links.ts).
+  "frame-src https://www.youtube-nocookie.com https://clips.twitch.tv https://streamable.com",
 ].join("; ");
 
 const securityHeaders = [

@@ -13,6 +13,8 @@ export default defineConfig({
   timeout: 60_000,
   testDir: "e2e",
   fullyParallel: false,
+  // Un solo servidor de Next y una sola base local: con más procesos en paralelo se saturan y salen fallos falsos.
+  workers: 4,
   forbidOnly: !!process.env.CI,
   retries: process.env.CI ? 1 : 0,
   reporter: process.env.CI ? "github" : "list",

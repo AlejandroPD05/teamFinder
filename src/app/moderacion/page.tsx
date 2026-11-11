@@ -19,7 +19,7 @@ export default async function ModerationPage() {
 
   const { data: reports } = await supabase
     .from("reports")
-    .select("id, target_user_id, reporter_id, reason, details, message_snapshot, lobby_id, created_at")
+    .select("id, target_user_id, reporter_id, reason, details, message_snapshot, lobby_id, clip_id, clip_comment_id, created_at")
     .eq("status", "open")
     .order("created_at")
     .limit(100);
@@ -50,6 +50,16 @@ export default async function ModerationPage() {
                   </Link>
                 ) : (
                   <span className="text-muted">cuenta borrada</span>
+                )}
+                {r.clip_id && (
+                  <>
+                    {" "}
+                    · en{" "}
+                    <Link href={`/clips/${r.clip_id}`} className="underline underline-offset-4">
+                      {r.clip_comment_id ? "un comentario de un clip" : "un clip"}
+                    </Link>{" "}
+                    (allí se puede ocultar)
+                  </>
                 )}
                 {r.lobby_id && (
                   <>
