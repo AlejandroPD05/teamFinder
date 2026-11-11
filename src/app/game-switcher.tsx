@@ -1,108 +1,119 @@
 "use client";
 
-import { usePathname, useRouter } from "next/navigation";
-import { useEffect, useLayoutEffect, useOptimistic, useRef, useTransition, type MouseEvent } from "react";
+import { Users } from "lucide-react";
+import { usePathname } from "next/navigation";
+import { useEffect, useOptimistic, useTransition, type CSSProperties, type MouseEvent } from "react";
 import { gameFromPath } from "@/lib/config";
 import { themeStyle, type GameTheme } from "@/lib/game-theme";
 import { chooseGame, selectGame } from "./juego/actions";
 
-type SwitcherGame = GameTheme & { id: string; name: string; short_name: string | null };
+type PickerGame = GameTheme & { id: string; name: string; short_name: string | null };
 
-/**
- * Selector de juego: cambia el tema y el catálogo de toda la web.
- * Con JavaScript, el color cambia al instante (con transición) mientras el servidor prepara el nuevo catálogo;
- * sin JavaScript sigue funcionando como formulario.
- */
 /** Tema inmediato: las variables de color están registradas con @property y se animan. */
-function applyTheme(game: SwitcherGame) {
+function applyTheme(game: PickerGame) {
   const root = document.documentElement;
   for (const [k, v] of Object.entries(themeStyle(game))) root.style.setProperty(k, String(v));
   root.setAttribute("data-game", game.id);
 }
 
-export function GameSwitcher({ games, current, saved }: { games: SwitcherGame[]; current: string; saved: string | null }) {
+/** Mientras llega la página del nuevo juego, el contenido se atenúa (ver globals.css). */
+function useDimWhile(pending: boolean) {
+  useEffect(() => {
+    const root = document.documentElement;
+    if (pending) root.setAttribute("data-switching", "");
+    else root.removeAttribute("data-switching");
+  }, [pending]);
+}
+
+/**
+ * Sin interfaz, en el layout: visitar de verdad /equipos/<juego> (no una precarga del enlace) elige ese juego para el
+ * resto de la web. Navegando dentro de la web el layout no se vuelve a pintar solo: se aplica el tema al momento y la
+ * acción lo refresca.
+ */
+export function GameSync({ games, current, saved }: { games: PickerGame[]; current: string; saved: string | null }) {
   const pathname = usePathname();
-  const router = useRouter();
   const [pending, startTransition] = useTransition();
-  const [active, setActive] = useOptimistic(current);
-  const group = useRef<HTMLFieldSetElement>(null);
-  const pill = useRef<HTMLSpanElement>(null);
-  const buttons = useRef(new Map<string, HTMLButtonElement>());
-
-  // Indicador que se desliza hasta el juego activo: el mismo objeto se mueve, no aparece uno nuevo.
-  useLayoutEffect(() => {
-    const b = buttons.current.get(active);
-    if (!b || !pill.current || !group.current) return;
-    pill.current.style.transform = `translateX(${b.offsetLeft}px)`;
-    pill.current.style.width = `${b.offsetWidth}px`;
-    group.current.setAttribute("data-ready", "");
-  }, [active]);
-
-  // Visitar de verdad /equipos/<juego> (no una precarga del enlace) elige ese juego para el resto de la web. Navegando
-  // dentro de la web el layout no se vuelve a pintar solo: se aplica el tema al momento y la acción lo refresca.
+  useDimWhile(pending);
   const pathGame = gameFromPath(pathname);
   useEffect(() => {
     const game = games.find((g) => g.id === pathGame);
     if (!game || game.id === saved) return;
     if (game.id !== current) applyTheme(game);
     startTransition(async () => {
-      setActive(game.id);
       await chooseGame(game.id, pathname);
     });
-  }, [pathGame, saved, current, games, pathname, setActive]);
+  }, [pathGame, saved, current, games, pathname]);
+  return null;
+}
 
-  // Mientras llega la página del nuevo juego, el contenido se atenúa (ver globals.css).
-  useEffect(() => {
-    const root = document.documentElement;
-    if (pending) root.setAttribute("data-switching", "");
-    else root.removeAttribute("data-switching");
-  }, [pending]);
+/**
+ * Selector de juego de la portada: un recuadro por juego con su nombre y cuántos jugadores tienen perfil.
+ * Con JavaScript el color cambia al instante (con transición) mientras llega el catálogo; sin JavaScript es un formulario.
+ * Sin logotipos de los juegos: sus políticas no permiten usarlos.
+ */
+export function GamePicker({
+  games,
+  current,
+  counts,
+}: {
+  games: PickerGame[];
+  current: string;
+  counts: Record<string, number>;
+}) {
+  const pathname = usePathname();
+  const [pending, startTransition] = useTransition();
+  const [active, setActive] = useOptimistic(current);
+  useDimWhile(pending);
 
   if (games.length < 2) return null;
 
-  function choose(e: MouseEvent<HTMLButtonElement>, game: SwitcherGame) {
+  function choose(e: MouseEvent<HTMLButtonElement>, game: PickerGame) {
     e.preventDefault();
     if (game.id === active) return;
     applyTheme(game);
-    const query = window.location.search;
     startTransition(async () => {
       setActive(game.id);
-      const target = await chooseGame(game.id, pathname);
-      // La acción ya ha vuelto a pintar la ruta actual con el juego nuevo; solo se navega si cambia la URL
-      // (filtros de otro juego o detalle de un grupo).
-      if (target !== pathname || query) router.replace(target);
+      await chooseGame(game.id, pathname);
     });
   }
 
   return (
-    <form action={selectGame} className="flex items-center" aria-label="Juego">
+    <form action={selectGame} aria-label="Juego" className="w-full max-w-2xl">
       <input type="hidden" name="next" value={pathname} />
-      <fieldset ref={group} className="group relative flex rounded-lg border border-line bg-bg-raised p-0.5">
-        <legend className="sr-only">Juego</legend>
-        <span
-          ref={pill}
-          aria-hidden="true"
-          className="absolute inset-y-0.5 left-0 rounded-md bg-accent opacity-0 transition-[transform,width] duration-300 ease-[var(--ease-in-out)] group-data-[ready]:opacity-100"
-        />
+      <fieldset className="grid grid-cols-3 gap-3 sm:gap-4">
+        <legend className="mb-3 w-full text-center text-sm text-muted">Elige juego</legend>
         {games.map((g) => {
           const on = g.id === active;
+          const n = counts[g.id] ?? 0;
           return (
             <button
               key={g.id}
-              ref={(el) => {
-                if (el) buttons.current.set(g.id, el);
-                else buttons.current.delete(g.id);
-              }}
               type="submit"
               name="game"
               value={g.id}
               aria-pressed={on}
               onClick={(e) => choose(e, g)}
-              className={`font-display relative min-h-9 whitespace-nowrap rounded-md px-2.5 text-xs font-semibold tracking-wide transition-colors duration-300 sm:text-sm ${
-                on ? "bg-accent text-bg group-data-[ready]:bg-transparent" : "text-muted hover:text-text"
+              style={
+                {
+                  "--tile": g.theme_accent ?? "var(--color-accent)",
+                  "--tile-text": g.theme_accent_soft ?? g.theme_accent ?? "var(--color-text)",
+                } as CSSProperties
+              }
+              className={`flex aspect-square min-h-24 flex-col items-center justify-center gap-2 rounded-xl border-2 p-3 transition-[border-color,background-color,transform] duration-200 ease-out active:scale-[0.97] sm:gap-3 ${
+                on
+                  ? "border-[var(--tile)] bg-[color-mix(in_srgb,var(--tile)_12%,var(--color-panel))]"
+                  : "border-line bg-panel hover:border-[color-mix(in_srgb,var(--tile)_60%,var(--color-line))]"
               }`}
             >
-              {g.short_name ?? g.name}
+              <span className="font-display text-center text-base font-bold leading-tight tracking-wide text-[var(--tile-text)] sm:text-2xl">
+                {g.short_name ?? g.name}
+              </span>
+              <span className="flex items-center gap-1.5 text-xs text-muted sm:text-sm">
+                <Users aria-hidden="true" className="hidden size-4 sm:block" />
+                <span>
+                  <span className="tabular-nums">{n.toLocaleString("es")}</span> {n === 1 ? "jugador" : "jugadores"}
+                </span>
+              </span>
             </button>
           );
         })}
