@@ -1,12 +1,13 @@
 "use client";
 
-import { MessagesSquare, Search, UserRound, UsersRound } from "lucide-react";
+import { Clapperboard, MessagesSquare, Search, UserRound, UsersRound } from "lucide-react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 
 const LINKS = [
   { href: "/buscar", label: "Buscar", Icon: Search, match: "/buscar" },
   { href: "/grupos", label: "Grupos", Icon: UsersRound, match: "/grupos" },
+  { href: "/clips", label: "Clips", Icon: Clapperboard, match: "/clips" },
   { href: "/mensajes", label: "Mensajes", Icon: MessagesSquare, match: "/mensajes" },
   { href: "/perfil", label: "Mi perfil", Icon: UserRound, match: "/perfil" },
 ] as const;

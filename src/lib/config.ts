@@ -2,7 +2,7 @@
 export const APP_NAME = "TeamFinder";
 
 // Rutas que exigen sesión. El proxy redirige a /entrar si no la hay.
-export const PROTECTED_PREFIXES = ["/inicio", "/perfil", "/buscar", "/grupos", "/mensajes", "/ajustes", "/moderacion", "/misiones", "/coleccion"] as const;
+export const PROTECTED_PREFIXES = ["/inicio", "/perfil", "/buscar", "/grupos", "/mensajes", "/ajustes", "/moderacion", "/misiones", "/coleccion", "/clips"] as const;
 
 export const DEFAULT_AFTER_LOGIN = "/inicio";
 
