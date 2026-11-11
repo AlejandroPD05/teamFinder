@@ -1,6 +1,6 @@
 "use client";
 
-import { Users } from "lucide-react";
+import { Bomb, Crosshair, Gamepad2, Mountain, Users, type LucideIcon } from "lucide-react";
 import { usePathname } from "next/navigation";
 import { useEffect, useOptimistic, useTransition, type CSSProperties, type MouseEvent } from "react";
 import { gameFromPath } from "@/lib/config";
@@ -8,6 +8,9 @@ import { themeStyle, type GameTheme } from "@/lib/game-theme";
 import { chooseGame, selectGame } from "./juego/actions";
 
 type PickerGame = GameTheme & { id: string; name: string; short_name: string | null };
+
+// Icono propio de cada juego (no su logotipo: Riot prohíbe usar sus logos, EA los limita y Valve no da permiso).
+const GAME_GLYPHS: Record<string, LucideIcon> = { valorant: Crosshair, cs2: Bomb, apex: Mountain };
 
 /** Tema inmediato: las variables de color están registradas con @property y se animan. */
 function applyTheme(game: PickerGame) {
@@ -99,13 +102,17 @@ export function GamePicker({
                   "--tile-text": g.theme_accent_soft ?? g.theme_accent ?? "var(--color-text)",
                 } as CSSProperties
               }
-              className={`flex aspect-square min-h-24 flex-col items-center justify-center gap-2 rounded-xl border-2 p-3 transition-[border-color,background-color,transform] duration-200 ease-out active:scale-[0.97] sm:gap-3 ${
+              className={`flex aspect-square min-h-28 flex-col items-center justify-center gap-1.5 rounded-xl border-2 p-3 transition-[border-color,background-color,transform] duration-200 ease-out active:scale-[0.97] sm:gap-3 ${
                 on
                   ? "border-[var(--tile)] bg-[color-mix(in_srgb,var(--tile)_12%,var(--color-panel))]"
                   : "border-line bg-panel hover:border-[color-mix(in_srgb,var(--tile)_60%,var(--color-line))]"
               }`}
             >
-              <span className="font-display text-center text-base font-bold leading-tight tracking-wide text-[var(--tile-text)] sm:text-2xl">
+              {(() => {
+                const Glyph = GAME_GLYPHS[g.id] ?? Gamepad2;
+                return <Glyph aria-hidden="true" strokeWidth={1.75} className="size-9 text-[var(--tile-text)] sm:size-14" />;
+              })()}
+              <span className="font-display text-center text-sm font-bold leading-tight tracking-wide sm:text-xl">
                 {g.short_name ?? g.name}
               </span>
               <span className="flex items-center gap-1.5 text-xs text-muted sm:text-sm">
