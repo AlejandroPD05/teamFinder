@@ -18,6 +18,7 @@ export function TiltCard({ children, holo = false }: { children: ReactNode; holo
     s.setProperty("--ry", `${(x - 0.5) * 16}deg`);
     s.setProperty("--rx", `${(0.5 - y) * 16}deg`);
     s.setProperty("--mx", `${Math.round(x * 100)}%`);
+    s.setProperty("--my", `${Math.round(y * 100)}%`);
     s.setProperty("--holo", "1");
   }
 

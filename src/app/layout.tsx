@@ -10,6 +10,9 @@ import { GameSync } from "./game-switcher";
 import { Logo } from "./logo";
 import { currentGame, themeStyle } from "@/lib/games";
 import { SiteNav } from "./site-nav";
+import { SpotlightTracker } from "@/components/spotlight-tracker";
+import { LiveAlerts } from "./live-alerts";
+import { NumberRoll } from "@/components/number-roll";
 import { indexable } from "@/lib/seo";
 import { siteUrl } from "@/lib/supabase/env";
 import "./globals.css";
@@ -52,6 +55,8 @@ export default async function RootLayout({ children }: LayoutProps<"/">) {
   return (
     <html lang="es" data-game={game?.id} style={themeStyle(game)} className={`${geistSans.variable} ${chakra.variable} h-full antialiased`}>
       <body className="flex min-h-full flex-col font-sans">
+        <SpotlightTracker />
+        {signedIn && <LiveAlerts me={data!.claims!.sub as string} />}
         <a
           href="#contenido"
           className="sr-only focus:not-sr-only focus:absolute focus:left-4 focus:top-4 focus:z-50 focus:rounded-md focus:bg-panel focus:px-4 focus:py-2"
@@ -79,7 +84,7 @@ export default async function RootLayout({ children }: LayoutProps<"/">) {
                   <Bell aria-hidden="true" className="size-5" />
                   {unreadNotes > 0 && (
                     <span aria-hidden="true" className="absolute right-0.5 top-0.5 rounded-full bg-accent px-1.5 text-[0.65rem] font-semibold leading-4 text-bg">
-                      {unreadNotes > 99 ? "99+" : unreadNotes}
+                      <NumberRoll value={unreadNotes} max={99} />
                     </span>
                   )}
                 </Link>

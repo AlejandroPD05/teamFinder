@@ -1,6 +1,7 @@
 "use client";
 
 import { useState } from "react";
+import { NumberRoll } from "@/components/number-roll";
 
 /**
  * Botón de emblema: al pulsarlo se aplasta y recupera la forma (squash & stretch, `.pop`). Dar un emblema pasa pocas
@@ -33,7 +34,7 @@ export function EmblemButton({
       } ${mine ? "border-accent bg-panel-hover font-medium" : "border-line hover:bg-panel-hover"}`}
     >
       {name}
-      <span className="tabular-nums text-muted">{count}</span>
+      <NumberRoll value={count} className="text-muted" />
     </button>
   );
 }

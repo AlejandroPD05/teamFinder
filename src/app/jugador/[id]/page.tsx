@@ -8,6 +8,7 @@ import { AVAILABILITY, CHARACTER_STATUS, GOALS, LANGUAGES, VOICE, type Character
 import { loadCatalog, loadPublicProfile } from "@/lib/profile/queries";
 import { KARMA_TAGS } from "@/lib/trust/options";
 import { CharacterIcon } from "@/components/game-icons";
+import { NumberRoll } from "@/components/number-roll";
 import { createClient } from "@/lib/supabase/server";
 import { SOCIALS } from "@/lib/profile/schema";
 import { BlockButton, ReportForm } from "../../confianza/forms";
@@ -191,7 +192,7 @@ export default async function PlayerPage({ params }: PageProps<"/jugador/[id]">)
         ) : k && Number(k.positives) > 0 ? (
           <>
             <p className="mt-2 text-sm">
-              {k.positives} {Number(k.positives) === 1 ? "reconocimiento" : "reconocimientos"} de compañeros
+              <NumberRoll value={Number(k.positives)} className="font-semibold" /> {Number(k.positives) === 1 ? "reconocimiento" : "reconocimientos"} de compañeros
             </p>
             {k.top_tags.length > 0 && (
               <ul className="mt-2 flex flex-wrap gap-2">

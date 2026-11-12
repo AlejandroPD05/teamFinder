@@ -43,7 +43,7 @@ export default async function ClipPage({ params }: PageProps<"/clips/[id]">) {
           Este clip está oculto por moderación: solo lo ves tú{isAdmin ? " y el equipo de moderación" : ""}.
         </p>
       )}
-      <ClipPlayer clip={{ provider: clip.provider, videoId: clip.video_id }} title={clip.title} />
+      <ClipPlayer clip={{ provider: clip.provider, videoId: clip.video_id }} title={clip.title} ambient />
       <header className="flex flex-col gap-1">
         <h1 className="font-display text-2xl font-semibold sm:text-3xl">{clip.title}</h1>
         <p className="text-sm text-muted">

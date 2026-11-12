@@ -4,6 +4,8 @@ import { Gamepad2, Users } from "lucide-react";
 import { usePathname } from "next/navigation";
 import { useEffect, useOptimistic, useTransition, type CSSProperties, type MouseEvent } from "react";
 import { GAME_GLYPHS } from "@/components/game-glyphs";
+import { NumberRoll } from "@/components/number-roll";
+import { ScrambleText } from "@/components/scramble-text";
 import { gameFromPath } from "@/lib/config";
 import { themeStyle, type GameTheme } from "@/lib/game-theme";
 import { chooseGame, selectGame } from "./juego/actions";
@@ -112,12 +114,12 @@ export function GamePicker({
                 return <Glyph aria-hidden="true" strokeWidth={1.75} className="size-9 text-[var(--tile-text)] sm:size-14" />;
               })()}
               <span className="font-display text-center text-sm font-bold leading-tight tracking-wide sm:text-xl">
-                {g.short_name ?? g.name}
+                <ScrambleText text={g.short_name ?? g.name} trigger={on && active} />
               </span>
               <span className="flex items-center gap-1.5 text-xs text-muted sm:text-sm">
                 <Users aria-hidden="true" className="hidden size-4 sm:block" />
                 <span>
-                  <span className="tabular-nums">{n.toLocaleString("es")}</span> {n === 1 ? "jugador" : "jugadores"}
+                  <NumberRoll value={n} /> {n === 1 ? "jugador" : "jugadores"}
                 </span>
               </span>
             </button>

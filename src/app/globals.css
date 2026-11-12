@@ -368,6 +368,138 @@ html[data-game="apex"] {
   }
 }
 
+/*
+ * Haz de luz que recorre el borde de una tarjeta (grupos que buscan uno de tus roles): un degradado cónico que gira,
+ * recortado para que solo se vea en el canto.
+ */
+@property --beam-angle {
+  syntax: "<angle>";
+  inherits: false;
+  initial-value: 0deg;
+}
+.beam::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  padding: 1.5px;
+  border-radius: inherit;
+  pointer-events: none;
+  background: conic-gradient(
+    from var(--beam-angle),
+    transparent 0 72%,
+    color-mix(in srgb, var(--color-accent) 40%, transparent) 82%,
+    var(--color-accent-soft) 90%,
+    transparent 96%
+  );
+  mask:
+    linear-gradient(#000 0 0) content-box,
+    linear-gradient(#000 0 0);
+  mask-composite: exclude;
+  animation: beam 4s linear infinite;
+}
+@keyframes beam {
+  to {
+    --beam-angle: 360deg;
+  }
+}
+
+/*
+ * Aviso en directo tipo «isla» (src/app/live-alerts.tsx): nace como una píldora pequeña, se estira hasta mostrar el
+ * contenido (con un leve rebote) y vuelve a encogerse al irse.
+ */
+.island {
+  max-width: 26rem;
+  width: 100%;
+  min-height: 3.25rem;
+  padding: 0.375rem 0.375rem 0.375rem 0.5rem;
+  border-radius: 999px;
+  background: color-mix(in srgb, #050508 92%, var(--color-accent));
+  box-shadow:
+    0 0 0 1px color-mix(in srgb, var(--color-accent) 30%, transparent),
+    0 18px 40px -12px rgb(0 0 0 / 0.7);
+  transform-origin: top center;
+  transform: translateY(-140%) scaleX(0.3);
+  opacity: 0;
+  transition:
+    transform 420ms cubic-bezier(0.34, 1.4, 0.64, 1),
+    opacity 200ms var(--ease-out);
+}
+.island[data-open] {
+  transform: none;
+  opacity: 1;
+}
+.island .island-body {
+  opacity: 0;
+  transition: opacity 180ms var(--ease-out);
+}
+.island[data-open] .island-body {
+  opacity: 1;
+  transition-delay: 160ms;
+}
+
+/* Guía de pasos del perfil (src/components/profile-steps.tsx): la línea se rellena y el paso actual late. */
+.steps-fill {
+  transform-origin: left;
+  transform: scaleX(var(--fill, 0));
+  animation: steps-fill 700ms 150ms var(--ease-out) both;
+}
+@keyframes steps-fill {
+  from {
+    transform: scaleX(0);
+  }
+}
+.step-current {
+  animation: step-pulse 2.4s var(--ease-in-out) infinite;
+}
+@keyframes step-pulse {
+  50% {
+    box-shadow: 0 0 0 6px color-mix(in srgb, var(--color-accent) 18%, transparent);
+  }
+}
+
+/* Luz ambiental de los clips (src/app/clips/components.tsx): halo que respira y, al reproducir, la miniatura difusa. */
+.ambient-glow {
+  background: radial-gradient(closest-side, color-mix(in srgb, var(--color-accent) 45%, transparent), transparent);
+  filter: blur(28px);
+  animation: breathe 6s var(--ease-in-out) infinite alternate;
+}
+.ambient-image {
+  filter: blur(48px) saturate(160%);
+  opacity: 0.55;
+  animation: fade-in 800ms var(--ease-out) both;
+}
+@keyframes breathe {
+  from {
+    opacity: 0.35;
+    transform: scale(0.96);
+  }
+  to {
+    opacity: 0.6;
+    transform: scale(1.02);
+  }
+}
+@keyframes fade-in {
+  from {
+    opacity: 0;
+  }
+}
+
+/* Dígito de marcador (src/components/number-roll.tsx): una ventana de una cifra sobre una tira 0–9 que se desplaza. */
+.roll-digit {
+  display: inline-block;
+  height: 1lh;
+  overflow: hidden;
+}
+.roll-strip {
+  display: block;
+  transition: transform 600ms var(--ease-out);
+}
+.roll-strip::before {
+  content: "0\A 1\A 2\A 3\A 4\A 5\A 6\A 7\A 8\A 9";
+  display: block;
+  white-space: pre;
+}
+
 @keyframes shimmer {
   from {
     background-position: 100% 0;
@@ -385,22 +517,70 @@ html[data-game="apex"] {
   transform: perspective(700px) rotateX(var(--rx, 0deg)) rotateY(var(--ry, 0deg));
   transition: transform 200ms var(--ease-out);
 }
+/*
+ * Lámina holográfica: bandas de arcoíris que se desplazan con la luz, un brillo especular donde apunta el ratón y
+ * un grano de purpurina. En reposo queda un reflejo leve, para que se note que es especial sin pasar el ratón.
+ */
+.tilt[data-holo] figure::before,
 .tilt[data-holo] figure::after {
   content: "";
   position: absolute;
   inset: 0;
+  z-index: 1;
   pointer-events: none;
-  opacity: var(--holo, 0);
   transition: opacity 200ms var(--ease-out);
+}
+.tilt[data-holo] figure::before {
+  opacity: calc(0.25 + var(--holo, 0) * 0.55);
   mix-blend-mode: color-dodge;
-  background: linear-gradient(
-    115deg,
-    transparent 20%,
-    rgb(255 120 220 / 0.35) calc(var(--mx, 50%) - 12%),
-    rgb(120 220 255 / 0.4) var(--mx, 50%),
-    rgb(255 240 140 / 0.35) calc(var(--mx, 50%) + 12%),
-    transparent 80%
+  background:
+    repeating-linear-gradient(
+      115deg,
+      rgb(255 110 210 / 0.5) 0%,
+      rgb(255 230 120 / 0.5) 7%,
+      rgb(110 255 200 / 0.5) 14%,
+      rgb(110 170 255 / 0.5) 21%,
+      rgb(200 120 255 / 0.5) 28%
+    )
+    calc(var(--mx, 50%) * 1.5) calc(var(--my, 50%) * 1.5) / 300% 300%;
+  mask-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='120' height='120'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.75' numOctaves='1'/%3E%3CfeColorMatrix values='0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 3 -1.2'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E"),
+    linear-gradient(#000 0 0);
+  mask-composite: add;
+  mask-size: 120px 120px, 100% 100%;
+}
+.tilt[data-holo] figure::after {
+  opacity: var(--holo, 0);
+  mix-blend-mode: overlay;
+  background: radial-gradient(
+    circle at var(--mx, 50%) var(--my, 50%),
+    rgb(255 255 255 / 0.65) 0%,
+    rgb(255 255 255 / 0.15) 25%,
+    transparent 55%
   );
+}
+
+/*
+ * Foco que sigue al ratón en las tarjetas de jugadores y grupos (src/components/spotlight-tracker.tsx): un halo del
+ * color del juego bajo el puntero, también en el borde.
+ */
+.spotlight::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  border-radius: inherit;
+  pointer-events: none;
+  opacity: 0;
+  transition: opacity 250ms var(--ease-out);
+  background: radial-gradient(
+    22rem circle at var(--sx, 50%) var(--sy, 50%),
+    color-mix(in srgb, var(--color-accent) 12%, transparent),
+    transparent 60%
+  );
+}
+@media (hover: hover) {
+  .spotlight:hover::before {
+    opacity: 1;
+  }
 }
 
 @keyframes enter {

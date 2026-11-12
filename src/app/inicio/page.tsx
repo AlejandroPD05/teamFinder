@@ -6,6 +6,7 @@ import { redirect } from "next/navigation";
 import { es } from "@/lib/i18n/es";
 import { loadOwnProfile } from "@/lib/profile/queries";
 import { profileCompletion } from "@/lib/profile/schema";
+import { ProfileSteps } from "@/components/profile-steps";
 import { activeRestriction, untilFormat } from "@/lib/restrictions";
 import { createClient } from "@/lib/supabase/server";
 
@@ -82,7 +83,7 @@ export default async function Dashboard() {
           <div className="h-full rounded-full bg-accent shadow-[0_0_12px_var(--color-accent)]" style={{ width: `${completion.percent}%` }} />
         </div>
         {completion.missing.length > 0 && (
-          <p className="mt-3 text-sm text-muted">Falta: {completion.missing.join(", ")}.</p>
+          <ProfileSteps missing={completion.missing} characterLabel={current.character_label} />
         )}
         <div className="mt-4 flex flex-wrap gap-3">
           <Link

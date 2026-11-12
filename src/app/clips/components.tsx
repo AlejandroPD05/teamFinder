@@ -20,9 +20,31 @@ function Status({ state }: { state: ClipState }) {
  * Reproductor con «fachada»: hasta que se pulsa no se carga nada de YouTube, Twitch o Streamable (ni sus cookies),
  * así la lista de clips es ligera y no se comparten datos con terceros sin que el usuario lo decida.
  */
-export function ClipPlayer({ clip, title }: { clip: ClipRef; title: string }) {
+/**
+ * Luz ambiental (como en YouTube): detrás del reproductor, un halo del color del juego que respira; al darle a ver un
+ * clip de YouTube, su miniatura desenfocada. La miniatura solo se pide después de pulsar: antes, YouTube no recibe nada.
+ */
+function Ambient({ clip, on }: { clip: ClipRef; on: boolean }) {
+  return (
+    <div aria-hidden="true" className="pointer-events-none absolute -inset-6 -z-10 sm:-inset-10">
+      <div className="ambient-glow absolute inset-0 rounded-[2rem]" />
+      {on && clip.provider === "youtube" && (
+        // eslint-disable-next-line @next/next/no-img-element -- imagen decorativa desenfocada, sin optimizar a propósito
+        <img
+          src={`https://i.ytimg.com/vi/${encodeURIComponent(clip.videoId)}/mqdefault.jpg`}
+          alt=""
+          className="ambient-image absolute inset-0 size-full rounded-[2rem] object-cover"
+        />
+      )}
+    </div>
+  );
+}
+
+export function ClipPlayer({ clip, title, ambient = false }: { clip: ClipRef; title: string; ambient?: boolean }) {
   const [on, setOn] = useState(false);
   return (
+    <div className="relative isolate">
+    {ambient && <Ambient clip={clip} on={on} />}
     <div className="relative aspect-video w-full overflow-hidden rounded-lg bg-bg-raised">
       {on ? (
         <iframe
@@ -59,6 +81,7 @@ export function ClipPlayer({ clip, title }: { clip: ClipRef; title: string }) {
           <span className="sr-only"> (se abre en otra pestaña)</span>
         </a>
       )}
+    </div>
     </div>
   );
 }
