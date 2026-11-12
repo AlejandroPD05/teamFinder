@@ -1,60 +1,105 @@
 import type { SVGProps } from "react";
 
-// Iconos propios de cada juego, dibujados para esta web (no son logotipos ni arte oficial): un objeto reconocible
-// de cada juego. Mismo lenguaje que lucide (rejilla de 24, trazo redondeado) para convivir con el resto de iconos.
+// Iconos de cada juego, rellenos y con volumen (tonos de un mismo color con distinta opacidad; los huecos se recortan
+// con `evenodd` para que se vea el fondo). Dibujados a mano para esta web a partir de referencias:
+// - VALORANT: la spike, dibujo fiel permitido por la política «Legal Jibber Jabber» de Riot (no es un logotipo).
+// - Apex Legends: el cráneo con cuernos del rango Depredador, contenido de fans sin ánimo de lucro (política de EA).
+// - CS2: un C4 genérico (Valve no permite reutilizar su arte; no copia su modelo).
 
 type GlyphProps = SVGProps<SVGSVGElement> & { strokeWidth?: number };
 
-function Svg({ children, strokeWidth = 1.75, ...props }: GlyphProps & { children: React.ReactNode }) {
+function Svg({ children, strokeWidth: _ignored, ...props }: GlyphProps & { children: React.ReactNode }) {
   return (
-    <svg
-      viewBox="0 0 24 24"
-      fill="none"
-      stroke="currentColor"
-      strokeWidth={strokeWidth}
-      strokeLinecap="round"
-      strokeLinejoin="round"
-      {...props}
-    >
+    <svg viewBox="0 0 48 48" fill="currentColor" {...props}>
       {children}
     </svg>
   );
 }
 
-/** VALORANT: el dispositivo que se planta (spike), como un huso facetado con su núcleo. */
+/** VALORANT: la spike — tapa facetada con asa, columna con núcleo luminoso, pistones laterales y patas en punta. */
 export function SpikeGlyph(props: GlyphProps) {
   return (
     <Svg {...props}>
-      <path d="M12 2 16.5 7.5v9L12 22l-4.5-5.5v-9Z" />
-      <path d="M7.5 9.5h9M7.5 14.5h9" />
-      <path d="M12 9.5 13.5 12 12 14.5 10.5 12Z" fill="currentColor" stroke="none" />
-      <path d="M12 2v3M12 19v3" />
+      {/* Asa */}
+      <path d="M20 3.5h8a1 1 0 0 1 1 1V8h-2.5V6h-5v2H19V4.5a1 1 0 0 1 1-1Z" />
+      {/* Tapa ancha: cara superior clara y canto inferior más oscuro */}
+      <path d="M9 12.5 18.5 7.5h11l9.5 5Z" />
+      <path d="M9 12.5h30l-4.75 4.5h-20.5Z" opacity="0.6" />
+      {/* Columna con paneles laterales, parte baja facetada y núcleo */}
+      <path d="M16 17h16v18H16Z" opacity="0.35" />
+      <path d="M16 17h4.5v18H16ZM27.5 17H32v18h-4.5Z" opacity="0.75" />
+      <path d="m20.5 28.5 3.5-2.25 3.5 2.25V35h-7Z" opacity="0.55" />
+      <path d="M22.6 19.5h2.8v5.25h-2.8Z" />
+      {/* Pistones */}
+      <path d="M7.75 20.5h4.75V24H7.75ZM35.5 20.5h4.75V24H35.5Z" />
+      <path d="M9.1 24h2v11.5h-2ZM36.9 24h2v11.5h-2ZM12.5 21.5H16V23h-3.5ZM32 21.5h3.5V23H32Z" opacity="0.7" />
+      {/* Base y patas */}
+      <path d="M14 35h20l-2 3.5H16Z" opacity="0.85" />
+      <path d="m6.5 35.5 7 .5 1.5 3-5 2-1.5 4.5-1-4.5ZM41.5 35.5l-7 .5-1.5 3 5 2 1.5 4.5 1-4.5Z" />
     </Svg>
   );
 }
 
-/** CS2: un explosivo C4 genérico: tres cargas atadas, el detonador con su pantalla y el cable. */
+/** CS2: un C4 genérico — tres cargas atadas con cinta, el detonador con pantalla y teclado, y los cables. */
 export function C4Glyph(props: GlyphProps) {
   return (
     <Svg {...props}>
-      <rect x="2" y="9" width="20" height="11" rx="1.5" />
-      <path d="M8.5 9v11M15.5 9v11" />
-      <rect x="9.75" y="11" width="4.5" height="3" rx="0.4" fill="currentColor" stroke="none" />
-      <path d="M10.5 16.5h3" />
-      <path d="M2 14.5h6.5M15.5 14.5H22" strokeDasharray="1.5 1.5" />
-      <path d="M5 9c0-4 7-5 7-1.5S18 6 19 9" />
+      {/* Cargas (los huecos entre ellas hacen de surco) */}
+      <rect x="4" y="17" width="40" height="7" rx="2" opacity="0.5" />
+      <rect x="4" y="25" width="40" height="7" rx="2" opacity="0.5" />
+      <rect x="4" y="33" width="40" height="7" rx="2" opacity="0.5" />
+      {/* Cinta */}
+      <path d="M9.5 16h3.5v25H9.5ZM35 16h3.5v25H35Z" opacity="0.85" />
+      {/* Detonador con la pantalla y nueve teclas recortadas */}
+      <path
+        fillRule="evenodd"
+        d="M16 12.5h16a1.5 1.5 0 0 1 1.5 1.5v20a1.5 1.5 0 0 1-1.5 1.5H16a1.5 1.5 0 0 1-1.5-1.5V14a1.5 1.5 0 0 1 1.5-1.5ZM17.5 15v5.5h13V15ZM17.75 23v2.25h2.75V23Zm4.75 0v2.25h3V23Zm5 0v2.25h2.75V23Zm-9.75 4v2.25h2.75V27Zm4.75 0v2.25h3V27Zm5 0v2.25h2.75V27Zm-9.75 4v2.25h2.75V31Zm4.75 0v2.25h3V31Zm5 0v2.25h2.75V31Z"
+      />
+      {/* Cifras de la pantalla */}
+      <path d="M19 16.75h2v2h-2Zm3 0h2v2h-2Zm3 0h2v2h-2Z" opacity="0.8" />
+      {/* Cables */}
+      <path
+        d="M19 12.5c0-5-9.5-4.5-9.5 3.5M29 12.5c0-6 9.5-5 9.5 3.5"
+        fill="none"
+        stroke="currentColor"
+        strokeWidth="1.75"
+        strokeLinecap="round"
+        opacity="0.9"
+      />
     </Svg>
   );
 }
 
-/** Apex Legends: emblema con cuernos que evoca el rango más alto (dibujo propio, no la insignia oficial). */
+/** Apex Legends: cráneo de carnero con cuernos enroscados, cresta y colmillos (rango Depredador). */
 export function ApexGlyph(props: GlyphProps) {
   return (
     <Svg {...props}>
-      <path d="M5 2.5c0 4 1.5 6.5 4 6.5M19 2.5c0 4-1.5 6.5-4 6.5" />
-      <path d="M7 9h10l-1 7.5-4 5-4-5Z" />
-      <path d="m9.3 12.4 1.9 1.1M14.7 12.4l-1.9 1.1" />
-      <path d="M12 16.5v1.5" />
+      {/* Cuernos */}
+      <path
+        d="M19.5 15C15.5 5.5 5.5 5.5 5 14c-.4 6.5 5 10.5 9 7.5M28.5 15c4-9.5 14-9.5 14.5-1 .4 6.5-5 10.5-9 7.5"
+        fill="none"
+        stroke="currentColor"
+        strokeWidth="4.25"
+        strokeLinecap="round"
+      />
+      {/* Estrías de los cuernos */}
+      <path
+        d="M9 9.5l2.5 2.5M6.5 15.5h3.25M39 9.5 36.5 12M41.5 15.5h-3.25"
+        fill="none"
+        stroke="currentColor"
+        strokeWidth="1.25"
+        strokeLinecap="round"
+        opacity="0.45"
+      />
+      {/* Cresta */}
+      <path d="m22.25 14 1.75-6 1.75 6Z" />
+      {/* Cráneo con ojos, nariz y boca recortados */}
+      <path
+        fillRule="evenodd"
+        d="M16.5 14h15l2.25 8.5-3.75 8.25-2.5 6.75L24 41l-3.5-3.5-2.5-6.75-3.75-8.25ZM18.5 21.25l4.25 2.1-1 2.4-3.6-1.6Zm11 0-4.25 2.1 1 2.4 3.6-1.6ZM22.9 28.25h.85v2.75h-.85Zm1.35 0h.85v2.75h-.85ZM20.75 32.5h6.5L26 35.5h-4Z"
+      />
+      {/* Colmillos */}
+      <path d="m21.5 32.5 1 2.75.75-2.75Zm5 0-1 2.75-.75-2.75Z" opacity="0.9" />
     </Svg>
   );
 }
