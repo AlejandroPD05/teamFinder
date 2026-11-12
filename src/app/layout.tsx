@@ -20,7 +20,7 @@ import "./globals.css";
 const geistSans = Geist({ variable: "--font-geist-sans", subsets: ["latin"] });
 const chakra = Chakra_Petch({ variable: "--font-chakra", subsets: ["latin"], weight: ["500", "600", "700"] });
 
-export const metadata: Metadata = {
+const baseMetadata: Metadata = {
   metadataBase: new URL(siteUrl()),
   title: { default: es.meta.title, template: `%s · ${APP_NAME}` },
   description: es.meta.description,
@@ -31,6 +31,19 @@ export const metadata: Metadata = {
   // Verificación de Google Search Console (meta etiqueta). No es secreto: Google lo lee del HTML público.
   verification: { google: process.env.GOOGLE_SITE_VERIFICATION || GOOGLE_SITE_VERIFICATION },
 };
+
+// El favicon es el logo de la web con el color del juego elegido (src/app/icono/[juego]).
+export async function generateMetadata(): Promise<Metadata> {
+  const { game } = await currentGame();
+  const id = encodeURIComponent(game?.id ?? "valorant");
+  return {
+    ...baseMetadata,
+    icons: {
+      icon: [{ url: `/icono/${id}`, type: "image/svg+xml" }],
+      apple: [{ url: `/icono/${id}/apple`, sizes: "180x180", type: "image/png" }],
+    },
+  };
+}
 
 export const viewport: Viewport = { themeColor: "#0b0c12" };
 

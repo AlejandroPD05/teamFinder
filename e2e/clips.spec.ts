@@ -3,6 +3,20 @@ import { expect, test, type Page } from "@playwright/test";
 import { signIn } from "./helpers";
 
 async function audit(page: Page, path: string) {
+  // Con los esqueletos de carga (loading.tsx), el contenido llega después: esperar a que se vaya el esqueleto.
+  await expect(page.locator('[aria-busy="true"]')).toHaveCount(0);
+  await page.waitForLoadState("networkidle");
+  // Hasta que no quede ninguna animación finita en marcha (las entradas escalonadas pueden empezar más tarde).
+  await expect
+    .poll(() =>
+      page.evaluate(
+        () =>
+          document
+            .getAnimations()
+            .filter((a) => a.playState === "running" && a.effect?.getComputedTiming().iterations !== Infinity).length,
+      ),
+    )
+    .toBe(0);
   await page.evaluate(() =>
     Promise.all(
       document

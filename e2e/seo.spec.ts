@@ -43,3 +43,18 @@ test("robots, sitemap y metadatos para buscadores", async ({ page, request }) =>
   expect((await request.get("/equipos/no-existe")).status()).toBe(404);
   expect((await request.get("/opengraph-image")).headers()["content-type"]).toContain("image/png");
 });
+
+test("el favicon es el logo de la web con el color del juego", async ({ page, request }) => {
+  await page.goto("/");
+  const href = await page.locator('link[rel~="icon"]').getAttribute("href");
+  expect(href).toMatch(/^\/icono\/[a-z0-9-]+$/);
+  const svg = await (await request.get(href!)).text();
+  expect(svg).toContain("<svg");
+  expect(svg).toContain('fill="#9ca0b4"');
+  const apple = await request.get(`${href}/apple`);
+  expect(apple.headers()["content-type"]).toBe("image/png");
+  // Quien pide /favicon.ico directamente acaba en el icono.
+  const ico = await request.get("/favicon.ico");
+  expect(ico.ok()).toBe(true);
+  expect(ico.url()).toContain("/icono/");
+});
