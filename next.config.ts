@@ -44,6 +44,10 @@ const nextConfig: NextConfig = {
       { protocol: "https", hostname: "drop-assets.ea.com", pathname: "/images/**" },
     ],
   },
+  // El favicon es una ruta (src/app/icono/[juego]): quien pida /favicon.ico directamente recibe el del juego por defecto.
+  async redirects() {
+    return [{ source: "/favicon.ico", destination: "/icono/valorant", permanent: false }];
+  },
   async headers() {
     return [{ source: "/:path*", headers: securityHeaders }];
   },

@@ -15,7 +15,8 @@ test("cambiar de juego cambia el tema y el catálogo", async ({ page }, info) =>
 
   // CS2: sin personajes, roles de comunidad y otro acento.
   await pickGame(page, "cs2");
-  expect(await accent(page)).not.toBe(valorantAccent);
+  // El acento se anima (400 ms): se espera a que termine de cambiar.
+  await expect.poll(() => accent(page)).not.toBe(valorantAccent);
   await page.goto("/buscar");
   await expect(page.getByLabel("Agente", { exact: true })).toHaveCount(0);
   await expect(page.getByLabel("Rol", { exact: true }).locator("option", { hasText: "AWPer" })).toHaveCount(1);

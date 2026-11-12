@@ -20,7 +20,10 @@ export async function latestMagicLink(email: string): Promise<string> {
 /** Inicia sesión con enlace por correo y deja la página en /inicio. */
 export async function signIn(page: Page, email: string) {
   await page.goto("/entrar");
+  // Rellenar con la página ya hidratada: si no, el formulario se puede rehacer y perder el correo.
+  await page.waitForLoadState("networkidle");
   await page.getByLabel("Correo electrónico").fill(email);
+  await expect(page.getByLabel("Correo electrónico")).toHaveValue(email);
   await page.getByRole("button", { name: "Enviarme el enlace" }).click();
   await expect(page.getByRole("main").getByRole("status")).toContainText("Enlace enviado");
   await page.goto(await latestMagicLink(email));
