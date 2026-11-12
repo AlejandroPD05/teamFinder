@@ -96,3 +96,25 @@ export async function loadClip(supabase: Client, viewer: string, id: string) {
     comments: (comments ?? []).map((c) => ({ ...c, author: names.get(c.user_id) ?? { name: "Jugador", avatar: null } })),
   };
 }
+
+export type Winner = {
+  week_start: string;
+  emblem_id: string;
+  clip_id: string;
+  votes: number;
+  closed: boolean;
+  clip: { id: string; title: string; user_id: string; author: string } | null;
+};
+
+/** Ganadores semanales del juego (reglas en la migración 20261112010000_clip_winners.sql y en /clips/ganadores). */
+export async function loadWinners(supabase: Client, gameId: string, weeks = 8): Promise<Winner[]> {
+  const { data, error } = await supabase.rpc("clip_weekly_winners", { p_game: gameId, p_weeks: weeks });
+  if (error) throw error;
+  const rows = data ?? [];
+  if (rows.length === 0) return [];
+  // Los datos del clip pasan por la RLS: si quien mira ha bloqueado al autor, no aparece.
+  const { data: clips } = await supabase.from("clips").select("id, title, user_id").in("id", [...new Set(rows.map((r) => r.clip_id))]);
+  const names = await loadNames(supabase, (clips ?? []).map((c) => c.user_id));
+  const byId = new Map((clips ?? []).map((c) => [c.id, { ...c, author: names.get(c.user_id)?.name ?? "Jugador" }]));
+  return rows.map((r) => ({ ...r, clip: byId.get(r.clip_id) ?? null }));
+}

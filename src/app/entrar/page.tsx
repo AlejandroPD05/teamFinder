@@ -20,13 +20,13 @@ export default async function LoginPage({ searchParams }: PageProps<"/entrar">) 
         <h1 className="font-display text-3xl font-semibold">{es.login.title}</h1>
         <p className="text-muted">{emailLoginEnabled() ? es.login.lead : es.login.leadDiscordOnly}</p>
         <p className="text-sm text-muted">
-          Antes de entrar, lee las{" "}
+          Al entrar declaras tener 16 años o más y aceptas las{" "}
           <Link href="/normas" className="text-accent-soft underline underline-offset-4">
             normas
           </Link>{" "}
           y la{" "}
           <Link href="/privacidad" className="text-accent-soft underline underline-offset-4">
-            privacidad
+            política de privacidad
           </Link>
           .
         </p>

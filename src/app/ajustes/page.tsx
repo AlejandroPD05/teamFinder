@@ -28,6 +28,19 @@ export default async function SettingsPage() {
         </p>
       </div>
 
+      <section aria-labelledby="datos" className="surface flex flex-col items-start gap-3 p-5">
+        <h2 id="datos" className="font-semibold">
+          Tus datos
+        </h2>
+        <p className="text-sm text-muted">
+          Descarga en un archivo JSON todo lo que has aportado: perfil, grupos, mensajes, clips, comentarios, cartas, bloqueos
+          y denuncias que has hecho.
+        </p>
+        <a href="/ajustes/mis-datos" download className="btn-ghost">
+          Descargar mis datos
+        </a>
+      </section>
+
       <section aria-labelledby="bloqueados" className="surface p-5">
         <h2 id="bloqueados" className="font-semibold">
           Jugadores bloqueados

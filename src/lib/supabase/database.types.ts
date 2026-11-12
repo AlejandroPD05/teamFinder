@@ -1192,6 +1192,11 @@ isOneToOne: false
 "claim_mission":
 { Args: { "p_mission": string }; Returns: string
                            },
+"clip_weekly_winners":
+{ Args: { "p_game": string,"p_min_voter_age"?: string,"p_min_votes"?: number,"p_weeks"?: number }; Returns: {
+              "clip_id": string,"closed": boolean,"emblem_id": string,"votes": number,"week_start": string
+            }[]
+                           },
 "close_lobby":
 { Args: { "p_lobby": string }; Returns: undefined
                            },

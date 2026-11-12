@@ -2,7 +2,8 @@ import type { Metadata } from "next";
 import Link from "next/link";
 import { notFound, redirect } from "next/navigation";
 import { z } from "zod";
-import { loadClip, loadEmblems } from "@/lib/clips/queries";
+import { Trophy } from "lucide-react";
+import { loadClip, loadEmblems, loadWinners } from "@/lib/clips/queries";
 import { createClient } from "@/lib/supabase/server";
 import { deleteClip, deleteComment, moderateClip, toggleVote } from "../actions";
 import { ClipPlayer, ClipReportForm, CommentForm } from "../components";
@@ -26,6 +27,9 @@ export default async function ClipPage({ params }: PageProps<"/clips/[id]">) {
   if (!data) notFound();
   const { clip, comments } = data;
   const own = clip.user_id === userId;
+  // Semanas cerradas en las que este clip ganó algún emblema.
+  const wins = (await loadWinners(supabase, clip.game_id, 52)).filter((w) => w.clip_id === clip.id && w.closed);
+  const weekFmt = new Intl.DateTimeFormat("es", { day: "numeric", month: "long" });
   const category = emblems.find((e) => e.id === clip.emblem_id);
 
   return (
@@ -48,6 +52,20 @@ export default async function ClipPage({ params }: PageProps<"/clips/[id]">) {
           · {category?.name} · {dateFmt.format(new Date(clip.created_at))}
         </p>
       </header>
+
+      {wins.length > 0 && (
+        <ul aria-label="Premios" className="flex flex-wrap gap-2">
+          {wins.map((w) => (
+            <li key={`${w.week_start}-${w.emblem_id}`}>
+              <Link href="/clips/ganadores" className="inline-flex min-h-11 items-center gap-2 rounded-md border border-warning px-3 text-sm">
+                <Trophy aria-hidden="true" className="size-4 text-warning" />
+                Ganador de {emblems.find((e) => e.id === w.emblem_id)?.name} · semana del{" "}
+                {weekFmt.format(new Date(`${w.week_start}T12:00:00`))}
+              </Link>
+            </li>
+          ))}
+        </ul>
+      )}
 
       <section aria-labelledby="emblemas" className="surface flex flex-col gap-3 p-5">
         <h2 id="emblemas" className="font-semibold">

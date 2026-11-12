@@ -47,9 +47,14 @@ export default async function ClipsPage({ searchParams }: PageProps<"/clips">) {
             Comparte tus mejores jugadas y da emblemas a las de los demás. Los vídeos se quedan en YouTube, Twitch o Streamable.
           </p>
         </div>
-        <Link href="/clips/nuevo" className="btn-primary">
-          Publicar clip
-        </Link>
+        <div className="flex flex-wrap gap-3">
+          <Link href="/clips/ganadores" className="btn-ghost">
+            Ganadores
+          </Link>
+          <Link href="/clips/nuevo" className="btn-primary">
+            Publicar clip
+          </Link>
+        </div>
       </header>
 
       <nav aria-label="Filtrar clips" className="flex flex-col gap-2">
