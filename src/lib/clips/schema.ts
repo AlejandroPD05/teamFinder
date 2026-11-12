@@ -1,5 +1,6 @@
 import { z } from "zod";
 import { parseClipUrl } from "./links";
+import { RESTRICTED_MESSAGE } from "@/lib/restrictions";
 
 export const postClipSchema = z.object({
   url: z
@@ -43,6 +44,8 @@ export function clipError(hint: string | undefined): string {
       return "Ese clip ya no está disponible.";
     case "self":
       return "No puedes denunciarte.";
+    case "restricted":
+      return RESTRICTED_MESSAGE;
     default:
       return "No se pudo completar. Inténtalo de nuevo.";
   }

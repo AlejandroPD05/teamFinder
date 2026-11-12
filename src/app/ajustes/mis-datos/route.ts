@@ -33,6 +33,10 @@ export async function GET() {
     emblems,
     cards,
     claimsMade,
+    directMessages,
+    notifications,
+    fanart,
+    restrictions,
   ] = await Promise.all([
     own("profiles", "id"),
     own("game_profiles"),
@@ -50,6 +54,10 @@ export async function GET() {
     own("clip_votes"),
     own("user_cards"),
     own("mission_claims"),
+    own("direct_messages", "sender_id"),
+    own("notifications"),
+    own("fanart_submissions"),
+    own("user_restrictions"),
   ]);
 
   const body = {
@@ -72,6 +80,11 @@ export async function GET() {
     clip_emblems_given: emblems,
     cards,
     mission_claims: claimsMade,
+    // Solo los mensajes privados que has enviado tú (los de la otra persona son suyos).
+    direct_messages: directMessages,
+    notifications,
+    fanart_submissions: fanart,
+    restrictions,
   };
   return new NextResponse(JSON.stringify(body, null, 2), {
     headers: {

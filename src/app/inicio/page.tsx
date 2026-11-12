@@ -6,6 +6,7 @@ import { redirect } from "next/navigation";
 import { es } from "@/lib/i18n/es";
 import { loadOwnProfile } from "@/lib/profile/queries";
 import { profileCompletion } from "@/lib/profile/schema";
+import { activeRestriction, untilFormat } from "@/lib/restrictions";
 import { createClient } from "@/lib/supabase/server";
 
 export const metadata: Metadata = { title: "Inicio" };
@@ -17,9 +18,10 @@ export default async function Dashboard() {
   if (!userId) redirect("/entrar?next=/inicio");
 
   const { game: current } = await currentGame();
-  const [{ profile, game, roles, characters }, { data: isAdmin }] = await Promise.all([
+  const [{ profile, game, roles, characters }, { data: isAdmin }, restriction] = await Promise.all([
     loadOwnProfile(supabase, userId, current.id),
     supabase.rpc("is_admin"),
+    activeRestriction(supabase, userId),
   ]);
   const name = profile.display_name;
   const completion = profileCompletion({
@@ -36,6 +38,19 @@ export default async function Dashboard() {
 
   return (
     <section className="flex flex-col gap-8">
+      {restriction && (
+        <div role="alert" className="rounded-lg border border-danger bg-panel p-4 text-sm">
+          <p className="font-semibold">Tu cuenta está restringida hasta el {untilFormat.format(new Date(restriction.until))}.</p>
+          <p className="mt-1 text-muted">
+            Motivo: {restriction.reason}. Mientras dure no puedes crear grupos, pedir unirte, escribir mensajes, publicar clips,
+            comentar ni dar emblemas. Puedes seguir viendo la web. Si crees que es un error, escríbenos (ver{" "}
+            <Link href="/normas" className="underline underline-offset-4">
+              Normas
+            </Link>
+            ).
+          </p>
+        </div>
+      )}
       <div className="flex items-center gap-4">
         {profile.avatar_url ? (
           <Image src={profile.avatar_url} alt="" width={56} height={56} className="rounded-full" />

@@ -1,6 +1,6 @@
 import type { Metadata, Viewport } from "next";
 import { Chakra_Petch, Geist } from "next/font/google";
-import { ExternalLink, LogIn, LogOut } from "lucide-react";
+import { Bell, ExternalLink, LogIn, LogOut } from "lucide-react";
 import Link from "next/link";
 import { APP_NAME, discordInvite, GOOGLE_SITE_VERIFICATION } from "@/lib/config";
 import { es } from "@/lib/i18n/es";
@@ -36,9 +36,18 @@ export default async function RootLayout({ children }: LayoutProps<"/">) {
   const { data } = await supabase.auth.getClaims();
   const signedIn = Boolean(data?.claims?.sub);
   const { game, games, saved } = await currentGame();
-  const unread = signedIn
-    ? ((await supabase.rpc("my_rooms")).data ?? []).reduce((n, r) => n + Number(r.unread ?? 0), 0)
-    : 0;
+  // Sin leer: salas de grupo + mensajes privados (pestaña Mensajes) y notificaciones (campana).
+  const [rooms, dms, notes] = signedIn
+    ? await Promise.all([
+        supabase.rpc("my_rooms"),
+        supabase.rpc("my_conversations"),
+        supabase.from("notifications").select("id", { count: "exact", head: true }).is("read_at", null),
+      ])
+    : [null, null, null];
+  const unread =
+    (rooms?.data ?? []).reduce((n, r) => n + Number(r.unread ?? 0), 0) +
+    (dms?.data ?? []).reduce((n, c) => n + (c.blocked ? 0 : Number(c.unread ?? 0)), 0);
+  const unreadNotes = notes?.count ?? 0;
 
   return (
     <html lang="es" data-game={game?.id} style={themeStyle(game)} className={`${geistSans.variable} ${chakra.variable} h-full antialiased`}>
@@ -61,6 +70,19 @@ export default async function RootLayout({ children }: LayoutProps<"/">) {
             {signedIn ? (
               <>
                 <SiteNav unread={unread} />
+                <div className="flex items-center">
+                <Link
+                  href="/notificaciones"
+                  aria-label={unreadNotes > 0 ? `Notificaciones, ${unreadNotes} sin leer` : "Notificaciones"}
+                  className="relative inline-flex min-h-11 min-w-11 items-center justify-center rounded-md text-muted hover:bg-panel hover:text-text"
+                >
+                  <Bell aria-hidden="true" className="size-5" />
+                  {unreadNotes > 0 && (
+                    <span aria-hidden="true" className="absolute right-0.5 top-0.5 rounded-full bg-accent px-1.5 text-[0.65rem] font-semibold leading-4 text-bg">
+                      {unreadNotes > 99 ? "99+" : unreadNotes}
+                    </span>
+                  )}
+                </Link>
                 <form action={signOut}>
                   <button
                     type="submit"
@@ -70,6 +92,7 @@ export default async function RootLayout({ children }: LayoutProps<"/">) {
                     {es.nav.logout}
                   </button>
                 </form>
+                </div>
               </>
             ) : (
               <Link href="/entrar" className="btn-ghost">

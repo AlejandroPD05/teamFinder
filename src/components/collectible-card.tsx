@@ -1,6 +1,7 @@
 import { Lock } from "lucide-react";
 import Image from "next/image";
 import type { CSSProperties } from "react";
+import { isFanartUrl } from "@/lib/fanart";
 import type { Card, Rarity } from "@/lib/missions/queries";
 
 export const RARITY: Record<Rarity, { label: string; color: string }> = {
@@ -39,8 +40,9 @@ export function CollectibleCard({
           fill
           priority={priority}
           sizes="(min-width: 1024px) 220px, (min-width: 640px) 30vw, 45vw"
-          // El arte propio (SVG de /cards) se sirve tal cual; el optimizador de Next no convierte SVG.
-          unoptimized={card.image_url.endsWith(".svg")}
+          // El arte propio (SVG de /cards) se sirve tal cual (el optimizador de Next no convierte SVG). El fanart ya viene
+          // limitado a 2 MB desde el almacenamiento de Supabase y tampoco pasa por el optimizador.
+          unoptimized={card.image_url.endsWith(".svg") || isFanartUrl(card.image_url)}
           className="object-cover object-top"
         />
       )}

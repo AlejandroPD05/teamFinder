@@ -15,20 +15,65 @@ export default async function InboxPage() {
   const me = claims?.claims?.sub;
   if (!me) redirect("/entrar?next=/mensajes");
 
-  const [{ data: rooms }, catalog] = await Promise.all([supabase.rpc("my_rooms"), loadCatalog(supabase)]);
+  const [{ data: rooms }, { data: convs }, catalog] = await Promise.all([
+    supabase.rpc("my_rooms"),
+    supabase.rpc("my_conversations"),
+    loadCatalog(supabase),
+  ]);
   const list = rooms ?? [];
-  const names = await loadNames(supabase, list.flatMap((r) => [r.owner_id, r.last_user_id].filter(Boolean) as string[]));
+  const dms = (convs ?? []).filter((c) => !c.blocked);
+  const names = await loadNames(supabase, [
+    ...list.flatMap((r) => [r.owner_id, r.last_user_id].filter(Boolean) as string[]),
+    ...dms.map((c) => c.other_id),
+  ]);
 
   return (
     <section className="flex flex-col gap-6">
       <div>
         <h1 className="font-display text-3xl font-semibold">Mensajes</h1>
-        <p className="text-muted">Salas de los grupos en los que estás. Los mensajes privados entre jugadores llegarán más adelante.</p>
+        <p className="text-muted">Conversaciones privadas y salas de los grupos en los que estás.</p>
       </div>
+
+      <section aria-labelledby="privados" className="flex flex-col gap-3">
+        <h2 id="privados" className="font-semibold">
+          Privados
+        </h2>
+        {dms.length === 0 ? (
+          <p className="text-sm text-muted">
+            Aún no tienes conversaciones privadas. Abre el perfil de un jugador y pulsa «Enviar mensaje».
+          </p>
+        ) : (
+          <ul className="flex flex-col gap-3">
+            {dms.map((c) => (
+              <li key={c.conversation_id}>
+                <Link href={`/mensajes/${c.conversation_id}`} className="flex items-center gap-4 surface p-4 hover:bg-panel-hover">
+                  <div className="min-w-0 flex-1">
+                    <p className="font-semibold">{names.get(c.other_id)?.name ?? "Jugador"}</p>
+                    <p className="truncate text-sm text-muted">
+                      {c.last_sender === me ? "Tú: " : ""}
+                      {c.last_body}
+                    </p>
+                  </div>
+                  <div className="flex flex-col items-end gap-1">
+                    {c.last_at && <span className="text-xs text-muted">{when.format(new Date(c.last_at))}</span>}
+                    {Number(c.unread) > 0 && (
+                      <span className="rounded-full bg-accent px-2 py-0.5 text-xs font-semibold text-bg">
+                        {c.unread} <span className="sr-only">sin leer</span>
+                      </span>
+                    )}
+                  </div>
+                </Link>
+              </li>
+            ))}
+          </ul>
+        )}
+      </section>
+
+      <h2 className="font-semibold">Salas de grupo</h2>
 
       {list.length === 0 ? (
         <div className="rounded-lg border border-dashed border-line p-6 text-center">
-          <h2 className="font-semibold">No estás en ningún grupo activo</h2>
+          <h3 className="font-semibold">No estás en ningún grupo activo</h3>
           <p className="mt-1 text-sm text-muted">Únete a un grupo o crea uno para chatear con tu stack.</p>
           <Link href="/grupos" className="mt-3 btn-ghost">
             Ver grupos

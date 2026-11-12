@@ -12,6 +12,7 @@ import {
 } from "@/lib/profile/options";
 import { CharacterIcon, RoleIcon } from "@/components/game-icons";
 import type { Catalog } from "@/lib/profile/queries";
+import { SOCIALS } from "@/lib/profile/schema";
 import { saveProfile, type SaveState } from "./actions";
 
 export type ProfileFormValues = {
@@ -24,6 +25,11 @@ export type ProfileFormValues = {
   availability_visibility: Visibility;
   goals_visibility: Visibility;
   voice_visibility: Visibility;
+  social_twitch: string | null;
+  social_youtube: string | null;
+  social_x: string | null;
+  socials_visibility: Visibility;
+  dm_policy: "registered" | "none";
   rank_id: string | null;
   region_id: string | null;
   flex: boolean;
@@ -167,6 +173,49 @@ export function ProfileForm({
           </label>
         </div>
         <VisibilitySelect name="voice_visibility" value={values.voice_visibility} label="cómo te comunicas" />
+      </fieldset>
+
+      <fieldset className={box}>
+        <legend className={legend}>Redes sociales</legend>
+        <p className="mt-1 text-sm text-muted">Opcional. Solo el nombre de usuario; el enlace lo ponemos nosotros.</p>
+        <div className="mt-3 grid gap-3 sm:grid-cols-3">
+          {(Object.keys(SOCIALS) as (keyof typeof SOCIALS)[]).map((k) => (
+            <div key={k}>
+              <label htmlFor={k} className="block text-sm font-medium">
+                {SOCIALS[k].label}
+              </label>
+              <input
+                id={k}
+                name={k}
+                defaultValue={values[k] ?? ""}
+                maxLength={31}
+                autoComplete="off"
+                spellCheck={false}
+                placeholder="usuario"
+                aria-invalid={!!err[k] || undefined}
+                aria-describedby={err[k] ? `${k}-error` : undefined}
+                className={`${control} mt-2 w-full`}
+              />
+              <FieldError id={`${k}-error`} error={err[k]} />
+            </div>
+          ))}
+        </div>
+        <VisibilitySelect name="socials_visibility" value={values.socials_visibility} label="tus redes" />
+      </fieldset>
+
+      <fieldset className={box}>
+        <legend className={legend}>Mensajes privados</legend>
+        <div className="mt-3 flex flex-col gap-2">
+          <label className={chip}>
+            <input type="radio" name="dm_policy" value="registered" defaultChecked={values.dm_policy === "registered"} className="size-4 accent-accent" />
+            Cualquier jugador con cuenta puede escribirme
+          </label>
+          <label className={chip}>
+            <input type="radio" name="dm_policy" value="none" defaultChecked={values.dm_policy === "none"} className="size-4 accent-accent" />
+            Nadie puede empezar una conversación conmigo
+          </label>
+        </div>
+        <p className="mt-2 text-sm text-muted">Las conversaciones que ya tienes siguen abiertas. Bloquear a alguien corta la conversación.</p>
       </fieldset>
 
       <fieldset className={box}>

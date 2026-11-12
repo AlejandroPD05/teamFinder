@@ -63,7 +63,7 @@ test("dos miembros chatean en tiempo real; alguien de fuera no ve la sala", asyn
     await expect(guestLog).toContainText("¿Estás?");
     await expect(guest.getByText("En directo")).toBeVisible({ timeout: 15_000 });
     await guest.goto("/mensajes");
-    await expect(guest.getByRole("link", { name: /sin leer/ })).toHaveCount(0);
+    await expect(guest.getByRole("main").getByRole("link", { name: /sin leer/ })).toHaveCount(0);
 
     // Alguien de fuera ve el grupo pero no la sala.
     await signIn(outsider, `e2e-chat-out-${stamp}@example.test`);

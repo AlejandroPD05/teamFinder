@@ -1,3 +1,5 @@
+import { RESTRICTED_MESSAGE } from "@/lib/restrictions";
+
 // Listas cerradas de confianza y seguridad. Deben coincidir con los enum/CHECK de la migración.
 
 export const REPORT_REASONS = {
@@ -23,6 +25,7 @@ export const TRUST_ERRORS: Record<string, string> = {
   duplicate: "Ya has valorado a esta persona en este grupo.",
   not_closed: "Solo se valora cuando el grupo está cerrado (hasta 7 días después).",
   not_member: "Solo entre miembros del grupo.",
+  restricted: RESTRICTED_MESSAGE,
 };
 
 export const trustError = (hint?: string | null) =>

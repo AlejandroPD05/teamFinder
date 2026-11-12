@@ -5,6 +5,7 @@ import {
   profileCompletion,
   profileFromForm,
   profileSchema,
+  SOCIALS,
 } from "@/lib/profile/schema";
 
 const A = "11111111-1111-4111-8111-111111111111";
@@ -43,6 +44,21 @@ describe("profileSchema", () => {
     const withName = (n: string) => fd([["display_name", n], ...baseProfile.slice(1)]);
     expect(profileSchema.safeParse(profileFromForm(withName("a"))).success).toBe(false);
     expect(profileSchema.safeParse(profileFromForm(withName("<script>"))).success).toBe(false);
+  });
+
+  it("redes: solo el usuario (quita la @), vacío = sin enlace; privados abiertos por defecto", () => {
+    const r = profileSchema.safeParse(profileFromForm(fd([...baseProfile, ["social_twitch", " @jugadora_1 "], ["social_x", ""]])));
+    expect(r.success).toBe(true);
+    expect(r.data).toMatchObject({ social_twitch: "jugadora_1", social_x: null, social_youtube: null, socials_visibility: "registered", dm_policy: "registered" });
+    expect(SOCIALS.social_youtube.url("canal.es")).toBe("https://www.youtube.com/@canal.es");
+    for (const [k, v] of [
+      ["social_twitch", "https://twitch.tv/x"],
+      ["social_x", "demasiado_largo_para_x"],
+      ["social_youtube", "con espacio"],
+      ["dm_policy", "todos"],
+    ]) {
+      expect(profileSchema.safeParse(profileFromForm(fd([...baseProfile, [k, v]]))).success).toBe(false);
+    }
   });
 });
 

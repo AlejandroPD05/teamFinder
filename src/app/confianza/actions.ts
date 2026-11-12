@@ -98,8 +98,41 @@ export async function resolveAction(_p: TrustState, fd: FormData): Promise<Trust
 export async function deleteAccountAction(_p: TrustState, fd: FormData): Promise<TrustState> {
   const supabase = await session();
   if (fd.get("confirm") !== "BORRAR") return { ok: false, message: "Escribe BORRAR para confirmar." };
+  // Las imágenes de fanart están en el almacenamiento (no en la base de datos): se borran con la API, antes de la cuenta.
+  const { data: fanart } = await supabase.from("fanart_submissions").select("image_path");
+  if (fanart?.length) await supabase.storage.from("fanart").remove(fanart.map((f) => f.image_path));
   const { error } = await supabase.rpc("delete_my_account");
   if (error) return { ok: false, message: trustError(error.hint) };
   await supabase.auth.signOut();
   redirect("/?cuenta=borrada");
+}
+
+const restrictSchema = z.object({
+  user: uuid,
+  days: z.coerce.number().int().refine((d) => [1, 3, 7, 30].includes(d), "Elige una duración."),
+  reason: z.string().trim().min(3, "Indica el motivo (lo verá la persona).").max(500, "Máximo 500 caracteres.").regex(/^[^<>]*$/, "Sin < ni >."),
+  report: z.preprocess((v) => (v === "" || v == null ? null : v), uuid.nullable()),
+});
+
+export async function restrictAction(_p: TrustState, fd: FormData): Promise<TrustState> {
+  const supabase = await session();
+  const v = restrictSchema.safeParse({ user: fd.get("user_id"), days: fd.get("days"), reason: fd.get("reason") ?? "", report: fd.get("report_id") });
+  if (!v.success) return { ok: false, message: v.error.issues[0].message };
+  const { error } = await supabase.rpc("restrict_user", {
+    p_user: v.data.user,
+    p_days: v.data.days,
+    p_reason: v.data.reason,
+    p_report: v.data.report ?? undefined,
+  });
+  if (error) return { ok: false, message: trustError(error.hint) };
+  return done(["/moderacion"], `Restringido ${v.data.days} ${v.data.days === 1 ? "día" : "días"}. Se le ha notificado.`);
+}
+
+export async function liftRestrictionAction(_p: TrustState, fd: FormData): Promise<TrustState> {
+  const supabase = await session();
+  const id = uuid.safeParse(fd.get("restriction_id"));
+  if (!id.success) return { ok: false, message: trustError() };
+  const { error } = await supabase.rpc("lift_restriction", { p_restriction: id.data });
+  if (error) return { ok: false, message: trustError(error.hint) };
+  return done(["/moderacion"], "Restricción levantada.");
 }

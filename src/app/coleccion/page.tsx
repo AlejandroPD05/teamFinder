@@ -29,9 +29,14 @@ export default async function CollectionPage() {
             ? `Aún no hay cartas de ${game.name}.`
             : `Tienes ${ownedHere} de ${cards.length} cartas. Consíguelas completando misiones.`}
         </p>
-        <Link href="/misiones" className="btn-ghost self-start">
-          Ver misiones
-        </Link>
+        <div className="flex flex-wrap gap-2">
+          <Link href="/misiones" className="btn-ghost">
+            Ver misiones
+          </Link>
+          <Link href="/coleccion/fanart" className="btn-ghost">
+            Enviar tu fanart
+          </Link>
+        </div>
       </header>
 
       {cards.length > 0 && (
