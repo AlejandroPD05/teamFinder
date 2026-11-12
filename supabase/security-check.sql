@@ -3,7 +3,8 @@
 --   - vistas de `public` sin security_invoker,
 --   - tablas de `public` sin RLS,
 --   - funciones de `public` sin search_path fijo,
---   - extensiones instaladas en `public`.
+--   - extensiones instaladas en `public`,
+--   - claves foráneas sin índice (rendimiento: borrados en cascada y filtros).
 do $$
 declare problems text[];
 begin
@@ -31,6 +32,12 @@ begin
     select 'extensión en public: ' || e.extname
     from pg_extension e join pg_namespace n on n.oid = e.extnamespace
     where n.nspname = 'public'
+    union all
+    select 'clave foránea sin índice: ' || c.conrelid::regclass::text || ' (' || c.conname || ')'
+    from pg_constraint c join pg_namespace n on n.oid = c.connamespace
+    where c.contype = 'f' and n.nspname = 'public'
+      and not exists (select 1 from pg_index i where i.indrelid = c.conrelid
+                      and (i.indkey::int2[])[0:cardinality(c.conkey) - 1] = c.conkey)
   ) t;
   if problems is not null then
     raise exception E'Problemas de seguridad en el esquema:\n%', array_to_string(problems, E'\n');

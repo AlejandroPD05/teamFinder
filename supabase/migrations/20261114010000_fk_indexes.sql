@@ -1,0 +1,46 @@
+-- Índices para todas las claves foráneas de `public` (aviso de rendimiento 0001 de Supabase). Sin ellos, borrar una cuenta
+-- (cascadas) o un grupo recorre tablas enteras, y los filtros por esas columnas tampoco tienen índice.
+
+create index if not exists clip_comments_user_id_fk on public.clip_comments (user_id);
+create index if not exists clip_votes_emblem_id_fk on public.clip_votes (emblem_id);
+create index if not exists clip_votes_user_id_fk on public.clip_votes (user_id);
+create index if not exists clips_emblem_id_fk on public.clips (emblem_id);
+create index if not exists clips_user_id_fk on public.clips (user_id);
+create index if not exists direct_conversations_created_by_fk on public.direct_conversations (created_by);
+create index if not exists direct_reads_user_id_fk on public.direct_reads (user_id);
+create index if not exists fanart_submissions_card_id_fk on public.fanart_submissions (card_id);
+create index if not exists fanart_submissions_game_id_fk on public.fanart_submissions (game_id);
+create index if not exists fanart_submissions_reviewed_by_fk on public.fanart_submissions (reviewed_by);
+create index if not exists fanart_submissions_user_id_fk on public.fanart_submissions (user_id);
+create index if not exists game_characters_role_id_fk on public.game_characters (role_id);
+create index if not exists game_profiles_rank_id_fk on public.game_profiles (rank_id);
+create index if not exists game_profiles_region_id_fk on public.game_profiles (region_id);
+create index if not exists karma_votes_target_id_fk on public.karma_votes (target_id);
+create index if not exists karma_votes_voter_id_fk on public.karma_votes (voter_id);
+create index if not exists lobbies_owner_id_fk on public.lobbies (owner_id);
+create index if not exists lobbies_rank_max_id_fk on public.lobbies (rank_max_id);
+create index if not exists lobbies_rank_min_id_fk on public.lobbies (rank_min_id);
+create index if not exists lobbies_region_id_fk on public.lobbies (region_id);
+create index if not exists lobby_needed_roles_role_id_fk on public.lobby_needed_roles (role_id);
+create index if not exists lobby_reads_user_id_fk on public.lobby_reads (user_id);
+create index if not exists mission_claims_card_id_fk on public.mission_claims (card_id);
+create index if not exists mission_claims_mission_id_fk on public.mission_claims (mission_id);
+create index if not exists moderation_log_admin_id_fk on public.moderation_log (admin_id);
+create index if not exists moderation_log_report_id_fk on public.moderation_log (report_id);
+create index if not exists notifications_actor_id_fk on public.notifications (actor_id);
+create index if not exists notifications_clip_id_fk on public.notifications (clip_id);
+create index if not exists notifications_lobby_id_fk on public.notifications (lobby_id);
+create index if not exists player_characters_character_id_fk on public.player_characters (character_id);
+create index if not exists player_roles_role_id_fk on public.player_roles (role_id);
+create index if not exists reports_clip_comment_id_fk on public.reports (clip_comment_id);
+create index if not exists reports_clip_id_fk on public.reports (clip_id);
+create index if not exists reports_direct_message_id_fk on public.reports (direct_message_id);
+create index if not exists reports_lobby_id_fk on public.reports (lobby_id);
+create index if not exists reports_message_id_fk on public.reports (message_id);
+create index if not exists reports_reporter_id_fk on public.reports (reporter_id);
+create index if not exists reports_reviewed_by_fk on public.reports (reviewed_by);
+create index if not exists reports_target_user_id_fk on public.reports (target_user_id);
+create index if not exists user_blocks_blocked_id_fk on public.user_blocks (blocked_id);
+create index if not exists user_cards_card_id_fk on public.user_cards (card_id);
+create index if not exists user_restrictions_created_by_fk on public.user_restrictions (created_by);
+create index if not exists user_restrictions_report_id_fk on public.user_restrictions (report_id);
