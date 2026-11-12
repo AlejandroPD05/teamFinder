@@ -5,7 +5,9 @@ import { KARMA_TAGS, REPORT_REASONS } from "@/lib/trust/options";
 import {
   blockAction,
   deleteAccountAction,
+  liftRestrictionAction,
   reportAction,
+  restrictAction,
   resolveAction,
   voteAction,
   type TrustState,
@@ -159,6 +161,55 @@ export function DeleteAccountForm() {
         </button>
         <Status state={state} />
       </div>
+    </form>
+  );
+}
+
+/** Moderación: restricción temporal (no puede crear grupos, pedir unirse, escribir, publicar clips ni dar emblemas). */
+export function RestrictForm({ userId, reportId }: { userId: string; reportId?: string }) {
+  const [state, action, pending] = useActionState<TrustState, FormData>(restrictAction, null);
+  const id = `res-${reportId ?? userId}`;
+  if (state?.ok) return <Status state={state} />;
+  return (
+    <details className="text-sm">
+      <summary className="min-h-11 cursor-pointer py-2 text-muted hover:text-text">Restringir temporalmente</summary>
+      <form action={action} className="mt-2 flex flex-col gap-2 rounded-md border border-line bg-bg p-3">
+        <input type="hidden" name="user_id" value={userId} />
+        {reportId && <input type="hidden" name="report_id" value={reportId} />}
+        <label htmlFor={`${id}-days`} className="font-medium">
+          Duración
+        </label>
+        <select id={`${id}-days`} name="days" defaultValue="7" className={control}>
+          <option value="1">1 día</option>
+          <option value="3">3 días</option>
+          <option value="7">7 días</option>
+          <option value="30">30 días</option>
+        </select>
+        <label htmlFor={`${id}-reason`} className="font-medium">
+          Motivo (lo verá la persona)
+        </label>
+        <input id={`${id}-reason`} name="reason" required minLength={3} maxLength={500} className={control} />
+        <div className="flex flex-wrap items-center gap-3">
+          <button type="submit" disabled={pending} className={`${btn} border border-danger text-danger hover:bg-panel-hover`}>
+            Restringir
+          </button>
+          <Status state={state} />
+        </div>
+      </form>
+    </details>
+  );
+}
+
+export function LiftRestrictionButton({ restrictionId }: { restrictionId: string }) {
+  const [state, action, pending] = useActionState<TrustState, FormData>(liftRestrictionAction, null);
+  if (state?.ok) return <Status state={state} />;
+  return (
+    <form action={action} className="flex flex-wrap items-center gap-2">
+      <input type="hidden" name="restriction_id" value={restrictionId} />
+      <button type="submit" disabled={pending} className={`${btn} border border-line hover:bg-panel-hover`}>
+        Levantar
+      </button>
+      <Status state={state} />
     </form>
   );
 }

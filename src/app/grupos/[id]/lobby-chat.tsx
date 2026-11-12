@@ -3,6 +3,7 @@
 import { useEffect, useRef, useState } from "react";
 import { browserClient } from "@/lib/supabase/client";
 import { ReportForm } from "../../confianza/forms";
+import { RESTRICTED_MESSAGE } from "@/lib/restrictions";
 
 export type ChatMessage = { id: number; user_id: string; body: string; created_at: string };
 
@@ -11,6 +12,7 @@ const ERRORS: Record<string, string> = {
   closed: "El grupo está cerrado: la sala es de solo lectura.",
   not_member: "Ya no eres miembro de este grupo.",
   invalid: "El mensaje debe tener entre 1 y 500 caracteres.",
+  restricted: RESTRICTED_MESSAGE,
 };
 
 const time = new Intl.DateTimeFormat("es-ES", { timeZone: "Europe/Madrid", hour: "2-digit", minute: "2-digit" });

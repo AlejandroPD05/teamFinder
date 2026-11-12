@@ -9,7 +9,16 @@ import { loadCatalog, loadPublicProfile } from "@/lib/profile/queries";
 import { KARMA_TAGS } from "@/lib/trust/options";
 import { CharacterIcon } from "@/components/game-icons";
 import { createClient } from "@/lib/supabase/server";
+import { SOCIALS } from "@/lib/profile/schema";
 import { BlockButton, ReportForm } from "../../confianza/forms";
+import { StartConversationButton } from "../../mensajes/start-button";
+
+type Badges = {
+  cards: { game_id: string; owned: number; total: number; legendary: string[] }[];
+  clip_awards: { week_start: string; emblem: string; clip_id: string; title: string; game_id: string }[];
+};
+
+const weekFmt = new Intl.DateTimeFormat("es-ES", { day: "numeric", month: "short", timeZone: "UTC" });
 
 // Perfiles: datos personales, fuera de los buscadores aunque sean públicos.
 export const metadata: Metadata = { title: "Perfil de jugador", robots: { index: false, follow: false } };
@@ -37,20 +46,28 @@ export default async function PlayerPage({ params }: PageProps<"/jugador/[id]">)
   if (!z.uuid().safeParse(id).success) notFound();
 
   const supabase = await createClient();
-  const [{ data: claims }, catalog, data] = await Promise.all([
+  const [{ data: claims }, catalog, data, { games }] = await Promise.all([
     supabase.auth.getClaims(),
     currentGame().then(({ game }) => loadCatalog(supabase, game.id).then((c) => ({ ...c, game }))),
     currentGame().then(({ game }) => loadPublicProfile(supabase, id, game.id)),
+    currentGame(),
   ]);
   if (!data.profile) notFound();
 
   const { profile, game, roles, characters } = data;
   const viewer = claims?.claims?.sub;
   const isOwner = viewer === id;
-  const [{ data: karma }, { data: myBlock }] = await Promise.all([
+  const [{ data: karma }, { data: myBlock }, { data: badgeData }] = await Promise.all([
     viewer ? supabase.rpc("karma_summary", { p_user: id }) : Promise.resolve({ data: null }),
     viewer && !isOwner ? supabase.from("user_blocks").select("blocked_id").eq("blocked_id", id).maybeSingle() : Promise.resolve({ data: null }),
+    viewer ? supabase.rpc("player_badges", { p_user: id }) : Promise.resolve({ data: null }),
   ]);
+  const badges = badgeData as Badges | null;
+  const gameName = (gid: string) => games.find((g) => g.id === gid)?.name ?? gid;
+  const socials = (Object.keys(SOCIALS) as (keyof typeof SOCIALS)[]).flatMap((key) => {
+    const h = profile[key];
+    return h ? [{ key, handle: h, ...SOCIALS[key] }] : [];
+  });
   const k = karma?.[0];
   const name = profile.display_name ?? "Jugador";
   const rankRow = catalog.ranks.find((r) => r.id === game?.rank_id);
@@ -83,6 +100,10 @@ export default async function PlayerPage({ params }: PageProps<"/jugador/[id]">)
             Editar perfil
           </Link>
         )}
+        {viewer && !isOwner && !myBlock && profile.dm_policy === "registered" && <StartConversationButton userId={id} />}
+        {viewer && !isOwner && !myBlock && profile.dm_policy === "none" && (
+          <p className="text-sm text-muted">No admite mensajes privados</p>
+        )}
       </header>
 
       <section aria-labelledby="sobre" className="surface p-5">
@@ -97,8 +118,69 @@ export default async function PlayerPage({ params }: PageProps<"/jugador/[id]">)
             title="Comunicación"
             value={profile.voice ? label(VOICE, profile.voice) : <span className="text-muted">Sin indicar u oculto</span>}
           />
+          <Row
+            title="Redes"
+            value={
+              socials.length ? (
+                <ul className="flex flex-wrap gap-x-4">
+                  {socials.map((s) => (
+                    <li key={s.key}>
+                      <a
+                        href={s.url(s.handle)}
+                        rel="noopener noreferrer nofollow ugc"
+                        target="_blank"
+                        className="inline-flex min-h-11 items-center underline underline-offset-4 hover:text-accent-soft"
+                      >
+                        {s.label}: {s.handle}
+                        <span className="sr-only"> (se abre en otra pestaña)</span>
+                      </a>
+                    </li>
+                  ))}
+                </ul>
+              ) : (
+                <span className="text-muted">Sin indicar u ocultas</span>
+              )
+            }
+          />
         </dl>
       </section>
+
+      {badges && (badges.cards.length > 0 || badges.clip_awards.length > 0) && (
+        <section aria-labelledby="insignias" className="surface p-5">
+          <h2 id="insignias" className="font-semibold">
+            Insignias
+          </h2>
+          {badges.clip_awards.length > 0 && (
+            <>
+              <h3 className="mt-4 text-sm text-muted">Clips ganadores de la semana</h3>
+              <ul className="mt-2 flex flex-col gap-1">
+                {badges.clip_awards.map((a) => (
+                  <li key={`${a.week_start}-${a.emblem}-${a.clip_id}`} className="text-sm">
+                    <span className="font-semibold text-accent-soft">{a.emblem}</span> · {gameName(a.game_id)} · semana del{" "}
+                    {weekFmt.format(new Date(a.week_start))} ·{" "}
+                    <Link href={`/clips/${a.clip_id}`} className="underline underline-offset-4">
+                      {a.title}
+                    </Link>
+                  </li>
+                ))}
+              </ul>
+            </>
+          )}
+          {badges.cards.length > 0 && (
+            <>
+              <h3 className="mt-4 text-sm text-muted">Colección de cartas</h3>
+              <ul className="mt-2 flex flex-col gap-1">
+                {badges.cards.map((c) => (
+                  <li key={c.game_id} className="text-sm">
+                    {gameName(c.game_id)}: {c.owned} de {c.total}
+                    {c.legendary.length > 0 && <span className="text-muted"> · legendarias: {c.legendary.join(", ")}</span>}
+                  </li>
+                ))}
+              </ul>
+            </>
+          )}
+        </section>
+      )}
 
       <section aria-labelledby="karma" className="surface p-5">
         <h2 id="karma" className="font-semibold">

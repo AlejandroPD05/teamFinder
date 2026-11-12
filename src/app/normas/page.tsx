@@ -6,7 +6,7 @@ export const metadata: Metadata = { title: "Normas de la comunidad", alternates:
 
 // Normas basadas en las de los editores (Riot, EA, Valve) y en las de plataformas parecidas (Discord, Twitch, FACEIT,
 // Reddit), con el procedimiento de avisos y sanciones del Reglamento de Servicios Digitales (arts. 14, 16 y 17).
-// Solo prometen lo que la web hace hoy: no hay restricciones temporales todavía.
+// Solo prometen lo que la web hace hoy (restricciones temporales: migración 20261113000000).
 export default function RulesPage() {
   return (
     <article className="mx-auto flex max-w-2xl flex-col gap-6">
@@ -97,6 +97,7 @@ export default function RulesPage() {
             dejan de verse aquí.
           </li>
           <li>Da emblemas y comenta de buena fe. No pidas emblemas ni pactes intercambiarlos.</li>
+          <li>Si tu clip gana una semana, lo anunciamos en el Discord de la comunidad con su título, tu nombre visible y el enlace.</li>
         </ul>
       </Section>
 
@@ -105,6 +106,21 @@ export default function RulesPage() {
           <li>El karma solo admite reconocimientos positivos. No lo pidas, no lo cambies por nada y no uses cuentas falsas.</li>
           <li>Las cartas se consiguen solo con misiones. No se compran, no se venden ni se intercambian, tampoco fuera de la web.</li>
           <li>Hacer trampas en las misiones (cuentas falsas, grupos que no existen) supone perder las recompensas.</li>
+          <li>
+            Puedes enviar fanart para que sea una carta: solo obras tuyas, sin arte oficial retocado ni obras de otras personas.
+            Puedes retirar tu permiso cuando quieras.
+          </li>
+        </ul>
+      </Section>
+
+      <Section title="Mensajes privados">
+        <ul>
+          <li>Escribe solo a quien quiera hablar contigo. Si no responde o te bloquea, déjalo estar.</li>
+          <li>Nada de spam, publicidad, enlaces engañosos ni pedir datos personales o contraseñas.</li>
+          <li>
+            Puedes cerrar tus mensajes privados en tu perfil y denunciar cualquier mensaje que recibas. La denuncia incluye una
+            copia del mensaje para que moderación pueda revisarlo.
+          </li>
         </ul>
       </Section>
 
@@ -126,12 +142,16 @@ export default function RulesPage() {
         <ul>
           <li>Archivar la denuncia si no hay infracción.</li>
           <li>Aviso y retirada del contenido: ocultar el clip o el comentario, o cerrar el grupo.</li>
+          <li>
+            Restricción temporal de 1 a 30 días: puedes seguir viendo la web, pero no crear grupos, pedir unirte, escribir en
+            salas ni en privado, publicar clips o fanart, comentar ni dar emblemas. Te llega una notificación con la fecha de fin
+            y el motivo.
+          </li>
           <li>Eliminación de la cuenta en casos graves o si se repite.</li>
         </ul>
         <p>
           Eliminación directa, sin aviso previo, por sexualizar a menores, amenazas creíbles, publicar datos de otros,
-          estafas o malware, vender cuentas, trampas o boosting, o crear cuentas para saltarse una sanción. De momento no
-          hay restricciones temporales.
+          estafas o malware, vender cuentas, trampas o boosting, o crear cuentas para saltarse una sanción.
         </p>
         <p>
           Cuando apliquemos una medida te diremos cuál es, por qué hechos, qué norma has incumplido y cómo recurrirla, si

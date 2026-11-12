@@ -39,18 +39,6 @@ export type Database = {
       foreignKeyName: "app_admins_user_id_fkey"
       columns: ["user_id"]
 isOneToOne: true
-      referencedRelation: "player_search"
-      referencedColumns: ["user_id"]
-    },{
-      foreignKeyName: "app_admins_user_id_fkey"
-      columns: ["user_id"]
-isOneToOne: true
-      referencedRelation: "profile_cards"
-      referencedColumns: ["id"]
-    },{
-      foreignKeyName: "app_admins_user_id_fkey"
-      columns: ["user_id"]
-isOneToOne: true
       referencedRelation: "profiles"
       referencedColumns: ["id"]
     }
@@ -72,18 +60,6 @@ isOneToOne: true
       columns: ["clip_id"]
 isOneToOne: false
       referencedRelation: "clips"
-      referencedColumns: ["id"]
-    },{
-      foreignKeyName: "clip_comments_user_id_fkey"
-      columns: ["user_id"]
-isOneToOne: false
-      referencedRelation: "player_search"
-      referencedColumns: ["user_id"]
-    },{
-      foreignKeyName: "clip_comments_user_id_fkey"
-      columns: ["user_id"]
-isOneToOne: false
-      referencedRelation: "profile_cards"
       referencedColumns: ["id"]
     },{
       foreignKeyName: "clip_comments_user_id_fkey"
@@ -135,18 +111,6 @@ isOneToOne: false
       foreignKeyName: "clip_votes_user_id_fkey"
       columns: ["user_id"]
 isOneToOne: false
-      referencedRelation: "player_search"
-      referencedColumns: ["user_id"]
-    },{
-      foreignKeyName: "clip_votes_user_id_fkey"
-      columns: ["user_id"]
-isOneToOne: false
-      referencedRelation: "profile_cards"
-      referencedColumns: ["id"]
-    },{
-      foreignKeyName: "clip_votes_user_id_fkey"
-      columns: ["user_id"]
-isOneToOne: false
       referencedRelation: "profiles"
       referencedColumns: ["id"]
     }
@@ -179,18 +143,6 @@ isOneToOne: false
       foreignKeyName: "clips_user_id_fkey"
       columns: ["user_id"]
 isOneToOne: false
-      referencedRelation: "player_search"
-      referencedColumns: ["user_id"]
-    },{
-      foreignKeyName: "clips_user_id_fkey"
-      columns: ["user_id"]
-isOneToOne: false
-      referencedRelation: "profile_cards"
-      referencedColumns: ["id"]
-    },{
-      foreignKeyName: "clips_user_id_fkey"
-      columns: ["user_id"]
-isOneToOne: false
       referencedRelation: "profiles"
       referencedColumns: ["id"]
     }
@@ -212,6 +164,128 @@ isOneToOne: false
       columns: ["game_id"]
 isOneToOne: false
       referencedRelation: "games"
+      referencedColumns: ["id"]
+    }
+                  ]
+                },"direct_conversations": {
+                  Row: {
+                    "created_at": string,"created_by": string | null,"id": string,"last_message_at": string | null,"user_a": string,"user_b": string
+                  }
+                  ComputedFields: never
+                  Insert: {
+                    "created_at"?: string,"created_by"?: string | null,"id"?: string,"last_message_at"?: string | null,"user_a": string,"user_b": string
+                  }
+                  Update: {
+                    "created_at"?: string,"created_by"?: string | null,"id"?: string,"last_message_at"?: string | null,"user_a"?: string,"user_b"?: string
+                  }
+                  Relationships: [
+                    {
+      foreignKeyName: "direct_conversations_created_by_fkey"
+      columns: ["created_by"]
+isOneToOne: false
+      referencedRelation: "profiles"
+      referencedColumns: ["id"]
+    },{
+      foreignKeyName: "direct_conversations_user_a_fkey"
+      columns: ["user_a"]
+isOneToOne: false
+      referencedRelation: "profiles"
+      referencedColumns: ["id"]
+    },{
+      foreignKeyName: "direct_conversations_user_b_fkey"
+      columns: ["user_b"]
+isOneToOne: false
+      referencedRelation: "profiles"
+      referencedColumns: ["id"]
+    }
+                  ]
+                },"direct_messages": {
+                  Row: {
+                    "body": string,"conversation_id": string,"created_at": string,"id": number,"sender_id": string
+                  }
+                  ComputedFields: never
+                  Insert: {
+                    "body": string,"conversation_id": string,"created_at"?: string,"id"?: never,"sender_id": string
+                  }
+                  Update: {
+                    "body"?: string,"conversation_id"?: string,"created_at"?: string,"id"?: never,"sender_id"?: string
+                  }
+                  Relationships: [
+                    {
+      foreignKeyName: "direct_messages_conversation_id_fkey"
+      columns: ["conversation_id"]
+isOneToOne: false
+      referencedRelation: "direct_conversations"
+      referencedColumns: ["id"]
+    },{
+      foreignKeyName: "direct_messages_sender_id_fkey"
+      columns: ["sender_id"]
+isOneToOne: false
+      referencedRelation: "profiles"
+      referencedColumns: ["id"]
+    }
+                  ]
+                },"direct_reads": {
+                  Row: {
+                    "conversation_id": string,"last_read_id": number,"user_id": string
+                  }
+                  ComputedFields: never
+                  Insert: {
+                    "conversation_id": string,"last_read_id"?: number,"user_id": string
+                  }
+                  Update: {
+                    "conversation_id"?: string,"last_read_id"?: number,"user_id"?: string
+                  }
+                  Relationships: [
+                    {
+      foreignKeyName: "direct_reads_conversation_id_fkey"
+      columns: ["conversation_id"]
+isOneToOne: false
+      referencedRelation: "direct_conversations"
+      referencedColumns: ["id"]
+    },{
+      foreignKeyName: "direct_reads_user_id_fkey"
+      columns: ["user_id"]
+isOneToOne: false
+      referencedRelation: "profiles"
+      referencedColumns: ["id"]
+    }
+                  ]
+                },"fanart_submissions": {
+                  Row: {
+                    "artist_name": string,"card_id": string | null,"created_at": string,"game_id": string,"id": string,"image_path": string,"license_accepted_at": string,"license_version": string,"portfolio_url": string | null,"review_note": string | null,"reviewed_at": string | null,"reviewed_by": string | null,"status": Database["public"]['Enums']["fanart_status"],"title": string,"user_id": string
+                  }
+                  ComputedFields: never
+                  Insert: {
+                    "artist_name": string,"card_id"?: string | null,"created_at"?: string,"game_id": string,"id"?: string,"image_path": string,"license_accepted_at"?: string,"license_version": string,"portfolio_url"?: string | null,"review_note"?: string | null,"reviewed_at"?: string | null,"reviewed_by"?: string | null,"status"?: Database["public"]['Enums']["fanart_status"],"title": string,"user_id": string
+                  }
+                  Update: {
+                    "artist_name"?: string,"card_id"?: string | null,"created_at"?: string,"game_id"?: string,"id"?: string,"image_path"?: string,"license_accepted_at"?: string,"license_version"?: string,"portfolio_url"?: string | null,"review_note"?: string | null,"reviewed_at"?: string | null,"reviewed_by"?: string | null,"status"?: Database["public"]['Enums']["fanart_status"],"title"?: string,"user_id"?: string
+                  }
+                  Relationships: [
+                    {
+      foreignKeyName: "fanart_submissions_card_id_fkey"
+      columns: ["card_id"]
+isOneToOne: false
+      referencedRelation: "collectible_cards"
+      referencedColumns: ["id"]
+    },{
+      foreignKeyName: "fanart_submissions_game_id_fkey"
+      columns: ["game_id"]
+isOneToOne: false
+      referencedRelation: "games"
+      referencedColumns: ["id"]
+    },{
+      foreignKeyName: "fanart_submissions_reviewed_by_fkey"
+      columns: ["reviewed_by"]
+isOneToOne: false
+      referencedRelation: "profiles"
+      referencedColumns: ["id"]
+    },{
+      foreignKeyName: "fanart_submissions_user_id_fkey"
+      columns: ["user_id"]
+isOneToOne: false
+      referencedRelation: "profiles"
       referencedColumns: ["id"]
     }
                   ]
@@ -290,18 +364,6 @@ isOneToOne: false
       columns: ["region_id"]
 isOneToOne: false
       referencedRelation: "game_regions"
-      referencedColumns: ["id"]
-    },{
-      foreignKeyName: "game_profiles_user_id_fkey"
-      columns: ["user_id"]
-isOneToOne: false
-      referencedRelation: "player_search"
-      referencedColumns: ["user_id"]
-    },{
-      foreignKeyName: "game_profiles_user_id_fkey"
-      columns: ["user_id"]
-isOneToOne: false
-      referencedRelation: "profile_cards"
       referencedColumns: ["id"]
     },{
       foreignKeyName: "game_profiles_user_id_fkey"
@@ -407,31 +469,7 @@ isOneToOne: false
       foreignKeyName: "karma_votes_target_id_fkey"
       columns: ["target_id"]
 isOneToOne: false
-      referencedRelation: "player_search"
-      referencedColumns: ["user_id"]
-    },{
-      foreignKeyName: "karma_votes_target_id_fkey"
-      columns: ["target_id"]
-isOneToOne: false
-      referencedRelation: "profile_cards"
-      referencedColumns: ["id"]
-    },{
-      foreignKeyName: "karma_votes_target_id_fkey"
-      columns: ["target_id"]
-isOneToOne: false
       referencedRelation: "profiles"
-      referencedColumns: ["id"]
-    },{
-      foreignKeyName: "karma_votes_voter_id_fkey"
-      columns: ["voter_id"]
-isOneToOne: false
-      referencedRelation: "player_search"
-      referencedColumns: ["user_id"]
-    },{
-      foreignKeyName: "karma_votes_voter_id_fkey"
-      columns: ["voter_id"]
-isOneToOne: false
-      referencedRelation: "profile_cards"
       referencedColumns: ["id"]
     },{
       foreignKeyName: "karma_votes_voter_id_fkey"
@@ -458,18 +496,6 @@ isOneToOne: false
       columns: ["game_id"]
 isOneToOne: false
       referencedRelation: "games"
-      referencedColumns: ["id"]
-    },{
-      foreignKeyName: "lobbies_owner_id_fkey"
-      columns: ["owner_id"]
-isOneToOne: false
-      referencedRelation: "player_search"
-      referencedColumns: ["user_id"]
-    },{
-      foreignKeyName: "lobbies_owner_id_fkey"
-      columns: ["owner_id"]
-isOneToOne: false
-      referencedRelation: "profile_cards"
       referencedColumns: ["id"]
     },{
       foreignKeyName: "lobbies_owner_id_fkey"
@@ -519,18 +545,6 @@ isOneToOne: false
       foreignKeyName: "lobby_members_user_id_fkey"
       columns: ["user_id"]
 isOneToOne: false
-      referencedRelation: "player_search"
-      referencedColumns: ["user_id"]
-    },{
-      foreignKeyName: "lobby_members_user_id_fkey"
-      columns: ["user_id"]
-isOneToOne: false
-      referencedRelation: "profile_cards"
-      referencedColumns: ["id"]
-    },{
-      foreignKeyName: "lobby_members_user_id_fkey"
-      columns: ["user_id"]
-isOneToOne: false
       referencedRelation: "profiles"
       referencedColumns: ["id"]
     }
@@ -552,18 +566,6 @@ isOneToOne: false
       columns: ["lobby_id"]
 isOneToOne: false
       referencedRelation: "lobbies"
-      referencedColumns: ["id"]
-    },{
-      foreignKeyName: "lobby_messages_user_id_fkey"
-      columns: ["user_id"]
-isOneToOne: false
-      referencedRelation: "player_search"
-      referencedColumns: ["user_id"]
-    },{
-      foreignKeyName: "lobby_messages_user_id_fkey"
-      columns: ["user_id"]
-isOneToOne: false
-      referencedRelation: "profile_cards"
       referencedColumns: ["id"]
     },{
       foreignKeyName: "lobby_messages_user_id_fkey"
@@ -621,18 +623,6 @@ isOneToOne: false
       foreignKeyName: "lobby_reads_user_id_fkey"
       columns: ["user_id"]
 isOneToOne: false
-      referencedRelation: "player_search"
-      referencedColumns: ["user_id"]
-    },{
-      foreignKeyName: "lobby_reads_user_id_fkey"
-      columns: ["user_id"]
-isOneToOne: false
-      referencedRelation: "profile_cards"
-      referencedColumns: ["id"]
-    },{
-      foreignKeyName: "lobby_reads_user_id_fkey"
-      columns: ["user_id"]
-isOneToOne: false
       referencedRelation: "profiles"
       referencedColumns: ["id"]
     }
@@ -654,18 +644,6 @@ isOneToOne: false
       columns: ["lobby_id"]
 isOneToOne: false
       referencedRelation: "lobbies"
-      referencedColumns: ["id"]
-    },{
-      foreignKeyName: "lobby_requests_user_id_fkey"
-      columns: ["user_id"]
-isOneToOne: false
-      referencedRelation: "player_search"
-      referencedColumns: ["user_id"]
-    },{
-      foreignKeyName: "lobby_requests_user_id_fkey"
-      columns: ["user_id"]
-isOneToOne: false
-      referencedRelation: "profile_cards"
       referencedColumns: ["id"]
     },{
       foreignKeyName: "lobby_requests_user_id_fkey"
@@ -698,18 +676,6 @@ isOneToOne: false
       columns: ["mission_id"]
 isOneToOne: false
       referencedRelation: "missions"
-      referencedColumns: ["id"]
-    },{
-      foreignKeyName: "mission_claims_user_id_fkey"
-      columns: ["user_id"]
-isOneToOne: false
-      referencedRelation: "player_search"
-      referencedColumns: ["user_id"]
-    },{
-      foreignKeyName: "mission_claims_user_id_fkey"
-      columns: ["user_id"]
-isOneToOne: false
-      referencedRelation: "profile_cards"
       referencedColumns: ["id"]
     },{
       foreignKeyName: "mission_claims_user_id_fkey"
@@ -755,18 +721,6 @@ isOneToOne: false
       foreignKeyName: "moderation_log_admin_id_fkey"
       columns: ["admin_id"]
 isOneToOne: false
-      referencedRelation: "player_search"
-      referencedColumns: ["user_id"]
-    },{
-      foreignKeyName: "moderation_log_admin_id_fkey"
-      columns: ["admin_id"]
-isOneToOne: false
-      referencedRelation: "profile_cards"
-      referencedColumns: ["id"]
-    },{
-      foreignKeyName: "moderation_log_admin_id_fkey"
-      columns: ["admin_id"]
-isOneToOne: false
       referencedRelation: "profiles"
       referencedColumns: ["id"]
     },{
@@ -774,6 +728,44 @@ isOneToOne: false
       columns: ["report_id"]
 isOneToOne: false
       referencedRelation: "reports"
+      referencedColumns: ["id"]
+    }
+                  ]
+                },"notifications": {
+                  Row: {
+                    "actor_id": string | null,"body": string | null,"clip_id": string | null,"created_at": string,"id": number,"kind": Database["public"]['Enums']["notification_kind"],"lobby_id": string | null,"read_at": string | null,"user_id": string
+                  }
+                  ComputedFields: never
+                  Insert: {
+                    "actor_id"?: string | null,"body"?: string | null,"clip_id"?: string | null,"created_at"?: string,"id"?: never,"kind": Database["public"]['Enums']["notification_kind"],"lobby_id"?: string | null,"read_at"?: string | null,"user_id": string
+                  }
+                  Update: {
+                    "actor_id"?: string | null,"body"?: string | null,"clip_id"?: string | null,"created_at"?: string,"id"?: never,"kind"?: Database["public"]['Enums']["notification_kind"],"lobby_id"?: string | null,"read_at"?: string | null,"user_id"?: string
+                  }
+                  Relationships: [
+                    {
+      foreignKeyName: "notifications_actor_id_fkey"
+      columns: ["actor_id"]
+isOneToOne: false
+      referencedRelation: "profiles"
+      referencedColumns: ["id"]
+    },{
+      foreignKeyName: "notifications_clip_id_fkey"
+      columns: ["clip_id"]
+isOneToOne: false
+      referencedRelation: "clips"
+      referencedColumns: ["id"]
+    },{
+      foreignKeyName: "notifications_lobby_id_fkey"
+      columns: ["lobby_id"]
+isOneToOne: false
+      referencedRelation: "lobbies"
+      referencedColumns: ["id"]
+    },{
+      foreignKeyName: "notifications_user_id_fkey"
+      columns: ["user_id"]
+isOneToOne: false
+      referencedRelation: "profiles"
       referencedColumns: ["id"]
     }
                   ]
@@ -795,12 +787,6 @@ isOneToOne: false
 isOneToOne: false
       referencedRelation: "game_characters"
       referencedColumns: ["id"]
-    },{
-      foreignKeyName: "player_characters_user_id_game_id_fkey"
-      columns: ["user_id","game_id"]
-isOneToOne: false
-      referencedRelation: "game_profile_cards"
-      referencedColumns: ["user_id","game_id"]
     },{
       foreignKeyName: "player_characters_user_id_game_id_fkey"
       columns: ["user_id","game_id"]
@@ -831,40 +817,34 @@ isOneToOne: false
       foreignKeyName: "player_roles_user_id_game_id_fkey"
       columns: ["user_id","game_id"]
 isOneToOne: false
-      referencedRelation: "game_profile_cards"
-      referencedColumns: ["user_id","game_id"]
-    },{
-      foreignKeyName: "player_roles_user_id_game_id_fkey"
-      columns: ["user_id","game_id"]
-isOneToOne: false
       referencedRelation: "game_profiles"
       referencedColumns: ["user_id","game_id"]
     }
                   ]
                 },"profiles": {
                   Row: {
-                    "availability": (string)[],"availability_visibility": Database["public"]['Enums']["visibility"],"avatar_url": string | null,"created_at": string,"display_name": string,"goals": (string)[],"goals_visibility": Database["public"]['Enums']["visibility"],"id": string,"languages": (string)[],"languages_visibility": Database["public"]['Enums']["visibility"],"updated_at": string,"voice": string | null,"voice_visibility": Database["public"]['Enums']["visibility"]
+                    "availability": (string)[],"availability_visibility": Database["public"]['Enums']["visibility"],"avatar_url": string | null,"created_at": string,"display_name": string,"dm_policy": string,"goals": (string)[],"goals_visibility": Database["public"]['Enums']["visibility"],"id": string,"languages": (string)[],"languages_visibility": Database["public"]['Enums']["visibility"],"social_twitch": string | null,"social_x": string | null,"social_youtube": string | null,"socials_visibility": Database["public"]['Enums']["visibility"],"updated_at": string,"voice": string | null,"voice_visibility": Database["public"]['Enums']["visibility"]
                   }
                   ComputedFields: never
                   Insert: {
-                    "availability"?: (string)[],"availability_visibility"?: Database["public"]['Enums']["visibility"],"avatar_url"?: string | null,"created_at"?: string,"display_name": string,"goals"?: (string)[],"goals_visibility"?: Database["public"]['Enums']["visibility"],"id": string,"languages"?: (string)[],"languages_visibility"?: Database["public"]['Enums']["visibility"],"updated_at"?: string,"voice"?: string | null,"voice_visibility"?: Database["public"]['Enums']["visibility"]
+                    "availability"?: (string)[],"availability_visibility"?: Database["public"]['Enums']["visibility"],"avatar_url"?: string | null,"created_at"?: string,"display_name": string,"dm_policy"?: string,"goals"?: (string)[],"goals_visibility"?: Database["public"]['Enums']["visibility"],"id": string,"languages"?: (string)[],"languages_visibility"?: Database["public"]['Enums']["visibility"],"social_twitch"?: string | null,"social_x"?: string | null,"social_youtube"?: string | null,"socials_visibility"?: Database["public"]['Enums']["visibility"],"updated_at"?: string,"voice"?: string | null,"voice_visibility"?: Database["public"]['Enums']["visibility"]
                   }
                   Update: {
-                    "availability"?: (string)[],"availability_visibility"?: Database["public"]['Enums']["visibility"],"avatar_url"?: string | null,"created_at"?: string,"display_name"?: string,"goals"?: (string)[],"goals_visibility"?: Database["public"]['Enums']["visibility"],"id"?: string,"languages"?: (string)[],"languages_visibility"?: Database["public"]['Enums']["visibility"],"updated_at"?: string,"voice"?: string | null,"voice_visibility"?: Database["public"]['Enums']["visibility"]
+                    "availability"?: (string)[],"availability_visibility"?: Database["public"]['Enums']["visibility"],"avatar_url"?: string | null,"created_at"?: string,"display_name"?: string,"dm_policy"?: string,"goals"?: (string)[],"goals_visibility"?: Database["public"]['Enums']["visibility"],"id"?: string,"languages"?: (string)[],"languages_visibility"?: Database["public"]['Enums']["visibility"],"social_twitch"?: string | null,"social_x"?: string | null,"social_youtube"?: string | null,"socials_visibility"?: Database["public"]['Enums']["visibility"],"updated_at"?: string,"voice"?: string | null,"voice_visibility"?: Database["public"]['Enums']["visibility"]
                   }
                   Relationships: [
                     
                   ]
                 },"reports": {
                   Row: {
-                    "clip_comment_id": number | null,"clip_id": string | null,"created_at": string,"details": string | null,"id": string,"lobby_id": string | null,"message_id": number | null,"message_snapshot": string | null,"reason": Database["public"]['Enums']["report_reason"],"reporter_id": string | null,"resolution": string | null,"reviewed_at": string | null,"reviewed_by": string | null,"status": Database["public"]['Enums']["report_status"],"target_user_id": string | null
+                    "clip_comment_id": number | null,"clip_id": string | null,"created_at": string,"details": string | null,"direct_message_id": number | null,"id": string,"lobby_id": string | null,"message_id": number | null,"message_snapshot": string | null,"reason": Database["public"]['Enums']["report_reason"],"reporter_id": string | null,"resolution": string | null,"reviewed_at": string | null,"reviewed_by": string | null,"status": Database["public"]['Enums']["report_status"],"target_user_id": string | null
                   }
                   ComputedFields: never
                   Insert: {
-                    "clip_comment_id"?: number | null,"clip_id"?: string | null,"created_at"?: string,"details"?: string | null,"id"?: string,"lobby_id"?: string | null,"message_id"?: number | null,"message_snapshot"?: string | null,"reason": Database["public"]['Enums']["report_reason"],"reporter_id"?: string | null,"resolution"?: string | null,"reviewed_at"?: string | null,"reviewed_by"?: string | null,"status"?: Database["public"]['Enums']["report_status"],"target_user_id"?: string | null
+                    "clip_comment_id"?: number | null,"clip_id"?: string | null,"created_at"?: string,"details"?: string | null,"direct_message_id"?: number | null,"id"?: string,"lobby_id"?: string | null,"message_id"?: number | null,"message_snapshot"?: string | null,"reason": Database["public"]['Enums']["report_reason"],"reporter_id"?: string | null,"resolution"?: string | null,"reviewed_at"?: string | null,"reviewed_by"?: string | null,"status"?: Database["public"]['Enums']["report_status"],"target_user_id"?: string | null
                   }
                   Update: {
-                    "clip_comment_id"?: number | null,"clip_id"?: string | null,"created_at"?: string,"details"?: string | null,"id"?: string,"lobby_id"?: string | null,"message_id"?: number | null,"message_snapshot"?: string | null,"reason"?: Database["public"]['Enums']["report_reason"],"reporter_id"?: string | null,"resolution"?: string | null,"reviewed_at"?: string | null,"reviewed_by"?: string | null,"status"?: Database["public"]['Enums']["report_status"],"target_user_id"?: string | null
+                    "clip_comment_id"?: number | null,"clip_id"?: string | null,"created_at"?: string,"details"?: string | null,"direct_message_id"?: number | null,"id"?: string,"lobby_id"?: string | null,"message_id"?: number | null,"message_snapshot"?: string | null,"reason"?: Database["public"]['Enums']["report_reason"],"reporter_id"?: string | null,"resolution"?: string | null,"reviewed_at"?: string | null,"reviewed_by"?: string | null,"status"?: Database["public"]['Enums']["report_status"],"target_user_id"?: string | null
                   }
                   Relationships: [
                     {
@@ -878,6 +858,12 @@ isOneToOne: false
       columns: ["clip_id"]
 isOneToOne: false
       referencedRelation: "clips"
+      referencedColumns: ["id"]
+    },{
+      foreignKeyName: "reports_direct_message_id_fkey"
+      columns: ["direct_message_id"]
+isOneToOne: false
+      referencedRelation: "direct_messages"
       referencedColumns: ["id"]
     },{
       foreignKeyName: "reports_lobby_id_fkey"
@@ -895,49 +881,13 @@ isOneToOne: false
       foreignKeyName: "reports_reporter_id_fkey"
       columns: ["reporter_id"]
 isOneToOne: false
-      referencedRelation: "player_search"
-      referencedColumns: ["user_id"]
-    },{
-      foreignKeyName: "reports_reporter_id_fkey"
-      columns: ["reporter_id"]
-isOneToOne: false
-      referencedRelation: "profile_cards"
-      referencedColumns: ["id"]
-    },{
-      foreignKeyName: "reports_reporter_id_fkey"
-      columns: ["reporter_id"]
-isOneToOne: false
       referencedRelation: "profiles"
       referencedColumns: ["id"]
     },{
       foreignKeyName: "reports_reviewed_by_fkey"
       columns: ["reviewed_by"]
 isOneToOne: false
-      referencedRelation: "player_search"
-      referencedColumns: ["user_id"]
-    },{
-      foreignKeyName: "reports_reviewed_by_fkey"
-      columns: ["reviewed_by"]
-isOneToOne: false
-      referencedRelation: "profile_cards"
-      referencedColumns: ["id"]
-    },{
-      foreignKeyName: "reports_reviewed_by_fkey"
-      columns: ["reviewed_by"]
-isOneToOne: false
       referencedRelation: "profiles"
-      referencedColumns: ["id"]
-    },{
-      foreignKeyName: "reports_target_user_id_fkey"
-      columns: ["target_user_id"]
-isOneToOne: false
-      referencedRelation: "player_search"
-      referencedColumns: ["user_id"]
-    },{
-      foreignKeyName: "reports_target_user_id_fkey"
-      columns: ["target_user_id"]
-isOneToOne: false
-      referencedRelation: "profile_cards"
       referencedColumns: ["id"]
     },{
       foreignKeyName: "reports_target_user_id_fkey"
@@ -963,31 +913,7 @@ isOneToOne: false
       foreignKeyName: "user_blocks_blocked_id_fkey"
       columns: ["blocked_id"]
 isOneToOne: false
-      referencedRelation: "player_search"
-      referencedColumns: ["user_id"]
-    },{
-      foreignKeyName: "user_blocks_blocked_id_fkey"
-      columns: ["blocked_id"]
-isOneToOne: false
-      referencedRelation: "profile_cards"
-      referencedColumns: ["id"]
-    },{
-      foreignKeyName: "user_blocks_blocked_id_fkey"
-      columns: ["blocked_id"]
-isOneToOne: false
       referencedRelation: "profiles"
-      referencedColumns: ["id"]
-    },{
-      foreignKeyName: "user_blocks_blocker_id_fkey"
-      columns: ["blocker_id"]
-isOneToOne: false
-      referencedRelation: "player_search"
-      referencedColumns: ["user_id"]
-    },{
-      foreignKeyName: "user_blocks_blocker_id_fkey"
-      columns: ["blocker_id"]
-isOneToOne: false
-      referencedRelation: "profile_cards"
       referencedColumns: ["id"]
     },{
       foreignKeyName: "user_blocks_blocker_id_fkey"
@@ -1019,16 +945,36 @@ isOneToOne: false
       foreignKeyName: "user_cards_user_id_fkey"
       columns: ["user_id"]
 isOneToOne: false
-      referencedRelation: "player_search"
-      referencedColumns: ["user_id"]
-    },{
-      foreignKeyName: "user_cards_user_id_fkey"
-      columns: ["user_id"]
+      referencedRelation: "profiles"
+      referencedColumns: ["id"]
+    }
+                  ]
+                },"user_restrictions": {
+                  Row: {
+                    "created_at": string,"created_by": string | null,"id": string,"lifted_at": string | null,"reason": string,"report_id": string | null,"until": string,"user_id": string
+                  }
+                  ComputedFields: never
+                  Insert: {
+                    "created_at"?: string,"created_by"?: string | null,"id"?: string,"lifted_at"?: string | null,"reason": string,"report_id"?: string | null,"until": string,"user_id": string
+                  }
+                  Update: {
+                    "created_at"?: string,"created_by"?: string | null,"id"?: string,"lifted_at"?: string | null,"reason"?: string,"report_id"?: string | null,"until"?: string,"user_id"?: string
+                  }
+                  Relationships: [
+                    {
+      foreignKeyName: "user_restrictions_created_by_fkey"
+      columns: ["created_by"]
 isOneToOne: false
-      referencedRelation: "profile_cards"
+      referencedRelation: "profiles"
       referencedColumns: ["id"]
     },{
-      foreignKeyName: "user_cards_user_id_fkey"
+      foreignKeyName: "user_restrictions_report_id_fkey"
+      columns: ["report_id"]
+isOneToOne: false
+      referencedRelation: "reports"
+      referencedColumns: ["id"]
+    },{
+      foreignKeyName: "user_restrictions_user_id_fkey"
       columns: ["user_id"]
 isOneToOne: false
       referencedRelation: "profiles"
@@ -1050,43 +996,7 @@ isOneToOne: false
                            "flex"?: boolean | null,"game_id"?: string | null,"mode_slugs"?: (string)[] | null,"rank_id"?: string | null,"rank_source"?: string | null,"region_id"?: string | null,"updated_at"?: string | null,"user_id"?: string | null
                          }
                         Relationships: [
-                    {
-      foreignKeyName: "game_profiles_game_id_fkey"
-      columns: ["game_id"]
-isOneToOne: false
-      referencedRelation: "games"
-      referencedColumns: ["id"]
-    },{
-      foreignKeyName: "game_profiles_rank_id_fkey"
-      columns: ["rank_id"]
-isOneToOne: false
-      referencedRelation: "game_ranks"
-      referencedColumns: ["id"]
-    },{
-      foreignKeyName: "game_profiles_region_id_fkey"
-      columns: ["region_id"]
-isOneToOne: false
-      referencedRelation: "game_regions"
-      referencedColumns: ["id"]
-    },{
-      foreignKeyName: "game_profiles_user_id_fkey"
-      columns: ["user_id"]
-isOneToOne: false
-      referencedRelation: "player_search"
-      referencedColumns: ["user_id"]
-    },{
-      foreignKeyName: "game_profiles_user_id_fkey"
-      columns: ["user_id"]
-isOneToOne: false
-      referencedRelation: "profile_cards"
-      referencedColumns: ["id"]
-    },{
-      foreignKeyName: "game_profiles_user_id_fkey"
-      columns: ["user_id"]
-isOneToOne: false
-      referencedRelation: "profiles"
-      referencedColumns: ["id"]
-    }
+                    
                   ]
                 },"player_character_cards": {
                   Row: {
@@ -1094,25 +1004,7 @@ isOneToOne: false
                   }
                   ComputedFields: never
                   Relationships: [
-                    {
-      foreignKeyName: "player_characters_character_id_fkey"
-      columns: ["character_id"]
-isOneToOne: false
-      referencedRelation: "game_characters"
-      referencedColumns: ["id"]
-    },{
-      foreignKeyName: "player_characters_user_id_game_id_fkey"
-      columns: ["user_id","game_id"]
-isOneToOne: false
-      referencedRelation: "game_profile_cards"
-      referencedColumns: ["user_id","game_id"]
-    },{
-      foreignKeyName: "player_characters_user_id_game_id_fkey"
-      columns: ["user_id","game_id"]
-isOneToOne: false
-      referencedRelation: "game_profiles"
-      referencedColumns: ["user_id","game_id"]
-    }
+                    
                   ]
                 },"player_role_cards": {
                   Row: {
@@ -1120,25 +1012,7 @@ isOneToOne: false
                   }
                   ComputedFields: never
                   Relationships: [
-                    {
-      foreignKeyName: "player_roles_role_id_fkey"
-      columns: ["role_id"]
-isOneToOne: false
-      referencedRelation: "game_roles"
-      referencedColumns: ["id"]
-    },{
-      foreignKeyName: "player_roles_user_id_game_id_fkey"
-      columns: ["user_id","game_id"]
-isOneToOne: false
-      referencedRelation: "game_profile_cards"
-      referencedColumns: ["user_id","game_id"]
-    },{
-      foreignKeyName: "player_roles_user_id_game_id_fkey"
-      columns: ["user_id","game_id"]
-isOneToOne: false
-      referencedRelation: "game_profiles"
-      referencedColumns: ["user_id","game_id"]
-    }
+                    
                   ]
                 },"player_search": {
                   Row: {
@@ -1146,36 +1020,18 @@ isOneToOne: false
                   }
                   ComputedFields: never
                   Relationships: [
-                    {
-      foreignKeyName: "game_profiles_game_id_fkey"
-      columns: ["game_id"]
-isOneToOne: false
-      referencedRelation: "games"
-      referencedColumns: ["id"]
-    },{
-      foreignKeyName: "game_profiles_rank_id_fkey"
-      columns: ["rank_id"]
-isOneToOne: false
-      referencedRelation: "game_ranks"
-      referencedColumns: ["id"]
-    },{
-      foreignKeyName: "game_profiles_region_id_fkey"
-      columns: ["region_id"]
-isOneToOne: false
-      referencedRelation: "game_regions"
-      referencedColumns: ["id"]
-    }
+                    
                   ]
                 },"profile_cards": {
                   Row: {
-                    "availability": (string)[] | null,"avatar_url": string | null,"created_at": string,"display_name": string,"goals": (string)[] | null,"id": string,"languages": (string)[] | null,"voice": string | null
+                    "availability": (string)[] | null,"avatar_url": string | null,"created_at": string,"display_name": string,"dm_policy": string | null,"goals": (string)[] | null,"id": string,"languages": (string)[] | null,"social_twitch": string | null,"social_x": string | null,"social_youtube": string | null,"voice": string | null
                   }
                   ComputedFields: never
                   Insert: {
-                           "availability"?: never,"avatar_url"?: string | null,"created_at"?: string | null,"display_name"?: string | null,"goals"?: never,"id"?: string | null,"languages"?: never,"voice"?: never
+                           "availability"?: never,"avatar_url"?: string | null,"created_at"?: string | null,"display_name"?: string | null,"dm_policy"?: never,"goals"?: never,"id"?: string | null,"languages"?: never,"social_twitch"?: never,"social_x"?: never,"social_youtube"?: never,"voice"?: never
                          }
                         Update: {
-                           "availability"?: never,"avatar_url"?: string | null,"created_at"?: string | null,"display_name"?: string | null,"goals"?: never,"id"?: string | null,"languages"?: never,"voice"?: never
+                           "availability"?: never,"avatar_url"?: string | null,"created_at"?: string | null,"display_name"?: string | null,"dm_policy"?: never,"goals"?: never,"id"?: string | null,"languages"?: never,"social_twitch"?: never,"social_x"?: never,"social_youtube"?: never,"voice"?: never
                          }
                         Relationships: [
                     
@@ -1234,14 +1090,28 @@ isOneToOne: false
 "leave_lobby":
 { Args: { "p_lobby": string }; Returns: undefined
                            },
+"lift_restriction":
+{ Args: { "p_restriction": string }; Returns: undefined
+                           },
 "lobby_refresh_status":
 { Args: { "p_lobby": string }; Returns: undefined
+                           },
+"mark_direct_read":
+{ Args: { "p_conversation": string }; Returns: undefined
+                           },
+"mark_notifications_read":
+{ Args: { "p_id"?: number }; Returns: undefined
                            },
 "mark_read":
 { Args: { "p_lobby": string }; Returns: undefined
                            },
 "moderate_clip":
 { Args: { "p_clip": string,"p_comment": number,"p_hidden": boolean,"p_note": string }; Returns: undefined
+                           },
+"my_conversations":
+{ Args: Record<PropertyKey, never>; Returns: {
+              "blocked": boolean,"conversation_id": string,"last_at": string,"last_body": string,"last_sender": string,"other_id": string,"unread": number
+            }[]
                            },
 "my_missions":
 { Args: { "p_game": string }; Returns: {
@@ -1253,11 +1123,17 @@ isOneToOne: false
               "last_at": string,"last_body": string,"last_user_id": string,"lobby_id": string,"mode_slug": string,"owner_id": string,"status": Database["public"]['Enums']["lobby_status"],"unread": number
             }[]
                            },
+"player_badges":
+{ Args: { "p_user": string }; Returns: Json
+                           },
 "post_clip":
 { Args: { "p_emblem": string,"p_game": string,"p_provider": Database["public"]['Enums']["clip_provider"],"p_title": string,"p_video": string }; Returns: string
                            },
 "report_clip":
 { Args: { "p_clip": string,"p_comment": number,"p_details": string,"p_reason": Database["public"]['Enums']["report_reason"] }; Returns: string
+                           },
+"report_direct_message":
+{ Args: { "p_details": string,"p_message": number,"p_reason": Database["public"]['Enums']["report_reason"] }; Returns: string
                            },
 "report_user":
 { Args: { "p_details": string,"p_lobby"?: string,"p_message"?: number,"p_reason": Database["public"]['Enums']["report_reason"],"p_target": string }; Returns: string
@@ -1271,11 +1147,26 @@ isOneToOne: false
 "respond_request":
 { Args: { "p_accept": boolean,"p_request": string }; Returns: undefined
                            },
+"restrict_user":
+{ Args: { "p_days": number,"p_reason": string,"p_report"?: string,"p_user": string }; Returns: string
+                           },
+"review_fanart":
+{ Args: { "p_approve": boolean,"p_id": string,"p_image_url": string,"p_note": string,"p_rarity": Database["public"]['Enums']["card_rarity"] }; Returns: undefined
+                           },
 "save_game_profile":
 { Args: { "p_characters": Json,"p_flex": boolean,"p_game_id": string,"p_modes"?: (string)[],"p_rank_id": string,"p_region_id": string,"p_roles": Json,"p_visibility": Database["public"]['Enums']["visibility"] }; Returns: undefined
                            },
+"send_direct_message":
+{ Args: { "p_body": string,"p_conversation": string }; Returns: number
+                           },
 "send_message":
 { Args: { "p_body": string,"p_lobby": string }; Returns: number
+                           },
+"start_conversation":
+{ Args: { "p_other": string }; Returns: string
+                           },
+"submit_fanart":
+{ Args: { "p_artist": string,"p_game": string,"p_license": string,"p_path": string,"p_portfolio": string,"p_title": string }; Returns: string
                            },
 "toggle_clip_vote":
 { Args: { "p_clip": string,"p_emblem": string }; Returns: boolean
@@ -1286,12 +1177,15 @@ isOneToOne: false
 "vote_karma":
 { Args: { "p_lobby": string,"p_tags": (string)[],"p_target": string,"p_value": number }; Returns: undefined
                            },
+"withdraw_fanart":
+{ Args: { "p_id": string }; Returns: undefined
+                           },
 "withdraw_request":
 { Args: { "p_lobby": string }; Returns: undefined
                            }
           }
           Enums: {
-            "card_rarity": "common"|"rare"|"epic"|"legendary","character_status": "main"|"comfort"|"playable"|"flexible","clip_provider": "youtube"|"twitch"|"streamable","lobby_status": "open"|"full"|"closed","report_reason": "spam"|"harassment"|"sexual"|"impersonation"|"cheating"|"other","report_status": "open"|"actioned"|"dismissed","request_status": "pending"|"accepted"|"rejected"|"withdrawn","visibility": "public"|"registered"|"private"
+            "card_rarity": "common"|"rare"|"epic"|"legendary","character_status": "main"|"comfort"|"playable"|"flexible","clip_provider": "youtube"|"twitch"|"streamable","fanart_status": "pending"|"approved"|"rejected"|"withdrawn","lobby_status": "open"|"full"|"closed","notification_kind": "join_request"|"request_accepted"|"request_rejected"|"clip_comment"|"karma"|"restriction"|"fanart","report_reason": "spam"|"harassment"|"sexual"|"impersonation"|"cheating"|"other","report_status": "open"|"actioned"|"dismissed","request_status": "pending"|"accepted"|"rejected"|"withdrawn","visibility": "public"|"registered"|"private"
           }
           CompositeTypes: {
             [_ in never]: never
@@ -1411,7 +1305,7 @@ export const Constants = {
           }
         },"public": {
           Enums: {
-            "card_rarity": ["common", "rare", "epic", "legendary"],"character_status": ["main", "comfort", "playable", "flexible"],"clip_provider": ["youtube", "twitch", "streamable"],"lobby_status": ["open", "full", "closed"],"report_reason": ["spam", "harassment", "sexual", "impersonation", "cheating", "other"],"report_status": ["open", "actioned", "dismissed"],"request_status": ["pending", "accepted", "rejected", "withdrawn"],"visibility": ["public", "registered", "private"]
+            "card_rarity": ["common", "rare", "epic", "legendary"],"character_status": ["main", "comfort", "playable", "flexible"],"clip_provider": ["youtube", "twitch", "streamable"],"fanart_status": ["pending", "approved", "rejected", "withdrawn"],"lobby_status": ["open", "full", "closed"],"notification_kind": ["join_request", "request_accepted", "request_rejected", "clip_comment", "karma", "restriction", "fanart"],"report_reason": ["spam", "harassment", "sexual", "impersonation", "cheating", "other"],"report_status": ["open", "actioned", "dismissed"],"request_status": ["pending", "accepted", "rejected", "withdrawn"],"visibility": ["public", "registered", "private"]
           }
         }
 } as const

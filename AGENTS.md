@@ -40,6 +40,7 @@ Requieren Docker en marcha y `npx supabase start` para `test` y `e2e`.
 - Estética: fondo `#0B0C12`, paneles `#151722`, acento morado `#8B5CF6`, azul `#3B82F6`, texto `#E7E8EF`. Color intenso solo en acciones, estados activos e insignias. Responsive (móvil primero) y accesible: contraste, teclado, etiquetas, objetivos táctiles.
 - «DUELINK» y «TeamFinder» no son marca aprobada: no fijes nombre, dominio ni logo sin decisión del usuario. No copies la marca ni el aspecto de VALORANT, FACEIT ni ESEA.
 - Seguridad desde el diseño: validación cliente y servidor, control de acceso, bloqueo/denuncia, rate limiting y datos personales ocultos por defecto.
+- Nada `SECURITY DEFINER` en `public` (ni funciones ni vistas): va en `private` y, si la web lo necesita, con un envoltorio `SECURITY INVOKER` en `public` (`private.expose_function`). La CI lo comprueba con `supabase/security-check.sql`.
 - Antes de añadir una dependencia, comprueba si hace falta y si compensa.
 - No inventes datos, APIs ni requisitos que no estén en `docs/PROMPT.md`; pregunta.
 - Sin secretos en el repo; usa `.env` (ignorado) y documenta las variables en `.env.example`.

@@ -1,5 +1,6 @@
 import { z } from "zod";
 import { GOALS, keys, LANGUAGES } from "@/lib/profile/options";
+import { RESTRICTED_MESSAGE } from "@/lib/restrictions";
 
 const optionalUuid = z.preprocess((v) => (v === "" || v == null ? null : v), z.uuid().nullable());
 const optionalEnum = <T extends Record<string, string>>(o: T) =>
@@ -73,6 +74,7 @@ export const LOBBY_ERRORS: Record<string, string> = {
   full: "No quedan plazas libres.",
   not_pending: "Esa solicitud ya estaba respondida.",
   owner: "Como creador, cierra el grupo en lugar de abandonarlo.",
+  restricted: RESTRICTED_MESSAGE,
 };
 
 export const lobbyError = (hint?: string | null) =>

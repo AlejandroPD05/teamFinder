@@ -37,6 +37,9 @@ jobs:
                   -e 's/"//g' >> "$GITHUB_ENV"
           echo "NEXT_PUBLIC_SITE_URL=http://127.0.0.1:3000" >> "$GITHUB_ENV"
 
+      - name: Esquema sin avisos de seguridad
+        run: docker exec -i supabase_db_teamFinder psql -U postgres -v ON_ERROR_STOP=1 -q < supabase/security-check.sql
+
       - name: Tipos de BD al día
         run: npm run db:types && git diff --exit-code src/lib/supabase/database.types.ts
 

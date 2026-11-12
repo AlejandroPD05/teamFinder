@@ -3,11 +3,11 @@ import { signIn } from "./helpers";
 
 test("normas y privacidad recogen lo que exige la normativa", async ({ page }) => {
   await page.goto("/normas");
-  for (const section of ["Juego limpio", "Clips", "Denuncias", "Qué hace moderación", "Recurrir una decisión", "Edad"]) {
+  for (const section of ["Juego limpio", "Clips", "Mensajes privados", "Denuncias", "Qué hace moderación", "Recurrir una decisión", "Edad"]) {
     await expect(page.getByRole("heading", { level: 2, name: section })).toBeVisible();
   }
-  // Honestidad funcional: no promete restricciones temporales que no existen.
-  await expect(page.getByText("De momento no hay restricciones temporales.", { exact: false })).toBeVisible();
+  // La escala de medidas incluye las restricciones temporales (ya existen).
+  await expect(page.getByText("Restricción temporal de 1 a 30 días", { exact: false })).toBeVisible();
 
   await page.goto("/privacidad");
   for (const section of ["Quién es el responsable", "Para qué y con qué base legal", "Proveedores (encargados del tratamiento)", "Cuánto tiempo los guardamos", "Tus derechos"]) {
@@ -16,6 +16,7 @@ test("normas y privacidad recogen lo que exige la normativa", async ({ page }) =
   await expect(page.getByText("Brevo", { exact: false }).first()).toBeVisible();
   await expect(page.getByRole("link", { name: /sedeagpd\.gob\.es/ })).toBeVisible();
   await expect(page.getByRole("cell", { name: "30 días desde que se cierra el grupo." })).toBeVisible();
+  await expect(page.getByRole("cell", { name: "60 días.", exact: true })).toBeVisible();
 });
 
 test("descargar mis datos devuelve un JSON con lo propio", async ({ page }, info) => {
@@ -30,6 +31,8 @@ test("descargar mis datos devuelve un JSON con lo propio", async ({ page }, info
   expect(data.account.email).toBe(email);
   expect(data.profile).toHaveLength(1);
   expect(Array.isArray(data.clips)).toBe(true);
+  expect(Array.isArray(data.direct_messages)).toBe(true);
+  expect(Array.isArray(data.notifications)).toBe(true);
 
   // Sin sesión no hay nada que descargar.
   const anon = await page.context().browser()!.newContext();

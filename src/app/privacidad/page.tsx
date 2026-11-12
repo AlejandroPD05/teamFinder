@@ -10,8 +10,10 @@ export const metadata: Metadata = { title: "Privacidad", alternates: { canonical
 const BASES: [string, string][] = [
   ["Tu cuenta: correo, identificador y, si entras con Discord, su nombre y avatar", "Contrato: prestarte el servicio que pides al registrarte (art. 6.1.b RGPD)."],
   ["Tu perfil y tus datos por juego (rango, roles, personajes, idiomas, horarios…)", "Contrato. Son opcionales y puedes borrarlos cuando quieras."],
-  ["Grupos, solicitudes, chat, karma, clips, emblemas, comentarios, misiones y cartas", "Contrato: son las funciones de la web."],
-  ["Bloqueos, denuncias (con copia del contenido denunciado) y registro de moderación", "Interés legítimo en mantener la comunidad segura y defendernos de reclamaciones (art. 6.1.f)."],
+  ["Grupos, solicitudes, chat, mensajes privados, notificaciones, karma, clips, emblemas, comentarios, misiones y cartas", "Contrato: son las funciones de la web."],
+  ["Enlaces a tus redes (Twitch, YouTube, X)", "Contrato. Son opcionales; tú eliges quién los ve."],
+  ["Fanart que envías (imagen, título, nombre artístico y la aceptación del permiso)", "Consentimiento: el permiso que das al enviarlo, que puedes retirar cuando quieras (art. 6.1.a)."],
+  ["Bloqueos, denuncias (con copia del contenido denunciado), restricciones temporales y registro de moderación", "Interés legítimo en mantener la comunidad segura y defendernos de reclamaciones (art. 6.1.f)."],
   ["Registros técnicos de seguridad y límites anti-abuso", "Interés legítimo en la seguridad del servicio (art. 6.1.f)."],
   ["Correo con el enlace para entrar", "Contrato. No enviamos publicidad."],
   ["Atender tus derechos y guardar prueba de la respuesta", "Obligación legal (art. 6.1.c)."],
@@ -20,6 +22,10 @@ const BASES: [string, string][] = [
 const PLAZOS: [string, string][] = [
   ["Cuenta, perfil, clips, comentarios, karma y cartas", "Mientras exista tu cuenta. Al borrarla se elimina todo en ese momento."],
   ["Mensajes del chat de un grupo", "30 días desde que se cierra el grupo."],
+  ["Mensajes privados", "Mientras existan las dos cuentas. Si una se borra, se borra la conversación entera."],
+  ["Notificaciones", "60 días."],
+  ["Fanart", "Hasta que lo retires o borres tu cuenta; entonces se borra también la imagen."],
+  ["Restricciones temporales", "12 meses desde que terminan, para detectar reincidencias."],
   ["Denuncias archivadas sin medida", "6 meses desde que se resuelven."],
   ["Denuncias con medida y registro de moderación", "12 meses, para detectar reincidencias."],
   ["Denuncias con intervención de las autoridades", "Hasta que termine el procedimiento."],
@@ -99,7 +105,7 @@ export default function PrivacyPage() {
 
       <Section title="Proveedores (encargados del tratamiento)">
         <ul>
-          <li>Supabase: base de datos, autenticación y chat en tiempo real. Datos alojados en la UE (París).</li>
+          <li>Supabase: base de datos, autenticación, chat en tiempo real y almacenamiento de las imágenes de fanart. Datos alojados en la UE (París).</li>
           <li>Vercel: alojamiento de la web y registros de peticiones. Funciones en la UE (París).</li>
           <li>Brevo (Sendinblue SAS, Francia): envío del correo con el enlace para entrar.</li>
         </ul>
@@ -110,7 +116,9 @@ export default function PrivacyPage() {
           <a href="https://discord.com/privacy" target="_blank" rel="noopener noreferrer" className="underline underline-offset-4">
             política de privacidad<span className="sr-only"> (se abre en otra pestaña)</span>
           </a>
-          .
+          . Si un clip tuyo gana una semana, publicamos en el Discord de la comunidad su título, tu nombre visible y el enlace
+          (interés legítimo en dar a conocer a los ganadores, art. 6.1.f); si no quieres que aparezca, escríbenos y lo
+          retiramos.
         </p>
       </Section>
 

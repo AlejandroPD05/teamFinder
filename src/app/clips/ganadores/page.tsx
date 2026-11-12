@@ -43,6 +43,7 @@ export default async function WinnersPage() {
           <li>Solo cuentan los emblemas de cuentas con más de un día de antigüedad, y nadie puede dárselos a sus propios clips.</li>
           <li>Hacen falta al menos 3 emblemas. Si hay empate, gana el clip publicado antes.</li>
           <li>Los clips ocultos por moderación no ganan. La semana en curso puede cambiar hasta el domingo.</li>
+          <li>Los lunes anunciamos los ganadores en el Discord de la comunidad: título, nombre visible y enlace al clip.</li>
         </ul>
       </details>
 

@@ -6,6 +6,19 @@ const uuid = z.uuid();
 const optionalUuid = z.preprocess((v) => (v === "" || v == null ? null : v), uuid.nullable());
 const unique = <T>(a: T[]) => new Set(a).size === a.length;
 
+/** Usuario de una red social: se guarda sin «@» y sin URL (la web construye el enlace). Vacío = sin enlace. */
+const handle = (re: RegExp, message: string) =>
+  z.preprocess(
+    (v) => (typeof v === "string" ? v.trim().replace(/^@/, "") : v) || null,
+    z.string().regex(re, message).nullable(),
+  );
+
+export const SOCIALS = {
+  social_twitch: { label: "Twitch", url: (h: string) => `https://www.twitch.tv/${h}` },
+  social_youtube: { label: "YouTube", url: (h: string) => `https://www.youtube.com/@${h}` },
+  social_x: { label: "X", url: (h: string) => `https://x.com/${h}` },
+} as const;
+
 export const profileSchema = z.object({
   display_name: z
     .string()
@@ -21,6 +34,11 @@ export const profileSchema = z.object({
   availability_visibility: visibility,
   goals_visibility: visibility,
   voice_visibility: visibility,
+  social_twitch: handle(/^[A-Za-z0-9_]{4,25}$/, "Usuario de Twitch no válido (4–25 letras, números o _)."),
+  social_youtube: handle(/^[A-Za-z0-9._-]{3,30}$/, "Identificador de YouTube no válido (3–30 caracteres, sin espacios)."),
+  social_x: handle(/^[A-Za-z0-9_]{1,15}$/, "Usuario de X no válido (hasta 15 letras, números o _)."),
+  socials_visibility: visibility,
+  dm_policy: z.enum(["registered", "none"]),
 });
 
 export const gameProfileSchema = z
@@ -57,6 +75,11 @@ export function profileFromForm(fd: FormData) {
     availability_visibility: fd.get("availability_visibility"),
     goals_visibility: fd.get("goals_visibility"),
     voice_visibility: fd.get("voice_visibility"),
+    social_twitch: fd.get("social_twitch") ?? "",
+    social_youtube: fd.get("social_youtube") ?? "",
+    social_x: fd.get("social_x") ?? "",
+    socials_visibility: fd.get("socials_visibility") ?? "registered",
+    dm_policy: fd.get("dm_policy") ?? "registered",
   };
 }
 
