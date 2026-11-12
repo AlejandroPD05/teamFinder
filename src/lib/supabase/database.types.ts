@@ -39,18 +39,6 @@ export type Database = {
       foreignKeyName: "app_admins_user_id_fkey"
       columns: ["user_id"]
 isOneToOne: true
-      referencedRelation: "player_search"
-      referencedColumns: ["user_id"]
-    },{
-      foreignKeyName: "app_admins_user_id_fkey"
-      columns: ["user_id"]
-isOneToOne: true
-      referencedRelation: "profile_cards"
-      referencedColumns: ["id"]
-    },{
-      foreignKeyName: "app_admins_user_id_fkey"
-      columns: ["user_id"]
-isOneToOne: true
       referencedRelation: "profiles"
       referencedColumns: ["id"]
     }
@@ -72,18 +60,6 @@ isOneToOne: true
       columns: ["clip_id"]
 isOneToOne: false
       referencedRelation: "clips"
-      referencedColumns: ["id"]
-    },{
-      foreignKeyName: "clip_comments_user_id_fkey"
-      columns: ["user_id"]
-isOneToOne: false
-      referencedRelation: "player_search"
-      referencedColumns: ["user_id"]
-    },{
-      foreignKeyName: "clip_comments_user_id_fkey"
-      columns: ["user_id"]
-isOneToOne: false
-      referencedRelation: "profile_cards"
       referencedColumns: ["id"]
     },{
       foreignKeyName: "clip_comments_user_id_fkey"
@@ -135,18 +111,6 @@ isOneToOne: false
       foreignKeyName: "clip_votes_user_id_fkey"
       columns: ["user_id"]
 isOneToOne: false
-      referencedRelation: "player_search"
-      referencedColumns: ["user_id"]
-    },{
-      foreignKeyName: "clip_votes_user_id_fkey"
-      columns: ["user_id"]
-isOneToOne: false
-      referencedRelation: "profile_cards"
-      referencedColumns: ["id"]
-    },{
-      foreignKeyName: "clip_votes_user_id_fkey"
-      columns: ["user_id"]
-isOneToOne: false
       referencedRelation: "profiles"
       referencedColumns: ["id"]
     }
@@ -174,18 +138,6 @@ isOneToOne: false
       columns: ["game_id"]
 isOneToOne: false
       referencedRelation: "games"
-      referencedColumns: ["id"]
-    },{
-      foreignKeyName: "clips_user_id_fkey"
-      columns: ["user_id"]
-isOneToOne: false
-      referencedRelation: "player_search"
-      referencedColumns: ["user_id"]
-    },{
-      foreignKeyName: "clips_user_id_fkey"
-      columns: ["user_id"]
-isOneToOne: false
-      referencedRelation: "profile_cards"
       referencedColumns: ["id"]
     },{
       foreignKeyName: "clips_user_id_fkey"
@@ -231,49 +183,13 @@ isOneToOne: false
       foreignKeyName: "direct_conversations_created_by_fkey"
       columns: ["created_by"]
 isOneToOne: false
-      referencedRelation: "player_search"
-      referencedColumns: ["user_id"]
-    },{
-      foreignKeyName: "direct_conversations_created_by_fkey"
-      columns: ["created_by"]
-isOneToOne: false
-      referencedRelation: "profile_cards"
-      referencedColumns: ["id"]
-    },{
-      foreignKeyName: "direct_conversations_created_by_fkey"
-      columns: ["created_by"]
-isOneToOne: false
       referencedRelation: "profiles"
       referencedColumns: ["id"]
     },{
       foreignKeyName: "direct_conversations_user_a_fkey"
       columns: ["user_a"]
 isOneToOne: false
-      referencedRelation: "player_search"
-      referencedColumns: ["user_id"]
-    },{
-      foreignKeyName: "direct_conversations_user_a_fkey"
-      columns: ["user_a"]
-isOneToOne: false
-      referencedRelation: "profile_cards"
-      referencedColumns: ["id"]
-    },{
-      foreignKeyName: "direct_conversations_user_a_fkey"
-      columns: ["user_a"]
-isOneToOne: false
       referencedRelation: "profiles"
-      referencedColumns: ["id"]
-    },{
-      foreignKeyName: "direct_conversations_user_b_fkey"
-      columns: ["user_b"]
-isOneToOne: false
-      referencedRelation: "player_search"
-      referencedColumns: ["user_id"]
-    },{
-      foreignKeyName: "direct_conversations_user_b_fkey"
-      columns: ["user_b"]
-isOneToOne: false
-      referencedRelation: "profile_cards"
       referencedColumns: ["id"]
     },{
       foreignKeyName: "direct_conversations_user_b_fkey"
@@ -305,18 +221,6 @@ isOneToOne: false
       foreignKeyName: "direct_messages_sender_id_fkey"
       columns: ["sender_id"]
 isOneToOne: false
-      referencedRelation: "player_search"
-      referencedColumns: ["user_id"]
-    },{
-      foreignKeyName: "direct_messages_sender_id_fkey"
-      columns: ["sender_id"]
-isOneToOne: false
-      referencedRelation: "profile_cards"
-      referencedColumns: ["id"]
-    },{
-      foreignKeyName: "direct_messages_sender_id_fkey"
-      columns: ["sender_id"]
-isOneToOne: false
       referencedRelation: "profiles"
       referencedColumns: ["id"]
     }
@@ -338,18 +242,6 @@ isOneToOne: false
       columns: ["conversation_id"]
 isOneToOne: false
       referencedRelation: "direct_conversations"
-      referencedColumns: ["id"]
-    },{
-      foreignKeyName: "direct_reads_user_id_fkey"
-      columns: ["user_id"]
-isOneToOne: false
-      referencedRelation: "player_search"
-      referencedColumns: ["user_id"]
-    },{
-      foreignKeyName: "direct_reads_user_id_fkey"
-      columns: ["user_id"]
-isOneToOne: false
-      referencedRelation: "profile_cards"
       referencedColumns: ["id"]
     },{
       foreignKeyName: "direct_reads_user_id_fkey"
@@ -387,31 +279,7 @@ isOneToOne: false
       foreignKeyName: "fanart_submissions_reviewed_by_fkey"
       columns: ["reviewed_by"]
 isOneToOne: false
-      referencedRelation: "player_search"
-      referencedColumns: ["user_id"]
-    },{
-      foreignKeyName: "fanart_submissions_reviewed_by_fkey"
-      columns: ["reviewed_by"]
-isOneToOne: false
-      referencedRelation: "profile_cards"
-      referencedColumns: ["id"]
-    },{
-      foreignKeyName: "fanart_submissions_reviewed_by_fkey"
-      columns: ["reviewed_by"]
-isOneToOne: false
       referencedRelation: "profiles"
-      referencedColumns: ["id"]
-    },{
-      foreignKeyName: "fanart_submissions_user_id_fkey"
-      columns: ["user_id"]
-isOneToOne: false
-      referencedRelation: "player_search"
-      referencedColumns: ["user_id"]
-    },{
-      foreignKeyName: "fanart_submissions_user_id_fkey"
-      columns: ["user_id"]
-isOneToOne: false
-      referencedRelation: "profile_cards"
       referencedColumns: ["id"]
     },{
       foreignKeyName: "fanart_submissions_user_id_fkey"
@@ -496,18 +364,6 @@ isOneToOne: false
       columns: ["region_id"]
 isOneToOne: false
       referencedRelation: "game_regions"
-      referencedColumns: ["id"]
-    },{
-      foreignKeyName: "game_profiles_user_id_fkey"
-      columns: ["user_id"]
-isOneToOne: false
-      referencedRelation: "player_search"
-      referencedColumns: ["user_id"]
-    },{
-      foreignKeyName: "game_profiles_user_id_fkey"
-      columns: ["user_id"]
-isOneToOne: false
-      referencedRelation: "profile_cards"
       referencedColumns: ["id"]
     },{
       foreignKeyName: "game_profiles_user_id_fkey"
@@ -613,31 +469,7 @@ isOneToOne: false
       foreignKeyName: "karma_votes_target_id_fkey"
       columns: ["target_id"]
 isOneToOne: false
-      referencedRelation: "player_search"
-      referencedColumns: ["user_id"]
-    },{
-      foreignKeyName: "karma_votes_target_id_fkey"
-      columns: ["target_id"]
-isOneToOne: false
-      referencedRelation: "profile_cards"
-      referencedColumns: ["id"]
-    },{
-      foreignKeyName: "karma_votes_target_id_fkey"
-      columns: ["target_id"]
-isOneToOne: false
       referencedRelation: "profiles"
-      referencedColumns: ["id"]
-    },{
-      foreignKeyName: "karma_votes_voter_id_fkey"
-      columns: ["voter_id"]
-isOneToOne: false
-      referencedRelation: "player_search"
-      referencedColumns: ["user_id"]
-    },{
-      foreignKeyName: "karma_votes_voter_id_fkey"
-      columns: ["voter_id"]
-isOneToOne: false
-      referencedRelation: "profile_cards"
       referencedColumns: ["id"]
     },{
       foreignKeyName: "karma_votes_voter_id_fkey"
@@ -664,18 +496,6 @@ isOneToOne: false
       columns: ["game_id"]
 isOneToOne: false
       referencedRelation: "games"
-      referencedColumns: ["id"]
-    },{
-      foreignKeyName: "lobbies_owner_id_fkey"
-      columns: ["owner_id"]
-isOneToOne: false
-      referencedRelation: "player_search"
-      referencedColumns: ["user_id"]
-    },{
-      foreignKeyName: "lobbies_owner_id_fkey"
-      columns: ["owner_id"]
-isOneToOne: false
-      referencedRelation: "profile_cards"
       referencedColumns: ["id"]
     },{
       foreignKeyName: "lobbies_owner_id_fkey"
@@ -725,18 +545,6 @@ isOneToOne: false
       foreignKeyName: "lobby_members_user_id_fkey"
       columns: ["user_id"]
 isOneToOne: false
-      referencedRelation: "player_search"
-      referencedColumns: ["user_id"]
-    },{
-      foreignKeyName: "lobby_members_user_id_fkey"
-      columns: ["user_id"]
-isOneToOne: false
-      referencedRelation: "profile_cards"
-      referencedColumns: ["id"]
-    },{
-      foreignKeyName: "lobby_members_user_id_fkey"
-      columns: ["user_id"]
-isOneToOne: false
       referencedRelation: "profiles"
       referencedColumns: ["id"]
     }
@@ -758,18 +566,6 @@ isOneToOne: false
       columns: ["lobby_id"]
 isOneToOne: false
       referencedRelation: "lobbies"
-      referencedColumns: ["id"]
-    },{
-      foreignKeyName: "lobby_messages_user_id_fkey"
-      columns: ["user_id"]
-isOneToOne: false
-      referencedRelation: "player_search"
-      referencedColumns: ["user_id"]
-    },{
-      foreignKeyName: "lobby_messages_user_id_fkey"
-      columns: ["user_id"]
-isOneToOne: false
-      referencedRelation: "profile_cards"
       referencedColumns: ["id"]
     },{
       foreignKeyName: "lobby_messages_user_id_fkey"
@@ -827,18 +623,6 @@ isOneToOne: false
       foreignKeyName: "lobby_reads_user_id_fkey"
       columns: ["user_id"]
 isOneToOne: false
-      referencedRelation: "player_search"
-      referencedColumns: ["user_id"]
-    },{
-      foreignKeyName: "lobby_reads_user_id_fkey"
-      columns: ["user_id"]
-isOneToOne: false
-      referencedRelation: "profile_cards"
-      referencedColumns: ["id"]
-    },{
-      foreignKeyName: "lobby_reads_user_id_fkey"
-      columns: ["user_id"]
-isOneToOne: false
       referencedRelation: "profiles"
       referencedColumns: ["id"]
     }
@@ -860,18 +644,6 @@ isOneToOne: false
       columns: ["lobby_id"]
 isOneToOne: false
       referencedRelation: "lobbies"
-      referencedColumns: ["id"]
-    },{
-      foreignKeyName: "lobby_requests_user_id_fkey"
-      columns: ["user_id"]
-isOneToOne: false
-      referencedRelation: "player_search"
-      referencedColumns: ["user_id"]
-    },{
-      foreignKeyName: "lobby_requests_user_id_fkey"
-      columns: ["user_id"]
-isOneToOne: false
-      referencedRelation: "profile_cards"
       referencedColumns: ["id"]
     },{
       foreignKeyName: "lobby_requests_user_id_fkey"
@@ -904,18 +676,6 @@ isOneToOne: false
       columns: ["mission_id"]
 isOneToOne: false
       referencedRelation: "missions"
-      referencedColumns: ["id"]
-    },{
-      foreignKeyName: "mission_claims_user_id_fkey"
-      columns: ["user_id"]
-isOneToOne: false
-      referencedRelation: "player_search"
-      referencedColumns: ["user_id"]
-    },{
-      foreignKeyName: "mission_claims_user_id_fkey"
-      columns: ["user_id"]
-isOneToOne: false
-      referencedRelation: "profile_cards"
       referencedColumns: ["id"]
     },{
       foreignKeyName: "mission_claims_user_id_fkey"
@@ -961,18 +721,6 @@ isOneToOne: false
       foreignKeyName: "moderation_log_admin_id_fkey"
       columns: ["admin_id"]
 isOneToOne: false
-      referencedRelation: "player_search"
-      referencedColumns: ["user_id"]
-    },{
-      foreignKeyName: "moderation_log_admin_id_fkey"
-      columns: ["admin_id"]
-isOneToOne: false
-      referencedRelation: "profile_cards"
-      referencedColumns: ["id"]
-    },{
-      foreignKeyName: "moderation_log_admin_id_fkey"
-      columns: ["admin_id"]
-isOneToOne: false
       referencedRelation: "profiles"
       referencedColumns: ["id"]
     },{
@@ -999,18 +747,6 @@ isOneToOne: false
       foreignKeyName: "notifications_actor_id_fkey"
       columns: ["actor_id"]
 isOneToOne: false
-      referencedRelation: "player_search"
-      referencedColumns: ["user_id"]
-    },{
-      foreignKeyName: "notifications_actor_id_fkey"
-      columns: ["actor_id"]
-isOneToOne: false
-      referencedRelation: "profile_cards"
-      referencedColumns: ["id"]
-    },{
-      foreignKeyName: "notifications_actor_id_fkey"
-      columns: ["actor_id"]
-isOneToOne: false
       referencedRelation: "profiles"
       referencedColumns: ["id"]
     },{
@@ -1024,18 +760,6 @@ isOneToOne: false
       columns: ["lobby_id"]
 isOneToOne: false
       referencedRelation: "lobbies"
-      referencedColumns: ["id"]
-    },{
-      foreignKeyName: "notifications_user_id_fkey"
-      columns: ["user_id"]
-isOneToOne: false
-      referencedRelation: "player_search"
-      referencedColumns: ["user_id"]
-    },{
-      foreignKeyName: "notifications_user_id_fkey"
-      columns: ["user_id"]
-isOneToOne: false
-      referencedRelation: "profile_cards"
       referencedColumns: ["id"]
     },{
       foreignKeyName: "notifications_user_id_fkey"
@@ -1067,12 +791,6 @@ isOneToOne: false
       foreignKeyName: "player_characters_user_id_game_id_fkey"
       columns: ["user_id","game_id"]
 isOneToOne: false
-      referencedRelation: "game_profile_cards"
-      referencedColumns: ["user_id","game_id"]
-    },{
-      foreignKeyName: "player_characters_user_id_game_id_fkey"
-      columns: ["user_id","game_id"]
-isOneToOne: false
       referencedRelation: "game_profiles"
       referencedColumns: ["user_id","game_id"]
     }
@@ -1095,12 +813,6 @@ isOneToOne: false
 isOneToOne: false
       referencedRelation: "game_roles"
       referencedColumns: ["id"]
-    },{
-      foreignKeyName: "player_roles_user_id_game_id_fkey"
-      columns: ["user_id","game_id"]
-isOneToOne: false
-      referencedRelation: "game_profile_cards"
-      referencedColumns: ["user_id","game_id"]
     },{
       foreignKeyName: "player_roles_user_id_game_id_fkey"
       columns: ["user_id","game_id"]
@@ -1169,49 +881,13 @@ isOneToOne: false
       foreignKeyName: "reports_reporter_id_fkey"
       columns: ["reporter_id"]
 isOneToOne: false
-      referencedRelation: "player_search"
-      referencedColumns: ["user_id"]
-    },{
-      foreignKeyName: "reports_reporter_id_fkey"
-      columns: ["reporter_id"]
-isOneToOne: false
-      referencedRelation: "profile_cards"
-      referencedColumns: ["id"]
-    },{
-      foreignKeyName: "reports_reporter_id_fkey"
-      columns: ["reporter_id"]
-isOneToOne: false
       referencedRelation: "profiles"
       referencedColumns: ["id"]
     },{
       foreignKeyName: "reports_reviewed_by_fkey"
       columns: ["reviewed_by"]
 isOneToOne: false
-      referencedRelation: "player_search"
-      referencedColumns: ["user_id"]
-    },{
-      foreignKeyName: "reports_reviewed_by_fkey"
-      columns: ["reviewed_by"]
-isOneToOne: false
-      referencedRelation: "profile_cards"
-      referencedColumns: ["id"]
-    },{
-      foreignKeyName: "reports_reviewed_by_fkey"
-      columns: ["reviewed_by"]
-isOneToOne: false
       referencedRelation: "profiles"
-      referencedColumns: ["id"]
-    },{
-      foreignKeyName: "reports_target_user_id_fkey"
-      columns: ["target_user_id"]
-isOneToOne: false
-      referencedRelation: "player_search"
-      referencedColumns: ["user_id"]
-    },{
-      foreignKeyName: "reports_target_user_id_fkey"
-      columns: ["target_user_id"]
-isOneToOne: false
-      referencedRelation: "profile_cards"
       referencedColumns: ["id"]
     },{
       foreignKeyName: "reports_target_user_id_fkey"
@@ -1237,31 +913,7 @@ isOneToOne: false
       foreignKeyName: "user_blocks_blocked_id_fkey"
       columns: ["blocked_id"]
 isOneToOne: false
-      referencedRelation: "player_search"
-      referencedColumns: ["user_id"]
-    },{
-      foreignKeyName: "user_blocks_blocked_id_fkey"
-      columns: ["blocked_id"]
-isOneToOne: false
-      referencedRelation: "profile_cards"
-      referencedColumns: ["id"]
-    },{
-      foreignKeyName: "user_blocks_blocked_id_fkey"
-      columns: ["blocked_id"]
-isOneToOne: false
       referencedRelation: "profiles"
-      referencedColumns: ["id"]
-    },{
-      foreignKeyName: "user_blocks_blocker_id_fkey"
-      columns: ["blocker_id"]
-isOneToOne: false
-      referencedRelation: "player_search"
-      referencedColumns: ["user_id"]
-    },{
-      foreignKeyName: "user_blocks_blocker_id_fkey"
-      columns: ["blocker_id"]
-isOneToOne: false
-      referencedRelation: "profile_cards"
       referencedColumns: ["id"]
     },{
       foreignKeyName: "user_blocks_blocker_id_fkey"
@@ -1293,18 +945,6 @@ isOneToOne: false
       foreignKeyName: "user_cards_user_id_fkey"
       columns: ["user_id"]
 isOneToOne: false
-      referencedRelation: "player_search"
-      referencedColumns: ["user_id"]
-    },{
-      foreignKeyName: "user_cards_user_id_fkey"
-      columns: ["user_id"]
-isOneToOne: false
-      referencedRelation: "profile_cards"
-      referencedColumns: ["id"]
-    },{
-      foreignKeyName: "user_cards_user_id_fkey"
-      columns: ["user_id"]
-isOneToOne: false
       referencedRelation: "profiles"
       referencedColumns: ["id"]
     }
@@ -1325,18 +965,6 @@ isOneToOne: false
       foreignKeyName: "user_restrictions_created_by_fkey"
       columns: ["created_by"]
 isOneToOne: false
-      referencedRelation: "player_search"
-      referencedColumns: ["user_id"]
-    },{
-      foreignKeyName: "user_restrictions_created_by_fkey"
-      columns: ["created_by"]
-isOneToOne: false
-      referencedRelation: "profile_cards"
-      referencedColumns: ["id"]
-    },{
-      foreignKeyName: "user_restrictions_created_by_fkey"
-      columns: ["created_by"]
-isOneToOne: false
       referencedRelation: "profiles"
       referencedColumns: ["id"]
     },{
@@ -1344,18 +972,6 @@ isOneToOne: false
       columns: ["report_id"]
 isOneToOne: false
       referencedRelation: "reports"
-      referencedColumns: ["id"]
-    },{
-      foreignKeyName: "user_restrictions_user_id_fkey"
-      columns: ["user_id"]
-isOneToOne: false
-      referencedRelation: "player_search"
-      referencedColumns: ["user_id"]
-    },{
-      foreignKeyName: "user_restrictions_user_id_fkey"
-      columns: ["user_id"]
-isOneToOne: false
-      referencedRelation: "profile_cards"
       referencedColumns: ["id"]
     },{
       foreignKeyName: "user_restrictions_user_id_fkey"
@@ -1380,43 +996,7 @@ isOneToOne: false
                            "flex"?: boolean | null,"game_id"?: string | null,"mode_slugs"?: (string)[] | null,"rank_id"?: string | null,"rank_source"?: string | null,"region_id"?: string | null,"updated_at"?: string | null,"user_id"?: string | null
                          }
                         Relationships: [
-                    {
-      foreignKeyName: "game_profiles_game_id_fkey"
-      columns: ["game_id"]
-isOneToOne: false
-      referencedRelation: "games"
-      referencedColumns: ["id"]
-    },{
-      foreignKeyName: "game_profiles_rank_id_fkey"
-      columns: ["rank_id"]
-isOneToOne: false
-      referencedRelation: "game_ranks"
-      referencedColumns: ["id"]
-    },{
-      foreignKeyName: "game_profiles_region_id_fkey"
-      columns: ["region_id"]
-isOneToOne: false
-      referencedRelation: "game_regions"
-      referencedColumns: ["id"]
-    },{
-      foreignKeyName: "game_profiles_user_id_fkey"
-      columns: ["user_id"]
-isOneToOne: false
-      referencedRelation: "player_search"
-      referencedColumns: ["user_id"]
-    },{
-      foreignKeyName: "game_profiles_user_id_fkey"
-      columns: ["user_id"]
-isOneToOne: false
-      referencedRelation: "profile_cards"
-      referencedColumns: ["id"]
-    },{
-      foreignKeyName: "game_profiles_user_id_fkey"
-      columns: ["user_id"]
-isOneToOne: false
-      referencedRelation: "profiles"
-      referencedColumns: ["id"]
-    }
+                    
                   ]
                 },"player_character_cards": {
                   Row: {
@@ -1424,25 +1004,7 @@ isOneToOne: false
                   }
                   ComputedFields: never
                   Relationships: [
-                    {
-      foreignKeyName: "player_characters_character_id_fkey"
-      columns: ["character_id"]
-isOneToOne: false
-      referencedRelation: "game_characters"
-      referencedColumns: ["id"]
-    },{
-      foreignKeyName: "player_characters_user_id_game_id_fkey"
-      columns: ["user_id","game_id"]
-isOneToOne: false
-      referencedRelation: "game_profile_cards"
-      referencedColumns: ["user_id","game_id"]
-    },{
-      foreignKeyName: "player_characters_user_id_game_id_fkey"
-      columns: ["user_id","game_id"]
-isOneToOne: false
-      referencedRelation: "game_profiles"
-      referencedColumns: ["user_id","game_id"]
-    }
+                    
                   ]
                 },"player_role_cards": {
                   Row: {
@@ -1450,25 +1012,7 @@ isOneToOne: false
                   }
                   ComputedFields: never
                   Relationships: [
-                    {
-      foreignKeyName: "player_roles_role_id_fkey"
-      columns: ["role_id"]
-isOneToOne: false
-      referencedRelation: "game_roles"
-      referencedColumns: ["id"]
-    },{
-      foreignKeyName: "player_roles_user_id_game_id_fkey"
-      columns: ["user_id","game_id"]
-isOneToOne: false
-      referencedRelation: "game_profile_cards"
-      referencedColumns: ["user_id","game_id"]
-    },{
-      foreignKeyName: "player_roles_user_id_game_id_fkey"
-      columns: ["user_id","game_id"]
-isOneToOne: false
-      referencedRelation: "game_profiles"
-      referencedColumns: ["user_id","game_id"]
-    }
+                    
                   ]
                 },"player_search": {
                   Row: {
@@ -1476,25 +1020,7 @@ isOneToOne: false
                   }
                   ComputedFields: never
                   Relationships: [
-                    {
-      foreignKeyName: "game_profiles_game_id_fkey"
-      columns: ["game_id"]
-isOneToOne: false
-      referencedRelation: "games"
-      referencedColumns: ["id"]
-    },{
-      foreignKeyName: "game_profiles_rank_id_fkey"
-      columns: ["rank_id"]
-isOneToOne: false
-      referencedRelation: "game_ranks"
-      referencedColumns: ["id"]
-    },{
-      foreignKeyName: "game_profiles_region_id_fkey"
-      columns: ["region_id"]
-isOneToOne: false
-      referencedRelation: "game_regions"
-      referencedColumns: ["id"]
-    }
+                    
                   ]
                 },"profile_cards": {
                   Row: {
