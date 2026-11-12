@@ -39,6 +39,8 @@ export function CollectibleCard({
           fill
           priority={priority}
           sizes="(min-width: 1024px) 220px, (min-width: 640px) 30vw, 45vw"
+          // El arte propio (SVG de /cards) se sirve tal cual; el optimizador de Next no convierte SVG.
+          unoptimized={card.image_url.endsWith(".svg")}
           className="object-cover object-top"
         />
       )}

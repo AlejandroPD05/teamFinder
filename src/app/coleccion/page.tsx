@@ -17,6 +17,8 @@ export default async function CollectionPage() {
   const { game } = await currentGame();
   const { cards, owned } = await loadCollection(supabase, game.id, userId);
   const credits = [...new Set(cards.map((c) => c.credit))];
+  // Solo las cartas de este juego (la persona puede tener cartas de otros).
+  const ownedHere = cards.filter((c) => owned.has(c.id)).length;
 
   return (
     <section className="flex flex-col gap-8">
@@ -25,7 +27,7 @@ export default async function CollectionPage() {
         <p className="text-muted">
           {cards.length === 0
             ? `Aún no hay cartas de ${game.name}.`
-            : `Tienes ${owned.size} de ${cards.length} cartas. Consíguelas completando misiones.`}
+            : `Tienes ${ownedHere} de ${cards.length} cartas. Consíguelas completando misiones.`}
         </p>
         <Link href="/misiones" className="btn-ghost self-start">
           Ver misiones

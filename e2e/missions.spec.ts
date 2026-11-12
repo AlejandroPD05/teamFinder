@@ -43,11 +43,13 @@ test("misiones y colección: progreso, cartas bloqueadas y conseguidas", async (
   await expect(jett.locator("img")).toBeVisible();
   await expect(jett).not.toContainText("bloqueada");
 
-  // CS2 aún no tiene cartas ni misiones: lo dice con claridad.
+  // CS2: cartas con arte original (estilo pegatina) y su misión.
   await pickGame(page, "cs2");
   await page.goto("/coleccion");
   await expect(page.getByRole("heading", { level: 1 })).toHaveText("Colección de Counter-Strike 2");
-  await expect(page.getByText("Aún no hay cartas de Counter-Strike 2.")).toBeVisible();
+  await expect(page.getByText(/Tienes 0 de 12 cartas/)).toBeVisible();
+  await expect(page.getByText("Arte original de TeamFinder", { exact: false })).toBeVisible();
   await page.goto("/misiones");
-  await expect(page.getByText(/Aún no hay misiones de Counter-Strike 2/)).toBeVisible();
+  await expect(page.getByRole("heading", { level: 1 })).toHaveText("Misiones de Counter-Strike 2");
+  await expect(page.getByText("0 de 10 grupos")).toBeVisible();
 });

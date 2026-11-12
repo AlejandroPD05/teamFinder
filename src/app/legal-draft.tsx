@@ -1,9 +1,23 @@
+import { LEGAL } from "@/lib/legal";
+
+/** Aviso honesto: texto basado en la normativa, sin revisión de un abogado. */
 export function DraftNotice() {
   return (
-    <p role="note" className="rounded-md border border-danger bg-panel p-3 text-sm">
-      <strong>Borrador pendiente de revisión legal.</strong> Describe cómo funciona hoy la beta, pero no es un texto legal
-      definitivo. Los campos marcados como «pendiente» los tiene que decidir el responsable del servicio.
+    <p role="note" className="rounded-md border border-warning bg-panel p-3 text-sm">
+      <strong>Beta.</strong> Este texto se ha redactado a partir de la normativa española y europea (RGPD, LOPDGDD, LSSI y
+      Reglamento de Servicios Digitales), pero no lo ha revisado un abogado. Última actualización: {LEGAL.updated}.
     </p>
+  );
+}
+
+/** Correo de contacto del responsable, o «pendiente» mientras no esté configurado. */
+export function ContactEmail() {
+  return LEGAL.email ? (
+    <a href={`mailto:${LEGAL.email}`} className="underline underline-offset-4">
+      {LEGAL.email}
+    </a>
+  ) : (
+    <strong>pendiente</strong>
   );
 }
 

@@ -43,7 +43,9 @@ export function ClipPlayer({ clip, title }: { clip: ClipRef; title: string }) {
             <Play aria-hidden="true" className="ml-0.5 size-6" />
           </span>
           Ver clip ({PROVIDER_NAMES[clip.provider]})
-          <span className="text-xs">Se cargará el reproductor de {PROVIDER_NAMES[clip.provider]}.</span>
+          <span className="max-w-xs text-center text-xs">
+            Al pulsar, {PROVIDER_NAMES[clip.provider]} recibe tu dirección IP y puede usar sus cookies.
+          </span>
         </button>
       )}
       {!on && (
