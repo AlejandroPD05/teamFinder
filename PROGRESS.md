@@ -91,7 +91,8 @@ RSO de Riot si aprueban la clave (rango y estadísticas verificados), mensajes p
 - [x] Supabase cloud: Discord activado y URL Configuration (Site URL `https://teamfinder-seven.vercel.app`; Redirect URLs `/auth/callback` de producción y `https://teamfinder-*-me-myself-and-i-8b2d.vercel.app/**`).
 - [x] SMTP propio (2026-11-12): Brevo (`smtp-relay.brevo.com:587`, plan gratuito de 300 correos/día) configurado en Supabase con el remitente verificado en Brevo; proveedor Email reactivado; plantillas «Confirmar registro» y «Enlace mágico» en español; `NEXT_PUBLIC_EMAIL_LOGIN=on` en Vercel. En Brevo hay que tener desactivado el bloqueo de IP no autorizadas para claves SMTP (Supabase envía desde IP variables). Límite de Supabase: 30 correos/hora. Remitente con dominio gratuito: algunos correos pueden ir a spam hasta tener dominio propio verificado.
 - [x] Servidor de Discord «TeamFinder (beta)» con canales de información, buscar partida y desarrollo; invitación permanente https://discord.gg/aNafKfd6SN en `NEXT_PUBLIC_DISCORD_INVITE_URL` (Vercel, Production).
-- [ ] Responsable (nombre y apellidos, lo exige el art. 13 RGPD) y correo de contacto en `NEXT_PUBLIC_LEGAL_OWNER` y `NEXT_PUBLIC_CONTACT_EMAIL` (Vercel). Recomendado: revisión de un abogado, registro de actividades (Facilita RGPD de la AEPD) y aceptar los DPA de Vercel, Supabase y Brevo.
+- [x] Responsable y correo de contacto (2026-11-12) en `src/lib/legal.ts` (se pueden sobrescribir con `NEXT_PUBLIC_LEGAL_OWNER` y `NEXT_PUBLIC_CONTACT_EMAIL`).
+- [ ] Recomendado: revisión de un abogado, registro de actividades (Facilita RGPD de la AEPD) y aceptar los DPA de Vercel, Supabase y Brevo.
 - [x] Moderador: la cuenta 1Cut1Kill está en `app_admins` (más moderadores: `insert into public.app_admins (user_id) values ('<uuid>');` en el SQL Editor).
 - [ ] Prueba final: un usuario nuevo completa el recorrido entero en producción desde el móvil.
 - [x] Docker instalado y en marcha.
