@@ -117,6 +117,11 @@ export function activeCount(f: Filters): number {
     (f.slot.length ? 1 : 0) + (f.flex ? 1 : 0);
 }
 
+/** Filtros secundarios activos (van plegados en «Más filtros»; si hay alguno, el bloque se abre). */
+export function advancedCount(f: Filters): number {
+  return [f.agent, f.lang, f.goal, f.voice].filter(Boolean).length + (f.slot.length ? 1 : 0) + (f.flex ? 1 : 0);
+}
+
 /** Sugerencias para ampliar la búsqueda cuando no hay resultados: quitar un filtro cada vez. */
 export function widenSuggestions(f: Filters): { label: string; filters: Filters }[] {
   const base = { ...f, page: 1 };

@@ -51,8 +51,20 @@ describe("profileSchema", () => {
     expect(r.success).toBe(true);
     expect(r.data).toMatchObject({ social_twitch: "jugadora_1", social_x: null, social_youtube: null, socials_visibility: "registered", dm_policy: "registered" });
     expect(SOCIALS.social_youtube.url("canal.es")).toBe("https://www.youtube.com/@canal.es");
+    // Ley de Postel: también vale el enlace del perfil.
+    const urls = profileSchema.safeParse(
+      profileFromForm(
+        fd([
+          ...baseProfile,
+          ["social_twitch", "https://www.twitch.tv/jugadora_1?sr=a"],
+          ["social_youtube", "youtube.com/@canal.es/videos"],
+          ["social_x", "https://twitter.com/Jugadora_X"],
+        ]),
+      ),
+    );
+    expect(urls.data).toMatchObject({ social_twitch: "jugadora_1", social_youtube: "canal.es", social_x: "Jugadora_X" });
     for (const [k, v] of [
-      ["social_twitch", "https://twitch.tv/x"],
+      ["social_twitch", "https://evil.example/x"],
       ["social_x", "demasiado_largo_para_x"],
       ["social_youtube", "con espacio"],
       ["dm_policy", "todos"],

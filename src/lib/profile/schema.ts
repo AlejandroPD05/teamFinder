@@ -6,10 +6,17 @@ const uuid = z.uuid();
 const optionalUuid = z.preprocess((v) => (v === "" || v == null ? null : v), uuid.nullable());
 const unique = <T>(a: T[]) => new Set(a).size === a.length;
 
-/** Usuario de una red social: se guarda sin «@» y sin URL (la web construye el enlace). Vacío = sin enlace. */
-const handle = (re: RegExp, message: string) =>
+/**
+ * Usuario de una red social: se guarda sin «@» y sin URL (la web construye el enlace). Vacío = sin enlace.
+ * Ley de Postel: se acepta también el enlace del perfil pegado tal cual y se saca de él el usuario.
+ */
+const handle = (re: RegExp, message: string, fromUrl: RegExp) =>
   z.preprocess(
-    (v) => (typeof v === "string" ? v.trim().replace(/^@/, "") : v) || null,
+    (v) => {
+      if (typeof v !== "string") return v;
+      const raw = v.trim();
+      return (fromUrl.exec(raw)?.[1] ?? raw).replace(/^@/, "") || null;
+    },
     z.string().regex(re, message).nullable(),
   );
 
@@ -34,9 +41,21 @@ export const profileSchema = z.object({
   availability_visibility: visibility,
   goals_visibility: visibility,
   voice_visibility: visibility,
-  social_twitch: handle(/^[A-Za-z0-9_]{4,25}$/, "Usuario de Twitch no válido (4–25 letras, números o _)."),
-  social_youtube: handle(/^[A-Za-z0-9._-]{3,30}$/, "Identificador de YouTube no válido (3–30 caracteres, sin espacios)."),
-  social_x: handle(/^[A-Za-z0-9_]{1,15}$/, "Usuario de X no válido (hasta 15 letras, números o _)."),
+  social_twitch: handle(
+    /^[A-Za-z0-9_]{4,25}$/,
+    "Usuario de Twitch no válido (4–25 letras, números o _).",
+    /^(?:https?:\/\/)?(?:www\.|m\.)?twitch\.tv\/([^/?#\s]+)/i,
+  ),
+  social_youtube: handle(
+    /^[A-Za-z0-9._-]{3,30}$/,
+    "Identificador de YouTube no válido (3–30 caracteres, sin espacios).",
+    /^(?:https?:\/\/)?(?:www\.|m\.)?youtube\.com\/@([^/?#\s]+)/i,
+  ),
+  social_x: handle(
+    /^[A-Za-z0-9_]{1,15}$/,
+    "Usuario de X no válido (hasta 15 letras, números o _).",
+    /^(?:https?:\/\/)?(?:www\.|mobile\.)?(?:x|twitter)\.com\/([^/?#\s]+)/i,
+  ),
   socials_visibility: visibility,
   dm_policy: z.enum(["registered", "none"]),
 });

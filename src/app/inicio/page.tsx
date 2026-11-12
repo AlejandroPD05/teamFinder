@@ -6,6 +6,7 @@ import { redirect } from "next/navigation";
 import { es } from "@/lib/i18n/es";
 import { loadOwnProfile } from "@/lib/profile/queries";
 import { profileCompletion } from "@/lib/profile/schema";
+import { ProfileSteps } from "@/components/profile-steps";
 import { activeRestriction, untilFormat } from "@/lib/restrictions";
 import { createClient } from "@/lib/supabase/server";
 
@@ -60,12 +61,13 @@ export default async function Dashboard() {
           </span>
         )}
         <div>
+          <p className="kicker">{current.name}</p>
           <h1 className="font-display text-3xl font-semibold">{es.dashboard.title(name)}</h1>
           <p className="text-muted">{es.dashboard.lead}</p>
         </div>
       </div>
 
-      <div className="surface p-5">
+      <div className="surface hud p-5">
         <div className="flex flex-wrap items-center justify-between gap-3">
           <h2 className="font-semibold">{es.dashboard.profileTitle}</h2>
           <span className="text-sm text-muted">{completion.percent}% completado</span>
@@ -78,10 +80,10 @@ export default async function Dashboard() {
           aria-valuemax={100}
           className="mt-3 h-2 overflow-hidden rounded-full bg-bg"
         >
-          <div className="h-full bg-accent" style={{ width: `${completion.percent}%` }} />
+          <div className="h-full rounded-full bg-accent shadow-[0_0_12px_var(--color-accent)]" style={{ width: `${completion.percent}%` }} />
         </div>
         {completion.missing.length > 0 && (
-          <p className="mt-3 text-sm text-muted">Falta: {completion.missing.join(", ")}.</p>
+          <ProfileSteps missing={completion.missing} characterLabel={current.character_label} />
         )}
         <div className="mt-4 flex flex-wrap gap-3">
           <Link

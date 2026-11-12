@@ -14,8 +14,8 @@ export async function listOpenLobbies(
   f: { gameId: string; mode?: string; regionId?: string; roleId?: string; lang?: string },
 ) {
   const select = f.roleId
-    ? `${LOBBY_FIELDS}, lobby_members(count), lobby_needed_roles!inner(role_id)`
-    : `${LOBBY_FIELDS}, lobby_members(count), lobby_needed_roles(role_id)`;
+    ? `${LOBBY_FIELDS}, lobby_members(user_id), lobby_needed_roles!inner(role_id)`
+    : `${LOBBY_FIELDS}, lobby_members(user_id), lobby_needed_roles(role_id)`;
   let q = supabase.from("lobbies").select(select).eq("game_id", f.gameId).eq("status", "open");
   if (f.mode) q = q.eq("mode_slug", f.mode);
   if (f.regionId) q = q.eq("region_id", f.regionId);
@@ -40,7 +40,7 @@ export type LobbyListItem = {
   starts_at: string | null;
   status: "open" | "full" | "closed";
   created_at: string;
-  lobby_members: { count: number }[];
+  lobby_members: { user_id: string }[];
   lobby_needed_roles: { role_id: string }[];
 };
 

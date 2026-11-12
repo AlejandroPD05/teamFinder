@@ -7,6 +7,7 @@ import { listOpenLobbies, loadNames } from "@/lib/lobbies/queries";
 import { GOALS, LANGUAGES } from "@/lib/profile/options";
 import { loadCatalog } from "@/lib/profile/queries";
 import type { CSSProperties } from "react";
+import { AvatarGroup } from "@/components/avatar-group";
 import { RoleIcon } from "@/components/game-icons";
 import { createClient } from "@/lib/supabase/server";
 
@@ -28,8 +29,12 @@ export default async function LobbiesPage({ searchParams }: PageProps<"/grupos">
   const role = catalog.roles.find((r) => r.slug === one(sp.role));
   const lang = one(sp.lang) && one(sp.lang)! in LANGUAGES ? one(sp.lang) : undefined;
 
-  const lobbies = await listOpenLobbies(supabase, { gameId: game.id, mode, regionId: region?.id, roleId: role?.id, lang });
-  const names = await loadNames(supabase, lobbies.map((l) => l.owner_id));
+  const [lobbies, { data: myRoles }] = await Promise.all([
+    listOpenLobbies(supabase, { gameId: game.id, mode, regionId: region?.id, roleId: role?.id, lang }),
+    supabase.from("player_roles").select("role_id").eq("user_id", claims.claims.sub).eq("game_id", game.id),
+  ]);
+  const names = await loadNames(supabase, lobbies.flatMap((l) => [l.owner_id, ...l.lobby_members.map((m) => m.user_id)]));
+  const mine = new Set((myRoles ?? []).map((r) => r.role_id));
   const label = (list: { id: string; name: string }[], id: string | null) => list.find((x) => x.id === id)?.name;
   const filtered = Boolean(mode || region || role || lang);
 
@@ -95,14 +100,24 @@ export default async function LobbiesPage({ searchParams }: PageProps<"/grupos">
       ) : (
         <ul className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
           {lobbies.map((l, i) => {
-            const taken = l.lobby_members[0]?.count ?? 0;
+            const taken = l.lobby_members.length;
+            // Haz de luz: el grupo busca uno de tus roles (y no estás dentro ni es tuyo).
+            const forYou =
+              l.owner_id !== claims.claims.sub &&
+              !l.lobby_members.some((m) => m.user_id === claims.claims.sub) &&
+              l.lobby_needed_roles.some((r) => mine.has(r.role_id));
             const modeName = catalog.modes.find((m) => m.slug === l.mode_slug)?.name ?? l.mode_slug;
             const ranks = [label(catalog.ranks, l.rank_min_id), label(catalog.ranks, l.rank_max_id)];
             const owner = names.get(l.owner_id)?.name ?? "Jugador";
             return (
-              <li key={l.id} className="surface surface-interactive enter flex flex-col gap-3 p-4" style={{ "--i": i } as CSSProperties}>
+              <li
+                key={l.id}
+                className={`surface surface-interactive spotlight group enter flex flex-col gap-3 p-4 ${forYou ? "beam" : ""}`}
+                style={{ "--i": i } as CSSProperties}
+              >
                 <div className="flex items-start justify-between gap-2">
                   <div>
+                    {forYou && <p className="kicker">Busca tu rol</p>}
                     <h2 className="font-display text-lg font-semibold">{modeName}</h2>
                     <p className="text-sm text-muted">de {owner}</p>
                   </div>
@@ -110,6 +125,14 @@ export default async function LobbiesPage({ searchParams }: PageProps<"/grupos">
                     {taken}/{l.slots} plazas
                   </span>
                 </div>
+                <AvatarGroup
+                  slots={l.slots}
+                  members={l.lobby_members.map((m) => ({
+                    id: m.user_id,
+                    name: names.get(m.user_id)?.name ?? "Jugador",
+                    avatar: names.get(m.user_id)?.avatar ?? null,
+                  }))}
+                />
                 {l.note && <p className="text-sm">{l.note}</p>}
                 <dl className="grid gap-1 text-sm">
                   <div className="flex gap-2">

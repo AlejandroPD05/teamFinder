@@ -3,6 +3,7 @@
 import { Clapperboard, MessagesSquare, Search, UserRound, UsersRound } from "lucide-react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
+import { NumberRoll } from "@/components/number-roll";
 
 const LINKS = [
   { href: "/buscar", label: "Buscar", Icon: Search, match: "/buscar" },
@@ -32,7 +33,7 @@ export function SiteNav({ unread }: { unread: number }) {
             <span className="whitespace-nowrap">{label}</span>
             {href === "/mensajes" && unread > 0 && (
               <span className="absolute right-[calc(50%-1.75rem)] top-1 rounded-full bg-accent px-1.5 text-[0.65rem] font-semibold leading-4 text-bg sm:static sm:text-xs">
-                {unread > 99 ? "99+" : unread}
+                <NumberRoll value={unread} max={99} />
                 <span className="sr-only"> sin leer</span>
               </span>
             )}

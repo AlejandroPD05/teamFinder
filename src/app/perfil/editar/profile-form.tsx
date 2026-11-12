@@ -117,6 +117,19 @@ export function ProfileForm({
 
   return (
     <form action={action} className="flex flex-col gap-6" noValidate>
+      {/* Ley de Miller: el formulario en tres bloques, con índice para saltar a cada uno. */}
+      <nav aria-label="Partes del perfil" className="flex flex-wrap gap-2 text-sm">
+        {[
+          ["#grupo-sobre-ti", "Sobre ti"],
+          ["#grupo-juego", gameName],
+          ["#grupo-contacto", "Contacto y privacidad"],
+        ].map(([href, label]) => (
+          <a key={href} href={href} className="inline-flex min-h-11 items-center rounded-md border border-line px-3 hover:bg-panel-hover">
+            {label}
+          </a>
+        ))}
+      </nav>
+      <h2 id="grupo-sobre-ti" className="kicker -mb-3 scroll-mt-24">Sobre ti</h2>
       <fieldset className={box}>
         <legend className={legend}>Datos básicos</legend>
         <label htmlFor="display_name" className="mt-3 block text-sm font-medium">
@@ -175,49 +188,7 @@ export function ProfileForm({
         <VisibilitySelect name="voice_visibility" value={values.voice_visibility} label="cómo te comunicas" />
       </fieldset>
 
-      <fieldset className={box}>
-        <legend className={legend}>Redes sociales</legend>
-        <p className="mt-1 text-sm text-muted">Opcional. Solo el nombre de usuario; el enlace lo ponemos nosotros.</p>
-        <div className="mt-3 grid gap-3 sm:grid-cols-3">
-          {(Object.keys(SOCIALS) as (keyof typeof SOCIALS)[]).map((k) => (
-            <div key={k}>
-              <label htmlFor={k} className="block text-sm font-medium">
-                {SOCIALS[k].label}
-              </label>
-              <input
-                id={k}
-                name={k}
-                defaultValue={values[k] ?? ""}
-                maxLength={31}
-                autoComplete="off"
-                spellCheck={false}
-                placeholder="usuario"
-                aria-invalid={!!err[k] || undefined}
-                aria-describedby={err[k] ? `${k}-error` : undefined}
-                className={`${control} mt-2 w-full`}
-              />
-              <FieldError id={`${k}-error`} error={err[k]} />
-            </div>
-          ))}
-        </div>
-        <VisibilitySelect name="socials_visibility" value={values.socials_visibility} label="tus redes" />
-      </fieldset>
-
-      <fieldset className={box}>
-        <legend className={legend}>Mensajes privados</legend>
-        <div className="mt-3 flex flex-col gap-2">
-          <label className={chip}>
-            <input type="radio" name="dm_policy" value="registered" defaultChecked={values.dm_policy === "registered"} className="size-4 accent-accent" />
-            Cualquier jugador con cuenta puede escribirme
-          </label>
-          <label className={chip}>
-            <input type="radio" name="dm_policy" value="none" defaultChecked={values.dm_policy === "none"} className="size-4 accent-accent" />
-            Nadie puede empezar una conversación conmigo
-          </label>
-        </div>
-        <p className="mt-2 text-sm text-muted">Las conversaciones que ya tienes siguen abiertas. Bloquear a alguien corta la conversación.</p>
-      </fieldset>
-
+      <h2 id="grupo-juego" className="kicker -mb-3 scroll-mt-24">Tu perfil de {gameName}</h2>
       <fieldset className={box}>
         <legend className={legend}>{gameName}</legend>
         <div className="mt-3 grid gap-4 sm:grid-cols-2">
@@ -321,6 +292,50 @@ export function ProfileForm({
         )}
 
         <VisibilitySelect name="game_visibility" value={values.game_visibility} label={`tu perfil de ${gameName}`} />
+      </fieldset>
+
+      <h2 id="grupo-contacto" className="kicker -mb-3 scroll-mt-24">Contacto y privacidad</h2>
+      <fieldset className={box}>
+        <legend className={legend}>Redes sociales</legend>
+        <p className="mt-1 text-sm text-muted">Opcional. Escribe tu usuario o pega el enlace de tu perfil.</p>
+        <div className="mt-3 grid gap-3 sm:grid-cols-3">
+          {(Object.keys(SOCIALS) as (keyof typeof SOCIALS)[]).map((k) => (
+            <div key={k}>
+              <label htmlFor={k} className="block text-sm font-medium">
+                {SOCIALS[k].label}
+              </label>
+              <input
+                id={k}
+                name={k}
+                defaultValue={values[k] ?? ""}
+                maxLength={120}
+                autoComplete="off"
+                spellCheck={false}
+                placeholder="usuario o enlace"
+                aria-invalid={!!err[k] || undefined}
+                aria-describedby={err[k] ? `${k}-error` : undefined}
+                className={`${control} mt-2 w-full`}
+              />
+              <FieldError id={`${k}-error`} error={err[k]} />
+            </div>
+          ))}
+        </div>
+        <VisibilitySelect name="socials_visibility" value={values.socials_visibility} label="tus redes" />
+      </fieldset>
+
+      <fieldset className={box}>
+        <legend className={legend}>Mensajes privados</legend>
+        <div className="mt-3 flex flex-col gap-2">
+          <label className={chip}>
+            <input type="radio" name="dm_policy" value="registered" defaultChecked={values.dm_policy === "registered"} className="size-4 accent-accent" />
+            Cualquier jugador con cuenta puede escribirme
+          </label>
+          <label className={chip}>
+            <input type="radio" name="dm_policy" value="none" defaultChecked={values.dm_policy === "none"} className="size-4 accent-accent" />
+            Nadie puede empezar una conversación conmigo
+          </label>
+        </div>
+        <p className="mt-2 text-sm text-muted">Las conversaciones que ya tienes siguen abiertas. Bloquear a alguien corta la conversación.</p>
       </fieldset>
 
       <div className="sticky bottom-0 -mx-4 flex flex-wrap items-center gap-4 border-t border-line bg-bg px-4 py-3">

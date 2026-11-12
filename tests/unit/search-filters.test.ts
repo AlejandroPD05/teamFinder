@@ -1,5 +1,5 @@
 import { describe, expect, it } from "vitest";
-import { activeCount, parseFilters, toConditions, toSearchParams, widenSuggestions, type SearchCatalog } from "@/lib/search/filters";
+import { activeCount, advancedCount, parseFilters, toConditions, toSearchParams, widenSuggestions, type SearchCatalog } from "@/lib/search/filters";
 
 const catalog: SearchCatalog = {
   ranks: [
@@ -83,5 +83,13 @@ describe("widenSuggestions", () => {
     expect(s.map((x) => x.label)).toEqual(["Cualquier rango", "Cualquier agente", "Cualquier idioma"]);
     expect(s.every((x) => x.filters.page === 1)).toBe(true);
     expect(s[1].filters.agent).toBeUndefined();
+  });
+});
+
+describe("advancedCount", () => {
+  it("cuenta solo los filtros que van plegados en «Más filtros»", () => {
+    const base = parseFilters({}, catalog);
+    expect(advancedCount({ ...base, rmin: "gold", region: "eu" })).toBe(0);
+    expect(advancedCount({ ...base, lang: "es", flex: true, slot: ["weekday_night"] })).toBe(3);
   });
 });

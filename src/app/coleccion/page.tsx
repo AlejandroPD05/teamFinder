@@ -3,6 +3,7 @@ import Link from "next/link";
 import { redirect } from "next/navigation";
 import type { CSSProperties } from "react";
 import { CollectibleCard } from "@/components/collectible-card";
+import { TiltCard } from "@/components/tilt-card";
 import { currentGame } from "@/lib/games";
 import { loadCollection } from "@/lib/missions/queries";
 import { createClient } from "@/lib/supabase/server";
@@ -43,7 +44,13 @@ export default async function CollectionPage() {
         <ul className="grid grid-cols-2 gap-4 sm:grid-cols-3 lg:grid-cols-5">
           {cards.map((c, i) => (
             <li key={c.id} className="enter" style={{ "--i": i } as CSSProperties}>
-              <CollectibleCard card={c} locked={!owned.has(c.id)} />
+              {owned.has(c.id) ? (
+                <TiltCard holo={c.rarity === "epic" || c.rarity === "legendary"}>
+                  <CollectibleCard card={c} />
+                </TiltCard>
+              ) : (
+                <CollectibleCard card={c} locked />
+              )}
             </li>
           ))}
         </ul>
