@@ -6,6 +6,7 @@ import { Trophy } from "lucide-react";
 import { loadClip, loadEmblems, loadWinners } from "@/lib/clips/queries";
 import { createClient } from "@/lib/supabase/server";
 import { deleteClip, deleteComment, moderateClip, toggleVote } from "../actions";
+import { EmblemButton } from "../emblem-button";
 import { ClipPlayer, ClipReportForm, CommentForm } from "../components";
 
 export const metadata: Metadata = { title: "Clip" };
@@ -85,18 +86,7 @@ export default async function ClipPage({ params }: PageProps<"/clips/[id]">) {
                 <form action={toggleVote}>
                   <input type="hidden" name="clip" value={clip.id} />
                   <input type="hidden" name="emblem" value={e.id} />
-                  <button
-                    type="submit"
-                    disabled={own}
-                    aria-pressed={mine}
-                    title={e.description}
-                    className={`inline-flex min-h-11 items-center gap-2 rounded-md border px-3 text-sm transition-[background-color,border-color,transform] duration-150 ease-out active:scale-[0.97] disabled:cursor-not-allowed ${
-                      mine ? "border-accent bg-panel-hover font-medium" : "border-line hover:bg-panel-hover"
-                    }`}
-                  >
-                    {e.name}
-                    <span className="tabular-nums text-muted">{n}</span>
-                  </button>
+                  <EmblemButton name={e.name} description={e.description} count={n} mine={mine} disabled={own} />
                 </form>
               </li>
             );

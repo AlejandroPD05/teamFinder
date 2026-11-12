@@ -1,16 +1,15 @@
 "use client";
 
-import { Bomb, Crosshair, Gamepad2, Mountain, Users, type LucideIcon } from "lucide-react";
+import { Gamepad2, Users } from "lucide-react";
 import { usePathname } from "next/navigation";
 import { useEffect, useOptimistic, useTransition, type CSSProperties, type MouseEvent } from "react";
+import { GAME_GLYPHS } from "@/components/game-glyphs";
 import { gameFromPath } from "@/lib/config";
 import { themeStyle, type GameTheme } from "@/lib/game-theme";
 import { chooseGame, selectGame } from "./juego/actions";
 
-type PickerGame = GameTheme & { id: string; name: string; short_name: string | null };
-
 // Icono propio de cada juego (no su logotipo: Riot prohíbe usar sus logos, EA los limita y Valve no da permiso).
-const GAME_GLYPHS: Record<string, LucideIcon> = { valorant: Crosshair, cs2: Bomb, apex: Mountain };
+type PickerGame = GameTheme & { id: string; name: string; short_name: string | null };
 
 /** Tema inmediato: las variables de color están registradas con @property y se animan. */
 function applyTheme(game: PickerGame) {
@@ -102,10 +101,10 @@ export function GamePicker({
                   "--tile-text": g.theme_accent_soft ?? g.theme_accent ?? "var(--color-text)",
                 } as CSSProperties
               }
-              className={`flex aspect-square min-h-28 flex-col items-center justify-center gap-1.5 rounded-xl border-2 p-3 transition-[border-color,background-color,transform] duration-200 ease-out active:scale-[0.97] sm:gap-3 ${
+              className={`flex aspect-square min-h-28 flex-col items-center justify-center gap-1.5 rounded-xl border-2 bg-[linear-gradient(180deg,rgb(255_255_255/0.05),transparent_50%)] p-3 transition-[border-color,background-color,transform,box-shadow] duration-200 ease-out active:scale-[0.97] sm:gap-3 ${
                 on
-                  ? "border-[var(--tile)] bg-[color-mix(in_srgb,var(--tile)_12%,var(--color-panel))]"
-                  : "border-line bg-panel hover:border-[color-mix(in_srgb,var(--tile)_60%,var(--color-line))]"
+                  ? "border-[var(--tile)] bg-[color-mix(in_srgb,var(--tile)_14%,var(--color-panel))] shadow-[inset_0_1px_0_rgb(255_255_255/0.08),0_18px_44px_-16px_var(--tile)]"
+                  : "border-line bg-panel shadow-[inset_0_1px_0_rgb(255_255_255/0.05),0_10px_24px_-18px_black] hover:-translate-y-0.5 hover:border-[color-mix(in_srgb,var(--tile)_60%,var(--color-line))]"
               }`}
             >
               {(() => {

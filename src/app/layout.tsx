@@ -58,7 +58,7 @@ export default async function RootLayout({ children }: LayoutProps<"/">) {
         >
           {es.nav.skip}
         </a>
-        <header className="sticky top-0 z-40 border-b border-line bg-bg">
+        <header className="site-header sticky top-0 z-40">
           <nav
             aria-label="Principal"
             className="mx-auto flex max-w-6xl flex-wrap items-center justify-between px-4 sm:h-16 sm:flex-nowrap sm:gap-4"

@@ -30,7 +30,7 @@ const FEATURES = [
   {
     Icon: Gamepad2,
     title: "Un perfil por juego",
-    text: "VALORANT, Counter-Strike 2 y Apex Legends, cada uno con sus rangos, roles y personajes. Cambia de juego desde la cabecera.",
+    text: "VALORANT, Counter-Strike 2 y Apex Legends, cada uno con sus rangos, roles y personajes. Cambia de juego desde la portada.",
   },
 ] as const;
 
@@ -119,9 +119,14 @@ export default async function Home({ searchParams }: PageProps<"/">) {
         </h2>
         {/* Pasos: un recorrido, no tarjetas. El orden lo da la lista. */}
         <ol className="grid gap-x-8 gap-y-8 sm:grid-cols-2 lg:grid-cols-4">
-          {STEPS.map(({ Icon, title, text }) => (
+          {STEPS.map(({ Icon, title, text }, i) => (
             <li key={title} className="flex flex-col gap-2 border-t border-line pt-5">
-              <Icon aria-hidden="true" className="size-5 text-muted" />
+              <span className="flex items-center gap-3">
+                <span aria-hidden="true" className="kicker tabular-nums">
+                  {String(i + 1).padStart(2, "0")}
+                </span>
+                <Icon aria-hidden="true" className="size-5 text-accent-soft" />
+              </span>
               <h3 className="font-display text-lg font-semibold">{title}</h3>
               <p className="text-sm text-muted">{text}</p>
             </li>
@@ -134,7 +139,7 @@ export default async function Home({ searchParams }: PageProps<"/">) {
         <ul aria-labelledby="funciones" className="mt-4 grid gap-4 md:grid-cols-3">
           {FEATURES.map(({ Icon, title, text }) => (
             <li key={title} className="surface flex flex-col gap-3 p-6">
-              <Icon aria-hidden="true" className="size-6 text-muted" />
+              <Icon aria-hidden="true" className="size-6 text-accent-soft" />
               <h4 className="font-display text-lg font-semibold">{title}</h4>
               <p className="text-sm text-muted">{text}</p>
             </li>
@@ -142,7 +147,7 @@ export default async function Home({ searchParams }: PageProps<"/">) {
         </ul>
       </section>
 
-      <section className="surface flex flex-col items-center gap-4 px-6 py-12 text-center">
+      <section className="surface hud flex flex-col items-center gap-4 px-6 py-12 text-center">
         <h2 className="font-display text-2xl font-semibold sm:text-3xl">¿Listo para la próxima partida?</h2>
         <p className="max-w-xl text-muted">{es.home.beta} Entra con Discord y completa tu perfil en un minuto.</p>
         <Link href={cta.href} className="btn-primary">

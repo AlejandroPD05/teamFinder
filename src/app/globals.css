@@ -2,8 +2,9 @@
 
 /*
  * Sistema visual «arena nocturna»: base oscura común a todos los juegos (AGENTS.md), color intenso solo en
- * acciones, estados activos e insignias. Profundidad por tonos de superficie: sin degradados, brillos ni
- * bordes decorativos.
+ * acciones, estados activos e insignias. Profundidad (decisión 2026-11-14, «dibujo sólido»): superficies con luz
+ * cenital y sombra teñida del juego, un resplandor ambiental, grano y un patrón propio por juego casi invisible.
+ * Todo sutil: el contenido manda.
  */
 @theme {
   --color-bg: #0b0c12;
@@ -88,9 +89,66 @@ html[data-switching] main {
 }
 
 body {
-  /* Fondo liso. El tono de cada juego llega por las variables de color (ver src/lib/games.ts), sin degradados. */
+  /* Resplandor ambiental del juego arriba; el tono base llega por las variables de color (src/lib/games.ts). */
   background-color: var(--color-bg);
+  background-image: radial-gradient(
+    80rem 32rem at 50% -8rem,
+    color-mix(in srgb, var(--color-accent) 14%, transparent),
+    transparent 70%
+  );
+  background-repeat: no-repeat;
   color: var(--color-text);
+}
+
+/* Patrón propio de cada juego, del color de acento, que se desvanece hacia abajo; y grano encima del negro. */
+body::before,
+body::after {
+  content: "";
+  position: fixed;
+  inset: 0;
+  z-index: -1;
+  pointer-events: none;
+}
+body::before {
+  background: var(--color-accent);
+  opacity: 0.07;
+  mask-image: var(--pattern, none), radial-gradient(ellipse 90% 70% at 50% 0%, #000 0%, transparent 75%);
+  mask-size: var(--pattern-size, 56px 56px), 100% 100%;
+  mask-repeat: repeat, no-repeat;
+  mask-composite: intersect;
+}
+body::after {
+  opacity: 0.045;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='160' height='160'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='2' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+}
+
+/* VALORANT: geometría angular. */
+html[data-game="valorant"] {
+  --pattern: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='56' height='56' fill='none' stroke='%23000' stroke-width='1'%3E%3Cpath d='M0 56 28 0l28 56M0 28h14M42 28h14'/%3E%3C/svg%3E");
+}
+/* CS2: franjas de peligro. */
+html[data-game="cs2"] {
+  --pattern: repeating-linear-gradient(135deg, #000 0 2px, transparent 2px 26px);
+  --pattern-size: 100% 100%;
+}
+/* Apex: curvas de nivel. */
+html[data-game="apex"] {
+  --pattern: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='200' height='200' fill='none' stroke='%23000' stroke-width='1'%3E%3Cpath d='M0 40c40-20 80 20 120 0s60-20 80 0M0 95c50-20 90 25 140 0s45-15 60 0M0 150c40-20 100 20 150 0s35-10 50 0M70 112c20-14 48-9 52 5s-24 22-46 14-20-10-6-19Z'/%3E%3C/svg%3E");
+  --pattern-size: 200px 200px;
+}
+
+/* Cabecera de cristal: deja ver el resplandor al hacer scroll, con un filo de luz del juego abajo. */
+.site-header {
+  background: color-mix(in srgb, var(--color-bg) 82%, transparent);
+  backdrop-filter: blur(12px) saturate(140%);
+}
+.site-header::after {
+  content: "";
+  position: absolute;
+  inset-inline: 0;
+  bottom: -1px;
+  height: 1px;
+  background: linear-gradient(90deg, transparent, color-mix(in srgb, var(--color-accent) 55%, transparent), transparent);
 }
 
 :focus-visible {
@@ -109,19 +167,86 @@ body {
     letter-spacing: 0.01em;
   }
 
-  /* Superficie de tarjeta: se separa del fondo por el tono, no por un borde. */
+  /*
+   * Superficie de tarjeta: luz cenital (brillo arriba que cae), canto superior iluminado, contorno tenue y sombra
+   * teñida del juego. El brillo va como imagen sobre el color, así `hover:bg-…` sigue funcionando.
+   */
   .surface {
     position: relative;
     border-radius: var(--radius-card);
-    background: var(--color-panel);
+    background-color: var(--color-panel);
+    background-image: linear-gradient(180deg, rgb(255 255 255 / 0.04), transparent 42%);
+    box-shadow:
+      inset 0 1px 0 rgb(255 255 255 / 0.06),
+      0 0 0 1px color-mix(in srgb, var(--color-line) 75%, transparent),
+      0 2px 4px rgb(0 0 0 / 0.3),
+      0 14px 32px -20px color-mix(in srgb, var(--color-accent) 40%, black);
   }
 
-  .surface-interactive {
-    transition: background-color 150ms var(--ease-out);
+  /* Tarjetas que llevan a otro sitio: se elevan al pasar por encima (sin animar al pulsar: se usan mucho). */
+  .surface-interactive,
+  a.surface {
+    transition:
+      background-color 150ms var(--ease-out),
+      transform 200ms var(--ease-out),
+      box-shadow 200ms var(--ease-out);
   }
   .surface-interactive:hover,
-  .surface-interactive:focus-within {
-    background: var(--color-panel-hover);
+  .surface-interactive:focus-within,
+  a.surface:hover {
+    background-color: var(--color-panel-hover);
+  }
+  @media (hover: hover) {
+    .surface-interactive:hover,
+    a.surface:hover {
+      transform: translateY(-2px);
+      box-shadow:
+        inset 0 1px 0 rgb(255 255 255 / 0.08),
+        0 0 0 1px color-mix(in srgb, var(--color-accent) 35%, var(--color-line)),
+        0 4px 8px rgb(0 0 0 / 0.3),
+        0 20px 40px -20px color-mix(in srgb, var(--color-accent) 55%, black);
+    }
+  }
+
+  /* En un fieldset con superficie, la leyenda va dentro de la tarjeta (no montada sobre su borde). */
+  fieldset.surface > legend {
+    float: left;
+    width: 100%;
+  }
+  fieldset.surface > legend + * {
+    clear: both;
+  }
+
+  /* Detalle tipo HUD: escuadras del color del juego en dos esquinas. Solo en piezas destacadas. */
+  .hud::after {
+    content: "";
+    position: absolute;
+    inset: -5px;
+    pointer-events: none;
+    --c: color-mix(in srgb, var(--color-accent) 80%, transparent);
+    background:
+      linear-gradient(var(--c), var(--c)) top left / 16px 2px no-repeat,
+      linear-gradient(var(--c), var(--c)) top left / 2px 16px no-repeat,
+      linear-gradient(var(--c), var(--c)) bottom right / 16px 2px no-repeat,
+      linear-gradient(var(--c), var(--c)) bottom right / 2px 16px no-repeat;
+  }
+
+  /* Etiqueta corta sobre un título: agrupa la información (ley de Miller) y da ritmo. */
+  .kicker {
+    font-family: var(--font-display);
+    font-size: 0.75rem;
+    font-weight: 600;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+    color: var(--color-accent-soft);
+  }
+
+  /* Bloque de carga (umbral de Doherty: la respuesta se ve al instante aunque los datos tarden). */
+  .skeleton {
+    border-radius: var(--radius-card);
+    background: linear-gradient(90deg, var(--color-panel) 0%, var(--color-panel-hover) 50%, var(--color-panel) 100%);
+    background-size: 200% 100%;
+    animation: shimmer 1.2s linear infinite;
   }
 
   /* Botón principal con esquina cortada (detalle propio, sin imitar a ningún juego). */
@@ -190,16 +315,92 @@ body {
   }
 }
 
-/* Carta nueva: aparece desde un poco más pequeña, sin rebote. */
+/*
+ * Carta nueva (momento raro, así que se exagera): coge impulso hacia abajo (anticipación), sube en arco con un
+ * pequeño giro y se pasa un poco antes de asentarse (follow-through). Después la cruza un destello (acción secundaria).
+ */
 .card-reveal {
-  animation: card-reveal 450ms var(--ease-out) both;
+  animation: card-reveal 480ms var(--ease-out) both;
+}
+.card-reveal::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  background: linear-gradient(110deg, transparent 35%, rgb(255 255 255 / 0.35) 50%, transparent 65%);
+  transform: translateX(-120%);
+  animation: shine 700ms 380ms var(--ease-in-out) both;
 }
 
 @keyframes card-reveal {
-  from {
+  0% {
     opacity: 0;
-    transform: scale(0.92);
+    transform: translateY(18px) scale(0.9) rotate(-4deg);
   }
+  20% {
+    opacity: 1;
+    transform: translateY(22px) scale(0.9, 0.86) rotate(-4deg);
+  }
+  70% {
+    transform: translateY(-8px) scale(1.04) rotate(1deg);
+  }
+  100% {
+    transform: none;
+  }
+}
+
+@keyframes shine {
+  to {
+    transform: translateX(120%);
+  }
+}
+
+/* Squash & stretch: el botón se aplasta al recibir el toque y recupera la forma con un pequeño estirón. */
+.pop {
+  animation: pop 280ms var(--ease-out);
+}
+@keyframes pop {
+  30% {
+    transform: scale(1.12, 0.86);
+  }
+  60% {
+    transform: scale(0.95, 1.06);
+  }
+}
+
+@keyframes shimmer {
+  from {
+    background-position: 100% 0;
+  }
+  to {
+    background-position: -100% 0;
+  }
+}
+
+/*
+ * Cartas de la colección: se inclinan hacia el puntero (volumen) y las épicas y legendarias llevan un reflejo
+ * holográfico que sigue la luz. Variables desde src/components/tilt-card.tsx.
+ */
+.tilt {
+  transform: perspective(700px) rotateX(var(--rx, 0deg)) rotateY(var(--ry, 0deg));
+  transition: transform 200ms var(--ease-out);
+}
+.tilt[data-holo] figure::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  opacity: var(--holo, 0);
+  transition: opacity 200ms var(--ease-out);
+  mix-blend-mode: color-dodge;
+  background: linear-gradient(
+    115deg,
+    transparent 20%,
+    rgb(255 120 220 / 0.35) calc(var(--mx, 50%) - 12%),
+    rgb(120 220 255 / 0.4) var(--mx, 50%),
+    rgb(255 240 140 / 0.35) calc(var(--mx, 50%) + 12%),
+    transparent 80%
+  );
 }
 
 @keyframes enter {

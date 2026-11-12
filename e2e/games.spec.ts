@@ -10,6 +10,7 @@ test("cambiar de juego cambia el tema y el catálogo", async ({ page }, info) =>
   await page.goto("/buscar");
   await expect(page.locator("html")).toHaveAttribute("data-game", "valorant");
   const valorantAccent = await accent(page);
+  await page.getByText("Más filtros").click();
   await expect(page.getByLabel("Agente", { exact: true })).toBeVisible();
 
   // CS2: sin personajes, roles de comunidad y otro acento.

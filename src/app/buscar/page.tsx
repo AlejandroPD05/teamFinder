@@ -6,6 +6,7 @@ import { AVAILABILITY, CHARACTER_STATUS, GOALS, LANGUAGES, VOICE } from "@/lib/p
 import { loadCatalog } from "@/lib/profile/queries";
 import {
   activeCount,
+  advancedCount,
   PAGE_SIZE,
   parseFilters,
   toConditions,
@@ -72,6 +73,7 @@ export default async function SearchPage({ searchParams }: PageProps<"/buscar">)
   const { players, total } = await searchPlayers(supabase, userId, toConditions(filters, catalog), filters.page, game.id);
   const pages = Math.max(1, Math.ceil(total / PAGE_SIZE));
   const n = activeCount(filters);
+  const advanced = advancedCount(filters);
   // Etiqueta en singular del filtro de personaje (Agente, Leyenda…); null si el juego no tiene personajes.
   const character =
     game.character_label && catalog.characters.length > 0 ? game.character_label.replace(/s$/, "") : null;
@@ -94,6 +96,12 @@ export default async function SearchPage({ searchParams }: PageProps<"/buscar">)
           <Select name="region" label="Servidor" value={filters.region} options={catalog.regions.map((r) => [r.slug, r.name])} />
           <Select name="mode" label="Modo" value={filters.mode} options={catalog.modes.map((m) => [m.slug, m.name])} />
           <Select name="role" label="Rol" value={filters.role} options={catalog.roles.map((r) => [r.slug, r.name])} />
+          {/* Ley de Hick: a la vista solo los filtros principales; el resto, plegado (abierto si alguno está activo). */}
+          <details open={advanced > 0} className="col-span-2 lg:col-span-4">
+            <summary className="min-h-11 cursor-pointer py-2 text-sm font-medium text-accent-soft">
+              Más filtros{advanced ? ` (${advanced})` : ""}
+            </summary>
+            <div className="mt-2 grid grid-cols-2 gap-3 sm:gap-4 lg:grid-cols-4">
           {character && (
           <>
           <Select name="agent" label={character} value={filters.agent} options={catalog.characters.map((c) => [c.slug, c.name])} />
@@ -128,6 +136,8 @@ export default async function SearchPage({ searchParams }: PageProps<"/buscar">)
               ))}
             </div>
           </fieldset>
+            </div>
+          </details>
           <div className="col-span-2 flex flex-wrap items-center gap-3 lg:col-span-4">
             <button type="submit" className="btn-primary">
               Buscar

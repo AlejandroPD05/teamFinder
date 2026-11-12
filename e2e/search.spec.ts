@@ -48,6 +48,7 @@ test("buscar con filtros combinados encuentra al jugador y la URL los conserva",
     await page.getByLabel("Rango máximo").selectOption({ label: "Platino 1" });
     await page.getByLabel("Servidor").selectOption({ label: "Europa" });
     await page.getByLabel("Rol", { exact: true }).selectOption({ label: "Controlador" });
+    await page.getByText("Más filtros").click();
     await page.getByLabel("Agente", { exact: true }).selectOption({ label: "Omen" });
     await page.getByLabel("Main").check();
     await page.getByLabel("Idioma").selectOption({ label: "Español" });
