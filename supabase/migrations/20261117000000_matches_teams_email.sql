@@ -28,14 +28,19 @@ alter table public.game_maps enable row level security;
 create policy "maps read" on public.game_maps for select to anon, authenticated using (active);
 revoke insert, update, delete on public.game_maps from anon, authenticated;
 
-insert into public.game_maps (game_id, slug, name, sort) values
+-- Solo si el juego ya existe (en una base nueva los juegos llegan con seed.sql, que también inserta los mapas).
+insert into public.game_maps (game_id, slug, name, sort)
+select v.* from (values
   ('valorant', 'abyss', 'Abyss', 1), ('valorant', 'ascent', 'Ascent', 2), ('valorant', 'bind', 'Bind', 3),
   ('valorant', 'breeze', 'Breeze', 4), ('valorant', 'corrode', 'Corrode', 5), ('valorant', 'fracture', 'Fracture', 6),
   ('valorant', 'haven', 'Haven', 7), ('valorant', 'icebox', 'Icebox', 8), ('valorant', 'lotus', 'Lotus', 9),
   ('valorant', 'pearl', 'Pearl', 10), ('valorant', 'split', 'Split', 11), ('valorant', 'summit', 'Summit', 12),
   ('valorant', 'sunset', 'Sunset', 13),
   ('valorant', 'district', 'District', 20), ('valorant', 'drift', 'Drift', 21), ('valorant', 'glitch', 'Glitch', 22),
-  ('valorant', 'kasbah', 'Kasbah', 23), ('valorant', 'piazza', 'Piazza', 24);
+  ('valorant', 'kasbah', 'Kasbah', 23), ('valorant', 'piazza', 'Piazza', 24)
+) as v(game_id, slug, name, sort)
+where exists (select 1 from public.games where id = 'valorant')
+on conflict (game_id, slug) do nothing;
 
 alter table public.profiles add column matches_visibility public.visibility not null default 'private';
 grant update (matches_visibility) on public.profiles to authenticated;
