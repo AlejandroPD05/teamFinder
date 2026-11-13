@@ -1,4 +1,6 @@
 import { z } from "zod";
+import type { AppLocale } from "@/lib/i18n/locale";
+import { translator } from "@/lib/i18n/translator";
 import { AVAILABILITY, CHARACTER_STATUS, GOALS, keys, LANGUAGES, VISIBILITY, VOICE } from "./options";
 
 const visibility = z.enum(keys(VISIBILITY));
@@ -20,20 +22,19 @@ const handle = (re: RegExp, message: string, fromUrl: RegExp) =>
     z.string().regex(re, message).nullable(),
   );
 
-export const SOCIALS = {
-  social_twitch: { label: "Twitch", url: (h: string) => `https://www.twitch.tv/${h}` },
-  social_youtube: { label: "YouTube", url: (h: string) => `https://www.youtube.com/@${h}` },
-  social_x: { label: "X", url: (h: string) => `https://x.com/${h}` },
-} as const;
+export { SOCIALS } from "@/lib/limits";
 
-export const profileSchema = z.object({
+/** Esquema del perfil común con los mensajes en el idioma pedido. */
+export function profileSchemaFor(locale: AppLocale) {
+  const t = translator(locale, "validation.profile");
+  return z.object({
   display_name: z
     .string()
     .trim()
-    .min(2, "El nombre debe tener al menos 2 caracteres.")
-    .max(32, "El nombre no puede pasar de 32 caracteres.")
-    .regex(/^[^<>]+$/, "El nombre no puede contener < ni >."),
-  languages: z.array(z.enum(keys(LANGUAGES))).max(6, "Elige como mucho 6 idiomas.").refine(unique),
+    .min(2, t("nameMin"))
+    .max(32, t("nameMax"))
+    .regex(/^[^<>]+$/, t("nameChars")),
+  languages: z.array(z.enum(keys(LANGUAGES))).max(6, t("languagesMax")).refine(unique),
   availability: z.array(z.enum(keys(AVAILABILITY))).refine(unique),
   goals: z.array(z.enum(keys(GOALS))).refine(unique),
   voice: z.preprocess((v) => (v === "" ? null : v), z.enum(keys(VOICE)).nullable()),
@@ -43,24 +44,30 @@ export const profileSchema = z.object({
   voice_visibility: visibility,
   social_twitch: handle(
     /^[A-Za-z0-9_]{4,25}$/,
-    "Usuario de Twitch no válido (4–25 letras, números o _).",
+    t("twitch"),
     /^(?:https?:\/\/)?(?:www\.|m\.)?twitch\.tv\/([^/?#\s]+)/i,
   ),
   social_youtube: handle(
     /^[A-Za-z0-9._-]{3,30}$/,
-    "Identificador de YouTube no válido (3–30 caracteres, sin espacios).",
+    t("youtube"),
     /^(?:https?:\/\/)?(?:www\.|m\.)?youtube\.com\/@([^/?#\s]+)/i,
   ),
   social_x: handle(
     /^[A-Za-z0-9_]{1,15}$/,
-    "Usuario de X no válido (hasta 15 letras, números o _).",
+    t("x"),
     /^(?:https?:\/\/)?(?:www\.|mobile\.)?(?:x|twitter)\.com\/([^/?#\s]+)/i,
   ),
   socials_visibility: visibility,
   dm_policy: z.enum(["registered", "none"]),
-});
+  });
+}
 
-export const gameProfileSchema = z
+export const profileSchema = profileSchemaFor("es");
+
+/** Esquema del perfil de un juego con los mensajes en el idioma pedido. */
+export function gameProfileSchemaFor(locale: AppLocale) {
+  const t = translator(locale, "validation.profile");
+  return z
   .object({
     rank_id: optionalUuid,
     region_id: optionalUuid,
@@ -72,12 +79,15 @@ export const gameProfileSchema = z
     characters: z
       .array(z.object({ character_id: uuid, status: z.enum(keys(CHARACTER_STATUS)) }))
       .max(40)
-      .refine((a) => unique(a.map((c) => c.character_id)), "Personaje repetido."),
+      .refine((a) => unique(a.map((c) => c.character_id)), t("characterRepeated")),
   })
   .refine((v) => !v.primary_role || v.roles.includes(v.primary_role), {
-    message: "El rol principal tiene que estar entre tus roles.",
+    message: t("primaryRole"),
     path: ["primary_role"],
   });
+}
+
+export const gameProfileSchema = gameProfileSchemaFor("es");
 
 export type ProfileInput = z.infer<typeof profileSchema>;
 export type GameProfileInput = z.infer<typeof gameProfileSchema>;

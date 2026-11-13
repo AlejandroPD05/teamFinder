@@ -1,5 +1,6 @@
 "use client";
 
+import { useTranslations } from "next-intl";
 import { useActionState } from "react";
 import { RoleIcon } from "@/components/game-icons";
 import { saveWelcomeRank, saveWelcomeRoles, type WelcomeState } from "./actions";
@@ -17,10 +18,11 @@ function Status({ state }: { state: WelcomeState }) {
 
 export function RolesStep({ roles, selected, primary }: { roles: { id: string; slug: string; name: string }[]; selected: string[]; primary: string | null }) {
   const [state, action, pending] = useActionState<WelcomeState, FormData>(saveWelcomeRoles, null);
+  const t = useTranslations("welcome");
   return (
     <form action={action} className="flex flex-col gap-5">
       <fieldset className="flex flex-col gap-2">
-        <legend className="mb-2 font-medium">¿Qué roles juegas? (hasta 4)</legend>
+        <legend className="mb-2 font-medium">{t("rolesQuestion")}</legend>
         <div className="grid gap-2 sm:grid-cols-2">
           {roles.map((r) => (
             <label key={r.id} className={chip}>
@@ -32,7 +34,7 @@ export function RolesStep({ roles, selected, primary }: { roles: { id: string; s
         </div>
       </fieldset>
       <fieldset className="flex flex-col gap-2">
-        <legend className="mb-2 font-medium">¿Cuál es tu rol principal?</legend>
+        <legend className="mb-2 font-medium">{t("primaryQuestion")}</legend>
         <div className="flex flex-wrap gap-2">
           {roles.map((r) => (
             <label key={r.id} className={chip}>
@@ -44,7 +46,7 @@ export function RolesStep({ roles, selected, primary }: { roles: { id: string; s
       </fieldset>
       <Status state={state} />
       <button type="submit" disabled={pending} className="btn-primary self-start">
-        Siguiente
+        {t("next")}
       </button>
     </form>
   );
@@ -64,21 +66,22 @@ export function RankStep({
   regionId: string | null;
 }) {
   const [state, action, pending] = useActionState<WelcomeState, FormData>(saveWelcomeRank, null);
+  const t = useTranslations("welcome");
   return (
     <form action={action} className="flex flex-col gap-4">
       <div className="flex flex-col gap-1.5">
         <label htmlFor="welcome-name" className="font-medium">
-          Tu nombre visible
+          {t("name")}
         </label>
         <input id="welcome-name" name="display_name" defaultValue={name} required minLength={2} maxLength={32} className={control} />
       </div>
       <div className="grid gap-4 sm:grid-cols-2">
         <div className="flex flex-col gap-1.5">
           <label htmlFor="welcome-rank" className="font-medium">
-            Rango actual
+            {t("rank")}
           </label>
           <select id="welcome-rank" name="rank_id" defaultValue={rankId ?? ""} className={control}>
-            <option value="">Prefiero no decirlo</option>
+            <option value="">{t("rankNone")}</option>
             {ranks.map((r) => (
               <option key={r.id} value={r.id}>
                 {r.name}
@@ -88,10 +91,10 @@ export function RankStep({
         </div>
         <div className="flex flex-col gap-1.5">
           <label htmlFor="welcome-region" className="font-medium">
-            Servidor
+            {t("region")}
           </label>
           <select id="welcome-region" name="region_id" defaultValue={regionId ?? ""} className={control}>
-            <option value="">Sin indicar</option>
+            <option value="">{t("unset")}</option>
             {regions.map((r) => (
               <option key={r.id} value={r.id}>
                 {r.name}
@@ -100,10 +103,10 @@ export function RankStep({
           </select>
         </div>
       </div>
-      <p className="text-xs text-muted">El rango lo indicas tú: se mostrará como «introducido manualmente».</p>
+      <p className="text-xs text-muted">{t("rankNote")}</p>
       <Status state={state} />
       <button type="submit" disabled={pending} className="btn-primary self-start">
-        Terminar
+        {t("finish")}
       </button>
     </form>
   );

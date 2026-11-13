@@ -1,3 +1,4 @@
+import { getTranslations } from "next-intl/server";
 import { NextResponse } from "next/server";
 import { createClient } from "@/lib/supabase/server";
 
@@ -7,7 +8,8 @@ export async function GET() {
   const supabase = await createClient();
   const { data: claims } = await supabase.auth.getClaims();
   const userId = claims?.claims?.sub;
-  if (!userId) return NextResponse.json({ error: "Sin sesión" }, { status: 401 });
+  const t = await getTranslations("settings");
+  if (!userId) return NextResponse.json({ error: t("exportNoSession") }, { status: 401 });
 
   const own = <T extends string>(table: T, column = "user_id") =>
     // Tipado laxo a propósito: es una exportación genérica de filas propias.
@@ -76,7 +78,7 @@ export async function GET() {
 
   const body = {
     exported_at: new Date().toISOString(),
-    note: "Datos de tu cuenta en TeamFinder. Los mensajes de grupos cerrados se borran a los 30 días (ver /privacidad).",
+    note: t("exportNote"),
     account: { id: userId, email: claims?.claims?.email ?? null },
     profile,
     game_profiles: gameProfiles,

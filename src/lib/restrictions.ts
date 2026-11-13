@@ -1,4 +1,5 @@
 import type { SupabaseClient } from "@supabase/supabase-js";
+import { INTL_LOCALE, type AppLocale } from "./i18n/locale";
 import type { Database } from "./supabase/database.types";
 
 /** Restricción temporal vigente de una persona (la RLS solo deja ver las propias y a moderación). */
@@ -15,10 +16,13 @@ export async function activeRestriction(supabase: SupabaseClient<Database>, user
   return data;
 }
 
-export const RESTRICTED_MESSAGE = "Tu cuenta está restringida temporalmente: no puedes hacer esto hasta que termine.";
+// El aviso de cuenta restringida está en messages/*.json (common.restricted y errors.*.restricted).
 
-export const untilFormat = new Intl.DateTimeFormat("es-ES", {
-  timeZone: "Europe/Madrid",
-  dateStyle: "long",
-  timeStyle: "short",
-});
+/** Fecha de fin de una restricción, en hora peninsular. */
+export function formatUntil(iso: string, locale: AppLocale = "es"): string {
+  return new Intl.DateTimeFormat(INTL_LOCALE[locale], {
+    timeZone: "Europe/Madrid",
+    dateStyle: "long",
+    timeStyle: "short",
+  }).format(new Date(iso));
+}

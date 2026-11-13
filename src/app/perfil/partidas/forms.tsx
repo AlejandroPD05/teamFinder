@@ -1,8 +1,9 @@
 "use client";
 
+import { useTranslations } from "next-intl";
 import { useActionState, useEffect, useRef } from "react";
-import { MATCH_RESULTS } from "@/lib/matches";
-import { VISIBILITY, type Visibility } from "@/lib/profile/options";
+import { MATCH_RESULTS } from "@/lib/limits";
+import { optionKeys, VISIBILITY, type Visibility } from "@/lib/profile/options";
 import { addMatchAction, deleteMatchAction, matchesVisibilityAction, type MatchState } from "./actions";
 
 const control = "min-h-11 w-full rounded-md border border-line bg-bg px-3 text-text focus:border-accent";
@@ -47,6 +48,8 @@ export function AddMatchForm({
   const [state, action, pending] = useActionState<MatchState, FormData>(addMatchAction, null);
   const err = state?.fieldErrors ?? {};
   const formRef = useRef<HTMLFormElement>(null);
+  const t = useTranslations("matches");
+  const to = useTranslations("options.matchResults");
   // Tras apuntar una partida, el formulario se vacía para la siguiente.
   useEffect(() => {
     if (state?.ok) formRef.current?.reset();
@@ -54,12 +57,12 @@ export function AddMatchForm({
   return (
     <form ref={formRef} action={action} noValidate className="flex flex-col gap-4 surface p-5">
       <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
-        <Field id="played_on" label="Fecha" error={err.played_on}>
+        <Field id="played_on" label={t("date")} error={err.played_on}>
           <input id="played_on" name="played_on" type="date" required max={today} defaultValue={today} className={control} />
         </Field>
-        <Field id="mode_id" label="Modo">
+        <Field id="mode_id" label={t("mode")}>
           <select id="mode_id" name="mode_id" defaultValue="" className={control}>
-            <option value="">Sin indicar</option>
+            <option value="">{t("unset")}</option>
             {modes.map((m) => (
               <option key={m.id} value={m.id}>
                 {m.name}
@@ -67,7 +70,7 @@ export function AddMatchForm({
             ))}
           </select>
         </Field>
-        <Field id="map_name" label="Mapa" error={err.map_name}>
+        <Field id="map_name" label={t("map")} error={err.map_name}>
           <input id="map_name" name="map_name" list="maps" maxLength={40} autoComplete="off" className={control} />
           <datalist id="maps">
             {maps.map((m) => (
@@ -78,7 +81,7 @@ export function AddMatchForm({
         {characterLabel && (
           <Field id="character_id" label={characterLabel.replace(/s$/, "")}>
             <select id="character_id" name="character_id" defaultValue="" className={control}>
-              <option value="">Sin indicar</option>
+              <option value="">{t("unset")}</option>
               {characters.map((c) => (
                 <option key={c.id} value={c.id}>
                   {c.name}
@@ -87,38 +90,38 @@ export function AddMatchForm({
             </select>
           </Field>
         )}
-        <Field id="result" label="Resultado">
+        <Field id="result" label={t("result")}>
           <select id="result" name="result" defaultValue="" className={control}>
-            <option value="">Sin indicar</option>
-            {Object.entries(MATCH_RESULTS).map(([k, v]) => (
+            <option value="">{t("unset")}</option>
+            {optionKeys(MATCH_RESULTS).map((k) => (
               <option key={k} value={k}>
-                {v}
+                {to(k)}
               </option>
             ))}
           </select>
         </Field>
-        <Field id="placement" label="Puesto final (battle royale)" error={err.placement}>
+        <Field id="placement" label={t("placement")} error={err.placement}>
           <input id="placement" name="placement" type="number" min={1} max={60} inputMode="numeric" className={control} />
         </Field>
       </div>
       <fieldset className="grid grid-cols-3 gap-3">
-        <legend className="mb-1.5 text-sm font-medium">Tus números (opcional)</legend>
-        <Field id="kills" label="Bajas" error={err.kills}>
+        <legend className="mb-1.5 text-sm font-medium">{t("numbers")}</legend>
+        <Field id="kills" label={t("kills")} error={err.kills}>
           <input id="kills" name="kills" type="number" min={0} max={200} inputMode="numeric" className={control} />
         </Field>
-        <Field id="deaths" label="Muertes" error={err.deaths}>
+        <Field id="deaths" label={t("deaths")} error={err.deaths}>
           <input id="deaths" name="deaths" type="number" min={0} max={200} inputMode="numeric" className={control} />
         </Field>
-        <Field id="assists" label="Asistencias" error={err.assists}>
+        <Field id="assists" label={t("assists")} error={err.assists}>
           <input id="assists" name="assists" type="number" min={0} max={200} inputMode="numeric" className={control} />
         </Field>
       </fieldset>
-      <Field id="note" label="Nota (opcional)" error={err.note}>
+      <Field id="note" label={t("note")} error={err.note}>
         <input id="note" name="note" maxLength={200} className={control} />
       </Field>
       <div className="flex flex-wrap items-center gap-3">
         <button type="submit" disabled={pending} className="btn-primary">
-          Apuntar partida
+          {t("add")}
         </button>
         <Status state={state} />
       </div>
@@ -128,16 +131,17 @@ export function AddMatchForm({
 
 export function DeleteMatch({ id, label }: { id: string; label: string }) {
   const [state, action, pending] = useActionState<MatchState, FormData>(deleteMatchAction, null);
+  const t = useTranslations("matches");
   return (
     <form action={action}>
       <input type="hidden" name="id" value={id} />
       <button
         type="submit"
         disabled={pending}
-        aria-label={`Borrar ${label}`}
+        aria-label={t("deleteLabel", { label })}
         className="min-h-11 rounded-md px-3 text-sm text-muted hover:bg-panel-hover hover:text-text"
       >
-        Borrar
+        {t("delete")}
       </button>
       {state && !state.ok && <Status state={state} />}
     </form>
@@ -146,20 +150,22 @@ export function DeleteMatch({ id, label }: { id: string; label: string }) {
 
 export function MatchesVisibility({ value }: { value: Visibility }) {
   const [state, action, pending] = useActionState<MatchState, FormData>(matchesVisibilityAction, null);
+  const t = useTranslations("matches");
+  const to = useTranslations("options.visibility");
   return (
     <form action={action} className="flex flex-wrap items-center gap-2 text-sm">
       <label htmlFor="matches-visibility" className="text-muted">
-        Quién ve tus partidas:
+        {t("whoSees")}
       </label>
       <select id="matches-visibility" name="visibility" defaultValue={value} className="min-h-9 rounded-md border border-line bg-bg px-3 text-sm text-text focus:border-accent">
-        {Object.entries(VISIBILITY).map(([k, v]) => (
+        {optionKeys(VISIBILITY).map((k) => (
           <option key={k} value={k}>
-            {v}
+            {to(k)}
           </option>
         ))}
       </select>
       <button type="submit" disabled={pending} className="btn-ghost min-h-9">
-        Guardar
+        {t("save")}
       </button>
       <Status state={state} />
     </form>

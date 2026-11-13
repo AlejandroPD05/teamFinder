@@ -18,7 +18,8 @@ export default defineConfig({
   forbidOnly: !!process.env.CI,
   retries: process.env.CI ? 1 : 0,
   reporter: process.env.CI ? "github" : "list",
-  use: { baseURL: "http://127.0.0.1:3000", trace: "retain-on-failure" },
+  // Navegador en español: sin cookie de idioma, la web elige por Accept-Language (las pruebas usan los textos en español).
+  use: { baseURL: "http://127.0.0.1:3000", trace: "retain-on-failure", locale: "es-ES" },
   projects: [
     { name: "desktop", use: { ...devices["Desktop Chrome"] } },
     { name: "mobile", use: { ...devices["Pixel 7"] } },

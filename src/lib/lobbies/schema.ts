@@ -1,6 +1,7 @@
 import { z } from "zod";
 import { GOALS, keys, LANGUAGES } from "@/lib/profile/options";
-import { RESTRICTED_MESSAGE } from "@/lib/restrictions";
+import type { AppLocale } from "@/lib/i18n/locale";
+import { errorMessage, translator } from "@/lib/i18n/translator";
 
 const optionalUuid = z.preprocess((v) => (v === "" || v == null ? null : v), z.uuid().nullable());
 const optionalEnum = <T extends Record<string, string>>(o: T) =>
@@ -15,10 +16,13 @@ export function parseLocalDateTime(value: string, tzOffsetMinutes: number): Date
   return Number.isFinite(utc) ? new Date(utc) : null;
 }
 
-export const createLobbySchema = z
+/** Esquema del formulario de grupo con los mensajes en el idioma pedido. */
+export function createLobbySchemaFor(locale: AppLocale) {
+  const t = translator(locale, "validation.lobby");
+  return z
   .object({
-    mode: z.string().regex(/^[a-z0-9-]{1,32}$/, "Elige un modo."),
-    note: z.string().trim().max(140, "Máximo 140 caracteres.").regex(/^[^<>]*$/, "Sin < ni >."),
+    mode: z.string().regex(/^[a-z0-9-]{1,32}$/, t("mode")),
+    note: z.string().trim().max(140, t("noteMax")).regex(/^[^<>]*$/, t("chars")),
     rank_min: optionalUuid,
     rank_max: optionalUuid,
     region: optionalUuid,
@@ -34,17 +38,20 @@ export const createLobbySchema = z
     if (v.when === "later") {
       startsAt = v.starts_at ? parseLocalDateTime(v.starts_at, v.tz) : null;
       if (!startsAt) {
-        ctx.addIssue({ code: "custom", path: ["starts_at"], message: "Indica fecha y hora." });
+        ctx.addIssue({ code: "custom", path: ["starts_at"], message: t("startsAt") });
         return z.NEVER;
       }
       const diff = startsAt.getTime() - Date.now();
       if (diff < -3_600_000 || diff > 14 * 86_400_000) {
-        ctx.addIssue({ code: "custom", path: ["starts_at"], message: "Entre ahora y 14 días." });
+        ctx.addIssue({ code: "custom", path: ["starts_at"], message: t("startsRange") });
         return z.NEVER;
       }
     }
     return { ...v, startsAt };
   });
+}
+
+export const createLobbySchema = createLobbySchemaFor("es");
 
 export function createLobbyFromForm(fd: FormData) {
   return {
@@ -62,20 +69,12 @@ export function createLobbyFromForm(fd: FormData) {
   };
 }
 
-export const requestMessageSchema = z.string().trim().max(200, "Máximo 200 caracteres.").regex(/^[^<>]*$/, "Sin < ni >.");
+export function requestMessageSchemaFor(locale: AppLocale) {
+  const t = translator(locale, "validation.lobby");
+  return z.string().trim().max(200, t("requestMax")).regex(/^[^<>]*$/, t("chars"));
+}
 
-/** Mensajes para los códigos (hint) que devuelven las funciones de la base de datos. */
-export const LOBBY_ERRORS: Record<string, string> = {
-  limit_lobbies: "Ya tienes 3 grupos abiertos. Cierra alguno para crear otro.",
-  rate_limited: "Demasiadas acciones seguidas. Espera un poco.",
-  not_open: "Este grupo ya no admite solicitudes (completo o cerrado).",
-  already_member: "Ya estás en este grupo.",
-  duplicate: "Ya tienes una solicitud en este grupo.",
-  full: "No quedan plazas libres.",
-  not_pending: "Esa solicitud ya estaba respondida.",
-  owner: "Como creador, cierra el grupo en lugar de abandonarlo.",
-  restricted: RESTRICTED_MESSAGE,
-};
+export const requestMessageSchema = requestMessageSchemaFor("es");
 
-export const lobbyError = (hint?: string | null) =>
-  (hint && LOBBY_ERRORS[hint]) || "No se pudo completar la acción. Inténtalo de nuevo.";
+/** Mensajes para los códigos (hint) que devuelven las funciones de la base de datos (errors.lobby). */
+export const lobbyError = (hint?: string | null, locale: AppLocale = "es") => errorMessage("lobby", hint, locale);

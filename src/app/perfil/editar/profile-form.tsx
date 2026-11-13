@@ -1,18 +1,20 @@
 "use client";
 
+import { useTranslations } from "next-intl";
 import { useActionState, useState, type FormEvent } from "react";
 import {
   AVAILABILITY,
   CHARACTER_STATUS,
   GOALS,
   LANGUAGES,
+  optionKeys,
   VISIBILITY,
   VOICE,
   type Visibility,
 } from "@/lib/profile/options";
 import { CharacterIcon, RoleIcon } from "@/components/game-icons";
 import type { Catalog } from "@/lib/profile/queries";
-import { SOCIALS } from "@/lib/profile/schema";
+import { SOCIALS } from "@/lib/limits";
 import { saveProfile, type SaveState } from "./actions";
 
 export type ProfileFormValues = {
@@ -57,13 +59,15 @@ function FieldError({ id, error }: { id: string; error?: string }) {
 }
 
 function VisibilitySelect({ name, value, label }: { name: string; value: Visibility; label: string }) {
+  const t = useTranslations("profileForm");
+  const to = useTranslations("options.visibility");
   return (
     <label className="mt-3 flex flex-wrap items-center gap-2 text-sm text-muted">
-      <span>Quién ve {label}:</span>
+      <span>{t("whoSees", { what: label })}</span>
       <select name={name} defaultValue={value} className={`${control} min-h-9 text-sm`}>
-        {Object.entries(VISIBILITY).map(([k, v]) => (
+        {optionKeys(VISIBILITY).map((k) => (
           <option key={k} value={k}>
-            {v}
+            {to(k)}
           </option>
         ))}
       </select>
@@ -106,6 +110,10 @@ export function ProfileForm({
   characterLabel: string | null;
 }) {
   const [state, action, pending] = useActionState<SaveState, FormData>(saveProfile, null);
+  const t = useTranslations("profileForm");
+  const to = useTranslations("options");
+  const labels = (group: "languages" | "availability" | "goals", o: Record<string, string>) =>
+    Object.fromEntries(optionKeys(o).map((k) => [k, to(`${group}.${k}` as never)]));
   const err = state?.fieldErrors ?? {};
   const roleName = new Map(catalog.roles.map((r) => [r.id, r.name]));
   // Cuántos personajes hay elegidos ahora mismo en el formulario (no solo los guardados al cargar la página).
@@ -118,22 +126,22 @@ export function ProfileForm({
   return (
     <form action={action} className="flex flex-col gap-6" noValidate>
       {/* Ley de Miller: el formulario en tres bloques, con índice para saltar a cada uno. */}
-      <nav aria-label="Partes del perfil" className="flex flex-wrap gap-2 text-sm">
+      <nav aria-label={t("partsLabel")} className="flex flex-wrap gap-2 text-sm">
         {[
-          ["#grupo-sobre-ti", "Sobre ti"],
+          ["#grupo-sobre-ti", t("aboutYou")],
           ["#grupo-juego", gameName],
-          ["#grupo-contacto", "Contacto y privacidad"],
+          ["#grupo-contacto", t("contact")],
         ].map(([href, label]) => (
           <a key={href} href={href} className="inline-flex min-h-11 items-center rounded-md border border-line px-3 hover:bg-panel-hover">
             {label}
           </a>
         ))}
       </nav>
-      <h2 id="grupo-sobre-ti" className="kicker -mb-3 scroll-mt-24">Sobre ti</h2>
+      <h2 id="grupo-sobre-ti" className="kicker -mb-3 scroll-mt-24">{t("aboutYou")}</h2>
       <fieldset className={box}>
-        <legend className={legend}>Datos básicos</legend>
+        <legend className={legend}>{t("basics")}</legend>
         <label htmlFor="display_name" className="mt-3 block text-sm font-medium">
-          Nombre visible
+          {t("displayName")}
         </label>
         <input
           id="display_name"
@@ -147,67 +155,67 @@ export function ProfileForm({
           className={`${control} mt-2 w-full`}
         />
         <p id="display_name-hint" className="mt-2 text-sm text-muted">
-          Siempre visible, junto con tu avatar.
+          {t("displayNameHint")}
         </p>
         <FieldError id="display_name-error" error={err.display_name} />
       </fieldset>
 
       <fieldset className={box}>
-        <legend className={legend}>Idiomas</legend>
-        <Checks name="languages" options={LANGUAGES} selected={values.languages} errorId="languages-error" />
+        <legend className={legend}>{t("languages")}</legend>
+        <Checks name="languages" options={labels("languages", LANGUAGES)} selected={values.languages} errorId="languages-error" />
         <FieldError id="languages-error" error={err.languages} />
-        <VisibilitySelect name="languages_visibility" value={values.languages_visibility} label="tus idiomas" />
+        <VisibilitySelect name="languages_visibility" value={values.languages_visibility} label={t("yourLanguages")} />
       </fieldset>
 
       <fieldset className={box}>
-        <legend className={legend}>Horarios habituales</legend>
-        <Checks name="availability" options={AVAILABILITY} selected={values.availability} />
-        <VisibilitySelect name="availability_visibility" value={values.availability_visibility} label="tus horarios" />
+        <legend className={legend}>{t("availability")}</legend>
+        <Checks name="availability" options={labels("availability", AVAILABILITY)} selected={values.availability} />
+        <VisibilitySelect name="availability_visibility" value={values.availability_visibility} label={t("yourAvailability")} />
       </fieldset>
 
       <fieldset className={box}>
-        <legend className={legend}>Objetivos</legend>
-        <Checks name="goals" options={GOALS} selected={values.goals} />
-        <VisibilitySelect name="goals_visibility" value={values.goals_visibility} label="tus objetivos" />
+        <legend className={legend}>{t("goals")}</legend>
+        <Checks name="goals" options={labels("goals", GOALS)} selected={values.goals} />
+        <VisibilitySelect name="goals_visibility" value={values.goals_visibility} label={t("yourGoals")} />
       </fieldset>
 
       <fieldset className={box}>
-        <legend className={legend}>Comunicación</legend>
+        <legend className={legend}>{t("voice")}</legend>
         <div className="mt-3 flex flex-wrap gap-2">
-          {Object.entries(VOICE).map(([k, v]) => (
+          {optionKeys(VOICE).map((k) => (
             <label key={k} className={chip}>
               <input type="radio" name="voice" value={k} defaultChecked={values.voice === k} className="size-4 accent-accent" />
-              {v}
+              {to(`voice.${k}`)}
             </label>
           ))}
           <label className={chip}>
             <input type="radio" name="voice" value="" defaultChecked={values.voice == null} className="size-4 accent-accent" />
-            Sin indicar
+            {t("unset")}
           </label>
         </div>
-        <VisibilitySelect name="voice_visibility" value={values.voice_visibility} label="cómo te comunicas" />
+        <VisibilitySelect name="voice_visibility" value={values.voice_visibility} label={t("yourVoice")} />
       </fieldset>
 
-      <h2 id="grupo-juego" className="kicker -mb-3 scroll-mt-24">Tu perfil de {gameName}</h2>
+      <h2 id="grupo-juego" className="kicker -mb-3 scroll-mt-24">{t("gameProfile", { game: gameName })}</h2>
       <fieldset className={box}>
         <legend className={legend}>{gameName}</legend>
         <div className="mt-3 grid gap-4 sm:grid-cols-2">
           <label className="flex flex-col gap-2 text-sm font-medium">
-            Rango actual
+            {t("rank")}
             <select name="rank_id" defaultValue={values.rank_id ?? ""} className={control}>
-              <option value="">Sin indicar</option>
+              <option value="">{t("unset")}</option>
               {catalog.ranks.map((r) => (
                 <option key={r.id} value={r.id}>
                   {r.name}
                 </option>
               ))}
             </select>
-            <span className="font-normal text-muted">Introducido manualmente: no está verificado con el juego.</span>
+            <span className="font-normal text-muted">{t("rankManual")}</span>
           </label>
           <label className="flex flex-col gap-2 text-sm font-medium">
-            Servidor
+            {t("region")}
             <select name="region_id" defaultValue={values.region_id ?? ""} className={control}>
-              <option value="">Sin indicar</option>
+              <option value="">{t("unset")}</option>
               {catalog.regions.map((r) => (
                 <option key={r.id} value={r.id}>
                   {r.name}
@@ -217,14 +225,14 @@ export function ProfileForm({
           </label>
         </div>
 
-        <p className="mt-5 text-sm font-medium">Modos que te interesan</p>
+        <p className="mt-5 text-sm font-medium">{t("modes")}</p>
         <Checks name="modes" options={Object.fromEntries(catalog.modes.map((m) => [m.slug, m.name]))} selected={values.modes} />
 
-        <p className="mt-5 text-sm font-medium">Roles que juegas</p>
+        <p className="mt-5 text-sm font-medium">{t("roles")}</p>
         <Checks name="roles" options={Object.fromEntries(catalog.roles.map((r) => [r.id, r.name]))} selected={values.roles} />
         <div className="mt-4 grid gap-4 sm:grid-cols-2">
           <label className="flex flex-col gap-2 text-sm font-medium">
-            Rol principal
+            {t("primaryRole")}
             <select
               name="primary_role"
               defaultValue={values.primary_role ?? ""}
@@ -232,7 +240,7 @@ export function ProfileForm({
               aria-describedby={err.primary_role ? "primary_role-error" : undefined}
               className={control}
             >
-              <option value="">Ninguno</option>
+              <option value="">{t("none")}</option>
               {catalog.roles.map((r) => (
                 <option key={r.id} value={r.id}>
                   {r.name}
@@ -243,14 +251,14 @@ export function ProfileForm({
           </label>
           <label className={`${chip} self-end`}>
             <input type="checkbox" name="flex" defaultChecked={values.flex} className="size-4 accent-accent" />
-            Flex: me adapto al rol que falte
+            {t("flex")}
           </label>
         </div>
 
         {characterLabel && catalog.characters.length > 0 && (
         <details className="mt-5" open={Object.keys(values.characters).length > 0} onChange={countPicked}>
           <summary className="min-h-11 cursor-pointer py-2 text-sm font-medium">
-            Pool de {characterLabel.toLowerCase()} ({picked} {picked === 1 ? "elegido" : "elegidos"})
+            {t("pool", { label: characterLabel.toLowerCase(), count: picked })}
           </summary>
           <div className="mt-2 grid gap-6 sm:grid-cols-2">
             {catalog.roles.map((role) => (
@@ -274,10 +282,10 @@ export function ProfileForm({
                             defaultValue={values.characters[c.id] ?? ""}
                             className={`${control} min-h-9 w-40 text-sm`}
                           >
-                            <option value="">No lo juego</option>
-                            {Object.entries(CHARACTER_STATUS).map(([k, v]) => (
+                            <option value="">{t("notPlayed")}</option>
+                            {optionKeys(CHARACTER_STATUS).map((k) => (
                               <option key={k} value={k}>
-                                {v}
+                                {to(`characterStatus.${k}`)}
                               </option>
                             ))}
                           </select>
@@ -291,13 +299,13 @@ export function ProfileForm({
         </details>
         )}
 
-        <VisibilitySelect name="game_visibility" value={values.game_visibility} label={`tu perfil de ${gameName}`} />
+        <VisibilitySelect name="game_visibility" value={values.game_visibility} label={t("yourGameProfile", { game: gameName })} />
       </fieldset>
 
-      <h2 id="grupo-contacto" className="kicker -mb-3 scroll-mt-24">Contacto y privacidad</h2>
+      <h2 id="grupo-contacto" className="kicker -mb-3 scroll-mt-24">{t("contact")}</h2>
       <fieldset className={box}>
-        <legend className={legend}>Redes sociales</legend>
-        <p className="mt-1 text-sm text-muted">Opcional. Escribe tu usuario o pega el enlace de tu perfil.</p>
+        <legend className={legend}>{t("socials")}</legend>
+        <p className="mt-1 text-sm text-muted">{t("socialsHint")}</p>
         <div className="mt-3 grid gap-3 sm:grid-cols-3">
           {(Object.keys(SOCIALS) as (keyof typeof SOCIALS)[]).map((k) => (
             <div key={k}>
@@ -311,7 +319,7 @@ export function ProfileForm({
                 maxLength={120}
                 autoComplete="off"
                 spellCheck={false}
-                placeholder="usuario o enlace"
+                placeholder={t("socialPlaceholder")}
                 aria-invalid={!!err[k] || undefined}
                 aria-describedby={err[k] ? `${k}-error` : undefined}
                 className={`${control} mt-2 w-full`}
@@ -320,22 +328,22 @@ export function ProfileForm({
             </div>
           ))}
         </div>
-        <VisibilitySelect name="socials_visibility" value={values.socials_visibility} label="tus redes" />
+        <VisibilitySelect name="socials_visibility" value={values.socials_visibility} label={t("yourSocials")} />
       </fieldset>
 
       <fieldset className={box}>
-        <legend className={legend}>Mensajes privados</legend>
+        <legend className={legend}>{t("dms")}</legend>
         <div className="mt-3 flex flex-col gap-2">
           <label className={chip}>
             <input type="radio" name="dm_policy" value="registered" defaultChecked={values.dm_policy === "registered"} className="size-4 accent-accent" />
-            Cualquier jugador con cuenta puede escribirme
+            {t("dmRegistered")}
           </label>
           <label className={chip}>
             <input type="radio" name="dm_policy" value="none" defaultChecked={values.dm_policy === "none"} className="size-4 accent-accent" />
-            Nadie puede empezar una conversación conmigo
+            {t("dmNone")}
           </label>
         </div>
-        <p className="mt-2 text-sm text-muted">Las conversaciones que ya tienes siguen abiertas. Bloquear a alguien corta la conversación.</p>
+        <p className="mt-2 text-sm text-muted">{t("dmHint")}</p>
       </fieldset>
 
       <div className="sticky bottom-0 -mx-4 flex flex-wrap items-center gap-4 border-t border-line bg-bg px-4 py-3">
@@ -344,7 +352,7 @@ export function ProfileForm({
           disabled={pending}
           className="btn-primary"
         >
-          {pending ? "Guardando…" : "Guardar perfil"}
+          {pending ? t("saving") : t("save")}
         </button>
         <p role="status" aria-live="polite" className={`text-sm ${state?.ok ? "text-success" : "text-danger"}`}>
           {state?.message}

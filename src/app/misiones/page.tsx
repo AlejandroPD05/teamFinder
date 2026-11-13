@@ -1,4 +1,5 @@
-import type { Metadata } from "next";
+import { getTranslations } from "next-intl/server";
+import { titled } from "@/lib/i18n/metadata";
 import Link from "next/link";
 import { redirect } from "next/navigation";
 import { currentGame } from "@/lib/games";
@@ -6,29 +7,24 @@ import { loadMissions } from "@/lib/missions/queries";
 import { createClient } from "@/lib/supabase/server";
 import { ClaimReward } from "./claim";
 
-export const metadata: Metadata = { title: "Misiones" };
+export const generateMetadata = titled("missions");
 
 export default async function MissionsPage() {
   const supabase = await createClient();
   const { data: claims } = await supabase.auth.getClaims();
   if (!claims?.claims?.sub) redirect("/entrar?next=/misiones");
   const { game } = await currentGame();
-  const missions = await loadMissions(supabase, game.id);
+  const [missions, t] = await Promise.all([loadMissions(supabase, game.id), getTranslations("missions")]);
 
   return (
     <section className="flex flex-col gap-8">
       <header className="flex flex-col gap-2">
-        <h1 className="font-display text-3xl font-semibold">Misiones de {game.name}</h1>
-        <p className="max-w-2xl text-muted">
-          Completa misiones para ganar cartas de tu colección. Las cartas son recompensas de la web: no se compran ni se
-          intercambian.
-        </p>
+        <h1 className="font-display text-3xl font-semibold">{t("title", { game: game.name })}</h1>
+        <p className="max-w-2xl text-muted">{t("lead")}</p>
       </header>
 
       {missions.length === 0 ? (
-        <p className="surface p-5 text-muted">
-          Aún no hay misiones de {game.name}: su colección de cartas está pendiente de tener arte con permiso de uso.
-        </p>
+        <p className="surface p-5 text-muted">{t("empty", { game: game.name })}</p>
       ) : (
         <ul className="flex flex-col gap-4">
           {missions.map((m) => (
@@ -39,9 +35,9 @@ export default async function MissionsPage() {
               </div>
               <div className="flex flex-col gap-2">
                 <div className="flex justify-between text-sm">
-                  <span id={`p-${m.id}`}>Progreso</span>
+                  <span id={`p-${m.id}`}>{t("progress")}</span>
                   <span className="tabular-nums">
-                    {m.progress} de {m.target} grupos
+                    {t("progressCount", { progress: m.progress, target: m.target })}
                   </span>
                 </div>
                 <div
@@ -58,15 +54,14 @@ export default async function MissionsPage() {
                   />
                 </div>
                 <p className="text-xs text-muted">
-                  Cuentan los grupos que creas, se llenan y cierras al terminar: como mucho uno al día y con compañeros cuya
-                  cuenta tenga más de un día.
-                  {m.claims > 0 && ` Ya la has completado ${m.claims} ${m.claims === 1 ? "vez" : "veces"}.`}
+                  {t("rules")}
+                  {m.claims > 0 && ` ${t("claims", { count: m.claims })}`}
                 </p>
               </div>
               <div className="flex flex-wrap items-end justify-between gap-4">
                 <ClaimReward missionId={m.id} claimable={m.claimable} />
                 <Link href="/coleccion" className="text-sm text-muted underline underline-offset-4 hover:text-text">
-                  Colección: {m.cards_owned} de {m.cards_total}
+                  {t("collection", { owned: m.cards_owned, total: m.cards_total })}
                 </Link>
               </div>
             </li>

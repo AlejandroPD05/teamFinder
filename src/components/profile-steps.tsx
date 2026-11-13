@@ -1,5 +1,6 @@
 import { Check } from "lucide-react";
 import Link from "next/link";
+import { useTranslations } from "next-intl";
 import type { CSSProperties } from "react";
 
 type Step = { label: string; keys: string[]; href: string };
@@ -9,10 +10,11 @@ type Step = { label: string; keys: string[]; href: string };
  * la línea se rellena hasta el paso actual con una animación corta.
  */
 export function ProfileSteps({ missing, characterLabel }: { missing: string[]; characterLabel: string | null }) {
+  const t = useTranslations("profileSteps");
   const steps: Step[] = [
-    { label: "Sobre ti", keys: ["Idiomas", "Horarios", "Objetivos", "Comunicación"], href: "/perfil/editar#grupo-sobre-ti" },
-    { label: "Rango y servidor", keys: ["Rango", "Servidor"], href: "/perfil/editar#grupo-juego" },
-    { label: "Roles", keys: ["Roles"], href: "/perfil/editar#grupo-juego" },
+    { label: t("about"), keys: ["Idiomas", "Horarios", "Objetivos", "Comunicación"], href: "/perfil/editar#grupo-sobre-ti" },
+    { label: t("rank"), keys: ["Rango", "Servidor"], href: "/perfil/editar#grupo-juego" },
+    { label: t("roles"), keys: ["Roles"], href: "/perfil/editar#grupo-juego" },
     ...(characterLabel ? [{ label: characterLabel, keys: [characterLabel], href: "/perfil/editar#grupo-juego" }] : []),
   ];
   const done = steps.map((s) => !s.keys.some((k) => missing.includes(k)));
@@ -21,7 +23,7 @@ export function ProfileSteps({ missing, characterLabel }: { missing: string[]; c
 
   return (
     <ol
-      aria-label="Pasos para completar tu perfil"
+      aria-label={t("label")}
       className="relative mt-4 grid gap-2"
       style={{ gridTemplateColumns: `repeat(${steps.length}, minmax(0, 1fr))` } as CSSProperties}
     >
@@ -50,7 +52,7 @@ export function ProfileSteps({ missing, characterLabel }: { missing: string[]; c
                 {state === "done" ? <Check aria-hidden="true" className="size-4" /> : i + 1}
               </span>
               <span className={state === "todo" ? "text-muted" : "text-text"}>{s.label}</span>
-              <span className="sr-only">{state === "done" ? "(hecho)" : state === "current" ? "(siguiente)" : "(pendiente)"}</span>
+              <span className="sr-only">{state === "done" ? t("done") : state === "current" ? t("current") : t("todo")}</span>
             </Link>
           </li>
         );

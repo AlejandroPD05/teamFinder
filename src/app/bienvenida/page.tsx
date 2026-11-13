@@ -1,4 +1,5 @@
-import type { Metadata } from "next";
+import { getTranslations } from "next-intl/server";
+import { titled } from "@/lib/i18n/metadata";
 import { redirect } from "next/navigation";
 import type { CSSProperties } from "react";
 import { GAME_GLYPHS } from "@/components/game-glyphs";
@@ -8,9 +9,9 @@ import { createClient } from "@/lib/supabase/server";
 import { chooseWelcomeGame, skipWelcome } from "./actions";
 import { RankStep, RolesStep } from "./forms";
 
-export const metadata: Metadata = { title: "Bienvenida", robots: { index: false } };
+export const generateMetadata = titled("welcome", { robots: { index: false } });
 
-const STEPS = ["Juego", "Rol", "Rango"] as const;
+const STEPS = ["game", "role", "rank"] as const;
 
 /** Guía de bienvenida para cuentas nuevas: juego → rol → rango, en tres pantallas cortas. Se puede saltar. */
 export default async function WelcomePage({ searchParams }: PageProps<"/bienvenida">) {
@@ -21,23 +22,27 @@ export default async function WelcomePage({ searchParams }: PageProps<"/bienveni
   const raw = (await searchParams).paso;
   const step = Math.min(3, Math.max(1, Number(Array.isArray(raw) ? raw[0] : raw) || 1));
   const { game, games } = await currentGame();
-  const [catalog, own] = await Promise.all([loadCatalog(supabase, game.id), loadOwnProfile(supabase, userId, game.id)]);
+  const [catalog, own, t] = await Promise.all([
+    loadCatalog(supabase, game.id),
+    loadOwnProfile(supabase, userId, game.id),
+    getTranslations("welcome"),
+  ]);
 
   return (
     <section className="mx-auto flex w-full max-w-2xl flex-col gap-6">
       <header className="flex flex-col gap-2">
-        <p className="kicker">Bienvenida · paso {step} de 3</p>
+        <p className="kicker">{t("kicker", { step })}</p>
         <h1 className="font-display text-3xl font-semibold">
-          {step === 1 ? "¿A qué juegas?" : step === 2 ? `Tu rol en ${game.name}` : "Tu rango y tu nombre"}
+          {step === 1 ? t("gameTitle") : step === 2 ? t("roleTitle", { game: game.name }) : t("rankTitle")}
         </h1>
-        <p className="text-muted">Tres pasos para que te encuentren. Todo se puede cambiar luego en tu perfil.</p>
+        <p className="text-muted">{t("lead")}</p>
       </header>
 
-      <ol aria-label="Pasos" className="grid grid-cols-3 gap-2">
+      <ol aria-label={t("steps")} className="grid grid-cols-3 gap-2">
         {STEPS.map((s, i) => (
           <li key={s} aria-current={i + 1 === step ? "step" : undefined} className="flex flex-col gap-1.5 text-xs">
             <span className={`h-1.5 rounded-full ${i + 1 <= step ? "bg-accent" : "bg-line"}`} />
-            <span className={i + 1 === step ? "font-semibold text-text" : "text-muted"}>{s}</span>
+            <span className={i + 1 === step ? "font-semibold text-text" : "text-muted"}>{t(`step.${s}`)}</span>
           </li>
         ))}
       </ol>
@@ -86,7 +91,7 @@ export default async function WelcomePage({ searchParams }: PageProps<"/bienveni
 
       <form action={skipWelcome}>
         <button type="submit" className="min-h-11 text-sm text-muted underline underline-offset-4 hover:text-text">
-          Saltar por ahora
+          {t("skip")}
         </button>
       </form>
     </section>

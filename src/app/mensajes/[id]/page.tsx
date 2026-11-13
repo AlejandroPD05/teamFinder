@@ -1,4 +1,5 @@
-import type { Metadata } from "next";
+import { getTranslations } from "next-intl/server";
+import { titled } from "@/lib/i18n/metadata";
 import Link from "next/link";
 import { notFound, redirect } from "next/navigation";
 import { z } from "zod";
@@ -7,7 +8,7 @@ import { activeRestriction } from "@/lib/restrictions";
 import { createClient } from "@/lib/supabase/server";
 import { DirectChat } from "./direct-chat";
 
-export const metadata: Metadata = { title: "Conversación", robots: { index: false } };
+export const generateMetadata = titled("conversation", { robots: { index: false } });
 
 export default async function ConversationPage({ params }: PageProps<"/mensajes/[id]">) {
   const { id } = await params;
@@ -35,28 +36,29 @@ export default async function ConversationPage({ params }: PageProps<"/mensajes/
     activeRestriction(supabase, me),
   ]);
   const messages = (msgs ?? []).toReversed();
-  const otherName = names.get(other)?.name ?? "Jugador";
+  const [t, te] = await Promise.all([getTranslations("messages"), getTranslations("errors.dm")]);
+  const otherName = names.get(other)?.name ?? t("player");
   // Si te ha bloqueado no se te dice: el envío falla con «no disponible», como en el resto de la web.
   const unavailable = !profile || Boolean(blockedByMe);
   const closed = profile?.dm_policy === "none" && !messages.some((m) => m.sender_id === other);
   const closedReason = unavailable
-    ? "Esta conversación ya no está disponible."
+    ? t("gone")
     : restriction
-      ? "Tu cuenta está restringida temporalmente: no puedes escribir hasta que termine."
-      : "Esta persona no admite mensajes privados.";
+      ? te("restricted")
+      : te("closed");
 
   return (
     <section className="flex flex-col gap-4">
       <div className="flex flex-wrap items-end justify-between gap-3">
         <div>
           <Link href="/mensajes" className="inline-flex min-h-11 items-center text-sm text-muted hover:text-text">
-            ← Mensajes
+            ← {t("title")}
           </Link>
           <h1 className="font-display text-3xl font-semibold">{otherName}</h1>
         </div>
         {!unavailable && (
           <Link href={`/jugador/${other}`} className="btn-ghost">
-            Ver perfil
+            {t("profile")}
           </Link>
         )}
       </div>

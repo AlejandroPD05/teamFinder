@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 import Link from "next/link";
+import { getTranslations } from "next-intl/server";
 import { notFound } from "next/navigation";
 import { CharacterIcon, RoleIcon } from "@/components/game-icons";
 import { loadGames, themeStyle } from "@/lib/games";
@@ -16,8 +17,9 @@ async function gameOf(id: string) {
 export async function generateMetadata({ params }: PageProps<"/equipos/[juego]">): Promise<Metadata> {
   const game = await gameOf((await params).juego);
   if (!game) return {};
-  const title = `Buscar equipo para ${game.name}: compañeros y grupos`;
-  const description = `Encuentra jugadores y equipos para ${game.name}. Filtra por rango, rol, idioma y horario, y únete a grupos para jugar en dúo, trío o equipo completo. Gratis.`;
+  const t = await getTranslations("gamePage");
+  const title = t("metaTitle", { game: game.name });
+  const description = t("metaDescription", { game: game.name });
   return {
     title,
     description,
@@ -40,31 +42,31 @@ export default async function GameTeamsPage({ params }: PageProps<"/equipos/[jue
   const last = catalog.ranks.at(-1)?.name;
   const characters = game.character_label?.toLowerCase();
   const others = games.filter((g) => g.id !== game.id);
+  const [t, th] = await Promise.all([getTranslations("gamePage"), getTranslations("home")]);
 
   return (
     <article className="flex flex-col gap-12" style={themeStyle(game)}>
       <header className="flex flex-col gap-4">
-        <h1 className="font-display max-w-3xl text-4xl font-bold leading-[1.1] sm:text-5xl">Encuentra equipo para {game.name}</h1>
+        <h1 className="font-display max-w-3xl text-4xl font-bold leading-[1.1] sm:text-5xl">{t("title", { game: game.name })}</h1>
         <p className="max-w-2xl text-lg text-muted">
-          Busca compañeros con tu rango, tus horarios y tu idioma, o únete a un grupo que ya tenga hueco. Cada jugador indica
-          sus roles{characters ? `, sus ${characters}` : ""} y cómo se comunica, así sabes con quién vas a jugar antes de entrar.
+          {characters ? t("leadWithCharacters", { characters }) : t("lead")}
         </p>
         <div className="flex flex-wrap gap-3">
           <Link href={signedIn ? "/buscar" : `/entrar?next=${encodeURIComponent("/buscar")}`} className="btn-primary">
-            {signedIn ? "Buscar jugadores" : "Entrar con Discord"}
+            {signedIn ? th("ctaSignedIn") : t("signIn")}
           </Link>
           <Link href={signedIn ? "/grupos" : "/demo"} className="btn-ghost">
-            {signedIn ? "Ver grupos abiertos" : "Ver la demo sin cuenta"}
+            {signedIn ? th("openLobbies") : th("demo")}
           </Link>
         </div>
       </header>
 
       <section aria-labelledby="como" className="grid gap-4 md:grid-cols-2">
         <h2 id="como" className="sr-only">
-          Qué puedes filtrar
+          {t("filtersTitle")}
         </h2>
         <div className="surface flex flex-col gap-3 p-5">
-          <h3 className="font-display text-lg font-semibold">Roles</h3>
+          <h3 className="font-display text-lg font-semibold">{t("roles")}</h3>
           <ul className="flex flex-wrap gap-x-4 gap-y-2">
             {catalog.roles.map((r) => (
               <li key={r.id} className="chip">
@@ -75,18 +77,17 @@ export default async function GameTeamsPage({ params }: PageProps<"/equipos/[jue
           </ul>
         </div>
         <div className="surface flex flex-col gap-3 p-5">
-          <h3 className="font-display text-lg font-semibold">Modos</h3>
-          <p className="text-sm">{catalog.modes.map((m) => `${m.name} (${m.party_size} jugadores)`).join(" · ")}</p>
+          <h3 className="font-display text-lg font-semibold">{t("modes")}</h3>
+          <p className="text-sm">{catalog.modes.map((m) => `${m.name} (${t("players", { count: m.party_size })})`).join(" · ")}</p>
         </div>
         <div className="surface flex flex-col gap-3 p-5">
-          <h3 className="font-display text-lg font-semibold">Rangos</h3>
+          <h3 className="font-display text-lg font-semibold">{t("ranks")}</h3>
           <p className="text-sm">
-            {first && last ? `De ${first} a ${last}.` : "Sin rangos configurados."} Cada jugador indica su rango; no lo
-            verificamos con el juego.
+            {first && last ? t("rankRange", { first, last }) : t("noRanks")} {t("rankNote")}
           </p>
         </div>
         <div className="surface flex flex-col gap-3 p-5">
-          <h3 className="font-display text-lg font-semibold">Servidores</h3>
+          <h3 className="font-display text-lg font-semibold">{t("regions")}</h3>
           <p className="text-sm">{catalog.regions.map((r) => r.name).join(" · ")}</p>
         </div>
       </section>
@@ -94,7 +95,7 @@ export default async function GameTeamsPage({ params }: PageProps<"/equipos/[jue
       {catalog.characters.some((c) => c.icon_url) && (
         <section aria-labelledby="personajes" className="flex flex-col gap-4">
           <h2 id="personajes" className="font-display text-2xl font-semibold">
-            {game.character_label} de {game.name}
+            {t("charactersOf", { label: game.character_label ?? "", game: game.name })}
           </h2>
           <ul className="flex flex-wrap gap-2">
             {catalog.characters.map((c, i) => (
@@ -107,10 +108,10 @@ export default async function GameTeamsPage({ params }: PageProps<"/equipos/[jue
       )}
 
       {others.length > 0 && (
-        <nav aria-label="Otros juegos" className="flex flex-wrap gap-x-6 gap-y-2 text-sm">
+        <nav aria-label={t("others")} className="flex flex-wrap gap-x-6 gap-y-2 text-sm">
           {others.map((g) => (
             <Link key={g.id} href={`/equipos/${g.id}`} className="text-muted underline underline-offset-4 hover:text-text">
-              Equipo para {g.name}
+              {th("teamFor", { game: g.name })}
             </Link>
           ))}
         </nav>

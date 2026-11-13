@@ -3,8 +3,9 @@
 import { Bell, MessageSquare, X } from "lucide-react";
 import Link from "next/link";
 import { usePathname, useRouter } from "next/navigation";
+import { useTranslations } from "next-intl";
 import { useEffect, useRef, useState } from "react";
-import { notificationText } from "@/lib/notifications";
+import { notificationLink } from "@/lib/notification-links";
 import type { Database } from "@/lib/supabase/database.types";
 import { browserClient } from "@/lib/supabase/client";
 
@@ -25,6 +26,13 @@ export function LiveAlerts({ me }: { me: string }) {
   const pathRef = useRef(pathname);
   const [alert, setAlert] = useState<Alert | null>(null);
   const [open, setOpen] = useState(false);
+  const t = useTranslations("liveAlerts");
+  const tn = useTranslations("notifications");
+  // Los textos se leen dentro del efecto (suscripción de Realtime) sin volver a suscribirse al cambiar de idioma.
+  const text = useRef({ t, tn });
+  useEffect(() => {
+    text.current = { t, tn };
+  }, [t, tn]);
 
   useEffect(() => {
     pathRef.current = pathname;
@@ -38,7 +46,7 @@ export function LiveAlerts({ me }: { me: string }) {
       if (!id) return null;
       if (!names.has(id)) {
         const { data } = await supabase.from("profile_cards").select("display_name").eq("id", id).maybeSingle();
-        names.set(id, data?.display_name ?? "Alguien");
+        names.set(id, data?.display_name ?? text.current.tn("someone"));
       }
       return names.get(id)!;
     };
@@ -61,8 +69,8 @@ export function LiveAlerts({ me }: { me: string }) {
           { event: "INSERT", schema: "public", table: "notifications", filter: `user_id=eq.${me}` },
           async (payload) => {
             const n = payload.new as NotificationRow;
-            const t = notificationText(n, await nameOf(n.actor_id));
-            show({ id: `n${n.id}`, kind: "note", ...t });
+            const who = (await nameOf(n.actor_id)) ?? text.current.tn("someone");
+            show({ id: `n${n.id}`, kind: "note", title: text.current.tn(`title.${n.kind}`, { who }), ...notificationLink(n) });
           },
         )
         .on("postgres_changes", { event: "INSERT", schema: "public", table: "direct_messages" }, async (payload) => {
@@ -70,7 +78,7 @@ export function LiveAlerts({ me }: { me: string }) {
           const href = `/mensajes/${m.conversation_id}`;
           // Lo mío no se avisa, ni lo que ya estoy leyendo en esa conversación.
           if (m.sender_id === me || pathRef.current === href) return;
-          show({ id: `m${m.id}`, kind: "dm", title: `Mensaje de ${await nameOf(m.sender_id)}`, detail: m.body, href });
+          show({ id: `m${m.id}`, kind: "dm", title: text.current.t("messageFrom", { name: (await nameOf(m.sender_id)) ?? "" }), detail: m.body, href });
         })
         .subscribe();
     })();
@@ -109,7 +117,7 @@ export function LiveAlerts({ me }: { me: string }) {
           <button
             type="button"
             onClick={() => setOpen(false)}
-            aria-label="Cerrar aviso"
+            aria-label={t("close")}
             className="island-body inline-flex size-11 shrink-0 items-center justify-center rounded-full text-muted hover:text-text"
           >
             <X aria-hidden="true" className="size-4" />

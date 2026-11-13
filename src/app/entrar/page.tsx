@@ -1,34 +1,34 @@
-import type { Metadata } from "next";
 import Link from "next/link";
+import { getTranslations } from "next-intl/server";
 import { safeNextPath } from "@/lib/auth";
-import { emailLoginEnabled } from "@/lib/config";
-import { es, loginError } from "@/lib/i18n/es";
+import { APP_NAME, emailLoginEnabled } from "@/lib/config";
+import { titled } from "@/lib/i18n/metadata";
+import { errorKey } from "@/lib/i18n/translator";
 import { signInWithDiscord, signInWithEmail } from "./actions";
 
-export const metadata: Metadata = { title: es.nav.login, robots: { index: false } };
+export const generateMetadata = titled("login", { robots: { index: false } });
 
 export default async function LoginPage({ searchParams }: PageProps<"/entrar">) {
   const params = await searchParams;
   const one = (v: string | string[] | undefined) => (Array.isArray(v) ? v[0] : v);
   const next = safeNextPath(one(params.next));
-  const error = loginError(one(params.error));
+  const code = one(params.error);
+  const [t, te] = await Promise.all([getTranslations("login"), getTranslations("errors")]);
+  const error = code ? te(errorKey("login", code) as never) : null;
   const sent = one(params.sent) === "1";
+  const link = (chunks: React.ReactNode, href: string) => (
+    <Link href={href} className="text-accent-soft underline underline-offset-4">
+      {chunks}
+    </Link>
+  );
 
   return (
     <section className="mx-auto flex max-w-sm flex-col gap-6">
       <div className="flex flex-col gap-2">
-        <h1 className="font-display text-3xl font-semibold">{es.login.title}</h1>
-        <p className="text-muted">{emailLoginEnabled() ? es.login.lead : es.login.leadDiscordOnly}</p>
+        <h1 className="font-display text-3xl font-semibold">{t("title", { app: APP_NAME })}</h1>
+        <p className="text-muted">{emailLoginEnabled() ? t("lead") : t("leadDiscordOnly")}</p>
         <p className="text-sm text-muted">
-          Al entrar declaras tener 16 años o más y aceptas las{" "}
-          <Link href="/normas" className="text-accent-soft underline underline-offset-4">
-            normas
-          </Link>{" "}
-          y la{" "}
-          <Link href="/privacidad" className="text-accent-soft underline underline-offset-4">
-            política de privacidad
-          </Link>
-          .
+          {t.rich("terms", { rules: (c) => link(c, "/normas"), privacy: (c) => link(c, "/privacidad") })}
         </p>
       </div>
 
@@ -39,7 +39,7 @@ export default async function LoginPage({ searchParams }: PageProps<"/entrar">) 
       )}
       {sent && (
         <p role="status" className="rounded-md border border-success bg-panel p-3 text-sm text-success">
-          {es.login.sent}
+          {t("sent")}
         </p>
       )}
 
@@ -49,7 +49,7 @@ export default async function LoginPage({ searchParams }: PageProps<"/entrar">) 
           type="submit"
           className="btn-primary w-full"
         >
-          {es.login.discord}
+          {t("discord")}
         </button>
       </form>
 
@@ -57,14 +57,14 @@ export default async function LoginPage({ searchParams }: PageProps<"/entrar">) 
         <>
       <div className="flex items-center gap-3 text-sm text-muted" aria-hidden="true">
         <span className="h-px flex-1 bg-line" />
-        {es.login.or}
+        {t("or")}
         <span className="h-px flex-1 bg-line" />
       </div>
 
       <form action={signInWithEmail} className="flex flex-col gap-3" noValidate>
         <input type="hidden" name="next" value={next} />
         <label htmlFor="email" className="text-sm font-medium">
-          {es.login.emailLabel}
+          {t("emailLabel")}
         </label>
         <input
           id="email"
@@ -74,22 +74,22 @@ export default async function LoginPage({ searchParams }: PageProps<"/entrar">) 
           required
           maxLength={254}
           aria-describedby="email-hint"
-          aria-invalid={error === es.login.errors.invalid_email || undefined}
+          aria-invalid={code === "invalid_email" || undefined}
           className="min-h-11 rounded-md border border-line bg-panel px-3 text-text placeholder:text-muted focus:border-accent"
         />
         <p id="email-hint" className="text-sm text-muted">
-          {es.login.emailHint}
+          {t("emailHint")}
         </p>
         <button
           type="submit"
           className="btn-ghost"
         >
-          {es.login.emailSubmit}
+          {t("emailSubmit")}
         </button>
       </form>
         </>
       ) : (
-        <p className="text-sm text-muted">{es.login.emailOff}</p>
+        <p className="text-sm text-muted">{t("emailOff")}</p>
       )}
     </section>
   );

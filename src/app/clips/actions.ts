@@ -2,8 +2,11 @@
 
 import { revalidatePath } from "next/cache";
 import { redirect } from "next/navigation";
+import { getLocale } from "next-intl/server";
 import { z } from "zod";
-import { clipError, commentSchema, postClipSchema } from "@/lib/clips/schema";
+import { clipError, commentSchemaFor, postClipSchemaFor } from "@/lib/clips/schema";
+import type { AppLocale } from "@/lib/i18n/locale";
+import { translator } from "@/lib/i18n/translator";
 import { currentGame } from "@/lib/games";
 import { createClient } from "@/lib/supabase/server";
 import { keys } from "@/lib/profile/options";
@@ -28,12 +31,13 @@ const uuid = z.uuid();
 
 export async function postClip(_p: ClipState, fd: FormData): Promise<ClipState> {
   const supabase = await session("/clips/nuevo");
+  const locale = await getLocale();
   const values = { url: String(fd.get("url") ?? ""), title: String(fd.get("title") ?? ""), emblem: String(fd.get("emblem") ?? "") };
-  const parsed = postClipSchema.safeParse(values);
+  const parsed = postClipSchemaFor(locale).safeParse(values);
   if (!parsed.success) {
     const fieldErrors: Record<string, string> = {};
     for (const i of parsed.error.issues) fieldErrors[String(i.path[0] ?? "form")] ??= i.message;
-    return { ok: false, message: "Revisa los campos marcados.", fieldErrors, values };
+    return { ok: false, message: translator(locale, "clips")("checkFields"), fieldErrors, values };
   }
   const { game } = await currentGame();
   const { data: id, error } = await supabase.rpc("post_clip", {
@@ -43,7 +47,7 @@ export async function postClip(_p: ClipState, fd: FormData): Promise<ClipState> 
     p_provider: parsed.data.url.provider,
     p_video: parsed.data.url.videoId,
   });
-  if (error) return { ok: false, message: clipError(error.hint), values };
+  if (error) return { ok: false, message: clipError(error.hint, locale), values };
   revalidatePath("/clips");
   redirect(`/clips/${id}`);
 }
@@ -60,15 +64,16 @@ export async function toggleVote(fd: FormData): Promise<void> {
 }
 
 export async function addComment(_p: ClipState, fd: FormData): Promise<ClipState> {
+  const locale = await getLocale();
   const clip = uuid.safeParse(fd.get("clip"));
-  if (!clip.success) return { ok: false, message: clipError("not_found") };
+  if (!clip.success) return { ok: false, message: clipError("not_found", locale) };
   const supabase = await session(`/clips/${clip.data}`);
-  const body = commentSchema.safeParse(fd.get("body") ?? "");
+  const body = commentSchemaFor(locale).safeParse(fd.get("body") ?? "");
   if (!body.success) return { ok: false, message: body.error.issues[0].message };
   const { error } = await supabase.rpc("comment_clip", { p_clip: clip.data, p_body: body.data });
-  if (error) return { ok: false, message: clipError(error.hint) };
+  if (error) return { ok: false, message: clipError(error.hint, locale) };
   revalidatePath(`/clips/${clip.data}`);
-  return { ok: true, message: "Comentario publicado." };
+  return { ok: true, message: translator(locale, "clips")("commented") };
 }
 
 export async function deleteComment(fd: FormData): Promise<void> {
@@ -89,15 +94,19 @@ export async function deleteClip(fd: FormData): Promise<void> {
   redirect("/clips");
 }
 
-const reportSchema = z.object({
-  clip: uuid,
-  comment: z.preprocess((v) => (v === "" || v == null ? undefined : v), z.coerce.number().int().positive().optional()),
-  reason: z.enum(keys(REPORT_REASONS), "Elige un motivo."),
-  details: z.string().trim().max(500, "Como mucho 500 caracteres."),
-});
+const reportSchema = (locale: AppLocale) => {
+  const t = translator(locale, "clips");
+  return z.object({
+    clip: uuid,
+    comment: z.preprocess((v) => (v === "" || v == null ? undefined : v), z.coerce.number().int().positive().optional()),
+    reason: z.enum(keys(REPORT_REASONS), t("chooseReason")),
+    details: z.string().trim().max(500, t("details500")),
+  });
+};
 
 export async function reportClip(_p: ClipState, fd: FormData): Promise<ClipState> {
-  const r = reportSchema.safeParse({
+  const locale = await getLocale();
+  const r = reportSchema(locale).safeParse({
     clip: fd.get("clip"),
     comment: fd.get("comment"),
     reason: fd.get("reason"),
@@ -111,8 +120,8 @@ export async function reportClip(_p: ClipState, fd: FormData): Promise<ClipState
     p_reason: r.data.reason,
     p_details: r.data.details,
   });
-  if (error) return { ok: false, message: clipError(error.hint) };
-  return { ok: true, message: "Denuncia enviada. La revisará el equipo de moderación." };
+  if (error) return { ok: false, message: clipError(error.hint, locale) };
+  return { ok: true, message: translator(locale, "trust")("reported") };
 }
 
 /** Moderación: ocultar o volver a mostrar un clip o un comentario. */

@@ -2,20 +2,22 @@
 
 import { Clapperboard, MessagesSquare, Search, UserRound, UsersRound } from "lucide-react";
 import Link from "next/link";
+import { useTranslations } from "next-intl";
 import { usePathname } from "next/navigation";
 import { NumberRoll } from "@/components/number-roll";
 
 const LINKS = [
-  { href: "/buscar", label: "Buscar", Icon: Search, match: "/buscar" },
-  { href: "/grupos", label: "Grupos", Icon: UsersRound, match: "/grupos" },
-  { href: "/clips", label: "Clips", Icon: Clapperboard, match: "/clips" },
-  { href: "/mensajes", label: "Mensajes", Icon: MessagesSquare, match: "/mensajes" },
-  { href: "/perfil", label: "Mi perfil", Icon: UserRound, match: "/perfil" },
+  { href: "/buscar", label: "search", Icon: Search, match: "/buscar" },
+  { href: "/grupos", label: "lobbies", Icon: UsersRound, match: "/grupos" },
+  { href: "/clips", label: "clips", Icon: Clapperboard, match: "/clips" },
+  { href: "/mensajes", label: "inbox", Icon: MessagesSquare, match: "/mensajes" },
+  { href: "/perfil", label: "profile", Icon: UserRound, match: "/perfil" },
 ] as const;
 
 /** Navegación principal con estado activo. En móvil ocupa una segunda fila a lo ancho. */
 export function SiteNav({ unread }: { unread: number }) {
   const pathname = usePathname();
+  const t = useTranslations("nav");
   return (
     <div className="order-last -mx-4 flex w-[calc(100%+2rem)] border-t border-line sm:order-none sm:mx-0 sm:ml-auto sm:w-auto sm:border-0">
       {LINKS.map(({ href, label, Icon, match }) => {
@@ -30,11 +32,11 @@ export function SiteNav({ unread }: { unread: number }) {
             }`}
           >
             <Icon aria-hidden="true" className={`size-5 sm:size-4 ${active ? "text-accent-soft" : ""}`} />
-            <span className="whitespace-nowrap">{label}</span>
+            <span className="whitespace-nowrap">{t(label)}</span>
             {href === "/mensajes" && unread > 0 && (
               <span className="absolute right-[calc(50%-1.75rem)] top-1 rounded-full bg-accent px-1.5 text-[0.65rem] font-semibold leading-4 text-bg sm:static sm:text-xs">
                 <NumberRoll value={unread} max={99} />
-                <span className="sr-only"> sin leer</span>
+                <span className="sr-only"> {t("unread")}</span>
               </span>
             )}
             {active && (

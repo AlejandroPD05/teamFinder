@@ -1,12 +1,15 @@
+import { useTranslations } from "next-intl";
+
 /**
  * Esqueleto de una página de lista mientras llegan los datos (umbral de Doherty: la navegación responde al instante).
  * Se usa desde los `loading.tsx` de las páginas con más consultas.
  */
 export function PageSkeleton({ rows = 4, filters = false }: { rows?: number; filters?: boolean }) {
+  const t = useTranslations("common");
   return (
     <div aria-busy="true" className="flex flex-col gap-6">
       <p role="status" className="sr-only">
-        Cargando…
+        {t("loading")}
       </p>
       <div className="flex flex-col gap-2">
         <div className="skeleton h-9 w-64 max-w-full" />

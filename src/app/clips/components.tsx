@@ -1,7 +1,9 @@
 "use client";
 
 import { Play } from "lucide-react";
+import { useTranslations } from "next-intl";
 import { useActionState, useEffect, useRef, useState } from "react";
+import { optionKeys } from "@/lib/profile/options";
 import { embedUrl, PROVIDER_NAMES, sourceUrl, type ClipRef } from "@/lib/clips/links";
 import { REPORT_REASONS } from "@/lib/trust/options";
 import { addComment, postClip, reportClip, type ClipState } from "./actions";
@@ -42,6 +44,8 @@ function Ambient({ clip, on }: { clip: ClipRef; on: boolean }) {
 
 export function ClipPlayer({ clip, title, ambient = false }: { clip: ClipRef; title: string; ambient?: boolean }) {
   const [on, setOn] = useState(false);
+  const t = useTranslations("clips");
+  const provider = PROVIDER_NAMES[clip.provider];
   return (
     <div className="relative isolate">
     {ambient && <Ambient clip={clip} on={on} />}
@@ -49,7 +53,7 @@ export function ClipPlayer({ clip, title, ambient = false }: { clip: ClipRef; ti
       {on ? (
         <iframe
           src={embedUrl(clip, window.location.hostname)}
-          title={`Clip: ${title}`}
+          title={t("iframeTitle", { title })}
           allow="autoplay; encrypted-media; picture-in-picture; fullscreen"
           allowFullScreen
           referrerPolicy="strict-origin-when-cross-origin"
@@ -64,10 +68,8 @@ export function ClipPlayer({ clip, title, ambient = false }: { clip: ClipRef; ti
           <span className="flex size-14 items-center justify-center rounded-full bg-accent text-bg">
             <Play aria-hidden="true" className="ml-0.5 size-6" />
           </span>
-          Ver clip ({PROVIDER_NAMES[clip.provider]})
-          <span className="max-w-xs text-center text-xs">
-            Al pulsar, {PROVIDER_NAMES[clip.provider]} recibe tu dirección IP y puede usar sus cookies.
-          </span>
+          {t("watch", { provider })}
+          <span className="max-w-xs text-center text-xs">{t("watchNote", { provider })}</span>
         </button>
       )}
       {!on && (
@@ -77,8 +79,8 @@ export function ClipPlayer({ clip, title, ambient = false }: { clip: ClipRef; ti
           rel="noopener noreferrer"
           className="absolute bottom-2 right-3 text-xs text-muted underline underline-offset-4 hover:text-text"
         >
-          Abrir en {PROVIDER_NAMES[clip.provider]}
-          <span className="sr-only"> (se abre en otra pestaña)</span>
+          {t("openIn", { provider })}
+          <span className="sr-only"> {t("newTab")}</span>
         </a>
       )}
     </div>
@@ -90,12 +92,13 @@ export function PostClipForm({ emblems, gameName }: { emblems: { id: string; nam
   const [state, action, pending] = useActionState<ClipState, FormData>(postClip, null);
   const err = state?.fieldErrors ?? {};
   const v = state?.values ?? {};
+  const t = useTranslations("clips");
   return (
     // La clave cambia con cada envío: el formulario se rehace con lo que se envió como valores iniciales.
     <form key={JSON.stringify(v)} action={action} className="surface flex flex-col gap-5 p-5" noValidate>
       <div className="flex flex-col gap-2">
         <label htmlFor="url" className="text-sm font-medium">
-          Enlace del clip
+          {t("url")}
         </label>
         <input
           id="url"
@@ -103,13 +106,13 @@ export function PostClipForm({ emblems, gameName }: { emblems: { id: string; nam
           type="url"
           required
           defaultValue={v.url}
-          placeholder="https://youtu.be/… o https://clips.twitch.tv/…"
+          placeholder={t("urlPlaceholder")}
           aria-invalid={!!err.url || undefined}
           aria-describedby={err.url ? "url-error" : "url-hint"}
           className={control}
         />
         <p id="url-hint" className="text-xs text-muted">
-          YouTube (también Shorts), clips de Twitch o Streamable. El vídeo se queda en su web: aquí solo se enlaza.
+          {t("urlHint")}
         </p>
         {err.url && (
           <p id="url-error" className="text-sm text-danger">
@@ -119,7 +122,7 @@ export function PostClipForm({ emblems, gameName }: { emblems: { id: string; nam
       </div>
       <div className="flex flex-col gap-2">
         <label htmlFor="title" className="text-sm font-medium">
-          Título
+          {t("titleLabel")}
         </label>
         <input
           id="title"
@@ -138,7 +141,7 @@ export function PostClipForm({ emblems, gameName }: { emblems: { id: string; nam
         )}
       </div>
       <fieldset className="flex flex-col gap-2" aria-describedby={err.emblem ? "emblem-error" : undefined}>
-        <legend className="mb-2 text-sm font-medium">Categoría</legend>
+        <legend className="mb-2 text-sm font-medium">{t("category")}</legend>
         <div className="grid gap-2 sm:grid-cols-2">
           {emblems.map((e) => (
             <label
@@ -159,12 +162,10 @@ export function PostClipForm({ emblems, gameName }: { emblems: { id: string; nam
           </p>
         )}
       </fieldset>
-      <p className="text-xs text-muted">
-        Se publicará en los clips de {gameName}. Publica solo clips tuyos o con permiso de quien los grabó. Como mucho 5 al día.
-      </p>
+      <p className="text-xs text-muted">{t("postNote", { game: gameName })}</p>
       <div className="flex flex-wrap items-center gap-4">
         <button type="submit" disabled={pending} className="btn-primary">
-          {pending ? "Publicando…" : "Publicar clip"}
+          {pending ? t("posting") : t("post")}
         </button>
         {!state?.ok && <Status state={state} />}
       </div>
@@ -175,6 +176,7 @@ export function PostClipForm({ emblems, gameName }: { emblems: { id: string; nam
 export function CommentForm({ clipId }: { clipId: string }) {
   const [state, action, pending] = useActionState<ClipState, FormData>(addComment, null);
   const form = useRef<HTMLFormElement>(null);
+  const t = useTranslations("clips");
   // Tras publicar, se vacía el campo.
   useEffect(() => {
     if (state?.ok) form.current?.reset();
@@ -183,12 +185,12 @@ export function CommentForm({ clipId }: { clipId: string }) {
     <form ref={form} action={action} className="flex flex-col gap-2">
       <input type="hidden" name="clip" value={clipId} />
       <label htmlFor="body" className="text-sm font-medium">
-        Comentar
+        {t("comment")}
       </label>
       <textarea id="body" name="body" required maxLength={300} rows={3} className={`${control} py-2`} />
       <div className="flex flex-wrap items-center gap-3">
         <button type="submit" disabled={pending} className="btn-ghost">
-          {pending ? "Publicando…" : "Publicar comentario"}
+          {pending ? t("posting") : t("postComment")}
         </button>
         <Status state={state} />
       </div>
@@ -196,36 +198,38 @@ export function CommentForm({ clipId }: { clipId: string }) {
   );
 }
 
-export function ClipReportForm({ clipId, commentId, label = "Denunciar" }: { clipId: string; commentId?: number; label?: string }) {
+export function ClipReportForm({ clipId, commentId, label }: { clipId: string; commentId?: number; label?: string }) {
   const [state, action, pending] = useActionState<ClipState, FormData>(reportClip, null);
   const id = `rep-${clipId}-${commentId ?? "clip"}`;
+  const tt = useTranslations("trust");
+  const to = useTranslations("options.reportReasons");
   if (state?.ok) return <Status state={state} />;
   return (
     <details className="text-sm">
-      <summary className="min-h-11 cursor-pointer py-2 text-muted hover:text-text">{label}</summary>
+      <summary className="min-h-11 cursor-pointer py-2 text-muted hover:text-text">{label ?? tt("report")}</summary>
       <form action={action} className="mt-2 flex flex-col gap-2 rounded-md border border-line bg-bg p-3">
         <input type="hidden" name="clip" value={clipId} />
         {commentId != null && <input type="hidden" name="comment" value={commentId} />}
         <label htmlFor={`${id}-reason`} className="font-medium">
-          Motivo
+          {tt("reason")}
         </label>
         <select id={`${id}-reason`} name="reason" defaultValue="" required className={control}>
           <option value="" disabled>
-            Elige un motivo
+            {tt("chooseReasonOption")}
           </option>
-          {Object.entries(REPORT_REASONS).map(([k, v]) => (
+          {optionKeys(REPORT_REASONS).map((k) => (
             <option key={k} value={k}>
-              {v}
+              {to(k)}
             </option>
           ))}
         </select>
         <label htmlFor={`${id}-details`} className="font-medium">
-          Detalles (opcional)
+          {tt("details")}
         </label>
         <textarea id={`${id}-details`} name="details" maxLength={500} rows={2} className={`${control} py-2`} />
         <div className="flex flex-wrap items-center gap-3">
           <button type="submit" disabled={pending} className="min-h-11 rounded-md border border-danger px-4 text-danger hover:bg-panel-hover">
-            Enviar denuncia
+            {tt("send")}
           </button>
           <Status state={state} />
         </div>

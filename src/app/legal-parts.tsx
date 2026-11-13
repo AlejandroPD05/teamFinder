@@ -1,4 +1,21 @@
+import { getLocale, getTranslations } from "next-intl/server";
 import { LEGAL } from "@/lib/legal";
+
+/**
+ * Normas y Privacidad solo existen en español, que es la versión vinculante. Con la web en otro idioma se avisa arriba
+ * (en ese idioma) y se resume el contenido.
+ */
+export async function BindingNotice({ page }: { page: "rules" | "privacy" }) {
+  const locale = await getLocale();
+  if (locale === "es") return null;
+  const t = await getTranslations("legalNotice");
+  return (
+    <div role="note" lang={locale} className="flex flex-col gap-2 rounded-lg border border-line bg-panel p-4 text-sm">
+      <p className="font-semibold">{t("binding")}</p>
+      <p className="text-muted">{t(page)}</p>
+    </div>
+  );
+}
 
 /** Versión vigente del texto (Normas y Privacidad). */
 export function LegalVersion() {

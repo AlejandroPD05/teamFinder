@@ -1,6 +1,7 @@
 "use client";
 
 import { Gamepad2, Users } from "lucide-react";
+import { useTranslations } from "next-intl";
 import { usePathname } from "next/navigation";
 import { useEffect, useOptimistic, useTransition, type CSSProperties, type MouseEvent } from "react";
 import { GAME_GLYPHS } from "@/components/game-glyphs";
@@ -70,6 +71,7 @@ export function GamePicker({
   const pathname = usePathname();
   const [pending, startTransition] = useTransition();
   const [active, setActive] = useOptimistic(current);
+  const t = useTranslations("gamePicker");
   useDimWhile(pending);
 
   if (games.length < 2) return null;
@@ -85,10 +87,10 @@ export function GamePicker({
   }
 
   return (
-    <form action={selectGame} aria-label="Juego" className="w-full max-w-2xl">
+    <form action={selectGame} aria-label={t("label")} className="w-full max-w-2xl">
       <input type="hidden" name="next" value={pathname} />
       <fieldset className="grid grid-cols-3 gap-3 sm:gap-4">
-        <legend className="mb-3 w-full text-center text-sm text-muted">Elige juego</legend>
+        <legend className="mb-3 w-full text-center text-sm text-muted">{t("legend")}</legend>
         {games.map((g) => {
           const on = g.id === active;
           const n = counts[g.id] ?? 0;
@@ -123,14 +125,14 @@ export function GamePicker({
               <span className="flex items-center gap-1.5 text-xs text-muted sm:text-sm">
                 <Users aria-hidden="true" className="hidden size-4 sm:block" />
                 <span>
-                  <NumberRoll value={n} /> {n === 1 ? "jugador" : "jugadores"}
+                  <NumberRoll value={n} /> {t("players", { count: n })}
                 </span>
               </span>
               {live > 0 && (
                 <span className="flex items-center gap-1.5 text-xs text-success">
                   <span aria-hidden="true" className="live-dot" />
                   <span>
-                    <NumberRoll value={live} /> ahora
+                    <NumberRoll value={live} /> {t("now")}
                   </span>
                 </span>
               )}

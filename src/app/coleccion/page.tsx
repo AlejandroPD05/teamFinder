@@ -1,4 +1,5 @@
-import type { Metadata } from "next";
+import { getTranslations } from "next-intl/server";
+import { titled } from "@/lib/i18n/metadata";
 import Link from "next/link";
 import { redirect } from "next/navigation";
 import type { CSSProperties } from "react";
@@ -8,7 +9,7 @@ import { currentGame } from "@/lib/games";
 import { loadCollection } from "@/lib/missions/queries";
 import { createClient } from "@/lib/supabase/server";
 
-export const metadata: Metadata = { title: "Mi colección" };
+export const generateMetadata = titled("collection");
 
 export default async function CollectionPage() {
   const supabase = await createClient();
@@ -20,22 +21,21 @@ export default async function CollectionPage() {
   const credits = [...new Set(cards.map((c) => c.credit))];
   // Solo las cartas de este juego (la persona puede tener cartas de otros).
   const ownedHere = cards.filter((c) => owned.has(c.id)).length;
+  const t = await getTranslations("collection");
 
   return (
     <section className="flex flex-col gap-8">
       <header className="flex flex-col gap-3">
-        <h1 className="font-display text-3xl font-semibold">Colección de {game.name}</h1>
+        <h1 className="font-display text-3xl font-semibold">{t("title", { game: game.name })}</h1>
         <p className="text-muted">
-          {cards.length === 0
-            ? `Aún no hay cartas de ${game.name}.`
-            : `Tienes ${ownedHere} de ${cards.length} cartas. Consíguelas completando misiones.`}
+          {cards.length === 0 ? t("empty", { game: game.name }) : t("count", { owned: ownedHere, total: cards.length })}
         </p>
         <div className="flex flex-wrap gap-2">
           <Link href="/misiones" className="btn-ghost">
-            Ver misiones
+            {t("missions")}
           </Link>
           <Link href="/coleccion/fanart" className="btn-ghost">
-            Enviar tu fanart
+            {t("fanart")}
           </Link>
         </div>
       </header>
@@ -57,7 +57,7 @@ export default async function CollectionPage() {
       )}
 
       {credits.length > 0 && (
-        <p className="text-xs text-muted">{credits.join(" · ")}. Las cartas no se compran ni se intercambian.</p>
+        <p className="text-xs text-muted">{credits.join(" · ")}. {t("noTrade")}</p>
       )}
     </section>
   );
