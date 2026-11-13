@@ -6,9 +6,9 @@ import type { SVGProps } from "react";
 // - Apex Legends: el cráneo con cuernos del rango Depredador, contenido de fans sin ánimo de lucro (política de EA).
 // - CS2: un C4 genérico (Valve no permite reutilizar su arte; no copia su modelo).
 
-type GlyphProps = SVGProps<SVGSVGElement> & { strokeWidth?: number };
+type GlyphProps = SVGProps<SVGSVGElement>;
 
-function Svg({ children, strokeWidth: _ignored, ...props }: GlyphProps & { children: React.ReactNode }) {
+function Svg({ children, ...props }: GlyphProps & { children: React.ReactNode }) {
   return (
     <svg viewBox="0 0 48 48" fill="currentColor" {...props}>
       {children}

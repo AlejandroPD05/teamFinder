@@ -44,3 +44,18 @@ describe("notificaciones y privados", () => {
     expect(dmError("desconocido")).toBe("No se pudo completar. Inténtalo de nuevo.");
   });
 });
+
+describe("ranking semanal", () => {
+  it("insignia según el puesto y semanas legibles", async () => {
+    const { rankTier, weekLabel, currentWeekStart, daysLeft } = await import("@/lib/ranking");
+    expect([1, 2, 3, 4, 10].map(rankTier)).toEqual(["top1", "podium", "podium", "top10", "top10"]);
+    expect(weekLabel("2026-11-09")).toBe("del 9 nov al 15 nov");
+    // Jueves 12/11/2026 a las 23:30 en Madrid → semana del lunes 9; quedan 4 días (jue, vie, sáb, dom).
+    const thu = new Date("2026-11-12T22:30:00Z");
+    expect(currentWeekStart(thu)).toBe("2026-11-09");
+    expect(daysLeft(thu)).toBe(4);
+    // Domingo 23:30 en Madrid sigue siendo la misma semana; el lunes 00:30 ya es la siguiente.
+    expect(currentWeekStart(new Date("2026-11-15T22:30:00Z"))).toBe("2026-11-09");
+    expect(currentWeekStart(new Date("2026-11-15T23:30:00Z"))).toBe("2026-11-16");
+  });
+});

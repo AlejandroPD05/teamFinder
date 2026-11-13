@@ -101,11 +101,15 @@ export default function RulesPage() {
         </ul>
       </Section>
 
-      <Section title="Karma, misiones y cartas">
+      <Section title="Karma, ranking, misiones y cartas">
         <ul>
           <li>El karma solo admite reconocimientos positivos. No lo pidas, no lo cambies por nada y no uses cuentas falsas.</li>
           <li>Las cartas se consiguen solo con misiones. No se compran, no se venden ni se intercambian, tampoco fuera de la web.</li>
           <li>Hacer trampas en las misiones (cuentas falsas, grupos que no existen) supone perder las recompensas.</li>
+          <li>
+            El ranking semanal premia jugar grupos hasta el final y ser buen compañero. Pactar reconocimientos, crear grupos
+            falsos o usar varias cuentas para subir supone perder los puestos y las insignias.
+          </li>
           <li>
             Puedes enviar fanart para que sea una carta: solo obras tuyas, sin arte oficial retocado ni obras de otras personas.
             Puedes retirar tu permiso cuando quieras.

@@ -28,5 +28,7 @@ export function notificationText(n: Notification, actor: string | null): { title
       return { title: "Tu cuenta está restringida temporalmente", detail: n.body, href: "/normas" };
     case "fanart":
       return { title: "Novedades sobre tu fanart", detail: n.body, href: "/coleccion/fanart" };
+    case "ranking":
+      return { title: "¡Estás en el Top 10 semanal!", detail: n.body, href: "/ranking" };
   }
 }

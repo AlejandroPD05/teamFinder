@@ -10,7 +10,7 @@ export const metadata: Metadata = { title: "Privacidad", alternates: { canonical
 const BASES: [string, string][] = [
   ["Tu cuenta: correo, identificador y, si entras con Discord, su nombre y avatar", "Contrato: prestarte el servicio que pides al registrarte (art. 6.1.b RGPD)."],
   ["Tu perfil y tus datos por juego (rango, roles, personajes, idiomas, horarios…)", "Contrato. Son opcionales y puedes borrarlos cuando quieras."],
-  ["Grupos, solicitudes, chat, mensajes privados, notificaciones, karma, clips, emblemas, comentarios, misiones y cartas", "Contrato: son las funciones de la web."],
+  ["Grupos, solicitudes, chat, mensajes privados, notificaciones, karma, ranking semanal, clips, emblemas, comentarios, misiones y cartas", "Contrato: son las funciones de la web."],
   ["Enlaces a tus redes (Twitch, YouTube, X)", "Contrato. Son opcionales; tú eliges quién los ve."],
   ["Fanart que envías (imagen, título, nombre artístico y la aceptación del permiso)", "Consentimiento: el permiso que das al enviarlo, que puedes retirar cuando quieras (art. 6.1.a)."],
   ["Bloqueos, denuncias (con copia del contenido denunciado), restricciones temporales y registro de moderación", "Interés legítimo en mantener la comunidad segura y defendernos de reclamaciones (art. 6.1.f)."],
@@ -24,6 +24,7 @@ const PLAZOS: [string, string][] = [
   ["Mensajes del chat de un grupo", "30 días desde que se cierra el grupo."],
   ["Mensajes privados", "Mientras existan las dos cuentas. Si una se borra, se borra la conversación entera."],
   ["Notificaciones", "60 días."],
+  ["Puestos del ranking semanal (Top 10)", "Mientras exista tu cuenta: son insignias permanentes."],
   ["Fanart", "Hasta que lo retires o borres tu cuenta; entonces se borra también la imagen."],
   ["Restricciones temporales", "12 meses desde que terminan, para detectar reincidencias."],
   ["Denuncias archivadas sin medida", "6 meses desde que se resuelven."],

@@ -9,6 +9,7 @@ import { loadCatalog, loadPublicProfile } from "@/lib/profile/queries";
 import { KARMA_TAGS } from "@/lib/trust/options";
 import { CharacterIcon } from "@/components/game-icons";
 import { NumberRoll } from "@/components/number-roll";
+import { rankTier, TIER_LABEL, weekLabel } from "@/lib/ranking";
 import { createClient } from "@/lib/supabase/server";
 import { SOCIALS } from "@/lib/profile/schema";
 import { BlockButton, ReportForm } from "../../confianza/forms";
@@ -17,6 +18,7 @@ import { StartConversationButton } from "../../mensajes/start-button";
 type Badges = {
   cards: { game_id: string; owned: number; total: number; legendary: string[] }[];
   clip_awards: { week_start: string; emblem: string; clip_id: string; title: string; game_id: string }[];
+  rank_awards?: { game_id: string; week_start: string; pos: number; points: number }[];
 };
 
 const weekFmt = new Intl.DateTimeFormat("es-ES", { day: "numeric", month: "short", timeZone: "UTC" });
@@ -146,11 +148,24 @@ export default async function PlayerPage({ params }: PageProps<"/jugador/[id]">)
         </dl>
       </section>
 
-      {badges && (badges.cards.length > 0 || badges.clip_awards.length > 0) && (
+      {badges && (badges.cards.length > 0 || badges.clip_awards.length > 0 || (badges.rank_awards?.length ?? 0) > 0) && (
         <section aria-labelledby="insignias" className="surface p-5">
           <h2 id="insignias" className="font-semibold">
             Insignias
           </h2>
+          {(badges.rank_awards?.length ?? 0) > 0 && (
+            <>
+              <h3 className="mt-4 text-sm text-muted">Ranking semanal</h3>
+              <ul className="mt-2 flex flex-col gap-1">
+                {badges.rank_awards!.map((a) => (
+                  <li key={`${a.game_id}-${a.week_start}`} className="text-sm">
+                    <span className="font-semibold text-accent-soft">{TIER_LABEL[rankTier(a.pos)]}</span> · #{a.pos} ·{" "}
+                    {gameName(a.game_id)} · semana {weekLabel(a.week_start)} · {a.points} pts
+                  </li>
+                ))}
+              </ul>
+            </>
+          )}
           {badges.clip_awards.length > 0 && (
             <>
               <h3 className="mt-4 text-sm text-muted">Clips ganadores de la semana</h3>
