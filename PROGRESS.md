@@ -1,10 +1,7 @@
 # PROGRESS
 
 ## Estado
-2026-11-04 — Fases 1, 2 y 3 terminadas, fusionadas en `main` y desplegadas en https://teamfinder-seven.vercel.app (Supabase cloud `teamfinder`, pkzgwndwwoyeaozqdpqn, París; migraciones al día). Login con Discord verificado en producción.
-Fase 4 (grupos) con el código terminado en la rama `fase-4-grupos`: lint, 76 tests (unit + BD, incluida la concurrencia en la última plaza) y 26 e2e en verde. Pendiente: aplicar `20261104040000_lobbies.sql` en cloud y fusionar. Fase 4 fusionada y desplegada.
-Fase 5 (chat) con el código terminado en la rama `fase-5-chat`: chat en tiempo real solo para miembros, límite de ritmo, bandeja /mensajes con «sin leer». Fase 6 (confianza) con el código terminado en la rama `fase-6-confianza`: bloqueo, denuncias, panel de moderación, karma y borrado de cuenta. Fases 5 y 6 fusionadas y desplegadas (migraciones aplicadas en cloud).
-Fase 7 (beta) con el código en la rama `fase-7-beta`: auditoría WCAG A/AA automática (axe) sin infracciones en 11 páginas, borradores de privacidad y normas marcados «pendiente de revisión legal», pie con enlaces y Discord opcional, 404 propio. Para cerrarla faltan las tareas del usuario de abajo y la prueba de un usuario real desde el móvil.
+2026-11-13 — Beta lanzada: las fases 1 a 7 están terminadas, fusionadas en `main` y desplegadas en https://teamfinder-seven.vercel.app (Supabase cloud `teamfinder`, pkzgwndwwoyeaozqdpqn, París; migraciones al día). El usuario completó el recorrido entero en producción desde el móvil. Después de la beta se han añadido CS2 y Apex, Clip Zone con ganadores semanales, misiones y cartas, mensajes privados, notificaciones, moderación con restricciones, fanart, rediseño con volumen y el ranking semanal (ver Decisiones). Pendiente externo: la clave de producción de Riot.
 
 ## Objetivo de la beta
 Web para encontrar gente con la que hacer stack en VALORANT: perfil → búsqueda con filtros → publicaciones «busco dúo/trío/five» con solicitudes → sala con chat → karma tras jugar. Beta con cuentas reales, público hispanohablante en servidores EU.
@@ -24,7 +21,7 @@ Cada fase se cierra con gate (`lint`, `test`, `build` en verde), commit y actual
   - *Hecho cuando:* dos navegadores chatean en tiempo real; un no miembro no puede leer ni escribir (test); el spam queda limitado.
 - [x] **Fase 6 — Confianza y seguridad.** Bloquear y denunciar usuarios y mensajes (los bloqueados desaparecen de búsquedas y salas). Panel mínimo de moderación (rol admin). Karma: al cerrar un grupo, cada miembro valora una vez a cada compañero (+/− y etiquetas); se muestra el agregado con su regla explicada. Borrado de cuenta y rate limiting en acciones sensibles.
   - *Hecho cuando:* tests de bloqueo, valoración única y acceso al panel; el borrado de cuenta elimina los datos personales.
-- [ ] **Fase 7 — Lanzamiento de la beta.** Auditoría de accesibilidad y móvil; e2e de flujos críticos en CI; borradores de privacidad y normas marcados «pendiente de revisión legal»; enlace al Discord; despliegue en producción.
+- [x] **Fase 7 — Lanzamiento de la beta.** (cerrada el 2026-11-13: el usuario hizo la prueba final desde el móvil) Auditoría de accesibilidad y móvil; e2e de flujos críticos en CI; borradores de privacidad y normas marcados «pendiente de revisión legal»; enlace al Discord; despliegue en producción.
   - *Hecho cuando:* un usuario real nuevo completa el recorrido entero en producción desde el móvil.
 
 ### Después de la beta (sin fecha)
@@ -102,12 +99,12 @@ RSO de Riot si aprueban la clave (rango y estadísticas verificados), bot de Dis
 - [x] Responsable y correo de contacto (2026-11-12) en `src/lib/legal.ts` (se pueden sobrescribir con `NEXT_PUBLIC_LEGAL_OWNER` y `NEXT_PUBLIC_CONTACT_EMAIL`).
 - [x] Registro de actividades de tratamiento (2026-11-12) generado con Facilita RGPD de la AEPD (usuarios como «clientes»; encargados Supabase, Vercel y Brevo). El documento incluye el NIF y la dirección del responsable: se guarda fuera del repositorio (es público) y hay que mantenerlo actualizado.
 - [x] Contratos de encargado (DPA): Supabase y Brevo los incluyen en sus términos, aceptados al registrarse. Vercel solo ofrece DPA en los planes Pro y Enterprise (de pago): riesgo residual aceptado, porque Vercel solo guarda registros técnicos (IP y navegador) y está certificada en el Marco de Privacidad UE-EE. UU. Alternativa sin coste si hiciera falta: un alojamiento con DPA en su plan gratuito.
-- [ ] Recomendado: revisión de un abogado.
-- [ ] Anuncio de ganadores en Discord: en el servidor, Ajustes del canal → Integraciones → Webhooks → Nuevo webhook → Copiar URL. Después, en el SQL Editor de Supabase cloud: `insert into private.app_settings (key, value) values ('discord_winners_webhook', '<URL del webhook>');` (es un secreto: no va al repositorio). Sin webhook el anuncio no hace nada.
+- [ ] ~~Revisión de un abogado~~: descartada por ahora por coste (2026-11-13). Riesgo aceptado: los textos siguen marcados como borrador; se basan en la normativa y en las guías gratuitas de la AEPD (Facilita RGPD hecho). Revisar si la web genera ingresos o crece.
+- [x] Anuncio de ganadores en Discord (comprobado el 2026-11-13: webhook guardado en `private.app_settings` con formato válido de discord.com y tarea `announce-clip-winners` activa; aún sin envíos: el primero será el lunes a las 09:00 UTC si la semana tiene ganadores). Pasos por si hay que cambiarlo: en el servidor, Ajustes del canal → Integraciones → Webhooks → Nuevo webhook → Copiar URL. Después, en el SQL Editor de Supabase cloud: `insert into private.app_settings (key, value) values ('discord_winners_webhook', '<URL del webhook>');` (es un secreto: no va al repositorio). Sin webhook el anuncio no hace nada.
 - [x] Moderador: la cuenta 1Cut1Kill está en `app_admins` (más moderadores: `insert into public.app_admins (user_id) values ('<uuid>');` en el SQL Editor).
-- [ ] Prueba final: un usuario nuevo completa el recorrido entero en producción desde el móvil.
+- [x] Prueba final: un usuario nuevo completa el recorrido entero en producción desde el móvil (2026-11-13).
 - [x] Docker instalado y en marcha.
-- [x] Solicitada la clave de producción de Riot (2026-11-05, app 902996, «Pending Review»; URL verificada con `public/riot.txt`; demo pública en `/demo`). Si se aprueba: implementar RSO en menos de 30 días o se pierde la clave.
+- [ ] Clave de producción de Riot: solicitada el 2026-11-05 (app 902996), sin respuesta a 2026-11-13 («Pending Review»; URL verificada con `public/riot.txt`; demo pública en `/demo`). Si se aprueba: implementar RSO en menos de 30 días o se pierde la clave.
 
 ## Riesgos
 - Riot rechaza la clave → el rango sigue siendo manual (ya contemplado).
