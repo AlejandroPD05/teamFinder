@@ -38,7 +38,8 @@ Requieren Docker en marcha y `npx supabase start` para `test` y `e2e`.
 - El karma es reputación social, no sanción ni clasificación oficial. El e-dating, cuando llegue, será solo para adultos.
 - Prioridad de la experiencia: elegir juego/modo → encontrar jugadores o búsquedas → conversar/unirse → jugar. No satures la pantalla inicial.
 - Estética: fondo `#0B0C12`, paneles `#151722`, acento morado `#8B5CF6`, azul `#3B82F6`, texto `#E7E8EF`. Color intenso solo en acciones, estados activos e insignias. Responsive (móvil primero) y accesible: contraste, teclado, etiquetas, objetivos táctiles.
-- «DUELINK» y «TeamFinder» no son marca aprobada: no fijes nombre, dominio ni logo sin decisión del usuario. No copies la marca ni el aspecto de VALORANT, FACEIT ni ESEA.
+- Marca aprobada por el usuario (2026-11-13): nombre «TeamFinder» y el logo de los dos chevrones (`src/lib/brand.ts`). Dominio: el gratuito de Vercel mientras los costes sean 0. No copies la marca ni el aspecto de VALORANT, FACEIT ni ESEA.
+- Costes: 0 € (decisión 2026-11-13). Solo servicios y planes gratuitos; nada de pago sin decisión del usuario.
 - Seguridad desde el diseño: validación cliente y servidor, control de acceso, bloqueo/denuncia, rate limiting y datos personales ocultos por defecto.
 - Nada `SECURITY DEFINER` en `public` (ni funciones ni vistas): va en `private` y, si la web lo necesita, con un envoltorio `SECURITY INVOKER` en `public` (`private.expose_function`). La CI lo comprueba con `supabase/security-check.sql`.
 - Antes de añadir una dependencia, comprueba si hace falta y si compensa.

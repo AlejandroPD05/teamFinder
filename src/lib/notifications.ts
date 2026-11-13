@@ -30,5 +30,9 @@ export function notificationText(n: Notification, actor: string | null): { title
       return { title: "Novedades sobre tu fanart", detail: n.body, href: "/coleccion/fanart" };
     case "ranking":
       return { title: "¡Estás en el Top 10 semanal!", detail: n.body, href: "/ranking" };
+    case "team_invite":
+      return { title: `${who} te invita a su equipo`, detail: n.body, href: "/mis-equipos" };
+    case "team_joined":
+      return { title: `${who} se ha unido a tu equipo`, detail: n.body, href: "/mis-equipos" };
   }
 }

@@ -1,6 +1,6 @@
 import type { Metadata } from "next";
 import Link from "next/link";
-import { ContactEmail, DraftNotice, Section } from "../legal-draft";
+import { ContactEmail, LegalVersion, Section } from "../legal-parts";
 
 export const metadata: Metadata = { title: "Normas de la comunidad", alternates: { canonical: "/normas" } };
 
@@ -11,7 +11,7 @@ export default function RulesPage() {
   return (
     <article className="mx-auto flex max-w-2xl flex-col gap-6">
       <h1 className="font-display text-3xl font-semibold">Normas de la comunidad</h1>
-      <DraftNotice />
+      <LegalVersion />
       <p className="text-sm text-muted">
         TeamFinder es una web de fans, gratuita y sin relación con Riot Games, Valve ni Electronic Arts. Al usarla aceptas
         estas normas. Además de ellas, siguen vigentes las condiciones de cada juego.
@@ -113,6 +113,20 @@ export default function RulesPage() {
           <li>
             Puedes enviar fanart para que sea una carta: solo obras tuyas, sin arte oficial retocado ni obras de otras personas.
             Puedes retirar tu permiso cuando quieras.
+          </li>
+        </ul>
+      </Section>
+
+      <Section title="Equipos y partidas">
+        <ul>
+          <li>
+            El nombre y la descripción de un equipo siguen las mismas normas que tu nombre: sin insultos, odio, contenido
+            sexual ni suplantar a equipos o clubes reales.
+          </li>
+          <li>El dueño del equipo responde de a quién invita y puede sacar a cualquiera. El chat del equipo se modera igual que el de los grupos.</li>
+          <li>
+            Las partidas que apuntas a mano son tu registro personal: apunta solo las tuyas y como fueron. No cuentan para el
+            ranking ni para ningún rating, y no son datos oficiales del juego.
           </li>
         </ul>
       </Section>

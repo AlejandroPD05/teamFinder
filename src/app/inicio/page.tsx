@@ -104,7 +104,11 @@ export default async function Dashboard() {
         )}
       </div>
 
-      <nav aria-label="Ranking, misiones y colección" className="grid gap-4 sm:grid-cols-3">
+      <nav aria-label="Equipos, ranking, misiones y colección" className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
+        <Link href="/mis-equipos" className="surface surface-interactive flex min-h-11 flex-col gap-1 p-5">
+          <span className="font-display text-lg font-semibold">Mis equipos</span>
+          <span className="text-sm text-muted">Tu grupo de siempre, con su propio chat.</span>
+        </Link>
         <Link href="/ranking" className="surface surface-interactive flex min-h-11 flex-col gap-1 p-5">
           <span className="font-display text-lg font-semibold">Ranking semanal</span>
           <span className="text-sm text-muted">Los mejores compañeros de {current.name} esta semana.</span>
