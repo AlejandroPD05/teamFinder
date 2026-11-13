@@ -111,7 +111,7 @@ export function GamePicker({
             >
               {(() => {
                 const Glyph = GAME_GLYPHS[g.id] ?? Gamepad2;
-                return <Glyph aria-hidden="true" strokeWidth={1.75} className="size-9 text-[var(--tile-text)] sm:size-14" />;
+                return <Glyph aria-hidden="true" className="size-11 text-[var(--tile-text)] drop-shadow-[0_4px_12px_color-mix(in_srgb,var(--tile)_45%,transparent)] sm:size-16" />;
               })()}
               <span className="font-display text-center text-sm font-bold leading-tight tracking-wide sm:text-xl">
                 <ScrambleText text={g.short_name ?? g.name} trigger={on && active} />
