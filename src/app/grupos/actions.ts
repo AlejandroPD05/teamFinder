@@ -5,6 +5,7 @@ import { redirect } from "next/navigation";
 import { z } from "zod";
 import { createLobbyFromForm, createLobbySchema, lobbyError, requestMessageSchema } from "@/lib/lobbies/schema";
 import { currentGame } from "@/lib/games";
+import { siteUrl } from "@/lib/supabase/env";
 import { createClient } from "@/lib/supabase/server";
 
 export type ActionState = { ok: boolean; message: string; fieldErrors?: Record<string, string> } | null;
@@ -90,4 +91,16 @@ export async function lobbyAction(_prev: ActionState, fd: FormData): Promise<Act
   revalidatePath(`/grupos/${id.data}`);
   revalidatePath("/grupos");
   return { ok: true, message: ok };
+}
+
+export type ShareState = { ok: true; url: string } | { ok: false; message: string } | null;
+
+/** El creador comparte el grupo: genera el enlace público con su resumen (para Discord, WhatsApp…). */
+export async function shareLobbyAction(_prev: ShareState, fd: FormData): Promise<ShareState> {
+  const supabase = await session();
+  const id = lobbyId.safeParse(fd.get("lobby_id"));
+  if (!id.success) return { ok: false, message: lobbyError() };
+  const { error } = await supabase.rpc("share_lobby", { p_lobby: id.data });
+  if (error) return { ok: false, message: error.hint === "closed" ? "El grupo está cerrado." : lobbyError(error.hint) };
+  return { ok: true, url: `${siteUrl()}/unete/${id.data}` };
 }

@@ -11,6 +11,7 @@ import { Logo } from "./logo";
 import { currentGame, themeStyle } from "@/lib/games";
 import { SiteNav } from "./site-nav";
 import { SpotlightTracker } from "@/components/spotlight-tracker";
+import { ServiceWorkerRegister } from "@/components/sw-register";
 import { LiveAlerts } from "./live-alerts";
 import { NumberRoll } from "@/components/number-roll";
 import { indexable } from "@/lib/seo";
@@ -69,6 +70,7 @@ export default async function RootLayout({ children }: LayoutProps<"/">) {
     <html lang="es" data-game={game?.id} style={themeStyle(game)} className={`${geistSans.variable} ${chakra.variable} h-full antialiased`}>
       <body className="flex min-h-full flex-col font-sans">
         <SpotlightTracker />
+        <ServiceWorkerRegister />
         {signedIn && <LiveAlerts me={data!.claims!.sub as string} />}
         <a
           href="#contenido"

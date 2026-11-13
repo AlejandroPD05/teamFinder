@@ -59,10 +59,13 @@ export function GamePicker({
   games,
   current,
   counts,
+  nowCounts,
 }: {
   games: PickerGame[];
   current: string;
   counts: Record<string, number>;
+  /** Cuántos se han marcado «disponible ahora» en cada juego. */
+  nowCounts?: Record<string, number>;
 }) {
   const pathname = usePathname();
   const [pending, startTransition] = useTransition();
@@ -89,6 +92,7 @@ export function GamePicker({
         {games.map((g) => {
           const on = g.id === active;
           const n = counts[g.id] ?? 0;
+          const live = nowCounts?.[g.id] ?? 0;
           return (
             <button
               key={g.id}
@@ -122,6 +126,14 @@ export function GamePicker({
                   <NumberRoll value={n} /> {n === 1 ? "jugador" : "jugadores"}
                 </span>
               </span>
+              {live > 0 && (
+                <span className="flex items-center gap-1.5 text-xs text-success">
+                  <span aria-hidden="true" className="live-dot" />
+                  <span>
+                    <NumberRoll value={live} /> ahora
+                  </span>
+                </span>
+              )}
             </button>
           );
         })}

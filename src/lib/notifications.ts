@@ -7,6 +7,7 @@ type Notification = {
   lobby_id: string | null;
   clip_id: string | null;
   body: string | null;
+  team_id?: string | null;
 };
 
 /** Texto y enlace de cada notificación. `actor` es el nombre visible de quien la provoca (null si no se dice). */
@@ -33,6 +34,10 @@ export function notificationText(n: Notification, actor: string | null): { title
     case "team_invite":
       return { title: `${who} te invita a su equipo`, detail: n.body, href: "/mis-equipos" };
     case "team_joined":
-      return { title: `${who} se ha unido a tu equipo`, detail: n.body, href: "/mis-equipos" };
+      return { title: `${who} se ha unido a tu equipo`, detail: n.body, href: n.team_id ? `/equipo/${n.team_id}` : "/mis-equipos" };
+    case "team_event":
+      return { title: `${who} propone una quedada`, detail: n.body, href: n.team_id ? `/equipo/${n.team_id}` : "/mis-equipos" };
+    case "team_lobby":
+      return { title: "Tu equipo ha creado un grupo y estás dentro", detail: n.body, href: lobby ?? "/mis-equipos" };
   }
 }

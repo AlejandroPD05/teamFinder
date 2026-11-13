@@ -18,6 +18,8 @@ export type Filters = {
   goal?: string;
   voice?: string;
   flex: boolean;
+  /** Solo quien se ha marcado «disponible ahora». */
+  now: boolean;
   page: number;
 };
 
@@ -51,6 +53,7 @@ export function parseFilters(params: Params, catalog: SearchCatalog): Filters {
     goal: inDict(GOALS, one(params.goal)),
     voice: inDict(VOICE, one(params.voice)),
     flex: one(params.flex) === "1",
+    now: one(params.now) === "1",
     page: Number.isFinite(page) && page >= 1 && page <= 500 ? page : 1,
   };
 }
@@ -71,6 +74,7 @@ export function toSearchParams(f: Filters): URLSearchParams {
   set("goal", f.goal);
   set("voice", f.voice);
   if (f.flex) sp.set("flex", "1");
+  if (f.now) sp.set("now", "1");
   if (f.page > 1) sp.set("page", String(f.page));
   return sp;
 }
@@ -114,7 +118,7 @@ export function toConditions(f: Filters, catalog: SearchCatalog): Condition[] {
 /** Cuántos filtros activos hay (sin contar la página). */
 export function activeCount(f: Filters): number {
   return [f.rmin, f.rmax, f.region, f.role, f.agent, f.mode, f.lang, f.goal, f.voice].filter(Boolean).length +
-    (f.slot.length ? 1 : 0) + (f.flex ? 1 : 0);
+    (f.slot.length ? 1 : 0) + (f.flex ? 1 : 0) + (f.now ? 1 : 0);
 }
 
 /** Filtros secundarios activos (van plegados en «Más filtros»; si hay alguno, el bloque se abre). */
@@ -126,6 +130,7 @@ export function advancedCount(f: Filters): number {
 export function widenSuggestions(f: Filters): { label: string; filters: Filters }[] {
   const base = { ...f, page: 1 };
   const out: { label: string; filters: Filters }[] = [];
+  if (f.now) out.push({ label: "No solo disponibles ahora", filters: { ...base, now: false } });
   if (f.rmin || f.rmax) out.push({ label: "Cualquier rango", filters: { ...base, rmin: undefined, rmax: undefined } });
   if (f.agent) out.push({ label: "Cualquier agente", filters: { ...base, agent: undefined, astatus: [] } });
   if (f.role) out.push({ label: "Cualquier rol", filters: { ...base, role: undefined } });

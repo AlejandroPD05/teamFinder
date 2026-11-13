@@ -357,14 +357,14 @@ isOneToOne: false
                   ]
                 },"game_profiles": {
                   Row: {
-                    "created_at": string,"flex": boolean,"game_id": string,"mode_slugs": (string)[],"rank_id": string | null,"rank_source": string,"region_id": string | null,"updated_at": string,"user_id": string,"visibility": Database["public"]['Enums']["visibility"]
+                    "available_mode": string | null,"available_until": string | null,"created_at": string,"flex": boolean,"game_id": string,"mode_slugs": (string)[],"rank_id": string | null,"rank_source": string,"region_id": string | null,"updated_at": string,"user_id": string,"visibility": Database["public"]['Enums']["visibility"]
                   }
                   ComputedFields: never
                   Insert: {
-                    "created_at"?: string,"flex"?: boolean,"game_id": string,"mode_slugs"?: (string)[],"rank_id"?: string | null,"rank_source"?: string,"region_id"?: string | null,"updated_at"?: string,"user_id": string,"visibility"?: Database["public"]['Enums']["visibility"]
+                    "available_mode"?: string | null,"available_until"?: string | null,"created_at"?: string,"flex"?: boolean,"game_id": string,"mode_slugs"?: (string)[],"rank_id"?: string | null,"rank_source"?: string,"region_id"?: string | null,"updated_at"?: string,"user_id": string,"visibility"?: Database["public"]['Enums']["visibility"]
                   }
                   Update: {
-                    "created_at"?: string,"flex"?: boolean,"game_id"?: string,"mode_slugs"?: (string)[],"rank_id"?: string | null,"rank_source"?: string,"region_id"?: string | null,"updated_at"?: string,"user_id"?: string,"visibility"?: Database["public"]['Enums']["visibility"]
+                    "available_mode"?: string | null,"available_until"?: string | null,"created_at"?: string,"flex"?: boolean,"game_id"?: string,"mode_slugs"?: (string)[],"rank_id"?: string | null,"rank_source"?: string,"region_id"?: string | null,"updated_at"?: string,"user_id"?: string,"visibility"?: Database["public"]['Enums']["visibility"]
                   }
                   Relationships: [
                     {
@@ -501,14 +501,14 @@ isOneToOne: false
                   ]
                 },"lobbies": {
                   Row: {
-                    "closed_at": string | null,"created_at": string,"filled_at": string | null,"game_id": string,"goal": string | null,"id": string,"language": string | null,"mode_slug": string,"note": string | null,"owner_id": string,"rank_max_id": string | null,"rank_min_id": string | null,"region_id": string | null,"slots": number,"starts_at": string | null,"status": Database["public"]['Enums']["lobby_status"],"updated_at": string
+                    "closed_at": string | null,"created_at": string,"filled_at": string | null,"game_id": string,"goal": string | null,"id": string,"language": string | null,"mode_slug": string,"note": string | null,"owner_id": string,"rank_max_id": string | null,"rank_min_id": string | null,"region_id": string | null,"shared_at": string | null,"slots": number,"starts_at": string | null,"status": Database["public"]['Enums']["lobby_status"],"updated_at": string
                   }
                   ComputedFields: never
                   Insert: {
-                    "closed_at"?: string | null,"created_at"?: string,"filled_at"?: string | null,"game_id": string,"goal"?: string | null,"id"?: string,"language"?: string | null,"mode_slug": string,"note"?: string | null,"owner_id": string,"rank_max_id"?: string | null,"rank_min_id"?: string | null,"region_id"?: string | null,"slots": number,"starts_at"?: string | null,"status"?: Database["public"]['Enums']["lobby_status"],"updated_at"?: string
+                    "closed_at"?: string | null,"created_at"?: string,"filled_at"?: string | null,"game_id": string,"goal"?: string | null,"id"?: string,"language"?: string | null,"mode_slug": string,"note"?: string | null,"owner_id": string,"rank_max_id"?: string | null,"rank_min_id"?: string | null,"region_id"?: string | null,"shared_at"?: string | null,"slots": number,"starts_at"?: string | null,"status"?: Database["public"]['Enums']["lobby_status"],"updated_at"?: string
                   }
                   Update: {
-                    "closed_at"?: string | null,"created_at"?: string,"filled_at"?: string | null,"game_id"?: string,"goal"?: string | null,"id"?: string,"language"?: string | null,"mode_slug"?: string,"note"?: string | null,"owner_id"?: string,"rank_max_id"?: string | null,"rank_min_id"?: string | null,"region_id"?: string | null,"slots"?: number,"starts_at"?: string | null,"status"?: Database["public"]['Enums']["lobby_status"],"updated_at"?: string
+                    "closed_at"?: string | null,"created_at"?: string,"filled_at"?: string | null,"game_id"?: string,"goal"?: string | null,"id"?: string,"language"?: string | null,"mode_slug"?: string,"note"?: string | null,"owner_id"?: string,"rank_max_id"?: string | null,"rank_min_id"?: string | null,"region_id"?: string | null,"shared_at"?: string | null,"slots"?: number,"starts_at"?: string | null,"status"?: Database["public"]['Enums']["lobby_status"],"updated_at"?: string
                   }
                   Relationships: [
                     {
@@ -791,14 +791,14 @@ isOneToOne: false
                   ]
                 },"notifications": {
                   Row: {
-                    "actor_id": string | null,"body": string | null,"clip_id": string | null,"created_at": string,"id": number,"kind": Database["public"]['Enums']["notification_kind"],"lobby_id": string | null,"read_at": string | null,"user_id": string
+                    "actor_id": string | null,"body": string | null,"clip_id": string | null,"created_at": string,"id": number,"kind": Database["public"]['Enums']["notification_kind"],"lobby_id": string | null,"read_at": string | null,"team_id": string | null,"user_id": string
                   }
                   ComputedFields: never
                   Insert: {
-                    "actor_id"?: string | null,"body"?: string | null,"clip_id"?: string | null,"created_at"?: string,"id"?: never,"kind": Database["public"]['Enums']["notification_kind"],"lobby_id"?: string | null,"read_at"?: string | null,"user_id": string
+                    "actor_id"?: string | null,"body"?: string | null,"clip_id"?: string | null,"created_at"?: string,"id"?: never,"kind": Database["public"]['Enums']["notification_kind"],"lobby_id"?: string | null,"read_at"?: string | null,"team_id"?: string | null,"user_id": string
                   }
                   Update: {
-                    "actor_id"?: string | null,"body"?: string | null,"clip_id"?: string | null,"created_at"?: string,"id"?: never,"kind"?: Database["public"]['Enums']["notification_kind"],"lobby_id"?: string | null,"read_at"?: string | null,"user_id"?: string
+                    "actor_id"?: string | null,"body"?: string | null,"clip_id"?: string | null,"created_at"?: string,"id"?: never,"kind"?: Database["public"]['Enums']["notification_kind"],"lobby_id"?: string | null,"read_at"?: string | null,"team_id"?: string | null,"user_id"?: string
                   }
                   Relationships: [
                     {
@@ -818,6 +818,12 @@ isOneToOne: false
       columns: ["lobby_id"]
 isOneToOne: false
       referencedRelation: "lobbies"
+      referencedColumns: ["id"]
+    },{
+      foreignKeyName: "notifications_team_id_fkey"
+      columns: ["team_id"]
+isOneToOne: false
+      referencedRelation: "teams"
       referencedColumns: ["id"]
     },{
       foreignKeyName: "notifications_user_id_fkey"
@@ -881,17 +887,37 @@ isOneToOne: false
                   ]
                 },"profiles": {
                   Row: {
-                    "availability": (string)[],"availability_visibility": Database["public"]['Enums']["visibility"],"avatar_url": string | null,"created_at": string,"display_name": string,"dm_policy": string,"email_notifications": boolean,"goals": (string)[],"goals_visibility": Database["public"]['Enums']["visibility"],"id": string,"languages": (string)[],"languages_visibility": Database["public"]['Enums']["visibility"],"matches_visibility": Database["public"]['Enums']["visibility"],"social_twitch": string | null,"social_x": string | null,"social_youtube": string | null,"socials_visibility": Database["public"]['Enums']["visibility"],"updated_at": string,"voice": string | null,"voice_visibility": Database["public"]['Enums']["visibility"]
+                    "availability": (string)[],"availability_visibility": Database["public"]['Enums']["visibility"],"avatar_url": string | null,"created_at": string,"display_name": string,"dm_policy": string,"email_notifications": boolean,"goals": (string)[],"goals_visibility": Database["public"]['Enums']["visibility"],"id": string,"languages": (string)[],"languages_visibility": Database["public"]['Enums']["visibility"],"matches_visibility": Database["public"]['Enums']["visibility"],"onboarded_at": string | null,"social_twitch": string | null,"social_x": string | null,"social_youtube": string | null,"socials_visibility": Database["public"]['Enums']["visibility"],"updated_at": string,"voice": string | null,"voice_visibility": Database["public"]['Enums']["visibility"]
                   }
                   ComputedFields: never
                   Insert: {
-                    "availability"?: (string)[],"availability_visibility"?: Database["public"]['Enums']["visibility"],"avatar_url"?: string | null,"created_at"?: string,"display_name": string,"dm_policy"?: string,"email_notifications"?: boolean,"goals"?: (string)[],"goals_visibility"?: Database["public"]['Enums']["visibility"],"id": string,"languages"?: (string)[],"languages_visibility"?: Database["public"]['Enums']["visibility"],"matches_visibility"?: Database["public"]['Enums']["visibility"],"social_twitch"?: string | null,"social_x"?: string | null,"social_youtube"?: string | null,"socials_visibility"?: Database["public"]['Enums']["visibility"],"updated_at"?: string,"voice"?: string | null,"voice_visibility"?: Database["public"]['Enums']["visibility"]
+                    "availability"?: (string)[],"availability_visibility"?: Database["public"]['Enums']["visibility"],"avatar_url"?: string | null,"created_at"?: string,"display_name": string,"dm_policy"?: string,"email_notifications"?: boolean,"goals"?: (string)[],"goals_visibility"?: Database["public"]['Enums']["visibility"],"id": string,"languages"?: (string)[],"languages_visibility"?: Database["public"]['Enums']["visibility"],"matches_visibility"?: Database["public"]['Enums']["visibility"],"onboarded_at"?: string | null,"social_twitch"?: string | null,"social_x"?: string | null,"social_youtube"?: string | null,"socials_visibility"?: Database["public"]['Enums']["visibility"],"updated_at"?: string,"voice"?: string | null,"voice_visibility"?: Database["public"]['Enums']["visibility"]
                   }
                   Update: {
-                    "availability"?: (string)[],"availability_visibility"?: Database["public"]['Enums']["visibility"],"avatar_url"?: string | null,"created_at"?: string,"display_name"?: string,"dm_policy"?: string,"email_notifications"?: boolean,"goals"?: (string)[],"goals_visibility"?: Database["public"]['Enums']["visibility"],"id"?: string,"languages"?: (string)[],"languages_visibility"?: Database["public"]['Enums']["visibility"],"matches_visibility"?: Database["public"]['Enums']["visibility"],"social_twitch"?: string | null,"social_x"?: string | null,"social_youtube"?: string | null,"socials_visibility"?: Database["public"]['Enums']["visibility"],"updated_at"?: string,"voice"?: string | null,"voice_visibility"?: Database["public"]['Enums']["visibility"]
+                    "availability"?: (string)[],"availability_visibility"?: Database["public"]['Enums']["visibility"],"avatar_url"?: string | null,"created_at"?: string,"display_name"?: string,"dm_policy"?: string,"email_notifications"?: boolean,"goals"?: (string)[],"goals_visibility"?: Database["public"]['Enums']["visibility"],"id"?: string,"languages"?: (string)[],"languages_visibility"?: Database["public"]['Enums']["visibility"],"matches_visibility"?: Database["public"]['Enums']["visibility"],"onboarded_at"?: string | null,"social_twitch"?: string | null,"social_x"?: string | null,"social_youtube"?: string | null,"socials_visibility"?: Database["public"]['Enums']["visibility"],"updated_at"?: string,"voice"?: string | null,"voice_visibility"?: Database["public"]['Enums']["visibility"]
                   }
                   Relationships: [
                     
+                  ]
+                },"push_subscriptions": {
+                  Row: {
+                    "auth": string,"created_at": string,"endpoint": string,"id": string,"p256dh": string,"user_id": string
+                  }
+                  ComputedFields: never
+                  Insert: {
+                    "auth": string,"created_at"?: string,"endpoint": string,"id"?: string,"p256dh": string,"user_id": string
+                  }
+                  Update: {
+                    "auth"?: string,"created_at"?: string,"endpoint"?: string,"id"?: string,"p256dh"?: string,"user_id"?: string
+                  }
+                  Relationships: [
+                    {
+      foreignKeyName: "push_subscriptions_user_id_fkey"
+      columns: ["user_id"]
+isOneToOne: false
+      referencedRelation: "profiles"
+      referencedColumns: ["id"]
+    }
                   ]
                 },"reports": {
                   Row: {
@@ -958,6 +984,64 @@ isOneToOne: false
       columns: ["team_message_id"]
 isOneToOne: false
       referencedRelation: "team_messages"
+      referencedColumns: ["id"]
+    }
+                  ]
+                },"team_event_rsvps": {
+                  Row: {
+                    "answer": string,"event_id": string,"updated_at": string,"user_id": string
+                  }
+                  ComputedFields: never
+                  Insert: {
+                    "answer": string,"event_id": string,"updated_at"?: string,"user_id": string
+                  }
+                  Update: {
+                    "answer"?: string,"event_id"?: string,"updated_at"?: string,"user_id"?: string
+                  }
+                  Relationships: [
+                    {
+      foreignKeyName: "team_event_rsvps_event_id_fkey"
+      columns: ["event_id"]
+isOneToOne: false
+      referencedRelation: "team_events"
+      referencedColumns: ["id"]
+    },{
+      foreignKeyName: "team_event_rsvps_user_id_fkey"
+      columns: ["user_id"]
+isOneToOne: false
+      referencedRelation: "profiles"
+      referencedColumns: ["id"]
+    }
+                  ]
+                },"team_events": {
+                  Row: {
+                    "created_at": string,"created_by": string | null,"id": string,"lobby_id": string | null,"note": string | null,"starts_at": string,"team_id": string
+                  }
+                  ComputedFields: never
+                  Insert: {
+                    "created_at"?: string,"created_by"?: string | null,"id"?: string,"lobby_id"?: string | null,"note"?: string | null,"starts_at": string,"team_id": string
+                  }
+                  Update: {
+                    "created_at"?: string,"created_by"?: string | null,"id"?: string,"lobby_id"?: string | null,"note"?: string | null,"starts_at"?: string,"team_id"?: string
+                  }
+                  Relationships: [
+                    {
+      foreignKeyName: "team_events_created_by_fkey"
+      columns: ["created_by"]
+isOneToOne: false
+      referencedRelation: "profiles"
+      referencedColumns: ["id"]
+    },{
+      foreignKeyName: "team_events_lobby_id_fkey"
+      columns: ["lobby_id"]
+isOneToOne: false
+      referencedRelation: "lobbies"
+      referencedColumns: ["id"]
+    },{
+      foreignKeyName: "team_events_team_id_fkey"
+      columns: ["team_id"]
+isOneToOne: false
+      referencedRelation: "teams"
       referencedColumns: ["id"]
     }
                   ]
@@ -1239,7 +1323,17 @@ isOneToOne: false
                 }
           }
           Functions: {
-            "block_user":
+            "available_counts":
+{ Args: Record<PropertyKey, never>; Returns: {
+              "game_id": string,"players": number
+            }[]
+                           },
+"available_now":
+{ Args: { "p_game": string }; Returns: {
+              "available_until": string,"mode_slug": string,"user_id": string
+            }[]
+                           },
+"block_user":
 { Args: { "p_user": string }; Returns: undefined
                            },
 "can_see":
@@ -1268,6 +1362,9 @@ isOneToOne: false
 "create_team":
 { Args: { "p_description": string,"p_game": string,"p_name": string }; Returns: string
                            },
+"create_team_event":
+{ Args: { "p_note": string,"p_starts_at": string,"p_team": string }; Returns: string
+                           },
 "delete_my_account":
 { Args: Record<PropertyKey, never>; Returns: undefined
                            },
@@ -1279,6 +1376,9 @@ isOneToOne: false
                            },
 "delete_team":
 { Args: { "p_team": string }; Returns: undefined
+                           },
+"delete_team_event":
+{ Args: { "p_event": string }; Returns: undefined
                            },
 "game_player_counts":
 { Args: Record<PropertyKey, never>; Returns: {
@@ -1344,6 +1444,9 @@ isOneToOne: false
 "post_clip":
 { Args: { "p_emblem": string,"p_game": string,"p_provider": Database["public"]['Enums']["clip_provider"],"p_title": string,"p_video": string }; Returns: string
                            },
+"prune_push_subscriptions":
+{ Args: { "p_endpoints": (string)[],"p_secret": string }; Returns: number
+                           },
 "report_clip":
 { Args: { "p_clip": string,"p_comment": number,"p_details": string,"p_reason": Database["public"]['Enums']["report_reason"] }; Returns: string
                            },
@@ -1374,6 +1477,9 @@ isOneToOne: false
 "review_fanart":
 { Args: { "p_approve": boolean,"p_id": string,"p_image_url": string,"p_note": string,"p_rarity": Database["public"]['Enums']["card_rarity"] }; Returns: undefined
                            },
+"rsvp_team_event":
+{ Args: { "p_answer": string,"p_event": string }; Returns: undefined
+                           },
 "save_game_profile":
 { Args: { "p_characters": Json,"p_flex": boolean,"p_game_id": string,"p_modes"?: (string)[],"p_rank_id": string,"p_region_id": string,"p_roles": Json,"p_visibility": Database["public"]['Enums']["visibility"] }; Returns: undefined
                            },
@@ -1386,11 +1492,25 @@ isOneToOne: false
 "send_team_message":
 { Args: { "p_body": string,"p_team": string }; Returns: number
                            },
+"set_available":
+{ Args: { "p_game": string,"p_hours": number,"p_mode"?: string }; Returns: string
+                           },
+"share_lobby":
+{ Args: { "p_lobby": string }; Returns: undefined
+                           },
+"shared_lobby":
+{ Args: { "p_lobby": string }; Returns: {
+              "game_id": string,"game_name": string,"goal": string,"id": string,"language": string,"mode_name": string,"note": string,"owner_name": string,"rank_max": string,"rank_min": string,"region": string,"roles": (string)[],"slots": number,"starts_at": string,"status": Database["public"]['Enums']["lobby_status"],"taken": number
+            }[]
+                           },
 "start_conversation":
 { Args: { "p_other": string }; Returns: string
                            },
 "submit_fanart":
 { Args: { "p_artist": string,"p_game": string,"p_license": string,"p_path": string,"p_portfolio": string,"p_title": string }; Returns: string
+                           },
+"team_event_lobby":
+{ Args: { "p_event": string,"p_mode": string }; Returns: string
                            },
 "toggle_clip_vote":
 { Args: { "p_clip": string,"p_emblem": string }; Returns: boolean
@@ -1417,7 +1537,7 @@ isOneToOne: false
                            }
           }
           Enums: {
-            "card_rarity": "common"|"rare"|"epic"|"legendary","character_status": "main"|"comfort"|"playable"|"flexible","clip_provider": "youtube"|"twitch"|"streamable","fanart_status": "pending"|"approved"|"rejected"|"withdrawn","lobby_status": "open"|"full"|"closed","match_result": "win"|"loss"|"draw","notification_kind": "join_request"|"request_accepted"|"request_rejected"|"clip_comment"|"karma"|"restriction"|"fanart"|"ranking"|"team_invite"|"team_joined","report_reason": "spam"|"harassment"|"sexual"|"impersonation"|"cheating"|"other","report_status": "open"|"actioned"|"dismissed","request_status": "pending"|"accepted"|"rejected"|"withdrawn","visibility": "public"|"registered"|"private"
+            "card_rarity": "common"|"rare"|"epic"|"legendary","character_status": "main"|"comfort"|"playable"|"flexible","clip_provider": "youtube"|"twitch"|"streamable","fanart_status": "pending"|"approved"|"rejected"|"withdrawn","lobby_status": "open"|"full"|"closed","match_result": "win"|"loss"|"draw","notification_kind": "join_request"|"request_accepted"|"request_rejected"|"clip_comment"|"karma"|"restriction"|"fanart"|"ranking"|"team_invite"|"team_joined"|"team_event"|"team_lobby","report_reason": "spam"|"harassment"|"sexual"|"impersonation"|"cheating"|"other","report_status": "open"|"actioned"|"dismissed","request_status": "pending"|"accepted"|"rejected"|"withdrawn","visibility": "public"|"registered"|"private"
           }
           CompositeTypes: {
             [_ in never]: never
@@ -1537,7 +1657,7 @@ export const Constants = {
           }
         },"public": {
           Enums: {
-            "card_rarity": ["common", "rare", "epic", "legendary"],"character_status": ["main", "comfort", "playable", "flexible"],"clip_provider": ["youtube", "twitch", "streamable"],"fanart_status": ["pending", "approved", "rejected", "withdrawn"],"lobby_status": ["open", "full", "closed"],"match_result": ["win", "loss", "draw"],"notification_kind": ["join_request", "request_accepted", "request_rejected", "clip_comment", "karma", "restriction", "fanart", "ranking", "team_invite", "team_joined"],"report_reason": ["spam", "harassment", "sexual", "impersonation", "cheating", "other"],"report_status": ["open", "actioned", "dismissed"],"request_status": ["pending", "accepted", "rejected", "withdrawn"],"visibility": ["public", "registered", "private"]
+            "card_rarity": ["common", "rare", "epic", "legendary"],"character_status": ["main", "comfort", "playable", "flexible"],"clip_provider": ["youtube", "twitch", "streamable"],"fanart_status": ["pending", "approved", "rejected", "withdrawn"],"lobby_status": ["open", "full", "closed"],"match_result": ["win", "loss", "draw"],"notification_kind": ["join_request", "request_accepted", "request_rejected", "clip_comment", "karma", "restriction", "fanart", "ranking", "team_invite", "team_joined", "team_event", "team_lobby"],"report_reason": ["spam", "harassment", "sexual", "impersonation", "cheating", "other"],"report_status": ["open", "actioned", "dismissed"],"request_status": ["pending", "accepted", "rejected", "withdrawn"],"visibility": ["public", "registered", "private"]
           }
         }
 } as const

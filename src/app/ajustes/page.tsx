@@ -5,6 +5,7 @@ import { loadNames } from "@/lib/lobbies/queries";
 import { createClient } from "@/lib/supabase/server";
 import { BlockButton, DeleteAccountForm } from "../confianza/forms";
 import { EmailNotificationsForm } from "./email-form";
+import { PushSettings } from "./push-settings";
 
 export const metadata: Metadata = { title: "Ajustes" };
 
@@ -31,6 +32,17 @@ export default async function SettingsPage() {
           .
         </p>
       </div>
+
+      <section aria-labelledby="push" className="surface flex flex-col items-start gap-3 p-5">
+        <h2 id="push" className="font-semibold">
+          Notificaciones en el móvil u ordenador
+        </h2>
+        <p className="text-sm text-muted">
+          Te avisamos de solicitudes, mensajes privados y quedadas aunque tengas la web cerrada. Se activan por dispositivo. En
+          iPhone solo funcionan si instalas la web en la pantalla de inicio (Compartir, Añadir a pantalla de inicio).
+        </p>
+        <PushSettings />
+      </section>
 
       <section aria-labelledby="correo" className="surface flex flex-col items-start gap-3 p-5">
         <h2 id="correo" className="font-semibold">

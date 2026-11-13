@@ -44,9 +44,10 @@ export default async function Home({ searchParams }: PageProps<"/">) {
 
   const supabase = await createClient();
   const { game, games } = await currentGame();
-  const [{ data: claims }, { data: counts }] = await Promise.all([
+  const [{ data: claims }, { data: counts }, { data: nowCounts }] = await Promise.all([
     supabase.auth.getClaims(),
     supabase.rpc("game_player_counts"),
+    supabase.rpc("available_counts"),
   ]);
   const signedIn = Boolean(claims?.claims?.sub);
   const cta = signedIn ? { href: "/buscar", text: es.home.ctaSignedIn } : { href: "/entrar", text: es.home.cta };
@@ -78,6 +79,7 @@ export default async function Home({ searchParams }: PageProps<"/">) {
             games={games}
             current={game.id}
             counts={Object.fromEntries((counts ?? []).map((c) => [c.game_id, c.players]))}
+            nowCounts={Object.fromEntries((nowCounts ?? []).map((c) => [c.game_id, c.players]))}
           />
         </div>
       </section>

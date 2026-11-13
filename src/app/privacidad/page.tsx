@@ -11,7 +11,10 @@ const BASES: [string, string][] = [
   ["Tu cuenta: correo, identificador y, si entras con Discord, su nombre y avatar", "Contrato: prestarte el servicio que pides al registrarte (art. 6.1.b RGPD)."],
   ["Tu perfil y tus datos por juego (rango, roles, personajes, idiomas, horarios…)", "Contrato. Son opcionales y puedes borrarlos cuando quieras."],
   ["Grupos, solicitudes, chat, mensajes privados, notificaciones, karma, ranking semanal, clips, emblemas, comentarios, misiones y cartas", "Contrato: son las funciones de la web."],
-  ["Equipos (nombre, miembros, invitaciones) y su chat", "Contrato: son funciones de la web que usas si quieres."],
+  ["Equipos (nombre, miembros, invitaciones), su chat y sus quedadas (fecha, nota y quién va)", "Contrato: son funciones de la web que usas si quieres."],
+  ["«Disponible ahora» (hasta cuándo y en qué modo)", "Contrato. Lo activas tú y caduca solo en 1 a 3 horas."],
+  ["Enlace público de un grupo que compartes (resumen del grupo y tu nombre visible)", "Contrato: solo si lo compartes tú."],
+  ["Notificaciones push (la dirección de suscripción de tu navegador)", "Consentimiento: solo si las activas en un dispositivo; se desactivan en Ajustes o en el navegador (art. 6.1.a)."],
   ["Partidas que apuntas a mano (fecha, modo, mapa, personaje, resultado y tus números)", "Contrato. Son opcionales; tú eliges quién las ve (por defecto, solo tú)."],
   ["Enlaces a tus redes (Twitch, YouTube, X)", "Contrato. Son opcionales; tú eliges quién los ve."],
   ["Resumen de avisos por correo", "Consentimiento: solo si lo activas en Ajustes, y lo puedes desactivar cuando quieras (art. 6.1.a)."],
@@ -30,6 +33,8 @@ const PLAZOS: [string, string][] = [
   ["Partidas apuntadas a mano", "Hasta que las borres o borres tu cuenta."],
   ["Equipos y mensajes de equipo", "Mientras exista el equipo. Si su dueño lo borra o borra su cuenta, se borra con todo su chat."],
   ["Registro de correos de avisos enviados (fecha y número de avisos)", "30 días."],
+  ["Quedadas de equipo y sus respuestas", "Hasta 30 días después de la fecha de la quedada."],
+  ["Suscripciones push", "Hasta que las desactives, borres tu cuenta o el navegador las dé de baja."],
   ["Puestos del ranking semanal (Top 10)", "Mientras exista tu cuenta: son insignias permanentes."],
   ["Fanart", "Hasta que lo retires o borres tu cuenta; entonces se borra también la imagen."],
   ["Restricciones temporales", "12 meses desde que terminan, para detectar reincidencias."],
@@ -109,6 +114,11 @@ export default function PrivacyPage() {
           <li>Del resto de tu perfil decides tú, campo a campo: todo el mundo, solo usuarios con cuenta o solo tú.</li>
           <li>Los mensajes de una sala solo los ven los miembros de ese grupo, y los de un equipo, solo sus miembros.</li>
           <li>El nombre, la descripción y los miembros de un equipo los ve cualquiera con cuenta.</li>
+          <li>
+            Si compartes un grupo, su enlace muestra a cualquiera (también sin cuenta) el modo, las plazas, los roles que buscáis,
+            el rango, el servidor, la nota y tu nombre visible. Nada más.
+          </li>
+          <li>«Disponible ahora» lo ven quienes pueden ver tu perfil de ese juego.</li>
           <li>Del karma solo se publican el total y los motivos, nunca quién los dio.</li>
           <li>Los clips, emblemas y comentarios los ven los usuarios con cuenta, salvo quienes te hayan bloqueado o hayas bloqueado.</li>
           <li>Las denuncias solo las ven quien denuncia y moderación.</li>
@@ -120,6 +130,10 @@ export default function PrivacyPage() {
           <li>Supabase: base de datos, autenticación, chat en tiempo real y almacenamiento de las imágenes de fanart. Datos alojados en la UE (París).</li>
           <li>Vercel: alojamiento de la web y registros de peticiones. Funciones en la UE (París).</li>
           <li>Brevo (Sendinblue SAS, Francia): envío del correo con el enlace para entrar y, si lo activas, del resumen de avisos.</li>
+          <li>
+            Si activas las notificaciones push, el aviso viaja cifrado por el servicio de push de tu navegador (Google, Mozilla,
+            Apple o Microsoft, según el que uses), que no puede leer su contenido.
+          </li>
         </ul>
         <p>
           Vercel y Supabase son empresas con matriz en EE. UU. y pueden acceder a datos desde fuera de la UE; esas

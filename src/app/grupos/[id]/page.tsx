@@ -9,6 +9,8 @@ import { GOALS, LANGUAGES } from "@/lib/profile/options";
 import { loadCatalog } from "@/lib/profile/queries";
 import { createClient } from "@/lib/supabase/server";
 import { ActionForm } from "./action-form";
+import { ShareLobby } from "./share-lobby";
+import { siteUrl } from "@/lib/supabase/env";
 import { LobbyChat } from "./lobby-chat";
 import { KarmaVote } from "../../confianza/forms";
 import { RankBadge, RoleIcon } from "@/components/game-icons";
@@ -209,6 +211,10 @@ export default async function LobbyPage({ params }: PageProps<"/grupos/[id]">) {
 
       {!isOwner && !isMember && lobby.status !== "open" && (
         <p className="text-sm text-muted">Este grupo no admite solicitudes ahora mismo.</p>
+      )}
+
+      {isOwner && lobby.status !== "closed" && (
+        <ShareLobby lobbyId={lobby.id} sharedUrl={lobby.shared_at ? `${siteUrl()}/unete/${lobby.id}` : null} />
       )}
 
       {isOwner && (
