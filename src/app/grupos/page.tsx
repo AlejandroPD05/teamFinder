@@ -1,17 +1,18 @@
 import { currentGame } from "@/lib/games";
-import type { Metadata } from "next";
+import { getLocale, getTranslations } from "next-intl/server";
+import { titled } from "@/lib/i18n/metadata";
 import Link from "next/link";
 import { redirect } from "next/navigation";
 import { formatStart } from "@/lib/lobbies/format";
 import { listOpenLobbies, loadNames } from "@/lib/lobbies/queries";
-import { GOALS, LANGUAGES } from "@/lib/profile/options";
+import { LANGUAGES, optionKeys } from "@/lib/profile/options";
 import { loadCatalog } from "@/lib/profile/queries";
 import type { CSSProperties } from "react";
 import { AvatarGroup } from "@/components/avatar-group";
 import { RoleIcon } from "@/components/game-icons";
 import { createClient } from "@/lib/supabase/server";
 
-export const metadata: Metadata = { title: "Grupos" };
+export const generateMetadata = titled("lobbies");
 
 const control = "min-h-11 w-full rounded-md border border-line bg-bg px-3 text-sm text-text focus:border-accent";
 const one = (v: string | string[] | undefined) => (Array.isArray(v) ? v[0] : v) || undefined;
@@ -37,33 +38,34 @@ export default async function LobbiesPage({ searchParams }: PageProps<"/grupos">
   const mine = new Set((myRoles ?? []).map((r) => r.role_id));
   const label = (list: { id: string; name: string }[], id: string | null) => list.find((x) => x.id === id)?.name;
   const filtered = Boolean(mode || region || role || lang);
+  const [t, to, ts, locale] = await Promise.all([getTranslations("lobbies"), getTranslations("options"), getTranslations("shared"), getLocale()]);
 
   return (
     <section className="flex flex-col gap-6">
       <div className="flex flex-wrap items-end justify-between gap-3">
         <div>
-          <h1 className="font-display text-3xl font-semibold">Grupos</h1>
-          <p className="text-muted">Grupos de {game.name} buscando gente ahora o para más tarde.</p>
+          <h1 className="font-display text-3xl font-semibold">{t("title")}</h1>
+          <p className="text-muted">{t("lead", { game: game.name })}</p>
         </div>
         <Link
           href="/grupos/nuevo"
           className="btn-primary"
         >
-          Crear grupo
+          {t("create")}
         </Link>
       </div>
 
       <form method="get" action="/grupos" className="grid grid-cols-2 gap-3 surface p-4 lg:grid-cols-5">
         {[
-          ["mode", "Modo", catalog.modes.map((m) => [m.slug, m.name]), mode],
-          ["role", "Buscan rol", catalog.roles.map((r) => [r.slug, r.name]), role?.slug],
-          ["region", "Servidor", catalog.regions.map((r) => [r.slug, r.name]), region?.slug],
-          ["lang", "Idioma", Object.entries(LANGUAGES), lang],
+          ["mode", t("filterMode"), catalog.modes.map((m) => [m.slug, m.name]), mode],
+          ["role", t("filterRole"), catalog.roles.map((r) => [r.slug, r.name]), role?.slug],
+          ["region", t("filterRegion"), catalog.regions.map((r) => [r.slug, r.name]), region?.slug],
+          ["lang", t("filterLang"), optionKeys(LANGUAGES).map((k) => [k, to(`languages.${k}`)]), lang],
         ].map(([name, text, options, value]) => (
           <div key={name as string} className="flex flex-col gap-1 text-sm font-medium">
             <label htmlFor={`g-${name}`}>{text as string}</label>
             <select id={`g-${name}`} name={name as string} defaultValue={(value as string) ?? ""} className={control}>
-              <option value="">Cualquiera</option>
+              <option value="">{t("any")}</option>
               {(options as string[][]).map(([v, l]) => (
                 <option key={v} value={v}>
                   {l}
@@ -74,11 +76,11 @@ export default async function LobbiesPage({ searchParams }: PageProps<"/grupos">
         ))}
         <div className="col-span-2 flex items-end gap-3 lg:col-span-1">
           <button type="submit" className="btn-ghost">
-            Filtrar
+            {t("filter")}
           </button>
           {filtered && (
             <Link href="/grupos" className="min-h-11 py-3 text-sm text-accent-soft underline underline-offset-4">
-              Quitar
+              {t("clear")}
             </Link>
           )}
         </div>
@@ -86,14 +88,14 @@ export default async function LobbiesPage({ searchParams }: PageProps<"/grupos">
 
       {lobbies.length === 0 ? (
         <div className="rounded-lg border border-dashed border-line p-6 text-center">
-          <h2 className="font-semibold">{filtered ? "No hay grupos con estos filtros" : "No hay grupos abiertos ahora mismo"}</h2>
-          <p className="mt-1 text-sm text-muted">Crea uno y deja que te encuentren, o busca jugadores directamente.</p>
+          <h2 className="font-semibold">{filtered ? t("emptyFiltered") : t("empty")}</h2>
+          <p className="mt-1 text-sm text-muted">{t("emptyText")}</p>
           <div className="mt-3 flex flex-wrap justify-center gap-3">
             <Link href="/grupos/nuevo" className="btn-ghost">
-              Crear grupo
+              {t("create")}
             </Link>
             <Link href="/buscar" className="btn-ghost">
-              Buscar jugadores
+              {t("searchPlayers")}
             </Link>
           </div>
         </div>
@@ -108,7 +110,7 @@ export default async function LobbiesPage({ searchParams }: PageProps<"/grupos">
               l.lobby_needed_roles.some((r) => mine.has(r.role_id));
             const modeName = catalog.modes.find((m) => m.slug === l.mode_slug)?.name ?? l.mode_slug;
             const ranks = [label(catalog.ranks, l.rank_min_id), label(catalog.ranks, l.rank_max_id)];
-            const owner = names.get(l.owner_id)?.name ?? "Jugador";
+            const owner = names.get(l.owner_id)?.name ?? t("player");
             return (
               <li
                 key={l.id}
@@ -117,26 +119,26 @@ export default async function LobbiesPage({ searchParams }: PageProps<"/grupos">
               >
                 <div className="flex items-start justify-between gap-2">
                   <div>
-                    {forYou && <p className="kicker">Busca tu rol</p>}
+                    {forYou && <p className="kicker">{t("forYou")}</p>}
                     <h2 className="font-display text-lg font-semibold">{modeName}</h2>
-                    <p className="text-sm text-muted">de {owner}</p>
+                    <p className="text-sm text-muted">{t("byOwner", { owner })}</p>
                   </div>
                   <span className="whitespace-nowrap text-sm font-medium tabular-nums">
-                    {taken}/{l.slots} plazas
+                    {t("slots", { taken, slots: l.slots })}
                   </span>
                 </div>
                 <AvatarGroup
                   slots={l.slots}
                   members={l.lobby_members.map((m) => ({
                     id: m.user_id,
-                    name: names.get(m.user_id)?.name ?? "Jugador",
+                    name: names.get(m.user_id)?.name ?? t("player"),
                     avatar: names.get(m.user_id)?.avatar ?? null,
                   }))}
                 />
                 {l.note && <p className="text-sm">{l.note}</p>}
                 <dl className="grid gap-1 text-sm">
                   <div className="flex gap-2">
-                    <dt className="text-muted">Buscan:</dt>
+                    <dt className="text-muted">{ts("lookingLabel")}</dt>
                     <dd className="flex flex-wrap gap-1.5">
                       {l.lobby_needed_roles.length
                         ? l.lobby_needed_roles.map((r) => {
@@ -148,25 +150,25 @@ export default async function LobbiesPage({ searchParams }: PageProps<"/grupos">
                               </span>
                             );
                           })
-                        : "Cualquier rol"}
+                        : ts("anyRole")}
                     </dd>
                   </div>
                   <div className="flex gap-2">
-                    <dt className="text-muted">Rango:</dt>
-                    <dd>{ranks[0] || ranks[1] ? `${ranks[0] ?? "—"} a ${ranks[1] ?? "—"}` : "Cualquiera"}</dd>
+                    <dt className="text-muted">{ts("rankLabel")}</dt>
+                    <dd>{ranks[0] || ranks[1] ? ts("rankRange", { min: ranks[0] ?? "—", max: ranks[1] ?? "—" }) : ts("anyRank")}</dd>
                   </div>
                   <div className="flex gap-2">
-                    <dt className="text-muted">Cuándo:</dt>
-                    <dd>{formatStart(l.starts_at)}</dd>
+                    <dt className="text-muted">{ts("whenLabel")}</dt>
+                    <dd>{formatStart(l.starts_at, locale)}</dd>
                   </div>
                   {(l.region_id || l.language || l.goal) && (
                     <div className="flex gap-2">
-                      <dt className="text-muted">Más:</dt>
+                      <dt className="text-muted">{ts("moreLabel")}</dt>
                       <dd>
                         {[
                           label(catalog.regions, l.region_id),
-                          l.language ? LANGUAGES[l.language as keyof typeof LANGUAGES] : null,
-                          l.goal ? GOALS[l.goal as keyof typeof GOALS] : null,
+                          l.language ? to(`languages.${l.language}` as never) : null,
+                          l.goal ? to(`goals.${l.goal}` as never) : null,
                         ]
                           .filter(Boolean)
                           .join(" · ")}
@@ -177,9 +179,9 @@ export default async function LobbiesPage({ searchParams }: PageProps<"/grupos">
                 <Link
                   href={`/grupos/${l.id}`}
                   className="mt-auto inline-flex min-h-11 items-center justify-center rounded-md border border-line px-4 text-sm hover:bg-panel-hover"
-                  aria-label={`Ver grupo ${modeName} de ${owner}`}
+                  aria-label={t("viewLabel", { mode: modeName, owner })}
                 >
-                  Ver grupo
+                  {t("view")}
                 </Link>
               </li>
             );

@@ -1,6 +1,8 @@
 "use client";
 
+import { useTranslations } from "next-intl";
 import { useActionState } from "react";
+import { optionKeys } from "@/lib/profile/options";
 import { KARMA_TAGS, REPORT_REASONS } from "@/lib/trust/options";
 import {
   blockAction,
@@ -26,18 +28,19 @@ function Status({ state }: { state: TrustState }) {
 
 export function BlockButton({ userId, blocked, name }: { userId: string; blocked: boolean; name: string }) {
   const [state, action, pending] = useActionState<TrustState, FormData>(blockAction, null);
+  const t = useTranslations("trust");
   return (
     <form
       action={action}
       onSubmit={(e) => {
-        if (!blocked && !window.confirm(`¿Bloquear a ${name}? No os veréis en búsquedas ni grupos.`)) e.preventDefault();
+        if (!blocked && !window.confirm(t("blockConfirm", { name }))) e.preventDefault();
       }}
       className="flex flex-wrap items-center gap-2"
     >
       <input type="hidden" name="user_id" value={userId} />
       <input type="hidden" name="intent" value={blocked ? "unblock" : "block"} />
       <button type="submit" disabled={pending} className={`${btn} border border-line hover:bg-panel-hover`}>
-        {blocked ? "Desbloquear" : "Bloquear"}
+        {blocked ? t("unblock") : t("block")}
       </button>
       <Status state={state} />
     </form>
@@ -48,7 +51,7 @@ export function ReportForm({
   targetId,
   messageId,
   lobbyId,
-  label = "Denunciar",
+  label,
 }: {
   targetId: string;
   messageId?: number;
@@ -56,36 +59,38 @@ export function ReportForm({
   label?: string;
 }) {
   const [state, action, pending] = useActionState<TrustState, FormData>(reportAction, null);
+  const t = useTranslations("trust");
+  const to = useTranslations("options.reportReasons");
   const id = `rep-${targetId}-${messageId ?? "u"}`;
   if (state?.ok) return <Status state={state} />;
   return (
     <details className="text-sm">
-      <summary className="min-h-11 cursor-pointer py-2 text-muted hover:text-text">{label}</summary>
+      <summary className="min-h-11 cursor-pointer py-2 text-muted hover:text-text">{label ?? t("report")}</summary>
       <form action={action} className="mt-2 flex flex-col gap-2 rounded-md border border-line bg-bg p-3">
         <input type="hidden" name="target" value={targetId} />
         {messageId != null && <input type="hidden" name="message_id" value={messageId} />}
         {lobbyId && <input type="hidden" name="lobby_id" value={lobbyId} />}
         <label htmlFor={`${id}-reason`} className="font-medium">
-          Motivo
+          {t("reason")}
         </label>
         <select id={`${id}-reason`} name="reason" defaultValue="" required className={control}>
           <option value="" disabled>
-            Elige un motivo
+            {t("chooseReasonOption")}
           </option>
-          {Object.entries(REPORT_REASONS).map(([k, v]) => (
+          {optionKeys(REPORT_REASONS).map((k) => (
             <option key={k} value={k}>
-              {v}
+              {to(k)}
             </option>
           ))}
         </select>
         <label htmlFor={`${id}-details`} className="font-medium">
-          Detalles (opcional)
+          {t("details")}
         </label>
         <textarea id={`${id}-details`} name="details" maxLength={500} rows={3} className={`${control} py-2`} />
-        <p className="text-xs text-muted">La persona denunciada no sabrá quién la ha denunciado.</p>
+        <p className="text-xs text-muted">{t("anonymous")}</p>
         <div className="flex flex-wrap items-center gap-3">
           <button type="submit" disabled={pending} className={`${btn} border border-danger text-danger hover:bg-panel-hover`}>
-            Enviar denuncia
+            {t("send")}
           </button>
           <Status state={state} />
         </div>
@@ -96,27 +101,29 @@ export function ReportForm({
 
 export function KarmaVote({ lobbyId, targetId, name }: { lobbyId: string; targetId: string; name: string }) {
   const [state, action, pending] = useActionState<TrustState, FormData>(voteAction, null);
+  const t = useTranslations("trust");
+  const to = useTranslations("options.karmaTags");
   if (state?.ok) return <Status state={state} />;
   return (
     <form action={action} className="flex flex-col gap-2">
       <input type="hidden" name="lobby_id" value={lobbyId} />
       <input type="hidden" name="target" value={targetId} />
       <input type="hidden" name="value" value="1" />
-      <p className="text-sm font-medium">¿Quieres reconocer a {name}?</p>
+      <p className="text-sm font-medium">{t("voteQuestion", { name })}</p>
       <fieldset>
-        <legend className="text-sm text-muted">Por qué (hasta 3, opcional)</legend>
+        <legend className="text-sm text-muted">{t("voteWhy")}</legend>
         <div className="mt-2 flex flex-wrap gap-2">
-          {Object.entries(KARMA_TAGS).map(([k, v]) => (
+          {optionKeys(KARMA_TAGS).map((k) => (
             <label key={k} className="flex min-h-11 items-center gap-2 rounded-md border border-line px-3 text-sm has-[:checked]:border-accent">
               <input type="checkbox" name="tags" value={k} className="size-4 accent-accent" />
-              {v}
+              {to(k)}
             </label>
           ))}
         </div>
       </fieldset>
       <div className="flex flex-wrap items-center gap-3">
         <button type="submit" disabled={pending} className={`${btn} bg-accent font-semibold text-bg hover:bg-accent-soft`}>
-          Dar reconocimiento
+          {t("vote")}
         </button>
         <Status state={state} />
       </div>
@@ -126,20 +133,21 @@ export function KarmaVote({ lobbyId, targetId, name }: { lobbyId: string; target
 
 export function ResolveForm({ reportId }: { reportId: string }) {
   const [state, action, pending] = useActionState<TrustState, FormData>(resolveAction, null);
+  const t = useTranslations("trust");
   if (state?.ok) return <Status state={state} />;
   return (
     <form action={action} className="flex flex-col gap-2">
       <input type="hidden" name="report_id" value={reportId} />
       <label htmlFor={`note-${reportId}`} className="text-sm font-medium">
-        Nota de moderación (opcional)
+        {t("modNote")}
       </label>
       <input id={`note-${reportId}`} name="note" maxLength={500} className={control} />
       <div className="flex flex-wrap items-center gap-2">
         <button type="submit" name="status" value="actioned" disabled={pending} className={`${btn} bg-accent font-semibold text-bg`}>
-          Marcar como actuada
+          {t("actioned")}
         </button>
         <button type="submit" name="status" value="dismissed" disabled={pending} className={`${btn} border border-line hover:bg-panel-hover`}>
-          Descartar
+          {t("dismiss")}
         </button>
         <Status state={state} />
       </div>
@@ -149,15 +157,16 @@ export function ResolveForm({ reportId }: { reportId: string }) {
 
 export function DeleteAccountForm() {
   const [state, action, pending] = useActionState<TrustState, FormData>(deleteAccountAction, null);
+  const t = useTranslations("trust");
   return (
     <form action={action} className="flex flex-col gap-2">
       <label htmlFor="confirm" className="text-sm font-medium">
-        Escribe BORRAR para confirmar
+        {t("confirmLabel", { word: t("confirmWord") })}
       </label>
       <input id="confirm" name="confirm" autoComplete="off" className={`${control} sm:w-60`} />
       <div className="flex flex-wrap items-center gap-3">
         <button type="submit" disabled={pending} className={`${btn} border border-danger text-danger hover:bg-panel-hover`}>
-          Borrar mi cuenta
+          {t("deleteAccount")}
         </button>
         <Status state={state} />
       </div>
@@ -169,29 +178,31 @@ export function DeleteAccountForm() {
 export function RestrictForm({ userId, reportId }: { userId: string; reportId?: string }) {
   const [state, action, pending] = useActionState<TrustState, FormData>(restrictAction, null);
   const id = `res-${reportId ?? userId}`;
+  const t = useTranslations("trust");
   if (state?.ok) return <Status state={state} />;
   return (
     <details className="text-sm">
-      <summary className="min-h-11 cursor-pointer py-2 text-muted hover:text-text">Restringir temporalmente</summary>
+      <summary className="min-h-11 cursor-pointer py-2 text-muted hover:text-text">{t("restrictTitle")}</summary>
       <form action={action} className="mt-2 flex flex-col gap-2 rounded-md border border-line bg-bg p-3">
         <input type="hidden" name="user_id" value={userId} />
         {reportId && <input type="hidden" name="report_id" value={reportId} />}
         <label htmlFor={`${id}-days`} className="font-medium">
-          Duración
+          {t("duration")}
         </label>
         <select id={`${id}-days`} name="days" defaultValue="7" className={control}>
-          <option value="1">1 día</option>
-          <option value="3">3 días</option>
-          <option value="7">7 días</option>
-          <option value="30">30 días</option>
+          {[1, 3, 7, 30].map((d) => (
+            <option key={d} value={d}>
+              {t("days", { count: d })}
+            </option>
+          ))}
         </select>
         <label htmlFor={`${id}-reason`} className="font-medium">
-          Motivo (lo verá la persona)
+          {t("restrictReason")}
         </label>
         <input id={`${id}-reason`} name="reason" required minLength={3} maxLength={500} className={control} />
         <div className="flex flex-wrap items-center gap-3">
           <button type="submit" disabled={pending} className={`${btn} border border-danger text-danger hover:bg-panel-hover`}>
-            Restringir
+            {t("restrict")}
           </button>
           <Status state={state} />
         </div>
@@ -202,12 +213,13 @@ export function RestrictForm({ userId, reportId }: { userId: string; reportId?: 
 
 export function LiftRestrictionButton({ restrictionId }: { restrictionId: string }) {
   const [state, action, pending] = useActionState<TrustState, FormData>(liftRestrictionAction, null);
+  const t = useTranslations("trust");
   if (state?.ok) return <Status state={state} />;
   return (
     <form action={action} className="flex flex-wrap items-center gap-2">
       <input type="hidden" name="restriction_id" value={restrictionId} />
       <button type="submit" disabled={pending} className={`${btn} border border-line hover:bg-panel-hover`}>
-        Levantar
+        {t("lift")}
       </button>
       <Status state={state} />
     </form>

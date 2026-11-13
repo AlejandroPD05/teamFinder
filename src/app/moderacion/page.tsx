@@ -1,15 +1,14 @@
-import type { Metadata } from "next";
+import { getLocale, getTranslations } from "next-intl/server";
+import { INTL_LOCALE } from "@/lib/i18n/locale";
+import { titled } from "@/lib/i18n/metadata";
 import Link from "next/link";
 import { notFound, redirect } from "next/navigation";
 import { loadNames } from "@/lib/lobbies/queries";
-import { REPORT_REASONS } from "@/lib/trust/options";
 import { createClient } from "@/lib/supabase/server";
 import { LiftRestrictionButton, ResolveForm, RestrictForm } from "../confianza/forms";
 import { ReviewFanart } from "../coleccion/fanart/forms";
 
-export const metadata: Metadata = { title: "Moderación", robots: { index: false } };
-
-const when = new Intl.DateTimeFormat("es-ES", { timeZone: "Europe/Madrid", dateStyle: "medium", timeStyle: "short" });
+export const generateMetadata = titled("moderation", { robots: { index: false } });
 
 export default async function ModerationPage() {
   const supabase = await createClient();
@@ -44,49 +43,51 @@ export default async function ModerationPage() {
     ...(restrictions ?? []).map((r) => r.user_id),
     ...(fanart ?? []).map((f) => f.user_id),
   ]);
+  const [t, to, locale] = await Promise.all([getTranslations("moderation"), getTranslations("options.reportReasons"), getLocale()]);
+  const when = new Intl.DateTimeFormat(INTL_LOCALE[locale], { timeZone: "Europe/Madrid", dateStyle: "medium", timeStyle: "short" });
   const fanartUrl = (path: string) => supabase.storage.from("fanart").getPublicUrl(path).data.publicUrl;
 
   return (
     <section className="flex flex-col gap-6">
       <div>
-        <h1 className="font-display text-3xl font-semibold">Moderación</h1>
-        <p className="text-muted">Denuncias abiertas, más antiguas primero. Cada resolución queda registrada.</p>
+        <h1 className="font-display text-3xl font-semibold">{t("title")}</h1>
+        <p className="text-muted">{t("lead")}</p>
       </div>
       {list.length === 0 ? (
-        <p className="rounded-lg border border-dashed border-line p-6 text-center text-muted">No hay denuncias abiertas.</p>
+        <p className="rounded-lg border border-dashed border-line p-6 text-center text-muted">{t("none")}</p>
       ) : (
         <ul className="flex flex-col gap-4">
           {list.map((r) => (
             <li key={r.id} className="flex flex-col gap-3 surface p-5">
               <div className="flex flex-wrap items-baseline justify-between gap-2">
-                <h2 className="font-semibold">{REPORT_REASONS[r.reason]}</h2>
+                <h2 className="font-semibold">{to(r.reason)}</h2>
                 <span className="text-xs text-muted">{when.format(new Date(r.created_at))}</span>
               </div>
               <p className="text-sm">
-                Denunciado:{" "}
+                {t("reported")}{" "}
                 {r.target_user_id ? (
                   <Link href={`/jugador/${r.target_user_id}`} className="underline underline-offset-4">
-                    {names.get(r.target_user_id)?.name ?? "Jugador"}
+                    {names.get(r.target_user_id)?.name ?? t("player")}
                   </Link>
                 ) : (
-                  <span className="text-muted">cuenta borrada</span>
+                  <span className="text-muted">{t("deletedAccount")}</span>
                 )}
                 {r.clip_id && (
                   <>
                     {" "}
-                    · en{" "}
+                    · {t("in")}{" "}
                     <Link href={`/clips/${r.clip_id}`} className="underline underline-offset-4">
-                      {r.clip_comment_id ? "un comentario de un clip" : "un clip"}
+                      {r.clip_comment_id ? t("aClipComment") : t("aClip")}
                     </Link>{" "}
-                    (allí se puede ocultar)
+                    {t("canHide")}
                   </>
                 )}
                 {r.lobby_id && (
                   <>
                     {" "}
-                    · en{" "}
+                    · {t("in")}{" "}
                     <Link href={`/grupos/${r.lobby_id}`} className="underline underline-offset-4">
-                      un grupo
+                      {t("aLobby")}
                     </Link>
                   </>
                 )}
@@ -94,8 +95,8 @@ export default async function ModerationPage() {
               {r.message_snapshot && (
                 <blockquote className="rounded border-l-2 border-danger bg-bg px-3 py-2 text-sm">«{r.message_snapshot}»</blockquote>
               )}
-              {r.details && <p className="text-sm text-muted">Detalles: {r.details}</p>}
-              {r.direct_message_id && <p className="text-xs text-muted">En un mensaje privado (copia arriba).</p>}
+              {r.details && <p className="text-sm text-muted">{t("details", { details: r.details })}</p>}
+              {r.direct_message_id && <p className="text-xs text-muted">{t("inDm")}</p>}
               {r.target_user_id && <RestrictForm userId={r.target_user_id} reportId={r.id} />}
               <ResolveForm reportId={r.id} />
             </li>
@@ -105,20 +106,20 @@ export default async function ModerationPage() {
 
       <section aria-labelledby="restricciones" className="flex flex-col gap-3">
         <h2 id="restricciones" className="font-display text-xl font-semibold">
-          Restricciones activas
+          {t("restrictions")}
         </h2>
         {!restrictions?.length ? (
-          <p className="text-sm text-muted">Nadie está restringido ahora mismo.</p>
+          <p className="text-sm text-muted">{t("noRestrictions")}</p>
         ) : (
           <ul className="flex flex-col gap-3">
             {restrictions.map((r) => (
               <li key={r.id} className="flex flex-wrap items-center justify-between gap-3 surface p-4">
                 <div className="text-sm">
                   <Link href={`/jugador/${r.user_id}`} className="font-semibold underline underline-offset-4">
-                    {names.get(r.user_id)?.name ?? "Jugador"}
+                    {names.get(r.user_id)?.name ?? t("player")}
                   </Link>{" "}
-                  hasta el {when.format(new Date(r.until))}
-                  <p className="text-muted">Motivo: {r.reason}</p>
+                  {t("until", { date: when.format(new Date(r.until)) })}
+                  <p className="text-muted">{t("reason", { reason: r.reason })}</p>
                 </div>
                 <LiftRestrictionButton restrictionId={r.id} />
               </li>
@@ -129,31 +130,31 @@ export default async function ModerationPage() {
 
       <section aria-labelledby="fanart" className="flex flex-col gap-3">
         <h2 id="fanart" className="font-display text-xl font-semibold">
-          Fanart pendiente
+          {t("fanart")}
         </h2>
         {!fanart?.length ? (
-          <p className="text-sm text-muted">No hay obras pendientes.</p>
+          <p className="text-sm text-muted">{t("noFanart")}</p>
         ) : (
           <ul className="flex flex-col gap-4">
             {fanart.map((f) => (
               <li key={f.id} className="grid gap-4 surface p-5 sm:grid-cols-[10rem_1fr]">
                 {/* eslint-disable-next-line @next/next/no-img-element -- vista previa sin optimizar de una subida pendiente */}
-                <img src={fanartUrl(f.image_path)} alt={`Fanart «${f.title}»`} className="aspect-[3/4] w-40 rounded-md object-cover" />
+                <img src={fanartUrl(f.image_path)} alt={t("fanartAlt", { title: f.title })} className="aspect-[3/4] w-40 rounded-md object-cover" />
                 <div className="flex flex-col gap-2">
                   <p className="font-semibold">{f.title}</p>
                   <p className="text-sm text-muted">
-                    {f.game_id} · de {f.artist_name} (cuenta:{" "}
+                    {f.game_id} · {t("byArtist", { artist: f.artist_name })} ({t("account")}{" "}
                     <Link href={`/jugador/${f.user_id}`} className="underline underline-offset-4">
-                      {names.get(f.user_id)?.name ?? "Jugador"}
+                      {names.get(f.user_id)?.name ?? t("player")}
                     </Link>
                     ) · {when.format(new Date(f.created_at))}
                   </p>
                   {f.portfolio_url && (
                     <a href={f.portfolio_url} rel="noopener noreferrer nofollow" target="_blank" className="text-sm underline underline-offset-4">
-                      Portfolio
+                      {t("portfolio")}
                     </a>
                   )}
-                  <p className="text-xs text-muted">Comprueba que no es arte oficial ni de otra persona (búsqueda inversa de imagen).</p>
+                  <p className="text-xs text-muted">{t("check")}</p>
                   <ReviewFanart id={f.id} />
                 </div>
               </li>

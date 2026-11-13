@@ -1,4 +1,5 @@
 import type { NextConfig } from "next";
+import createNextIntlPlugin from "next-intl/plugin";
 
 // CSP prudente: bloquea plugins, <base> ajenos, incrustar la web en iframes y enviar formularios a otros dominios
 // (salvo el login de Supabase/Discord). No restringe scripts para no romper la hidratación de Next sin nonces.
@@ -53,4 +54,5 @@ const nextConfig: NextConfig = {
   },
 };
 
-export default nextConfig;
+// next-intl sin rutas por idioma: la configuración por petición está en src/i18n/request.ts.
+export default createNextIntlPlugin("./src/i18n/request.ts")(nextConfig);

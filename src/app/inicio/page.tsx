@@ -1,18 +1,18 @@
 import { currentGame } from "@/lib/games";
-import type { Metadata } from "next";
 import Image from "next/image";
 import Link from "next/link";
 import { redirect } from "next/navigation";
-import { es } from "@/lib/i18n/es";
+import { getLocale, getTranslations } from "next-intl/server";
+import { titled } from "@/lib/i18n/metadata";
 import { loadOwnProfile } from "@/lib/profile/queries";
 import { profileCompletion } from "@/lib/profile/schema";
 import { ProfileSteps } from "@/components/profile-steps";
 import { loadCatalog } from "@/lib/profile/queries";
 import { AvailableNow } from "./available-now";
-import { activeRestriction, untilFormat } from "@/lib/restrictions";
+import { activeRestriction, formatUntil } from "@/lib/restrictions";
 import { createClient } from "@/lib/supabase/server";
 
-export const metadata: Metadata = { title: "Inicio" };
+export const generateMetadata = titled("dashboard");
 
 export default async function Dashboard() {
   const supabase = await createClient();
@@ -30,6 +30,12 @@ export default async function Dashboard() {
   // Cuenta nueva: primero la guía de bienvenida (juego → rol → rango).
   if (!profile.onboarded_at) redirect("/bienvenida");
   const name = profile.display_name;
+  const [t, locale] = await Promise.all([getTranslations("dashboard"), getLocale()]);
+  const link = (chunks: React.ReactNode) => (
+    <Link href="/normas" className="underline underline-offset-4">
+      {chunks}
+    </Link>
+  );
   const completion = profileCompletion({
     languages: profile.languages,
     availability: profile.availability,
@@ -46,15 +52,8 @@ export default async function Dashboard() {
     <section className="flex flex-col gap-8">
       {restriction && (
         <div role="alert" className="rounded-lg border border-danger bg-panel p-4 text-sm">
-          <p className="font-semibold">Tu cuenta está restringida hasta el {untilFormat.format(new Date(restriction.until))}.</p>
-          <p className="mt-1 text-muted">
-            Motivo: {restriction.reason}. Mientras dure no puedes crear grupos, pedir unirte, escribir mensajes, publicar clips,
-            comentar ni dar emblemas. Puedes seguir viendo la web. Si crees que es un error, escríbenos (ver{" "}
-            <Link href="/normas" className="underline underline-offset-4">
-              Normas
-            </Link>
-            ).
-          </p>
+          <p className="font-semibold">{t("restrictedUntil", { until: formatUntil(restriction.until, locale) })}</p>
+          <p className="mt-1 text-muted">{t.rich("restrictedText", { reason: restriction.reason, rules: link })}</p>
         </div>
       )}
       <div className="flex items-center gap-4">
@@ -67,8 +66,8 @@ export default async function Dashboard() {
         )}
         <div>
           <p className="kicker">{current.name}</p>
-          <h1 className="font-display text-3xl font-semibold">{es.dashboard.title(name)}</h1>
-          <p className="text-muted">{es.dashboard.lead}</p>
+          <h1 className="font-display text-3xl font-semibold">{t("title", { name })}</h1>
+          <p className="text-muted">{t("lead")}</p>
         </div>
       </div>
 
@@ -83,12 +82,12 @@ export default async function Dashboard() {
 
       <div className="surface hud p-5">
         <div className="flex flex-wrap items-center justify-between gap-3">
-          <h2 className="font-semibold">{es.dashboard.profileTitle}</h2>
-          <span className="text-sm text-muted">{completion.percent}% completado</span>
+          <h2 className="font-semibold">{t("profileTitle")}</h2>
+          <span className="text-sm text-muted">{t("percent", { percent: completion.percent })}</span>
         </div>
         <div
           role="progressbar"
-          aria-label="Perfil completado"
+          aria-label={t("progressLabel")}
           aria-valuenow={completion.percent}
           aria-valuemin={0}
           aria-valuemax={100}
@@ -104,46 +103,46 @@ export default async function Dashboard() {
             href="/perfil/editar"
             className="btn-primary"
           >
-            {completion.percent === 100 ? "Editar perfil" : "Completar perfil"}
+            {completion.percent === 100 ? t("editProfile") : t("completeProfile")}
           </Link>
           <Link
             href={`/jugador/${userId}`}
             className="btn-ghost"
           >
-            Ver mi perfil público
+            {t("publicProfile")}
           </Link>
         </div>
         {current.id === "valorant" && (
-          <p className="mt-4 inline-block rounded border border-line px-2 py-1 text-xs text-muted">{es.dashboard.riot}</p>
+          <p className="mt-4 inline-block rounded border border-line px-2 py-1 text-xs text-muted">{t("riot")}</p>
         )}
       </div>
 
-      <nav aria-label="Equipos, ranking, misiones y colección" className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
+      <nav aria-label={t("moreLabel")} className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
         <Link href="/mis-equipos" className="surface surface-interactive flex min-h-11 flex-col gap-1 p-5">
-          <span className="font-display text-lg font-semibold">Mis equipos</span>
-          <span className="text-sm text-muted">Tu grupo de siempre, con su propio chat.</span>
+          <span className="font-display text-lg font-semibold">{t("teams")}</span>
+          <span className="text-sm text-muted">{t("teamsText")}</span>
         </Link>
         <Link href="/ranking" className="surface surface-interactive flex min-h-11 flex-col gap-1 p-5">
-          <span className="font-display text-lg font-semibold">Ranking semanal</span>
-          <span className="text-sm text-muted">Los mejores compañeros de {current.name} esta semana.</span>
+          <span className="font-display text-lg font-semibold">{t("ranking")}</span>
+          <span className="text-sm text-muted">{t("rankingText", { game: current.name })}</span>
         </Link>
         <Link href="/misiones" className="surface surface-interactive flex min-h-11 flex-col gap-1 p-5">
-          <span className="font-display text-lg font-semibold">Misiones</span>
-          <span className="text-sm text-muted">Llena grupos y gana cartas de {current.name}.</span>
+          <span className="font-display text-lg font-semibold">{t("missions")}</span>
+          <span className="text-sm text-muted">{t("missionsText", { game: current.name })}</span>
         </Link>
         <Link href="/coleccion" className="surface surface-interactive flex min-h-11 flex-col gap-1 p-5">
-          <span className="font-display text-lg font-semibold">Mi colección</span>
-          <span className="text-sm text-muted">Las cartas que has conseguido.</span>
+          <span className="font-display text-lg font-semibold">{t("collection")}</span>
+          <span className="text-sm text-muted">{t("collectionText")}</span>
         </Link>
       </nav>
 
-      <nav aria-label="Cuenta" className="flex flex-wrap gap-3 text-sm">
+      <nav aria-label={t("accountLabel")} className="flex flex-wrap gap-3 text-sm">
         <Link href="/ajustes" className="inline-flex min-h-11 items-center rounded-md border border-line px-4 hover:bg-panel-hover">
-          Ajustes, bloqueados y borrar cuenta
+          {t("settings")}
         </Link>
         {isAdmin && (
           <Link href="/moderacion" className="inline-flex min-h-11 items-center rounded-md border border-line px-4 hover:bg-panel-hover">
-            Moderación
+            {t("moderation")}
           </Link>
         )}
       </nav>

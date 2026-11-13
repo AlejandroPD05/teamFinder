@@ -1,15 +1,17 @@
-import type { Metadata } from "next";
 import Link from "next/link";
-import { ContactEmail, LegalVersion, Section } from "../legal-parts";
+import { titled } from "@/lib/i18n/metadata";
+import { BindingNotice, ContactEmail, LegalVersion, Section } from "../legal-parts";
 
-export const metadata: Metadata = { title: "Normas de la comunidad", alternates: { canonical: "/normas" } };
+export const generateMetadata = titled("rules", { alternates: { canonical: "/normas" } });
 
 // Normas basadas en las de los editores (Riot, EA, Valve) y en las de plataformas parecidas (Discord, Twitch, FACEIT,
 // Reddit), con el procedimiento de avisos y sanciones del Reglamento de Servicios Digitales (arts. 14, 16 y 17).
 // Solo prometen lo que la web hace hoy (restricciones temporales: migración 20261113000000).
 export default function RulesPage() {
   return (
-    <article className="mx-auto flex max-w-2xl flex-col gap-6">
+    // Texto legal solo en español (la versión vinculante); en inglés se añade un aviso con un resumen.
+    <article lang="es" className="mx-auto flex max-w-2xl flex-col gap-6">
+      <BindingNotice page="rules" />
       <h1 className="font-display text-3xl font-semibold">Normas de la comunidad</h1>
       <LegalVersion />
       <p className="text-sm text-muted">

@@ -3,7 +3,10 @@ import { Chakra_Petch, Geist } from "next/font/google";
 import { Bell, ExternalLink, LogIn, LogOut } from "lucide-react";
 import Link from "next/link";
 import { APP_NAME, discordInvite, GOOGLE_SITE_VERIFICATION } from "@/lib/config";
-import { es } from "@/lib/i18n/es";
+import { NextIntlClientProvider } from "next-intl";
+import { getLocale, getTranslations } from "next-intl/server";
+import { OG_LOCALE } from "@/lib/i18n/locale";
+import { LanguageSwitcher } from "./language-switcher";
 import { createClient } from "@/lib/supabase/server";
 import { signOut } from "./auth/salir/actions";
 import { GameSync } from "./game-switcher";
@@ -21,24 +24,28 @@ import "./globals.css";
 const geistSans = Geist({ variable: "--font-geist-sans", subsets: ["latin"] });
 const chakra = Chakra_Petch({ variable: "--font-chakra", subsets: ["latin"], weight: ["500", "600", "700"] });
 
-const baseMetadata: Metadata = {
-  metadataBase: new URL(siteUrl()),
-  title: { default: es.meta.title, template: `%s · ${APP_NAME}` },
-  description: es.meta.description,
-  applicationName: APP_NAME,
-  openGraph: { type: "website", siteName: APP_NAME, locale: "es_ES", title: es.meta.title, description: es.meta.description },
-  twitter: { card: "summary_large_image" },
-  robots: indexable() ? undefined : { index: false, follow: false },
-  // Verificación de Google Search Console (meta etiqueta). No es secreto: Google lo lee del HTML público.
-  verification: { google: process.env.GOOGLE_SITE_VERIFICATION || GOOGLE_SITE_VERIFICATION },
-};
-
-// El favicon es el logo de la web con el color del juego elegido (src/app/icono/[juego]).
+// El favicon es el logo de la web con el color del juego elegido (src/app/icono/[juego]). Títulos en el idioma elegido.
 export async function generateMetadata(): Promise<Metadata> {
-  const { game } = await currentGame();
+  const [{ game }, locale, t] = await Promise.all([currentGame(), getLocale(), getTranslations("meta")]);
   const id = encodeURIComponent(game?.id ?? "valorant");
   return {
-    ...baseMetadata,
+    metadataBase: new URL(siteUrl()),
+    title: { default: t("title"), template: `%s · ${APP_NAME}` },
+    description: t("description"),
+    applicationName: APP_NAME,
+    openGraph: {
+      type: "website",
+      siteName: APP_NAME,
+      locale: OG_LOCALE[locale],
+      title: t("title"),
+      description: t("description"),
+      // La imagen es src/app/opengraph-image.tsx; aquí solo para poner su texto alternativo en el idioma de la página.
+      images: [{ url: "/opengraph-image", alt: t("ogAlt", { app: APP_NAME }), width: 1200, height: 630, type: "image/png" }],
+    },
+    twitter: { card: "summary_large_image" },
+    robots: indexable() ? undefined : { index: false, follow: false },
+    // Verificación de Google Search Console (meta etiqueta). No es secreto: Google lo lee del HTML público.
+    verification: { google: process.env.GOOGLE_SITE_VERIFICATION || GOOGLE_SITE_VERIFICATION },
     icons: {
       icon: [{ url: `/icono/${id}`, type: "image/svg+xml" }],
       apple: [{ url: `/icono/${id}/apple`, sizes: "180x180", type: "image/png" }],
@@ -50,7 +57,7 @@ export const viewport: Viewport = { themeColor: "#0b0c12" };
 
 export default async function RootLayout({ children }: LayoutProps<"/">) {
   const supabase = await createClient();
-  const { data } = await supabase.auth.getClaims();
+  const [{ data }, locale, t] = await Promise.all([supabase.auth.getClaims(), getLocale(), getTranslations()]);
   const signedIn = Boolean(data?.claims?.sub);
   const { game, games, saved } = await currentGame();
   // Sin leer: salas de grupo + mensajes privados (pestaña Mensajes) y notificaciones (campana).
@@ -67,8 +74,9 @@ export default async function RootLayout({ children }: LayoutProps<"/">) {
   const unreadNotes = notes?.count ?? 0;
 
   return (
-    <html lang="es" data-game={game?.id} style={themeStyle(game)} className={`${geistSans.variable} ${chakra.variable} h-full antialiased`}>
+    <html lang={locale} data-game={game?.id} style={themeStyle(game)} className={`${geistSans.variable} ${chakra.variable} h-full antialiased`}>
       <body className="flex min-h-full flex-col font-sans">
+        <NextIntlClientProvider>
         <SpotlightTracker />
         <ServiceWorkerRegister />
         {signedIn && <LiveAlerts me={data!.claims!.sub as string} />}
@@ -76,14 +84,14 @@ export default async function RootLayout({ children }: LayoutProps<"/">) {
           href="#contenido"
           className="sr-only focus:not-sr-only focus:absolute focus:left-4 focus:top-4 focus:z-50 focus:rounded-md focus:bg-panel focus:px-4 focus:py-2"
         >
-          {es.nav.skip}
+          {t("nav.skip")}
         </a>
         <header className="site-header sticky top-0 z-40">
           <nav
-            aria-label="Principal"
+            aria-label={t("nav.main")}
             className="mx-auto flex max-w-6xl flex-wrap items-center justify-between px-4 sm:h-16 sm:flex-nowrap sm:gap-4"
           >
-            <Link href="/" className="flex min-h-14 items-center" aria-label={`${APP_NAME}, inicio`}>
+            <Link href="/" className="flex min-h-14 items-center" aria-label={t("nav.home", { app: APP_NAME })}>
               <Logo />
             </Link>
             <GameSync games={games} current={game?.id ?? ""} saved={saved} />
@@ -93,7 +101,7 @@ export default async function RootLayout({ children }: LayoutProps<"/">) {
                 <div className="flex items-center">
                 <Link
                   href="/notificaciones"
-                  aria-label={unreadNotes > 0 ? `Notificaciones, ${unreadNotes} sin leer` : "Notificaciones"}
+                  aria-label={unreadNotes > 0 ? t("nav.notificationsUnread", { count: unreadNotes }) : t("nav.notifications")}
                   className="relative inline-flex min-h-11 min-w-11 items-center justify-center rounded-md text-muted hover:bg-panel hover:text-text"
                 >
                   <Bell aria-hidden="true" className="size-5" />
@@ -109,7 +117,7 @@ export default async function RootLayout({ children }: LayoutProps<"/">) {
                     className="inline-flex min-h-11 items-center gap-2 whitespace-nowrap rounded-md px-3 text-sm text-muted hover:bg-panel hover:text-text"
                   >
                     <LogOut aria-hidden="true" className="size-4" />
-                    {es.nav.logout}
+                    {t("nav.logout")}
                   </button>
                 </form>
                 </div>
@@ -117,7 +125,7 @@ export default async function RootLayout({ children }: LayoutProps<"/">) {
             ) : (
               <Link href="/entrar" className="btn-ghost">
                 <LogIn aria-hidden="true" className="size-4" />
-                {es.nav.login}
+                {t("nav.login")}
               </Link>
             )}
           </nav>
@@ -127,34 +135,36 @@ export default async function RootLayout({ children }: LayoutProps<"/">) {
         </main>
         <footer className="mt-12 border-t border-line bg-bg-raised">
           <div className="mx-auto flex max-w-6xl flex-col gap-3 px-4 py-6 text-sm text-muted">
-            <nav aria-label="Pie" className="flex flex-wrap items-center gap-x-5">
-              <span className="font-display text-text">{APP_NAME} · beta</span>
+            <nav aria-label={t("footer.label")} className="flex flex-wrap items-center gap-x-5">
+              <span className="font-display text-text">{t("footer.beta", { app: APP_NAME })}</span>
               <Link href="/demo" className="inline-flex min-h-11 items-center hover:text-text">
-                Demo
+                {t("footer.demo")}
               </Link>
               <Link href="/normas" className="inline-flex min-h-11 items-center hover:text-text">
-                Normas
+                {t("footer.rules")}
               </Link>
               <Link href="/privacidad" className="inline-flex min-h-11 items-center hover:text-text">
-                Privacidad
+                {t("footer.privacy")}
               </Link>
               {discordInvite() && (
                 <a href={discordInvite()!} rel="noopener noreferrer" target="_blank" className="inline-flex min-h-11 items-center gap-1.5 hover:text-text">
-                  Discord de la comunidad
+                  {t("footer.discord")}
                   <ExternalLink aria-hidden="true" className="size-3.5" />
-                  <span className="sr-only"> (se abre en otra pestaña)</span>
+                  <span className="sr-only"> {t("common.newTab")}</span>
                 </a>
               )}
             </nav>
+            <LanguageSwitcher />
             <p lang="en" className="max-w-3xl text-xs leading-relaxed">
-              {es.legal.riot}
+              {t("legal.riot")}
             </p>
             <p lang="en" className="max-w-3xl text-xs leading-relaxed">
-              {es.legal.valve} {es.legal.ea}
+              {t("legal.valve")} {t("legal.ea")}
             </p>
-            <p className="max-w-3xl text-xs leading-relaxed">{es.legal.fan}</p>
+            <p className="max-w-3xl text-xs leading-relaxed">{t("legal.fan")}</p>
           </div>
         </footer>
+        </NextIntlClientProvider>
       </body>
     </html>
   );

@@ -1,9 +1,9 @@
-import type { Metadata } from "next";
+import { titled } from "@/lib/i18n/metadata";
 import { redirect } from "next/navigation";
 import { createClient } from "@/lib/supabase/server";
 import PlayerPage from "../jugador/[id]/page";
 
-export const metadata: Metadata = { title: "Mi perfil" };
+export const generateMetadata = titled("profile");
 
 /** «Mi perfil»: resumen del perfil propio tal como lo ven los demás, con el botón para editarlo. */
 export default async function MyProfilePage() {

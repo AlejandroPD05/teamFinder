@@ -1,16 +1,20 @@
 import { z } from "zod";
 import { parseClipUrl } from "./links";
-import { RESTRICTED_MESSAGE } from "@/lib/restrictions";
+import type { AppLocale } from "@/lib/i18n/locale";
+import { errorMessage, translator } from "@/lib/i18n/translator";
 
-export const postClipSchema = z.object({
+/** Esquemas de clips con los mensajes en el idioma pedido. */
+export function postClipSchemaFor(locale: AppLocale) {
+  const t = translator(locale, "validation.clip");
+  return z.object({
   url: z
     .string()
     .trim()
-    .max(300, "Enlace demasiado largo.")
+    .max(300, t("urlMax"))
     .transform((u, ctx) => {
       const ref = parseClipUrl(u);
       if (!ref) {
-        ctx.addIssue({ code: "custom", message: "Pega un enlace de YouTube, de un clip de Twitch o de Streamable." });
+        ctx.addIssue({ code: "custom", message: t("url") });
         return z.NEVER;
       }
       return ref;
@@ -18,35 +22,23 @@ export const postClipSchema = z.object({
   title: z
     .string()
     .trim()
-    .min(3, "El título necesita al menos 3 caracteres.")
-    .max(80, "El título no puede pasar de 80 caracteres.")
-    .regex(/^[^<>]+$/, "El título no puede contener < ni >."),
-  emblem: z.uuid("Elige una categoría."),
-});
+    .min(3, t("titleMin"))
+    .max(80, t("titleMax"))
+    .regex(/^[^<>]+$/, t("titleChars")),
+  emblem: z.uuid(t("emblem")),
+  });
+}
 
-export const commentSchema = z
-  .string()
-  .trim()
-  .min(1, "Escribe algo.")
-  .max(300, "Como mucho 300 caracteres.");
+export const postClipSchema = postClipSchemaFor("es");
 
-/** Mensajes para los errores de las funciones de la base de datos (pista `hint`). */
-export function clipError(hint: string | undefined): string {
-  switch (hint) {
-    case "rate_limited":
-      return "Has llegado al límite por ahora. Prueba más tarde.";
-    case "duplicate":
-      return "Ese clip ya está publicado.";
-    case "own":
-      return "No puedes dar emblemas a tus propios clips.";
-    case "not_found":
-    case "invalid":
-      return "Ese clip ya no está disponible.";
-    case "self":
-      return "No puedes denunciarte.";
-    case "restricted":
-      return RESTRICTED_MESSAGE;
-    default:
-      return "No se pudo completar. Inténtalo de nuevo.";
-  }
+export function commentSchemaFor(locale: AppLocale) {
+  const t = translator(locale, "validation.clip");
+  return z.string().trim().min(1, t("commentMin")).max(300, t("commentMax"));
+}
+
+export const commentSchema = commentSchemaFor("es");
+
+/** Mensajes para los errores de las funciones de la base de datos (pista `hint`, errors.clip). */
+export function clipError(hint: string | undefined, locale: AppLocale = "es"): string {
+  return errorMessage("clip", hint, locale);
 }

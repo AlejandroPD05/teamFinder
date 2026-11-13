@@ -1,3 +1,6 @@
+import { INTL_LOCALE, type AppLocale } from "./i18n/locale";
+import { translator } from "./i18n/translator";
+
 // Ranking semanal comunitario (migración 20261116000000_weekly_ranking.sql). Las reglas se muestran tal cual en
 // /ranking: si cambian aquí, cambian también en la función de la base de datos.
 
@@ -14,19 +17,14 @@ export function rankTier(pos: number): RankTier {
   return pos === 1 ? "top1" : pos <= 3 ? "podium" : "top10";
 }
 
-export const TIER_LABEL: Record<RankTier, string> = {
-  top1: "Top 1 semanal",
-  podium: "Podio semanal",
-  top10: "Top 10 semanal",
-};
-
-const day = new Intl.DateTimeFormat("es-ES", { day: "numeric", month: "short", timeZone: "UTC" });
+// Los nombres de cada insignia están en messages/*.json (ranking.tier).
 
 /** «del 10 nov al 16 nov» para una semana que empieza en `weekStart` (AAAA-MM-DD, lunes). */
-export function weekLabel(weekStart: string): string {
+export function weekLabel(weekStart: string, locale: AppLocale = "es"): string {
+  const day = new Intl.DateTimeFormat(INTL_LOCALE[locale], { day: "numeric", month: "short", timeZone: "UTC" });
   const start = new Date(`${weekStart}T00:00:00Z`);
   const end = new Date(start.getTime() + 6 * 86_400_000);
-  return `del ${day.format(start)} al ${day.format(end)}`;
+  return translator(locale, "ranking")("weekRange", { start: day.format(start), end: day.format(end) });
 }
 
 /** Lunes de la semana actual en España, como AAAA-MM-DD. */

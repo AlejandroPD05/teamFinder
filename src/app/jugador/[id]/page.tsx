@@ -1,16 +1,17 @@
 import { currentGame } from "@/lib/games";
-import type { Metadata } from "next";
+import { getLocale, getTranslations } from "next-intl/server";
+import { titled } from "@/lib/i18n/metadata";
+import { INTL_LOCALE } from "@/lib/i18n/locale";
 import Image from "next/image";
 import Link from "next/link";
 import { notFound } from "next/navigation";
 import { z } from "zod";
-import { AVAILABILITY, CHARACTER_STATUS, GOALS, LANGUAGES, VOICE, type CharacterStatus } from "@/lib/profile/options";
+import { CHARACTER_STATUS, type CharacterStatus } from "@/lib/profile/options";
 import { loadCatalog, loadPublicProfile } from "@/lib/profile/queries";
-import { KARMA_TAGS } from "@/lib/trust/options";
 import { CharacterIcon } from "@/components/game-icons";
 import { NumberRoll } from "@/components/number-roll";
-import { rankTier, TIER_LABEL, weekLabel } from "@/lib/ranking";
-import { MATCH_RESULTS, matchSummary } from "@/lib/matches";
+import { rankTier, weekLabel } from "@/lib/ranking";
+import { matchSummary } from "@/lib/matches";
 import { createClient } from "@/lib/supabase/server";
 import { SOCIALS } from "@/lib/profile/schema";
 import { BlockButton, ReportForm } from "../../confianza/forms";
@@ -23,12 +24,8 @@ type Badges = {
   rank_awards?: { game_id: string; week_start: string; pos: number; points: number }[];
 };
 
-const weekFmt = new Intl.DateTimeFormat("es-ES", { day: "numeric", month: "short", timeZone: "UTC" });
-
 // Perfiles: datos personales, fuera de los buscadores aunque sean públicos.
-export const metadata: Metadata = { title: "Perfil de jugador", robots: { index: false, follow: false } };
-
-const label = <T extends Record<string, string>>(o: T, k: string) => (o as Record<string, string>)[k] ?? k;
+export const generateMetadata = titled("player", { robots: { index: false, follow: false } });
 
 function Row({ title, value }: { title: string; value: React.ReactNode }) {
   return (
@@ -39,11 +36,11 @@ function Row({ title, value }: { title: string; value: React.ReactNode }) {
   );
 }
 
-/** null = oculto por privacidad; [] = sin rellenar. */
-function list(values: string[] | null, dict: Record<string, string>) {
-  if (values == null) return <span className="text-muted">Oculto</span>;
-  if (values.length === 0) return <span className="text-muted">Sin indicar</span>;
-  return values.map((v) => label(dict, v)).join(" · ");
+/** null = oculto por privacidad; [] = sin rellenar. `label` da el texto de cada opción. */
+function list(values: string[] | null, label: (v: string) => string, t: (k: "hidden" | "unset") => string) {
+  if (values == null) return <span className="text-muted">{t("hidden")}</span>;
+  if (values.length === 0) return <span className="text-muted">{t("unset")}</span>;
+  return values.map(label).join(" · ");
 }
 
 export default async function PlayerPage({ params }: PageProps<"/jugador/[id]">) {
@@ -58,6 +55,10 @@ export default async function PlayerPage({ params }: PageProps<"/jugador/[id]">)
     currentGame(),
   ]);
   if (!data.profile) notFound();
+  const [t, to, tr, locale] = await Promise.all([getTranslations("player"), getTranslations("options"), getTranslations("ranking"), getLocale()]);
+  const opt = (group: "languages" | "availability" | "goals" | "voice" | "karmaTags", v: string) =>
+    to.has(`${group}.${v}` as never) ? to(`${group}.${v}` as never) : v;
+  const weekFmt = new Intl.DateTimeFormat(INTL_LOCALE[locale], { day: "numeric", month: "short", timeZone: "UTC" });
 
   const { profile, game, roles, characters } = data;
   const viewer = claims?.claims?.sub;
@@ -94,7 +95,8 @@ export default async function PlayerPage({ params }: PageProps<"/jugador/[id]">)
     return h ? [{ key, handle: h, ...SOCIALS[key] }] : [];
   });
   const k = karma?.[0];
-  const name = profile.display_name ?? "Jugador";
+  const tOwner = t("owner");
+  const name = profile.display_name ?? t("player");
   const rankRow = catalog.ranks.find((r) => r.id === game?.rank_id);
   const rank = rankRow?.name;
   const region = catalog.regions.find((r) => r.id === game?.region_id)?.name;
@@ -122,29 +124,29 @@ export default async function PlayerPage({ params }: PageProps<"/jugador/[id]">)
         </div>
         {isOwner && (
           <Link href="/perfil/editar" className="btn-ghost">
-            Editar perfil
+            {t("editProfile")}
           </Link>
         )}
         {viewer && !isOwner && !myBlock && profile.dm_policy === "registered" && <StartConversationButton userId={id} />}
         {viewer && !isOwner && !myBlock && profile.dm_policy === "none" && (
-          <p className="text-sm text-muted">No admite mensajes privados</p>
+          <p className="text-sm text-muted">{t("noDms")}</p>
         )}
       </header>
 
       <section aria-labelledby="sobre" className="surface p-5">
         <h2 id="sobre" className="font-semibold">
-          Sobre {isOwner ? "ti" : "este jugador"}
+          {isOwner ? t("aboutYou") : t("aboutPlayer")}
         </h2>
         <dl className="mt-4 flex flex-col gap-3">
-          <Row title="Idiomas" value={list(profile.languages, LANGUAGES)} />
-          <Row title="Horarios" value={list(profile.availability, AVAILABILITY)} />
-          <Row title="Objetivos" value={list(profile.goals, GOALS)} />
+          <Row title={t("languages")} value={list(profile.languages, (v) => opt("languages", v), t)} />
+          <Row title={t("availability")} value={list(profile.availability, (v) => opt("availability", v), t)} />
+          <Row title={t("goals")} value={list(profile.goals, (v) => opt("goals", v), t)} />
           <Row
-            title="Comunicación"
-            value={profile.voice ? label(VOICE, profile.voice) : <span className="text-muted">Sin indicar u oculto</span>}
+            title={t("voice")}
+            value={profile.voice ? opt("voice", profile.voice) : <span className="text-muted">{t("unsetOrHidden")}</span>}
           />
           <Row
-            title="Redes"
+            title={t("socials")}
             value={
               socials.length ? (
                 <ul className="flex flex-wrap gap-x-4">
@@ -157,13 +159,13 @@ export default async function PlayerPage({ params }: PageProps<"/jugador/[id]">)
                         className="inline-flex min-h-11 items-center underline underline-offset-4 hover:text-accent-soft"
                       >
                         {s.label}: {s.handle}
-                        <span className="sr-only"> (se abre en otra pestaña)</span>
+                        <span className="sr-only"> {t("newTab")}</span>
                       </a>
                     </li>
                   ))}
                 </ul>
               ) : (
-                <span className="text-muted">Sin indicar u ocultas</span>
+                <span className="text-muted">{t("socialsUnset")}</span>
               )
             }
           />
@@ -173,16 +175,16 @@ export default async function PlayerPage({ params }: PageProps<"/jugador/[id]">)
       {badges && (badges.cards.length > 0 || badges.clip_awards.length > 0 || (badges.rank_awards?.length ?? 0) > 0) && (
         <section aria-labelledby="insignias" className="surface p-5">
           <h2 id="insignias" className="font-semibold">
-            Insignias
+            {t("badges")}
           </h2>
           {(badges.rank_awards?.length ?? 0) > 0 && (
             <>
-              <h3 className="mt-4 text-sm text-muted">Ranking semanal</h3>
+              <h3 className="mt-4 text-sm text-muted">{t("weeklyRanking")}</h3>
               <ul className="mt-2 flex flex-col gap-1">
                 {badges.rank_awards!.map((a) => (
                   <li key={`${a.game_id}-${a.week_start}`} className="text-sm">
-                    <span className="font-semibold text-accent-soft">{TIER_LABEL[rankTier(a.pos)]}</span> · #{a.pos} ·{" "}
-                    {gameName(a.game_id)} · semana {weekLabel(a.week_start)} · {a.points} pts
+                    <span className="font-semibold text-accent-soft">{tr(`tier.${rankTier(a.pos)}`)}</span> · #{a.pos} ·{" "}
+                    {t("rankAward", { game: gameName(a.game_id), week: weekLabel(a.week_start, locale), points: a.points })}
                   </li>
                 ))}
               </ul>
@@ -190,12 +192,12 @@ export default async function PlayerPage({ params }: PageProps<"/jugador/[id]">)
           )}
           {badges.clip_awards.length > 0 && (
             <>
-              <h3 className="mt-4 text-sm text-muted">Clips ganadores de la semana</h3>
+              <h3 className="mt-4 text-sm text-muted">{t("clipAwards")}</h3>
               <ul className="mt-2 flex flex-col gap-1">
                 {badges.clip_awards.map((a) => (
                   <li key={`${a.week_start}-${a.emblem}-${a.clip_id}`} className="text-sm">
-                    <span className="font-semibold text-accent-soft">{a.emblem}</span> · {gameName(a.game_id)} · semana del{" "}
-                    {weekFmt.format(new Date(a.week_start))} ·{" "}
+                    <span className="font-semibold text-accent-soft">{a.emblem}</span> · {gameName(a.game_id)} ·{" "}
+                    {t("weekOf", { date: weekFmt.format(new Date(a.week_start)) })} ·{" "}
                     <Link href={`/clips/${a.clip_id}`} className="underline underline-offset-4">
                       {a.title}
                     </Link>
@@ -206,12 +208,12 @@ export default async function PlayerPage({ params }: PageProps<"/jugador/[id]">)
           )}
           {badges.cards.length > 0 && (
             <>
-              <h3 className="mt-4 text-sm text-muted">Colección de cartas</h3>
+              <h3 className="mt-4 text-sm text-muted">{t("cards")}</h3>
               <ul className="mt-2 flex flex-col gap-1">
                 {badges.cards.map((c) => (
                   <li key={c.game_id} className="text-sm">
-                    {gameName(c.game_id)}: {c.owned} de {c.total}
-                    {c.legendary.length > 0 && <span className="text-muted"> · legendarias: {c.legendary.join(", ")}</span>}
+                    {t("cardsCount", { game: gameName(c.game_id), owned: c.owned, total: c.total })}
+                    {c.legendary.length > 0 && <span className="text-muted"> · {t("legendary", { names: c.legendary.join(", ") })}</span>}
                   </li>
                 ))}
               </ul>
@@ -225,29 +227,26 @@ export default async function PlayerPage({ params }: PageProps<"/jugador/[id]">)
           Karma
         </h2>
         {!viewer ? (
-          <p className="mt-2 text-sm text-muted">Entra para ver el karma.</p>
+          <p className="mt-2 text-sm text-muted">{t("karmaSignIn")}</p>
         ) : k && Number(k.positives) > 0 ? (
           <>
             <p className="mt-2 text-sm">
-              <NumberRoll value={Number(k.positives)} className="font-semibold" /> {Number(k.positives) === 1 ? "reconocimiento" : "reconocimientos"} de compañeros
+              <NumberRoll value={Number(k.positives)} className="font-semibold" /> {t("karmaCount", { count: Number(k.positives) })}
             </p>
             {k.top_tags.length > 0 && (
               <ul className="mt-2 flex flex-wrap gap-2">
-                {k.top_tags.map((t) => (
-                  <li key={t} className="rounded border border-line px-2 py-0.5 text-xs text-muted">
-                    {KARMA_TAGS[t as keyof typeof KARMA_TAGS] ?? t}
+                {k.top_tags.map((tag) => (
+                  <li key={tag} className="rounded border border-line px-2 py-0.5 text-xs text-muted">
+                    {opt("karmaTags", tag)}
                   </li>
                 ))}
               </ul>
             )}
           </>
         ) : (
-          <p className="mt-2 text-sm text-muted">Sin valoraciones todavía.</p>
+          <p className="mt-2 text-sm text-muted">{t("karmaNone")}</p>
         )}
-        <p className="mt-3 text-xs text-muted">
-          Reputación social: tras cerrar un grupo, cada miembro puede reconocer una vez a cada compañero durante 7 días. Solo hay
-          reconocimientos positivos: se muestran el total y los motivos más repetidos, nunca quién los dio. No es un ranking oficial.
-        </p>
+        <p className="mt-3 text-xs text-muted">{t("karmaNote")}</p>
       </section>
 
       <section aria-labelledby="valorant" className="surface p-5">
@@ -257,53 +256,53 @@ export default async function PlayerPage({ params }: PageProps<"/jugador/[id]">)
         {game ? (
           <dl className="mt-4 flex flex-col gap-3">
             <Row
-              title="Rango"
+              title={t("rank")}
               value={
                 rank ? (
                   <span className="inline-flex items-center gap-2">
                     {rankRow?.icon_url && <Image src={rankRow.icon_url} alt="" width={28} height={28} />}
                     <span>
                       <span>{rank}</span>{" "}
-                      <span className="text-muted">· introducido manualmente</span>
+                      <span className="text-muted">· {t("manual")}</span>
                     </span>
                   </span>
                 ) : (
-                  <span className="text-muted">Sin indicar</span>
+                  <span className="text-muted">{t("unset")}</span>
                 )
               }
             />
-            <Row title="Servidor" value={region ?? <span className="text-muted">Sin indicar</span>} />
+            <Row title={t("region")} value={region ?? <span className="text-muted">{t("unset")}</span>} />
             <Row
-              title="Modos"
+              title={t("modes")}
               value={
                 game.mode_slugs?.length ? (
                   game.mode_slugs.map((s) => catalog.modes.find((m) => m.slug === s)?.name ?? s).join(" · ")
                 ) : (
-                  <span className="text-muted">Sin indicar</span>
+                  <span className="text-muted">{t("unset")}</span>
                 )
               }
             />
             <Row
-              title="Roles"
+              title={t("roles")}
               value={
                 roles.length ? (
                   roles
                     .toSorted((a, b) => Number(b.is_primary) - Number(a.is_primary))
-                    .map((r) => `${roleName.get(r.role_id!)}${r.is_primary ? " (principal)" : ""}`)
+                    .map((r) => `${roleName.get(r.role_id!)}${r.is_primary ? ` ${t("primary")}` : ""}`)
                     .join(" · ")
                 ) : (
-                  <span className="text-muted">Sin indicar</span>
+                  <span className="text-muted">{t("unset")}</span>
                 )
               }
             />
             <Row
-              title={catalog.game.character_label ?? "Personajes"}
+              title={catalog.game.character_label ?? t("characters")}
               value={
                 byStatus.length ? (
                   <ul className="flex flex-col gap-3">
                     {byStatus.map((g) => (
                       <li key={g.s} className="flex flex-col gap-1.5">
-                        <span className="text-sm text-muted">{CHARACTER_STATUS[g.s]}</span>
+                        <span className="text-sm text-muted">{to(`characterStatus.${g.s}`)}</span>
                         <ul className="flex flex-wrap gap-3">
                           {g.chars.map((c) => (
                             <li key={c!.id} className="flex items-center gap-2">
@@ -316,19 +315,19 @@ export default async function PlayerPage({ params }: PageProps<"/jugador/[id]">)
                     ))}
                   </ul>
                 ) : (
-                  <span className="text-muted">Sin indicar</span>
+                  <span className="text-muted">{t("unset")}</span>
                 )
               }
             />
           </dl>
         ) : (
           <p className="mt-3 text-sm text-muted">
-            {isOwner ? `Aún no has rellenado tu perfil de ${catalog.game.name}.` : `Sin datos de ${catalog.game.name} visibles.`}
+            {isOwner ? t("emptyOwn", { game: catalog.game.name }) : t("emptyOther", { game: catalog.game.name })}
           </p>
         )}
         {catalog.game.id === "valorant" && (
           <p className="mt-4 inline-block rounded border border-line px-2 py-1 text-xs text-muted">
-            Cuenta Riot: no conectada (integración pendiente)
+            {t("riot")}
           </p>
         )}
       </section>
@@ -337,27 +336,27 @@ export default async function PlayerPage({ params }: PageProps<"/jugador/[id]">)
         <section aria-labelledby="partidas" className="surface p-5">
           <div className="flex flex-wrap items-baseline justify-between gap-2">
             <h2 id="partidas" className="font-semibold">
-              Partidas de {catalog.game.name}
+              {t("matches", { game: catalog.game.name })}
             </h2>
             {isOwner && (
               <Link href="/perfil/partidas" className="text-sm text-accent-soft underline underline-offset-4">
-                Apuntar partidas
+                {t("logMatches")}
               </Link>
             )}
           </div>
           {matchList.length === 0 ? (
-            <p className="mt-2 text-sm text-muted">Aún no has apuntado partidas. Solo tú decides quién las ve.</p>
+            <p className="mt-2 text-sm text-muted">{t("noMatches")}</p>
           ) : (
             <>
               <p className="mt-2 text-sm">
-                {ms.total} {ms.total === 1 ? "partida" : "partidas"}
-                {ms.winRate != null && ` · ${ms.winRate}% de victorias`}
-                {ms.kd != null && ` · K/D ${ms.kd.toLocaleString("es")}`}
+                {t("matchCount", { count: ms.total })}
+                {ms.winRate != null && ` · ${t("winRate", { rate: ms.winRate })}`}
+                {ms.kd != null && ` · K/D ${ms.kd.toLocaleString(INTL_LOCALE[locale])}`}
               </p>
               <ul className="mt-2 flex flex-col gap-1 text-sm text-muted">
                 {matchList.slice(0, 5).map((m) => (
                   <li key={m.id}>
-                    {m.played_on} · {m.result ? MATCH_RESULTS[m.result] : m.placement ? `puesto ${m.placement}` : "sin resultado"}
+                    {m.played_on} · {m.result ? to(`matchResults.${m.result}`) : m.placement ? t("placement", { n: m.placement }) : t("noResult")}
                     {m.map_name && ` · ${m.map_name}`}
                     {m.kills != null && ` · ${m.kills}/${m.deaths ?? "–"}/${m.assists ?? "–"}`}
                   </li>
@@ -366,7 +365,7 @@ export default async function PlayerPage({ params }: PageProps<"/jugador/[id]">)
             </>
           )}
           <p className="mt-3 inline-block rounded border border-line px-2 py-1 text-xs text-muted">
-            Introducido manualmente · sin verificar · no cuenta para rankings
+            {t("matchesNote")}
           </p>
         </section>
       )}
@@ -374,7 +373,7 @@ export default async function PlayerPage({ params }: PageProps<"/jugador/[id]">)
       {teams && teams.length > 0 && (
         <section aria-labelledby="equipos" className="surface p-5">
           <h2 id="equipos" className="font-semibold">
-            Equipos
+            {t("teams")}
           </h2>
           <ul className="mt-2 flex flex-wrap gap-2">
             {teams.map((t) =>
@@ -384,7 +383,7 @@ export default async function PlayerPage({ params }: PageProps<"/jugador/[id]">)
                     {t.teams.name}
                     <span className="text-xs text-muted">
                       {gameName(t.teams.game_id)}
-                      {t.role === "owner" ? " · dueño" : ""}
+                      {t.role === "owner" ? ` · ${tOwner}` : ""}
                     </span>
                   </Link>
                 </li>
@@ -397,12 +396,12 @@ export default async function PlayerPage({ params }: PageProps<"/jugador/[id]">)
       {viewer && !isOwner && (
         <section aria-labelledby="seguridad" className="flex flex-col gap-2 surface p-5">
           <h2 id="seguridad" className="font-semibold">
-            Seguridad
+            {t("safety")}
           </h2>
-          {myBlock && <p className="text-sm text-muted">Has bloqueado a este jugador: no os veréis en búsquedas ni grupos.</p>}
+          {myBlock && <p className="text-sm text-muted">{t("blocked")}</p>}
           {invitable.length > 0 && <InviteToTeam userId={id} teams={invitable} />}
           <BlockButton userId={id} blocked={Boolean(myBlock)} name={name} />
-          <ReportForm targetId={id} label="Denunciar a este jugador" />
+          <ReportForm targetId={id} label={t("report")} />
         </section>
       )}
     </article>

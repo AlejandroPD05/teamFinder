@@ -3,20 +3,28 @@
 import { revalidatePath } from "next/cache";
 import { redirect } from "next/navigation";
 import { z } from "zod";
-import { KARMA_TAGS, REPORT_REASONS, trustError } from "@/lib/trust/options";
+import { getLocale } from "next-intl/server";
+import { KARMA_TAGS, REPORT_REASONS } from "@/lib/trust/options";
+import { errorMessage, translator } from "@/lib/i18n/translator";
 import { keys } from "@/lib/profile/options";
 import { createClient } from "@/lib/supabase/server";
 
 export type TrustState = { ok: boolean; message: string } | null;
 
 const uuid = z.uuid();
-const text500 = z.string().trim().max(500, "Máximo 500 caracteres.").regex(/^[^<>]*$/, "Sin < ni >.");
+const text500 = (t: ReturnType<typeof translator<"trust">>) => z.string().trim().max(500, t("max500")).regex(/^[^<>]*$/, t("chars"));
 
 async function session() {
   const supabase = await createClient();
   const { data } = await supabase.auth.getClaims();
   if (!data?.claims?.sub) redirect("/entrar");
   return supabase;
+}
+
+/** Textos en el idioma de la petición. */
+async function messages() {
+  const locale = await getLocale();
+  return { t: translator(locale, "trust"), trustError: (hint?: string | null) => errorMessage("trust", hint, locale) };
 }
 
 const done = (paths: string[], message: string): TrustState => {
@@ -26,32 +34,34 @@ const done = (paths: string[], message: string): TrustState => {
 
 export async function blockAction(_p: TrustState, fd: FormData): Promise<TrustState> {
   const supabase = await session();
+  const { t, trustError } = await messages();
   const user = uuid.safeParse(fd.get("user_id"));
   if (!user.success) return { ok: false, message: trustError() };
   const unblock = fd.get("intent") === "unblock";
   const { error } = await supabase.rpc(unblock ? "unblock_user" : "block_user", { p_user: user.data });
   if (error) return { ok: false, message: trustError(error.hint) };
-  return done([`/jugador/${user.data}`, "/ajustes", "/buscar"], unblock ? "Desbloqueado." : "Bloqueado. Ya no os veréis en búsquedas ni grupos.");
+  return done([`/jugador/${user.data}`, "/ajustes", "/buscar"], unblock ? t("unblocked") : t("blocked"));
 }
 
-const reportSchema = z.object({
+const reportSchema = (t: ReturnType<typeof translator<"trust">>) => z.object({
   target: uuid,
   reason: z.enum(keys(REPORT_REASONS)),
-  details: text500,
+  details: text500(t),
   message: z.preprocess((v) => (v === "" || v == null ? null : Number(v)), z.number().int().positive().nullable()),
   lobby: z.preprocess((v) => (v === "" || v == null ? null : v), uuid.nullable()),
 });
 
 export async function reportAction(_p: TrustState, fd: FormData): Promise<TrustState> {
   const supabase = await session();
-  const r = reportSchema.safeParse({
+  const { t, trustError } = await messages();
+  const r = reportSchema(t).safeParse({
     target: fd.get("target"),
     reason: fd.get("reason"),
     details: fd.get("details") ?? "",
     message: fd.get("message_id"),
     lobby: fd.get("lobby_id"),
   });
-  if (!r.success) return { ok: false, message: r.error.issues[0].message.startsWith("Invalid") ? "Elige un motivo." : r.error.issues[0].message };
+  if (!r.success) return { ok: false, message: r.error.issues[0].path[0] === "details" ? r.error.issues[0].message : t("chooseReason") };
   const { error } = await supabase.rpc("report_user", {
     p_target: r.data.target,
     p_reason: r.data.reason,
@@ -60,19 +70,20 @@ export async function reportAction(_p: TrustState, fd: FormData): Promise<TrustS
     p_lobby: r.data.lobby ?? (null as unknown as string),
   });
   if (error) return { ok: false, message: trustError(error.hint) };
-  return { ok: true, message: "Denuncia enviada. La revisará el equipo de moderación." };
+  return { ok: true, message: t("reported") };
 }
 
-const voteSchema = z.object({
+const voteSchema = (t: ReturnType<typeof translator<"trust">>) => z.object({
   lobby: uuid,
   target: uuid,
   value: z.literal("1"),
-  tags: z.array(z.enum(keys(KARMA_TAGS))).max(3, "Como mucho 3 etiquetas."),
+  tags: z.array(z.enum(keys(KARMA_TAGS))).max(3, t("tagsMax")),
 });
 
 export async function voteAction(_p: TrustState, fd: FormData): Promise<TrustState> {
   const supabase = await session();
-  const v = voteSchema.safeParse({ lobby: fd.get("lobby_id"), target: fd.get("target"), value: fd.get("value"), tags: fd.getAll("tags") });
+  const { t, trustError } = await messages();
+  const v = voteSchema(t).safeParse({ lobby: fd.get("lobby_id"), target: fd.get("target"), value: fd.get("value"), tags: fd.getAll("tags") });
   if (!v.success) return { ok: false, message: v.error.issues[0].message };
   const { error } = await supabase.rpc("vote_karma", {
     p_lobby: v.data.lobby,
@@ -81,23 +92,28 @@ export async function voteAction(_p: TrustState, fd: FormData): Promise<TrustSta
     p_tags: v.data.tags,
   });
   if (error) return { ok: false, message: trustError(error.hint) };
-  return done([`/grupos/${v.data.lobby}`, `/jugador/${v.data.target}`], "Valoración guardada.");
+  return done([`/grupos/${v.data.lobby}`, `/jugador/${v.data.target}`], t("voted"));
 }
 
-const resolveSchema = z.object({ report: uuid, status: z.enum(["actioned", "dismissed"]), note: text500 });
+const resolveSchema = (t: ReturnType<typeof translator<"trust">>) =>
+  z.object({ report: uuid, status: z.enum(["actioned", "dismissed"]), note: text500(t) });
 
 export async function resolveAction(_p: TrustState, fd: FormData): Promise<TrustState> {
   const supabase = await session();
-  const v = resolveSchema.safeParse({ report: fd.get("report_id"), status: fd.get("status"), note: fd.get("note") ?? "" });
+  const { t, trustError } = await messages();
+  const v = resolveSchema(t).safeParse({ report: fd.get("report_id"), status: fd.get("status"), note: fd.get("note") ?? "" });
   if (!v.success) return { ok: false, message: v.error.issues[0].message };
   const { error } = await supabase.rpc("resolve_report", { p_report: v.data.report, p_status: v.data.status, p_note: v.data.note });
   if (error) return { ok: false, message: trustError(error.hint) };
-  return done(["/moderacion"], "Denuncia resuelta.");
+  return done(["/moderacion"], t("resolved"));
 }
 
 export async function deleteAccountAction(_p: TrustState, fd: FormData): Promise<TrustState> {
   const supabase = await session();
-  if (fd.get("confirm") !== "BORRAR") return { ok: false, message: "Escribe BORRAR para confirmar." };
+  const { t, trustError } = await messages();
+  // Vale la palabra en español (la de siempre) o la del idioma de la página.
+  const confirm = fd.get("confirm");
+  if (confirm !== "BORRAR" && confirm !== t("confirmWord")) return { ok: false, message: t("confirmDelete", { word: t("confirmWord") }) };
   // Las imágenes de fanart están en el almacenamiento (no en la base de datos): se borran con la API, antes de la cuenta.
   const { data: fanart } = await supabase.from("fanart_submissions").select("image_path");
   if (fanart?.length) await supabase.storage.from("fanart").remove(fanart.map((f) => f.image_path));
@@ -107,16 +123,17 @@ export async function deleteAccountAction(_p: TrustState, fd: FormData): Promise
   redirect("/?cuenta=borrada");
 }
 
-const restrictSchema = z.object({
+const restrictSchema = (t: ReturnType<typeof translator<"trust">>) => z.object({
   user: uuid,
-  days: z.coerce.number().int().refine((d) => [1, 3, 7, 30].includes(d), "Elige una duración."),
-  reason: z.string().trim().min(3, "Indica el motivo (lo verá la persona).").max(500, "Máximo 500 caracteres.").regex(/^[^<>]*$/, "Sin < ni >."),
+  days: z.coerce.number().int().refine((d) => [1, 3, 7, 30].includes(d), t("chooseDuration")),
+  reason: z.string().trim().min(3, t("reasonMin")).max(500, t("max500")).regex(/^[^<>]*$/, t("chars")),
   report: z.preprocess((v) => (v === "" || v == null ? null : v), uuid.nullable()),
 });
 
 export async function restrictAction(_p: TrustState, fd: FormData): Promise<TrustState> {
   const supabase = await session();
-  const v = restrictSchema.safeParse({ user: fd.get("user_id"), days: fd.get("days"), reason: fd.get("reason") ?? "", report: fd.get("report_id") });
+  const { t, trustError } = await messages();
+  const v = restrictSchema(t).safeParse({ user: fd.get("user_id"), days: fd.get("days"), reason: fd.get("reason") ?? "", report: fd.get("report_id") });
   if (!v.success) return { ok: false, message: v.error.issues[0].message };
   const { error } = await supabase.rpc("restrict_user", {
     p_user: v.data.user,
@@ -125,14 +142,15 @@ export async function restrictAction(_p: TrustState, fd: FormData): Promise<Trus
     p_report: v.data.report ?? undefined,
   });
   if (error) return { ok: false, message: trustError(error.hint) };
-  return done(["/moderacion"], `Restringido ${v.data.days} ${v.data.days === 1 ? "día" : "días"}. Se le ha notificado.`);
+  return done(["/moderacion"], t("restricted", { count: v.data.days }));
 }
 
 export async function liftRestrictionAction(_p: TrustState, fd: FormData): Promise<TrustState> {
   const supabase = await session();
+  const { t, trustError } = await messages();
   const id = uuid.safeParse(fd.get("restriction_id"));
   if (!id.success) return { ok: false, message: trustError() };
   const { error } = await supabase.rpc("lift_restriction", { p_restriction: id.data });
   if (error) return { ok: false, message: trustError(error.hint) };
-  return done(["/moderacion"], "Restricción levantada.");
+  return done(["/moderacion"], t("lifted"));
 }

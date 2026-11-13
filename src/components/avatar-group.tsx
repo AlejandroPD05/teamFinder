@@ -1,4 +1,5 @@
 import Image from "next/image";
+import { useTranslations } from "next-intl";
 
 type Member = { id: string; name: string; avatar: string | null };
 
@@ -9,9 +10,10 @@ type Member = { id: string; name: string; avatar: string | null };
 export function AvatarGroup({ members, slots }: { members: Member[]; slots: number }) {
   const free = Math.max(0, slots - members.length);
   const shown = members.slice(0, 5);
+  const t = useTranslations("avatarGroup");
   return (
     <div className="flex items-center">
-      <ul aria-label={`Miembros: ${members.map((m) => m.name).join(", ") || "ninguno"}`} className="flex items-center">
+      <ul aria-label={t("members", { names: members.map((m) => m.name).join(", ") || t("none") })} className="flex items-center">
         {shown.map((m, i) => (
           <li
             key={m.id}
@@ -40,7 +42,7 @@ export function AvatarGroup({ members, slots }: { members: Member[]; slots: numb
         />
       ))}
       <span className="sr-only">
-        {free} {free === 1 ? "plaza libre" : "plazas libres"}
+        {t("free", { count: free })}
       </span>
     </div>
   );

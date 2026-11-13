@@ -1,14 +1,16 @@
 import { Lock } from "lucide-react";
 import Image from "next/image";
+import { useTranslations } from "next-intl";
 import type { CSSProperties } from "react";
 import { isFanartUrl } from "@/lib/fanart";
 import type { Card, Rarity } from "@/lib/missions/queries";
 
-export const RARITY: Record<Rarity, { label: string; color: string }> = {
-  common: { label: "Común", color: "#9ca0b4" },
-  rare: { label: "Rara", color: "#60a5fa" },
-  epic: { label: "Épica", color: "#b794f6" },
-  legendary: { label: "Legendaria", color: "#f5c451" },
+// Color de cada rareza; el nombre está en messages/*.json (options.rarity).
+export const RARITY: Record<Rarity, { color: string }> = {
+  common: { color: "#9ca0b4" },
+  rare: { color: "#60a5fa" },
+  epic: { color: "#b794f6" },
+  legendary: { color: "#f5c451" },
 };
 
 /** Carta coleccionable: arte oficial, marco del color de su rareza. Bloqueada, solo muestra nombre y rareza. */
@@ -24,6 +26,7 @@ export function CollectibleCard({
   priority?: boolean;
 }) {
   const r = RARITY[card.rarity];
+  const t = useTranslations("options.rarity");
   return (
     <figure
       className={`relative aspect-[3/4] overflow-hidden rounded-xl border-2 ${className}`}
@@ -49,8 +52,8 @@ export function CollectibleCard({
       <figcaption className="absolute inset-x-0 bottom-0 flex flex-col gap-0.5 bg-bg/90 px-3 py-2">
         <span className="font-display truncate font-semibold">{card.name}</span>
         <span className="text-xs font-medium" style={{ color: locked ? "var(--color-muted)" : r.color }}>
-          {r.label}
-          {locked && " · bloqueada"}
+          {t(card.rarity)}
+          {locked && ` · ${t("locked")}`}
         </span>
       </figcaption>
     </figure>

@@ -1,5 +1,6 @@
 "use client";
 
+import { useTranslations } from "next-intl";
 import { useEffect, useState } from "react";
 import { deletePushSubscription, savePushSubscription } from "./actions";
 
@@ -18,6 +19,7 @@ function keyBytes(base64url: string) {
 export function PushSettings() {
   const [status, setStatus] = useState<Status>("checking");
   const [message, setMessage] = useState("");
+  const t = useTranslations("push");
 
   useEffect(() => {
     (async () => {
@@ -44,13 +46,13 @@ export function PushSettings() {
       const { ok } = await savePushSubscription(sub.toJSON());
       if (!ok) {
         await sub.unsubscribe();
-        setMessage("No se pudo activar. Inténtalo de nuevo.");
+        setMessage(t("error"));
         return;
       }
       setStatus("on");
-      setMessage("Activadas en este dispositivo.");
+      setMessage(t("enabled"));
     } catch {
-      setMessage("Tu navegador no ha dejado activarlas. Si usas iPhone, instala primero la web en la pantalla de inicio.");
+      setMessage(t("blockedByBrowser"));
     }
   }
 
@@ -63,35 +65,27 @@ export function PushSettings() {
       await sub.unsubscribe();
     }
     setStatus("off");
-    setMessage("Desactivadas en este dispositivo.");
+    setMessage(t("disabled"));
   }
 
   return (
     <div className="flex flex-col items-start gap-2">
       <p className="text-sm">
-        {status === "checking" && "Comprobando…"}
-        {status === "unsupported" && "Este navegador no admite notificaciones push."}
-        {status === "unconfigured" && "Las notificaciones push aún no están disponibles en la web."}
-        {status === "denied" && "Has bloqueado las notificaciones para esta web: actívalas en los ajustes del navegador."}
-        {status === "off" && (
-          <>
-            Ahora mismo: <strong>desactivadas</strong> en este dispositivo.
-          </>
-        )}
-        {status === "on" && (
-          <>
-            Ahora mismo: <strong>activadas</strong> en este dispositivo.
-          </>
-        )}
+        {status === "checking" && t("checking")}
+        {status === "unsupported" && t("unsupported")}
+        {status === "unconfigured" && t("unconfigured")}
+        {status === "denied" && t("denied")}
+        {status === "off" && t.rich("nowOff", { b: (c) => <strong>{c}</strong> })}
+        {status === "on" && t.rich("nowOn", { b: (c) => <strong>{c}</strong> })}
       </p>
       {status === "off" && (
         <button type="button" onClick={enable} className="btn-ghost">
-          Activar en este dispositivo
+          {t("enable")}
         </button>
       )}
       {status === "on" && (
         <button type="button" onClick={disable} className="btn-ghost">
-          Desactivar en este dispositivo
+          {t("disable")}
         </button>
       )}
       <p role="status" aria-live="polite" className="text-sm text-muted">

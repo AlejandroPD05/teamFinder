@@ -1,23 +1,23 @@
 import { Clock3, Languages, Mic } from "lucide-react";
 import Image from "next/image";
 import Link from "next/link";
+import { useLocale, useTranslations } from "next-intl";
 import type { CSSProperties } from "react";
 import { CharacterIcon, RankBadge, RoleIcon } from "@/components/game-icons";
-import { CHARACTER_STATUS, GOALS, LANGUAGES, VOICE } from "@/lib/profile/options";
+import { INTL_LOCALE, type AppLocale } from "@/lib/i18n/locale";
 import type { Catalog } from "@/lib/profile/queries";
 import type { PlayerRow } from "@/lib/search/query";
 
-const rtf = new Intl.RelativeTimeFormat("es", { numeric: "auto" });
-function ago(iso: string | null) {
+function ago(iso: string | null, locale: AppLocale, today: string) {
   if (!iso) return "";
+  const rtf = new Intl.RelativeTimeFormat(INTL_LOCALE[locale], { numeric: "auto" });
   const days = Math.round((Date.parse(iso) - Date.now()) / 86_400_000);
-  if (days > -1) return "hoy";
+  if (days > -1) return today;
   if (days > -30) return rtf.format(days, "day");
   return rtf.format(Math.round(days / 30), "month");
 }
 
 const STATUS_ORDER = ["main", "comfort", "playable", "flexible"] as const;
-const untilFmt = new Intl.DateTimeFormat("es-ES", { timeZone: "Europe/Madrid", hour: "2-digit", minute: "2-digit" });
 
 export function PlayerCard({
   p,
@@ -36,7 +36,12 @@ export function PlayerCard({
   /** Si se ha marcado «disponible ahora» (hasta cuándo y en qué modo). */
   available?: { available_until: string; mode_slug: string | null } | null;
 }) {
-  const name = p.display_name ?? "Jugador";
+  const t = useTranslations("playerCard");
+  const to = useTranslations("options");
+  const locale = useLocale();
+  const untilFmt = new Intl.DateTimeFormat(INTL_LOCALE[locale], { timeZone: "Europe/Madrid", hour: "2-digit", minute: "2-digit" });
+  const opt = (group: "languages" | "goals" | "voice", v: string) => (to.has(`${group}.${v}` as never) ? to(`${group}.${v}` as never) : v);
+  const name = p.display_name ?? t("player");
   const rank = catalog.ranks.find((r) => r.id === p.rank_id);
   const region = catalog.regions.find((r) => r.id === p.region_id)?.name;
   const role = (id: string) => catalog.roles.find((r) => r.id === id);
@@ -50,8 +55,8 @@ export function PlayerCard({
     .sort((a, b) => STATUS_ORDER.indexOf(a.status) - STATUS_ORDER.indexOf(b.status))
     .slice(0, 5);
   const modes = (p.mode_slugs ?? []).map((s) => catalog.modes.find((m) => m.slug === s)?.name ?? s);
-  const langs = (p.languages ?? []).map((l) => LANGUAGES[l as keyof typeof LANGUAGES] ?? l);
-  const goals = (p.goals ?? []).map((g) => GOALS[g as keyof typeof GOALS] ?? g);
+  const langs = (p.languages ?? []).map((l) => opt("languages", l));
+  const goals = (p.goals ?? []).map((g) => opt("goals", g));
 
   return (
     <li className="surface surface-interactive spotlight enter flex flex-col gap-4 p-4" style={{ "--i": index } as CSSProperties}>
@@ -66,7 +71,7 @@ export function PlayerCard({
         <div className="min-w-0 flex-1">
           <h2 className="font-display truncate text-lg font-semibold">{name}</h2>
           <div className="mt-0.5 flex flex-wrap items-center gap-x-2 text-sm">
-            {rank ? <RankBadge name={rank.name} src={rank.icon_url} color={rank.color} size={20} /> : <span className="text-muted">Rango sin indicar</span>}
+            {rank ? <RankBadge name={rank.name} src={rank.icon_url} color={rank.color} size={20} /> : <span className="text-muted">{t("noRank")}</span>}
             {region && <span className="text-muted">· {region}</span>}
           </div>
         </div>
@@ -75,23 +80,23 @@ export function PlayerCard({
       {available && (
         <p className="flex items-center gap-2 text-sm font-medium text-success">
           <span aria-hidden="true" className="live-dot" />
-          Disponible ahora
+          {t("availableNow")}
           {available.mode_slug && (
             <span className="font-normal text-muted">· {catalog.modes.find((m) => m.slug === available.mode_slug)?.name ?? available.mode_slug}</span>
           )}
-          <span className="font-normal text-muted">· hasta las {untilFmt.format(new Date(available.available_until))}</span>
+          <span className="font-normal text-muted">· {t("until", { time: untilFmt.format(new Date(available.available_until)) })}</span>
         </p>
       )}
 
       {roles.length > 0 && (
-        <ul aria-label="Roles" className="flex flex-wrap gap-1.5">
+        <ul aria-label={t("roles")} className="flex flex-wrap gap-1.5">
           {roles.map((id) => {
             const r = role(id);
             return (
               <li key={id} className={`chip ${id === p.primary_role_id ? "font-semibold" : "text-muted"}`}>
                 <RoleIcon slug={r?.slug} className="size-3.5 text-muted" />
                 {r?.name}
-                {id === p.primary_role_id && <span className="sr-only"> (principal)</span>}
+                {id === p.primary_role_id && <span className="sr-only"> {t("primary")}</span>}
               </li>
             );
           })}
@@ -99,25 +104,25 @@ export function PlayerCard({
       )}
 
       {agents.length > 0 ? (
-        <ul aria-label={characterLabel ?? "Personajes"} className="flex flex-wrap gap-2">
+        <ul aria-label={characterLabel ?? t("characters")} className="flex flex-wrap gap-2">
           {agents.map(({ c, status }) => (
             <li key={c!.id} className="flex flex-col items-center gap-1">
               <CharacterIcon name={c!.name} src={c!.icon_url} size={40} ring={status === "main" ? "main" : status === "comfort" ? "comfort" : null} />
               <span className="text-[0.65rem] leading-none text-muted">
                 {c!.name}
-                <span className="sr-only"> ({CHARACTER_STATUS[status]})</span>
+                <span className="sr-only"> ({to(`characterStatus.${status}`)})</span>
               </span>
             </li>
           ))}
         </ul>
       ) : characterLabel ? (
-        <p className="text-sm text-muted">Sin {characterLabel.toLowerCase()} indicados</p>
+        <p className="text-sm text-muted">{t("noCharacters", { label: characterLabel.toLowerCase() })}</p>
       ) : null}
 
       <dl className="grid gap-1.5 text-sm">
         {modes.length > 0 && (
           <div className="flex items-center gap-2">
-            <dt className="sr-only">Modos</dt>
+            <dt className="sr-only">{t("modes")}</dt>
             <dd>{modes.join(" · ")}</dd>
           </div>
         )}
@@ -125,7 +130,7 @@ export function PlayerCard({
           <div className="flex items-start gap-2 text-muted">
             <dt>
               <Languages aria-hidden="true" className="mt-0.5 size-4" />
-              <span className="sr-only">Idiomas y objetivos</span>
+              <span className="sr-only">{t("langsGoals")}</span>
             </dt>
             <dd>{[...langs, ...goals].join(" · ")}</dd>
           </div>
@@ -134,9 +139,9 @@ export function PlayerCard({
           <div className="flex items-center gap-2 text-muted">
             <dt>
               <Mic aria-hidden="true" className="size-4" />
-              <span className="sr-only">Comunicación</span>
+              <span className="sr-only">{t("voice")}</span>
             </dt>
-            <dd>{VOICE[p.voice as keyof typeof VOICE]}</dd>
+            <dd>{opt("voice", p.voice)}</dd>
           </div>
         )}
       </dl>
@@ -144,11 +149,11 @@ export function PlayerCard({
       <div className="mt-auto flex items-center justify-between gap-2 border-t border-line pt-3">
         <span className="inline-flex items-center gap-1.5 text-xs text-muted">
           <Clock3 aria-hidden="true" className="size-3.5" />
-          Actualizado {ago(p.updated_at)}
+          {t("updated", { when: ago(p.updated_at, locale, t("today")) })}
         </span>
         {profileHref !== null && (
-          <Link href={profileHref ?? `/jugador/${p.user_id}`} className="btn-ghost" aria-label={`Ver perfil de ${name}`}>
-            Ver perfil
+          <Link href={profileHref ?? `/jugador/${p.user_id}`} className="btn-ghost" aria-label={t("viewLabel", { name })}>
+            {t("view")}
           </Link>
         )}
       </div>

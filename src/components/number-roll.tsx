@@ -1,6 +1,8 @@
 "use client";
 
+import { useLocale } from "next-intl";
 import { useEffect, useState } from "react";
+import { INTL_LOCALE } from "@/lib/i18n/locale";
 
 /**
  * Número cuyos dígitos ruedan como un marcador al cambiar (y al aparecer, desde 0). Cada dígito es una tira 0–9 que
@@ -16,7 +18,9 @@ export function NumberRoll({ value, max, className = "" }: { value: number; max?
     return () => cancelAnimationFrame(id);
   }, [target]);
 
-  const text = target.toLocaleString("es");
+  const locale = useLocale();
+  const text = target.toLocaleString(INTL_LOCALE[locale]);
+  const separator = locale === "es" ? "." : ",";
   const digits = String(shown).padStart(String(target).length, "0").split("");
   // Separadores de miles en la misma posición que en el texto final.
   const out: (string | number)[] = [];
@@ -24,7 +28,7 @@ export function NumberRoll({ value, max, className = "" }: { value: number; max?
   digits.forEach((d, i) => {
     out.push(Number(d));
     const left = len - 1 - i;
-    if (left > 0 && left % 3 === 0) out.push(".");
+    if (left > 0 && left % 3 === 0) out.push(separator);
   });
 
   return (

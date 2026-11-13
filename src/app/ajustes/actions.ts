@@ -2,6 +2,7 @@
 
 import { revalidatePath } from "next/cache";
 import { redirect } from "next/navigation";
+import { getTranslations } from "next-intl/server";
 import { z } from "zod";
 import { createClient } from "@/lib/supabase/server";
 
@@ -13,13 +14,14 @@ export async function emailNotificationsAction(_p: EmailState, fd: FormData): Pr
   const userId = data?.claims?.sub;
   if (!userId) redirect("/entrar?next=/ajustes");
   const enabled = fd.get("enabled") === "on";
+  const t = await getTranslations("settings");
   const { error } = await supabase.from("profiles").update({ email_notifications: enabled }).eq("id", userId);
-  if (error) return { ok: false, message: "No se pudo guardar. Inténtalo de nuevo." };
+  if (error) return { ok: false, message: t("saveError") };
   revalidatePath("/ajustes");
   return {
     ok: true,
     enabled,
-    message: enabled ? "Activados. Te escribiremos como mucho una vez por hora si tienes novedades." : "Desactivados.",
+    message: enabled ? t("emailEnabled") : t("emailDisabled"),
   };
 }
 

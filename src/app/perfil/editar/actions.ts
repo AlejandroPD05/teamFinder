@@ -2,8 +2,9 @@
 
 import { revalidatePath } from "next/cache";
 import { redirect } from "next/navigation";
+import { getLocale, getTranslations } from "next-intl/server";
 import { currentGame } from "@/lib/games";
-import { gameProfileFromForm, gameProfileSchema, profileFromForm, profileSchema } from "@/lib/profile/schema";
+import { gameProfileFromForm, gameProfileSchemaFor, profileFromForm, profileSchemaFor } from "@/lib/profile/schema";
 import { createClient } from "@/lib/supabase/server";
 
 export type SaveState = { ok: boolean; message: string; fieldErrors?: Record<string, string> } | null;
@@ -23,12 +24,13 @@ export async function saveProfile(_prev: SaveState, fd: FormData): Promise<SaveS
   const userId = claims?.claims?.sub;
   if (!userId) redirect("/entrar?next=/perfil/editar");
 
-  const common = profileSchema.safeParse(profileFromForm(fd));
-  const gameParsed = gameProfileSchema.safeParse(gameProfileFromForm(fd));
+  const [locale, t] = await Promise.all([getLocale(), getTranslations("profileForm")]);
+  const common = profileSchemaFor(locale).safeParse(profileFromForm(fd));
+  const gameParsed = gameProfileSchemaFor(locale).safeParse(gameProfileFromForm(fd));
   if (!common.success || !gameParsed.success) {
     return {
       ok: false,
-      message: "Revisa los campos marcados.",
+      message: t("checkFields"),
       fieldErrors: {
         ...(common.success ? {} : firstErrors(common.error.issues)),
         ...(gameParsed.success ? {} : firstErrors(gameParsed.error.issues)),
@@ -37,7 +39,7 @@ export async function saveProfile(_prev: SaveState, fd: FormData): Promise<SaveS
   }
 
   const { error: profileError } = await supabase.from("profiles").update(common.data).eq("id", userId);
-  if (profileError) return { ok: false, message: "No se pudo guardar el perfil. Inténtalo de nuevo." };
+  if (profileError) return { ok: false, message: t("saveError") };
 
   const { game } = await currentGame();
   const g = gameParsed.data;
@@ -51,11 +53,11 @@ export async function saveProfile(_prev: SaveState, fd: FormData): Promise<SaveS
     p_characters: g.characters,
     p_modes: g.modes,
   });
-  if (gameError) return { ok: false, message: `No se pudo guardar tu perfil de ${game.name}. Inténtalo de nuevo.` };
+  if (gameError) return { ok: false, message: t("saveGameError", { game: game.name }) };
 
   revalidatePath("/inicio");
   revalidatePath("/perfil");
   revalidatePath("/perfil/editar");
   revalidatePath(`/jugador/${userId}`);
-  return { ok: true, message: "Perfil guardado." };
+  return { ok: true, message: t("saved") };
 }

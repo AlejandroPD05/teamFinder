@@ -1,5 +1,6 @@
 "use client";
 
+import { useTranslations } from "next-intl";
 import { useActionState } from "react";
 import { emailNotificationsAction, type EmailState } from "./actions";
 
@@ -7,14 +8,15 @@ import { emailNotificationsAction, type EmailState } from "./actions";
 export function EmailNotificationsForm({ enabled }: { enabled: boolean }) {
   const [state, action, pending] = useActionState<EmailState, FormData>(emailNotificationsAction, null);
   const on = state?.ok ? state.enabled : enabled;
+  const t = useTranslations("settings");
   return (
     <form action={action} className="flex flex-col items-start gap-2">
       <input type="hidden" name="enabled" value={on ? "off" : "on"} />
       <p className="text-sm">
-        Ahora mismo: <strong>{on ? "activados" : "desactivados"}</strong>.
+        {t.rich("emailNow", { state: on ? t("emailOn") : t("emailOff"), b: (c) => <strong>{c}</strong> })}
       </p>
       <button type="submit" disabled={pending} className="btn-ghost">
-        {on ? "Desactivar avisos por correo" : "Activar avisos por correo"}
+        {on ? t("emailDisable") : t("emailEnable")}
       </button>
       <p role="status" aria-live="polite" className={`text-sm ${state?.ok ? "text-success" : "text-danger"}`}>
         {state?.message}

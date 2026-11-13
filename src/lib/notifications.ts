@@ -1,43 +1,14 @@
-import type { Database } from "./supabase/database.types";
-
-type Kind = Database["public"]["Enums"]["notification_kind"];
-
-type Notification = {
-  kind: Kind;
-  lobby_id: string | null;
-  clip_id: string | null;
-  body: string | null;
-  team_id?: string | null;
-};
+import type { AppLocale } from "./i18n/locale";
+import { translator } from "./i18n/translator";
+import { notificationLink, type NotificationLike } from "./notification-links";
 
 /** Texto y enlace de cada notificación. `actor` es el nombre visible de quien la provoca (null si no se dice). */
-export function notificationText(n: Notification, actor: string | null): { title: string; detail: string | null; href: string | null } {
-  const who = actor ?? "Alguien";
-  const lobby = n.lobby_id ? `/grupos/${n.lobby_id}` : null;
-  switch (n.kind) {
-    case "join_request":
-      return { title: `${who} quiere unirse a tu grupo`, detail: n.body, href: lobby };
-    case "request_accepted":
-      return { title: "Te han aceptado en un grupo", detail: null, href: lobby };
-    case "request_rejected":
-      return { title: "No te han aceptado en un grupo", detail: null, href: lobby };
-    case "clip_comment":
-      return { title: `${who} ha comentado tu clip`, detail: n.body, href: n.clip_id ? `/clips/${n.clip_id}` : null };
-    case "karma":
-      return { title: "Un compañero te ha dado un reconocimiento", detail: null, href: "/perfil" };
-    case "restriction":
-      return { title: "Tu cuenta está restringida temporalmente", detail: n.body, href: "/normas" };
-    case "fanart":
-      return { title: "Novedades sobre tu fanart", detail: n.body, href: "/coleccion/fanart" };
-    case "ranking":
-      return { title: "¡Estás en el Top 10 semanal!", detail: n.body, href: "/ranking" };
-    case "team_invite":
-      return { title: `${who} te invita a su equipo`, detail: n.body, href: "/mis-equipos" };
-    case "team_joined":
-      return { title: `${who} se ha unido a tu equipo`, detail: n.body, href: n.team_id ? `/equipo/${n.team_id}` : "/mis-equipos" };
-    case "team_event":
-      return { title: `${who} propone una quedada`, detail: n.body, href: n.team_id ? `/equipo/${n.team_id}` : "/mis-equipos" };
-    case "team_lobby":
-      return { title: "Tu equipo ha creado un grupo y estás dentro", detail: n.body, href: lobby ?? "/mis-equipos" };
-  }
+export function notificationText(
+  n: NotificationLike,
+  actor: string | null,
+  locale: AppLocale = "es",
+): { title: string; detail: string | null; href: string | null } {
+  const t = translator(locale, "notifications");
+  const who = actor ?? t("someone");
+  return { title: t(`title.${n.kind}`, { who }), ...notificationLink(n) };
 }

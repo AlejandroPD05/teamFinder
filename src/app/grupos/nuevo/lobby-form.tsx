@@ -1,7 +1,8 @@
 "use client";
 
+import { useTranslations } from "next-intl";
 import { useActionState, useEffect, useRef, useState } from "react";
-import { GOALS, LANGUAGES } from "@/lib/profile/options";
+import { GOALS, LANGUAGES, optionKeys } from "@/lib/profile/options";
 import type { Catalog } from "@/lib/profile/queries";
 import { createLobby, type ActionState } from "../actions";
 
@@ -26,17 +27,19 @@ export function LobbyForm({ catalog }: { catalog: Catalog }) {
     if (tzRef.current) tzRef.current.value = String(new Date().getTimezoneOffset());
   }, []);
   const err = state?.fieldErrors ?? {};
+  const t = useTranslations("lobbyForm");
+  const to = useTranslations("options");
 
   return (
     <form action={action} className="flex flex-col gap-6" noValidate>
       <input ref={tzRef} type="hidden" name="tz" defaultValue="0" />
       <fieldset className="surface p-5">
-        <legend className="font-semibold">Modo</legend>
+        <legend className="font-semibold">{t("mode")}</legend>
         <div className="mt-3 flex flex-wrap gap-2">
           {catalog.modes.map((m, i) => (
             <label key={m.slug} className={chip}>
               <input type="radio" name="mode" value={m.slug} defaultChecked={i === 0} className="size-4 accent-accent" />
-              {m.name} · {m.party_size} plazas
+              {m.name} · {t("partySize", { count: m.party_size })}
             </label>
           ))}
         </div>
@@ -44,8 +47,8 @@ export function LobbyForm({ catalog }: { catalog: Catalog }) {
       </fieldset>
 
       <fieldset className="surface p-5">
-        <legend className="font-semibold">Roles que buscáis</legend>
-        <p className="mt-1 text-sm text-muted">Orientativo: no hay una composición obligatoria.</p>
+        <legend className="font-semibold">{t("roles")}</legend>
+        <p className="mt-1 text-sm text-muted">{t("rolesHint")}</p>
         <div className="mt-3 flex flex-wrap gap-2">
           {catalog.roles.map((r) => (
             <label key={r.id} className={chip}>
@@ -57,13 +60,13 @@ export function LobbyForm({ catalog }: { catalog: Catalog }) {
       </fieldset>
 
       <fieldset className="grid gap-4 surface p-5 sm:grid-cols-2">
-        <legend className="font-semibold">Requisitos (opcionales)</legend>
+        <legend className="font-semibold">{t("requirements")}</legend>
         {[
-          ["rank_min", "Rango mínimo", catalog.ranks.map((r) => [r.id, r.name]), "Sin mínimo"],
-          ["rank_max", "Rango máximo", catalog.ranks.map((r) => [r.id, r.name]), "Sin máximo"],
-          ["region", "Servidor", catalog.regions.map((r) => [r.id, r.name]), "Cualquiera"],
-          ["language", "Idioma", Object.entries(LANGUAGES), "Cualquiera"],
-          ["goal", "Objetivo", Object.entries(GOALS), "Cualquiera"],
+          ["rank_min", t("rankMin"), catalog.ranks.map((r) => [r.id, r.name]), t("noMin")],
+          ["rank_max", t("rankMax"), catalog.ranks.map((r) => [r.id, r.name]), t("noMax")],
+          ["region", t("region"), catalog.regions.map((r) => [r.id, r.name]), t("any")],
+          ["language", t("language"), optionKeys(LANGUAGES).map((k) => [k, to(`languages.${k}`)]), t("any")],
+          ["goal", t("goal"), optionKeys(GOALS).map((k) => [k, to(`goals.${k}`)]), t("any")],
         ].map(([name, text, options, any]) => (
           <div key={name as string} className="flex flex-col gap-2 text-sm font-medium">
             <label htmlFor={`n-${name}`}>{text as string}</label>
@@ -80,20 +83,20 @@ export function LobbyForm({ catalog }: { catalog: Catalog }) {
       </fieldset>
 
       <fieldset className="surface p-5">
-        <legend className="font-semibold">Cuándo</legend>
+        <legend className="font-semibold">{t("when")}</legend>
         <div className="mt-3 flex flex-wrap gap-2">
           <label className={chip}>
             <input type="radio" name="when" value="now" checked={when === "now"} onChange={() => setWhen("now")} className="size-4 accent-accent" />
-            Ahora
+            {t("now")}
           </label>
           <label className={chip}>
             <input type="radio" name="when" value="later" checked={when === "later"} onChange={() => setWhen("later")} className="size-4 accent-accent" />
-            Más tarde
+            {t("later")}
           </label>
         </div>
         {when === "later" && (
           <div className="mt-3 flex flex-col gap-2 text-sm font-medium">
-            <label htmlFor="starts_at">Fecha y hora</label>
+            <label htmlFor="starts_at">{t("dateTime")}</label>
             <input
               id="starts_at"
               name="starts_at"
@@ -108,12 +111,12 @@ export function LobbyForm({ catalog }: { catalog: Catalog }) {
       </fieldset>
 
       <div className="flex flex-col gap-2 surface p-5 text-sm font-medium">
-        <label htmlFor="note">Nota (opcional)</label>
+        <label htmlFor="note">{t("note")}</label>
         <input
           id="note"
           name="note"
           maxLength={140}
-          placeholder="Ej.: buscamos smoker para subir a Platino"
+          placeholder={t("notePlaceholder")}
           aria-invalid={!!err.note || undefined}
           aria-describedby={err.note ? "note-error" : undefined}
           className={control}
@@ -127,7 +130,7 @@ export function LobbyForm({ catalog }: { catalog: Catalog }) {
           disabled={pending}
           className="btn-primary"
         >
-          {pending ? "Creando…" : "Crear grupo"}
+          {pending ? t("creating") : t("create")}
         </button>
         <p role="status" aria-live="polite" className="text-sm text-danger">
           {state && !state.ok ? state.message : ""}

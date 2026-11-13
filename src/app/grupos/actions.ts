@@ -2,8 +2,10 @@
 
 import { revalidatePath } from "next/cache";
 import { redirect } from "next/navigation";
+import { getLocale } from "next-intl/server";
 import { z } from "zod";
-import { createLobbyFromForm, createLobbySchema, lobbyError, requestMessageSchema } from "@/lib/lobbies/schema";
+import { translator } from "@/lib/i18n/translator";
+import { createLobbyFromForm, createLobbySchemaFor, lobbyError as baseLobbyError, requestMessageSchemaFor } from "@/lib/lobbies/schema";
 import { currentGame } from "@/lib/games";
 import { siteUrl } from "@/lib/supabase/env";
 import { createClient } from "@/lib/supabase/server";
@@ -17,16 +19,23 @@ async function session() {
   return supabase;
 }
 
+/** Textos en el idioma de la petición. */
+async function messages() {
+  const locale = await getLocale();
+  return { locale, t: translator(locale, "lobbies.actions"), lobbyError: (hint?: string | null) => baseLobbyError(hint, locale) };
+}
+
 const lobbyId = z.uuid();
 const nil = null as unknown as string;
 
 export async function createLobby(_prev: ActionState, fd: FormData): Promise<ActionState> {
   const supabase = await session();
-  const parsed = createLobbySchema.safeParse(createLobbyFromForm(fd));
+  const { locale, t, lobbyError } = await messages();
+  const parsed = createLobbySchemaFor(locale).safeParse(createLobbyFromForm(fd));
   if (!parsed.success) {
     const fieldErrors: Record<string, string> = {};
     for (const i of parsed.error.issues) fieldErrors[String(i.path[0] ?? "form")] ??= i.message;
-    return { ok: false, message: "Revisa los campos marcados.", fieldErrors };
+    return { ok: false, message: t("checkFields"), fieldErrors };
   }
   const v = parsed.data;
   const { data, error } = await supabase.rpc("create_lobby", {
@@ -49,39 +58,40 @@ export async function createLobby(_prev: ActionState, fd: FormData): Promise<Act
 /** Acciones sobre un grupo concreto: devuelven un mensaje para el estado accesible. */
 export async function lobbyAction(_prev: ActionState, fd: FormData): Promise<ActionState> {
   const supabase = await session();
+  const { locale, t, lobbyError } = await messages();
   const id = lobbyId.safeParse(fd.get("lobby_id"));
   if (!id.success) return { ok: false, message: lobbyError() };
   const intent = fd.get("intent");
   let result: { error: { hint?: string | null } | null };
-  let ok = "Hecho.";
+  let ok = t("done");
 
   switch (intent) {
     case "request": {
-      const msg = requestMessageSchema.safeParse(fd.get("message") ?? "");
+      const msg = requestMessageSchemaFor(locale).safeParse(fd.get("message") ?? "");
       if (!msg.success) return { ok: false, message: msg.error.issues[0].message };
       result = await supabase.rpc("request_join", { p_lobby: id.data, p_message: msg.data });
-      ok = "Solicitud enviada. El creador del grupo la verá en su página.";
+      ok = t("requested");
       break;
     }
     case "withdraw":
       result = await supabase.rpc("withdraw_request", { p_lobby: id.data });
-      ok = "Solicitud retirada.";
+      ok = t("withdrawn");
       break;
     case "accept":
     case "reject": {
       const req = lobbyId.safeParse(fd.get("request_id"));
       if (!req.success) return { ok: false, message: lobbyError() };
       result = await supabase.rpc("respond_request", { p_request: req.data, p_accept: intent === "accept" });
-      ok = intent === "accept" ? "Solicitud aceptada." : "Solicitud rechazada.";
+      ok = intent === "accept" ? t("accepted") : t("rejected");
       break;
     }
     case "leave":
       result = await supabase.rpc("leave_lobby", { p_lobby: id.data });
-      ok = "Has salido del grupo.";
+      ok = t("left");
       break;
     case "close":
       result = await supabase.rpc("close_lobby", { p_lobby: id.data });
-      ok = "Grupo cerrado.";
+      ok = t("closed");
       break;
     default:
       return { ok: false, message: lobbyError() };
@@ -98,9 +108,10 @@ export type ShareState = { ok: true; url: string } | { ok: false; message: strin
 /** El creador comparte el grupo: genera el enlace público con su resumen (para Discord, WhatsApp…). */
 export async function shareLobbyAction(_prev: ShareState, fd: FormData): Promise<ShareState> {
   const supabase = await session();
+  const { t, lobbyError } = await messages();
   const id = lobbyId.safeParse(fd.get("lobby_id"));
   if (!id.success) return { ok: false, message: lobbyError() };
   const { error } = await supabase.rpc("share_lobby", { p_lobby: id.data });
-  if (error) return { ok: false, message: error.hint === "closed" ? "El grupo está cerrado." : lobbyError(error.hint) };
+  if (error) return { ok: false, message: error.hint === "closed" ? t("isClosed") : lobbyError(error.hint) };
   return { ok: true, url: `${siteUrl()}/unete/${id.data}` };
 }

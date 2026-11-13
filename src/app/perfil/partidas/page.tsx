@@ -1,15 +1,15 @@
-import type { Metadata } from "next";
+import { getLocale, getTranslations } from "next-intl/server";
+import { INTL_LOCALE } from "@/lib/i18n/locale";
+import { titled } from "@/lib/i18n/metadata";
 import Link from "next/link";
 import { redirect } from "next/navigation";
 import { currentGame } from "@/lib/games";
-import { MATCH_RESULTS, matchSummary, todayInMadrid } from "@/lib/matches";
+import { matchSummary, todayInMadrid } from "@/lib/matches";
 import { loadCatalog } from "@/lib/profile/queries";
 import { createClient } from "@/lib/supabase/server";
 import { AddMatchForm, DeleteMatch, MatchesVisibility } from "./forms";
 
-export const metadata: Metadata = { title: "Mis partidas" };
-
-const dateFmt = new Intl.DateTimeFormat("es-ES", { day: "numeric", month: "short", year: "numeric", timeZone: "UTC" });
+export const generateMetadata = titled("matches");
 
 export default async function MatchesPage() {
   const supabase = await createClient();
@@ -36,19 +36,18 @@ export default async function MatchesPage() {
   const modeName = new Map((modes ?? []).map((m) => [m.id, m.name]));
   const charName = new Map(catalog.characters.map((c) => [c.id, c.name]));
   const s = matchSummary(list);
+  const [t, tp, to, locale] = await Promise.all([getTranslations("matches"), getTranslations("player"), getTranslations("options"), getLocale()]);
+  const dateFmt = new Intl.DateTimeFormat(INTL_LOCALE[locale], { day: "numeric", month: "short", year: "numeric", timeZone: "UTC" });
 
   return (
     <section className="flex max-w-4xl flex-col gap-6">
       <header className="flex flex-col gap-2">
         <Link href="/perfil" className="inline-flex min-h-11 items-center self-start text-sm text-muted hover:text-text">
-          ← Mi perfil
+          ← {t("back")}
         </Link>
         <p className="kicker">{game.name}</p>
-        <h1 className="font-display text-3xl font-semibold">Mis partidas</h1>
-        <p className="max-w-2xl text-muted">
-          Apunta tus partidas para llevar tu propio registro. Son datos <strong>introducidos manualmente</strong>: no están
-          conectados con {game.name}, no se verifican y no cuentan para el ranking semanal ni para ningún rating.
-        </p>
+        <h1 className="font-display text-3xl font-semibold">{t("title")}</h1>
+        <p className="max-w-2xl text-muted">{t.rich("lead", { game: game.name, b: (c) => <strong>{c}</strong> })}</p>
         <MatchesVisibility value={profile?.matches_visibility ?? "private"} />
       </header>
 
@@ -63,18 +62,18 @@ export default async function MatchesPage() {
       <section aria-labelledby="registro" className="flex flex-col gap-3">
         <div className="flex flex-wrap items-baseline justify-between gap-2">
           <h2 id="registro" className="font-display text-xl font-semibold">
-            Registro
+            {t("log")}
           </h2>
           {s.total > 0 && (
             <p className="text-sm text-muted">
-              {s.total} {s.total === 1 ? "partida" : "partidas"}
-              {s.winRate != null && ` · ${s.winRate}% de victorias`}
-              {s.kd != null && ` · K/D ${s.kd.toLocaleString("es")}`} · introducido manualmente
+              {tp("matchCount", { count: s.total })}
+              {s.winRate != null && ` · ${tp("winRate", { rate: s.winRate })}`}
+              {s.kd != null && ` · K/D ${s.kd.toLocaleString(INTL_LOCALE[locale])}`} · {tp("manual")}
             </p>
           )}
         </div>
         {list.length === 0 ? (
-          <p className="rounded-lg border border-dashed border-line p-6 text-center text-sm text-muted">Aún no has apuntado ninguna partida.</p>
+          <p className="rounded-lg border border-dashed border-line p-6 text-center text-sm text-muted">{t("empty")}</p>
         ) : (
           <ul className="flex flex-col gap-2">
             {list.map((m) => {
@@ -91,7 +90,7 @@ export default async function MatchesPage() {
                   <span
                     className={`w-20 text-sm font-semibold ${m.result === "win" ? "text-success" : m.result === "loss" ? "text-danger" : "text-muted"}`}
                   >
-                    {m.result ? MATCH_RESULTS[m.result] : m.placement ? `#${m.placement}` : "—"}
+                    {m.result ? to(`matchResults.${m.result}`) : m.placement ? `#${m.placement}` : "—"}
                   </span>
                   <span className="min-w-0 flex-1">
                     <span className="block truncate text-sm">{label}</span>
@@ -100,14 +99,14 @@ export default async function MatchesPage() {
                         m.kills != null || m.deaths != null || m.assists != null
                           ? `${m.kills ?? "–"}/${m.deaths ?? "–"}/${m.assists ?? "–"}`
                           : null,
-                        m.result && m.placement ? `puesto ${m.placement}` : null,
+                        m.result && m.placement ? tp("placement", { n: m.placement }) : null,
                         m.note,
                       ]
                         .filter(Boolean)
-                        .join(" · ") || "Sin más datos"}
+                        .join(" · ") || t("noMore")}
                     </span>
                   </span>
-                  <DeleteMatch id={m.id} label={`la partida del ${label}`} />
+                  <DeleteMatch id={m.id} label={t("matchOf", { label })} />
                 </li>
               );
             })}

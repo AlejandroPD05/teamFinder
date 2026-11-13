@@ -1,7 +1,8 @@
 "use client";
 
+import { useLocale, useTranslations } from "next-intl";
 import { useActionState, useRef, useState, useTransition } from "react";
-import { FANART_LICENSE, FANART_MAX_BYTES, FANART_TYPES } from "@/lib/fanart";
+import { FANART_MAX_BYTES, FANART_TYPES } from "@/lib/limits";
 import { browserClient } from "@/lib/supabase/client";
 import { reviewFanartAction, submitFanartAction, withdrawFanartAction, type FanartState } from "./actions";
 
@@ -21,20 +22,22 @@ export function FanartForm({ userId, games, current }: { userId: string; games: 
   const [state, setState] = useState<FanartState>(null);
   const [pending, start] = useTransition();
   const formRef = useRef<HTMLFormElement>(null);
+  const t = useTranslations("fanart");
+  const locale = useLocale();
 
   function submit(e: React.FormEvent<HTMLFormElement>) {
     e.preventDefault();
     const fd = new FormData(e.currentTarget);
     const file = fd.get("image");
     start(async () => {
-      if (!(file instanceof File) || file.size === 0) return setState({ ok: false, message: "Elige una imagen." });
+      if (!(file instanceof File) || file.size === 0) return setState({ ok: false, message: t("chooseImage") });
       const ext = FANART_TYPES[file.type as keyof typeof FANART_TYPES];
-      if (!ext) return setState({ ok: false, message: "La imagen debe ser PNG, JPG o WebP." });
-      if (file.size > FANART_MAX_BYTES) return setState({ ok: false, message: "La imagen no puede pasar de 2 MB." });
-      if (fd.get("license") !== "on") return setState({ ok: false, message: "Tienes que aceptar el permiso para enviarla." });
+      if (!ext) return setState({ ok: false, message: t("imageType") });
+      if (file.size > FANART_MAX_BYTES) return setState({ ok: false, message: t("imageSize") });
+      if (fd.get("license") !== "on") return setState({ ok: false, message: t("acceptLicense") });
       const path = `${userId}/${crypto.randomUUID().replaceAll("-", "")}.${ext}`;
       const { error } = await browserClient().storage.from("fanart").upload(path, file, { contentType: file.type, upsert: false });
-      if (error) return setState({ ok: false, message: "No se pudo subir la imagen. Inténtalo de nuevo." });
+      if (error) return setState({ ok: false, message: t("uploadError") });
       fd.delete("image");
       fd.set("path", path);
       const result = await submitFanartAction(null, fd);
@@ -48,19 +51,19 @@ export function FanartForm({ userId, games, current }: { userId: string; games: 
       <div className="grid gap-4 sm:grid-cols-2">
         <div>
           <label htmlFor="fa-title" className="text-sm font-medium">
-            Título de la obra
+            {t("titleLabel")}
           </label>
           <input id="fa-title" name="title" required minLength={2} maxLength={60} className={`${control} mt-2`} />
         </div>
         <div>
           <label htmlFor="fa-artist" className="text-sm font-medium">
-            Nombre artístico (aparece en la carta)
+            {t("artist")}
           </label>
           <input id="fa-artist" name="artist" required minLength={2} maxLength={60} className={`${control} mt-2`} />
         </div>
         <div>
           <label htmlFor="fa-game" className="text-sm font-medium">
-            Juego
+            {t("game")}
           </label>
           <select id="fa-game" name="game" defaultValue={current} className={`${control} mt-2`}>
             {games.map((g) => (
@@ -72,14 +75,14 @@ export function FanartForm({ userId, games, current }: { userId: string; games: 
         </div>
         <div>
           <label htmlFor="fa-portfolio" className="text-sm font-medium">
-            Enlace a tu portfolio (opcional)
+            {t("portfolio")}
           </label>
           <input id="fa-portfolio" name="portfolio" type="url" inputMode="url" placeholder="https://" maxLength={200} className={`${control} mt-2`} />
         </div>
       </div>
       <div>
         <label htmlFor="fa-image" className="text-sm font-medium">
-          Imagen (PNG, JPG o WebP, hasta 2 MB, mejor vertical 3:4)
+          {t("image")}
         </label>
         <input
           id="fa-image"
@@ -92,11 +95,14 @@ export function FanartForm({ userId, games, current }: { userId: string; games: 
       </div>
       <label className="flex items-start gap-3 rounded-md border border-line p-3 text-sm has-[:checked]:border-accent">
         <input type="checkbox" name="license" required className="mt-1 size-4 shrink-0 accent-accent" />
-        <span>{FANART_LICENSE}</span>
+        <span>
+          {t("license")}
+          {locale !== "es" && <span className="mt-1 block text-xs text-muted">{t("licenseNote")}</span>}
+        </span>
       </label>
       <div className="flex flex-wrap items-center gap-3">
         <button type="submit" disabled={pending} className="btn-primary">
-          {pending ? "Enviando…" : "Enviar fanart"}
+          {pending ? t("sending") : t("send")}
         </button>
         <Status state={state} />
       </div>
@@ -106,18 +112,19 @@ export function FanartForm({ userId, games, current }: { userId: string; games: 
 
 export function WithdrawFanart({ id }: { id: string }) {
   const [state, action, pending] = useActionState<FanartState, FormData>(withdrawFanartAction, null);
+  const t = useTranslations("fanart");
   if (state?.ok) return <Status state={state} />;
   return (
     <form
       action={action}
       onSubmit={(e) => {
-        if (!window.confirm("¿Retirar el permiso? La carta dejará de mostrarse y se borrará la imagen.")) e.preventDefault();
+        if (!window.confirm(t("withdrawConfirm"))) e.preventDefault();
       }}
       className="flex flex-wrap items-center gap-2"
     >
       <input type="hidden" name="id" value={id} />
       <button type="submit" disabled={pending} className={`${btn} border border-line hover:bg-panel-hover`}>
-        Retirar
+        {t("withdraw")}
       </button>
       <Status state={state} />
     </form>
@@ -126,31 +133,34 @@ export function WithdrawFanart({ id }: { id: string }) {
 
 export function ReviewFanart({ id }: { id: string }) {
   const [state, action, pending] = useActionState<FanartState, FormData>(reviewFanartAction, null);
+  const t = useTranslations("fanart");
+  const tr = useTranslations("options.rarity");
   if (state?.ok) return <Status state={state} />;
   return (
     <form action={action} className="flex flex-col gap-2">
       <input type="hidden" name="id" value={id} />
       <div className="grid gap-2 sm:grid-cols-2">
         <label className="flex flex-col gap-1 text-sm">
-          <span className="font-medium">Rareza si se aprueba</span>
+          <span className="font-medium">{t("rarity")}</span>
           <select name="rarity" defaultValue="rare" className={control}>
-            <option value="common">Común</option>
-            <option value="rare">Rara</option>
-            <option value="epic">Épica</option>
-            <option value="legendary">Legendaria</option>
+            {(["common", "rare", "epic", "legendary"] as const).map((r) => (
+              <option key={r} value={r}>
+                {tr(r)}
+              </option>
+            ))}
           </select>
         </label>
         <label className="flex flex-col gap-1 text-sm">
-          <span className="font-medium">Nota para la persona (opcional)</span>
+          <span className="font-medium">{t("reviewNote")}</span>
           <input name="note" maxLength={300} className={control} />
         </label>
       </div>
       <div className="flex flex-wrap items-center gap-2">
         <button type="submit" name="decision" value="approve" disabled={pending} className={`${btn} bg-accent font-semibold text-bg`}>
-          Aprobar como carta
+          {t("approve")}
         </button>
         <button type="submit" name="decision" value="reject" disabled={pending} className={`${btn} border border-line hover:bg-panel-hover`}>
-          Rechazar
+          {t("reject")}
         </button>
         <Status state={state} />
       </div>

@@ -4,7 +4,7 @@ import { revalidatePath } from "next/cache";
 import { redirect } from "next/navigation";
 import { z } from "zod";
 import { currentGame } from "@/lib/games";
-import { RESTRICTED_MESSAGE } from "@/lib/restrictions";
+import { getTranslations } from "next-intl/server";
 import { createClient } from "@/lib/supabase/server";
 
 export type AvailableState = { ok: boolean; message: string } | null;
@@ -19,21 +19,22 @@ export async function setAvailableAction(_p: AvailableState, fd: FormData): Prom
   const supabase = await createClient();
   const { data } = await supabase.auth.getClaims();
   if (!data?.claims?.sub) redirect("/entrar?next=/inicio");
+  const t = await getTranslations("availableNow");
   const v = schema.safeParse({ hours: fd.get("hours"), mode: fd.get("mode") });
-  if (!v.success) return { ok: false, message: "Elige cuánto tiempo." };
+  if (!v.success) return { ok: false, message: t("chooseTime") };
   const { game } = await currentGame();
   const { error } = await supabase.rpc("set_available", { p_game: game.id, p_hours: v.data.hours, p_mode: v.data.mode ?? undefined });
   if (error) {
     const message =
       error.hint === "no_profile"
-        ? `Primero completa tu perfil de ${game.name}.`
+        ? t("noProfile", { game: game.name })
         : error.hint === "restricted"
-          ? RESTRICTED_MESSAGE
-          : "No se pudo guardar. Inténtalo de nuevo.";
+          ? t("restricted")
+          : t("saveError");
     return { ok: false, message };
   }
   revalidatePath("/inicio");
   revalidatePath("/buscar");
   revalidatePath("/");
-  return { ok: true, message: v.data.hours ? "¡Listo! Te verán como disponible." : "Ya no apareces como disponible." };
+  return { ok: true, message: v.data.hours ? t("saved") : t("cleared") };
 }

@@ -1,21 +1,14 @@
 "use client";
 
+import { useLocale, useTranslations } from "next-intl";
 import { useEffect, useRef, useState } from "react";
+import { INTL_LOCALE } from "@/lib/i18n/locale";
+import { useErrorMessage } from "@/lib/i18n/use-error-message";
 import { browserClient } from "@/lib/supabase/client";
 import { ReportForm } from "../../confianza/forms";
-import { RESTRICTED_MESSAGE } from "@/lib/restrictions";
 
 export type ChatMessage = { id: number; user_id: string; body: string; created_at: string };
 
-const ERRORS: Record<string, string> = {
-  rate_limited: "Vas demasiado rápido. Espera unos segundos.",
-  closed: "El grupo está cerrado: la sala es de solo lectura.",
-  not_member: "Ya no eres miembro de este grupo.",
-  invalid: "El mensaje debe tener entre 1 y 500 caracteres.",
-  restricted: RESTRICTED_MESSAGE,
-};
-
-const time = new Intl.DateTimeFormat("es-ES", { timeZone: "Europe/Madrid", hour: "2-digit", minute: "2-digit" });
 
 export function LobbyChat({
   lobbyId,
@@ -37,6 +30,10 @@ export function LobbyChat({
   const [sending, setSending] = useState(false);
   const [live, setLive] = useState<"connecting" | "live" | "offline">("connecting");
   const listRef = useRef<HTMLOListElement>(null);
+  const t = useTranslations("chat");
+  const chatError = useErrorMessage("chat");
+  const time = new Intl.DateTimeFormat(INTL_LOCALE[useLocale()], { timeZone: "Europe/Madrid", hour: "2-digit", minute: "2-digit" });
+  const player = t("player");
 
   // Tiempo real: Realtime solo entrega a miembros (aplica la RLS de lectura).
   useEffect(() => {
@@ -78,9 +75,9 @@ export function LobbyChat({
       .select("id, display_name")
       .in("id", unknown)
       .then(({ data }) => {
-        if (data?.length) setNames((n) => ({ ...n, ...Object.fromEntries(data.map((p) => [p.id!, p.display_name ?? "Jugador"])) }));
+        if (data?.length) setNames((n) => ({ ...n, ...Object.fromEntries(data.map((p) => [p.id!, p.display_name ?? player])) }));
       });
-  }, [messages, names]);
+  }, [messages, names, player]);
 
   useEffect(() => {
     listRef.current?.lastElementChild?.scrollIntoView({ block: "nearest" });
@@ -90,7 +87,7 @@ export function LobbyChat({
     e.preventDefault();
     const text = body.trim();
     if (!text || text.length > 500) {
-      setError(ERRORS.invalid);
+      setError(chatError("invalid"));
       return;
     }
     setSending(true);
@@ -99,7 +96,7 @@ export function LobbyChat({
     const { data, error: err } = await supabase.rpc("send_message", { p_lobby: lobbyId, p_body: text });
     setSending(false);
     if (err) {
-      setError(ERRORS[err.hint ?? ""] ?? "No se pudo enviar. Inténtalo de nuevo.");
+      setError(chatError(err.hint));
       return;
     }
     setBody("");
@@ -113,26 +110,26 @@ export function LobbyChat({
     <section aria-labelledby="chat" className="flex flex-col gap-3 surface p-5">
       <div className="flex flex-wrap items-center justify-between gap-2">
         <h2 id="chat" className="font-semibold">
-          Chat del grupo
+          {t("lobbyTitle")}
         </h2>
         <span className="text-xs text-muted">
-          {live === "live" ? "En directo" : live === "connecting" ? "Conectando…" : "Sin tiempo real: recarga para ver mensajes nuevos"}
+          {live === "live" ? t("live") : live === "connecting" ? t("connecting") : t("offline")}
         </span>
       </div>
-      <p className="text-xs text-muted">Solo lo ven los miembros del grupo. Sé respetuoso: no compartas datos personales.</p>
+      <p className="text-xs text-muted">{t("lobbyPrivacy")}</p>
 
       <ol
         ref={listRef}
         role="log"
         aria-live="polite"
-        aria-label="Mensajes del grupo"
+        aria-label={t("lobbyLog")}
         className="flex max-h-96 min-h-24 flex-col gap-2 overflow-y-auto rounded-md bg-bg p-3"
       >
-        {messages.length === 0 && <li className="text-sm text-muted">Aún no hay mensajes. Saluda y coordinad la partida.</li>}
+        {messages.length === 0 && <li className="text-sm text-muted">{t("emptyLobby")}</li>}
         {messages.map((m) => (
           <li key={m.id} className={`flex flex-col ${m.user_id === me ? "items-end" : "items-start"}`}>
             <span className="text-xs text-muted">
-              {m.user_id === me ? "Tú" : (names[m.user_id] ?? "Jugador")} · {time.format(new Date(m.created_at))}
+              {m.user_id === me ? t("you") : (names[m.user_id] ?? player)} · {time.format(new Date(m.created_at))}
             </span>
             <p
               className={`max-w-[85%] whitespace-pre-wrap break-words rounded-lg px-3 py-2 text-sm ${
@@ -141,17 +138,17 @@ export function LobbyChat({
             >
               {m.body}
             </p>
-            {m.user_id !== me && <ReportForm targetId={m.user_id} messageId={m.id} lobbyId={lobbyId} label="Denunciar mensaje" />}
+            {m.user_id !== me && <ReportForm targetId={m.user_id} messageId={m.id} lobbyId={lobbyId} label={t("reportMessage")} />}
           </li>
         ))}
       </ol>
 
       {closed ? (
-        <p className="text-sm text-muted">El grupo está cerrado: la sala es de solo lectura.</p>
+        <p className="text-sm text-muted">{chatError("closed")}</p>
       ) : (
         <form onSubmit={send} className="flex flex-col gap-2">
           <label htmlFor="chat-input" className="sr-only">
-            Escribe un mensaje
+            {t("inputLabel")}
           </label>
           <div className="flex gap-2">
             <input
@@ -159,7 +156,7 @@ export function LobbyChat({
               value={body}
               onChange={(e) => setBody(e.target.value)}
               maxLength={500}
-              placeholder="Escribe un mensaje…"
+              placeholder={t("placeholder")}
               autoComplete="off"
               aria-describedby={error ? "chat-error" : undefined}
               className="min-h-11 flex-1 rounded-md border border-line bg-bg px-3 text-text focus:border-accent"
@@ -169,7 +166,7 @@ export function LobbyChat({
               disabled={sending}
               className="btn-primary"
             >
-              Enviar
+              {t("send")}
             </button>
           </div>
           {error && (

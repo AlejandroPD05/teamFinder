@@ -1,5 +1,6 @@
 "use client";
 
+import { useTranslations } from "next-intl";
 import { useActionState } from "react";
 import { lobbyAction, type ActionState } from "../actions";
 
@@ -30,6 +31,7 @@ export function ActionForm({
   confirm?: string;
 }) {
   const [state, action, pending] = useActionState<ActionState, FormData>(lobbyAction, null);
+  const t = useTranslations("lobby");
   return (
     <form
       action={action}
@@ -44,20 +46,20 @@ export function ActionForm({
       {withMessage && (
         <>
           <label htmlFor={`msg-${lobbyId}`} className="text-sm font-medium">
-            Mensaje para el grupo (opcional)
+            {t("requestMessage")}
           </label>
           <input
             id={`msg-${lobbyId}`}
             name="message"
             maxLength={200}
-            placeholder="Ej.: juego Omen y Clove, Oro 2"
+            placeholder={t("requestPlaceholder")}
             className="min-h-11 rounded-md border border-line bg-bg px-3 text-text focus:border-accent"
           />
         </>
       )}
       <div className="flex flex-wrap items-center gap-3">
         <button type="submit" disabled={pending} className={`min-h-11 rounded-md px-4 text-sm disabled:opacity-60 ${styles[variant]}`}>
-          {pending ? (pendingLabel ?? "Un momento…") : label}
+          {pending ? (pendingLabel ?? t("wait")) : label}
         </button>
         <p role="status" aria-live="polite" className={`text-sm ${state?.ok ? "text-success" : "text-danger"}`}>
           {state?.message}

@@ -1,40 +1,53 @@
 import { z } from "zod";
+import type { AppLocale } from "./i18n/locale";
+import { translator } from "./i18n/translator";
 
 // Partidas introducidas a mano (prompt §4.6). Siempre se muestran como «introducido manualmente»: no son datos
 // oficiales ni cuentan para el ranking semanal ni para ningún rating.
 
-export const MATCH_RESULTS = { win: "Victoria", loss: "Derrota", draw: "Empate" } as const;
+export { MATCH_RESULTS } from "./limits";
 
-const optInt = (max: number, what: string) =>
-  z.preprocess(
-    (v) => (v === "" || v == null ? null : Number(v)),
-    z.number({ message: `${what}: un número.` }).int(`${what}: un número entero.`).min(0, `${what}: no puede ser negativo.`).max(max, `${what}: como mucho ${max}.`).nullable(),
-  );
 const optUuid = z.preprocess((v) => (v === "" || v == null ? null : v), z.uuid().nullable());
 
-export const matchSchema = z
+/** Esquema de una partida con los mensajes en el idioma pedido. */
+export function matchSchemaFor(locale: AppLocale) {
+  const t = translator(locale, "validation.match");
+  const optInt = (max: number, field: "kills" | "deaths" | "assists") =>
+    z.preprocess(
+      (v) => (v === "" || v == null ? null : Number(v)),
+      z
+        .number({ message: t("number", { field }) })
+        .int(t("integer", { field }))
+        .min(0, t("negative", { field }))
+        .max(max, t("max", { field, max }))
+        .nullable(),
+    );
+  return z
   .object({
-    played_on: z.iso.date({ message: "Pon la fecha de la partida." }),
+    played_on: z.iso.date({ message: t("date") }),
     mode_id: optUuid,
     map_name: z.preprocess(
       (v) => (typeof v === "string" ? v.trim() : v) || null,
-      z.string().max(40, "Mapa: como mucho 40 caracteres.").regex(/^[^<>]*$/, "Mapa: sin < ni >.").nullable(),
+      z.string().max(40, t("mapMax")).regex(/^[^<>]*$/, t("mapChars")).nullable(),
     ),
     character_id: optUuid,
     result: z.preprocess((v) => (v === "" || v == null ? null : v), z.enum(["win", "loss", "draw"]).nullable()),
     placement: z.preprocess(
       (v) => (v === "" || v == null ? null : Number(v)),
-      z.number().int().min(1, "Puesto: de 1 a 60.").max(60, "Puesto: de 1 a 60.").nullable(),
+      z.number().int().min(1, t("placement")).max(60, t("placement")).nullable(),
     ),
-    kills: optInt(200, "Bajas"),
-    deaths: optInt(200, "Muertes"),
-    assists: optInt(200, "Asistencias"),
+    kills: optInt(200, "kills"),
+    deaths: optInt(200, "deaths"),
+    assists: optInt(200, "assists"),
     note: z.preprocess(
       (v) => (typeof v === "string" ? v.trim() : v) || null,
-      z.string().max(200, "Nota: como mucho 200 caracteres.").regex(/^[^<>]*$/, "Nota: sin < ni >.").nullable(),
+      z.string().max(200, t("noteMax")).regex(/^[^<>]*$/, t("noteChars")).nullable(),
     ),
   })
-  .refine((m) => m.played_on <= todayInMadrid(), { message: "La fecha no puede ser futura.", path: ["played_on"] });
+  .refine((m) => m.played_on <= todayInMadrid(), { message: t("future"), path: ["played_on"] });
+}
+
+export const matchSchema = matchSchemaFor("es");
 
 export type MatchInput = z.infer<typeof matchSchema>;
 

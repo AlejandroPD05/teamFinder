@@ -2,6 +2,7 @@
 
 import { cookies } from "next/headers";
 import { redirect } from "next/navigation";
+import { getTranslations } from "next-intl/server";
 import { z } from "zod";
 import { GAME_COOKIE_MAX_AGE } from "@/lib/config";
 import { currentGame, GAME_COOKIE, loadGames } from "@/lib/games";
@@ -49,26 +50,28 @@ async function saveGamePart(part: { roles?: { role_id: string; is_primary: boole
 
 /** Paso 2: roles (y cuál es el principal). */
 export async function saveWelcomeRoles(_p: WelcomeState, fd: FormData): Promise<WelcomeState> {
+  const t = await getTranslations("welcome");
   const roles = z.array(uuid).max(4).safeParse(fd.getAll("roles"));
   const primary = fd.get("primary") ? uuid.safeParse(fd.get("primary")) : null;
-  if (!roles.success || (primary && !primary.success)) return { ok: false, message: "Revisa los roles elegidos." };
+  if (!roles.success || (primary && !primary.success)) return { ok: false, message: t("checkRoles") };
   const main = primary?.success && roles.data.includes(primary.data) ? primary.data : roles.data[0];
   const error = await saveGamePart({ roles: roles.data.map((role_id) => ({ role_id, is_primary: role_id === main })) });
-  if (error) return { ok: false, message: "No se pudo guardar. Inténtalo de nuevo." };
+  if (error) return { ok: false, message: t("saveError") };
   redirect("/bienvenida?paso=3");
 }
 
 /** Paso 3: nombre, rango y servidor. Al terminar, la guía no vuelve a salir. */
 export async function saveWelcomeRank(_p: WelcomeState, fd: FormData): Promise<WelcomeState> {
   const { supabase, userId } = await session();
-  const name = z.string().trim().min(2, "El nombre: al menos 2 caracteres.").max(32, "El nombre: como mucho 32.").regex(/^[^<>]+$/, "Sin < ni >.").safeParse(fd.get("display_name") ?? "");
+  const t = await getTranslations("welcome");
+  const name = z.string().trim().min(2, t("nameMin")).max(32, t("nameMax")).regex(/^[^<>]+$/, t("chars")).safeParse(fd.get("display_name") ?? "");
   const opt = (v: FormDataEntryValue | null) => (v ? uuid.safeParse(v) : { success: true as const, data: null });
   const rank = opt(fd.get("rank_id"));
   const region = opt(fd.get("region_id"));
   if (!name.success) return { ok: false, message: name.error.issues[0].message };
-  if (!rank.success || !region.success) return { ok: false, message: "Revisa el rango y el servidor." };
+  if (!rank.success || !region.success) return { ok: false, message: t("checkRank") };
   const error = await saveGamePart({ rank: rank.data, region: region.data });
-  if (error) return { ok: false, message: "No se pudo guardar. Inténtalo de nuevo." };
+  if (error) return { ok: false, message: t("saveError") };
   await supabase.from("profiles").update({ display_name: name.data, onboarded_at: new Date().toISOString() }).eq("id", userId);
   redirect("/inicio");
 }

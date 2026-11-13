@@ -1,22 +1,17 @@
+import { INTL_LOCALE, type AppLocale } from "@/lib/i18n/locale";
+import { translator } from "@/lib/i18n/translator";
+
 // Formato de fechas de grupos. La beta es para servidores EU: se muestran en hora peninsular española.
-const fmt = new Intl.DateTimeFormat("es-ES", {
-  timeZone: "Europe/Madrid",
-  weekday: "short",
-  day: "numeric",
-  month: "short",
-  hour: "2-digit",
-  minute: "2-digit",
-});
-
-export function formatStart(iso: string | null): string {
-  if (!iso) return "Ahora";
-  return `${fmt.format(new Date(iso))} (hora peninsular)`;
+export function formatStart(iso: string | null, locale: AppLocale = "es"): string {
+  const t = translator(locale, "lobbies");
+  if (!iso) return t("now");
+  const when = new Intl.DateTimeFormat(INTL_LOCALE[locale], {
+    timeZone: "Europe/Madrid",
+    weekday: "short",
+    day: "numeric",
+    month: "short",
+    hour: "2-digit",
+    minute: "2-digit",
+  }).format(new Date(iso));
+  return t("startsAt", { when });
 }
-
-export const STATUS_LABEL = { open: "Abierto", full: "Completo", closed: "Cerrado" } as const;
-export const REQUEST_LABEL = {
-  pending: "Pendiente",
-  accepted: "Aceptada",
-  rejected: "Rechazada",
-  withdrawn: "Retirada",
-} as const;

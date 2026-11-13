@@ -1,9 +1,9 @@
-import type { Metadata } from "next";
 import Link from "next/link";
 import { LEGAL } from "@/lib/legal";
-import { ContactEmail, LegalVersion, Section } from "../legal-parts";
+import { titled } from "@/lib/i18n/metadata";
+import { BindingNotice, ContactEmail, LegalVersion, Section } from "../legal-parts";
 
-export const metadata: Metadata = { title: "Privacidad", alternates: { canonical: "/privacidad" } };
+export const generateMetadata = titled("privacy", { alternates: { canonical: "/privacidad" } });
 
 // Política de privacidad según el art. 13 RGPD (y 14 para los datos que llegan de Discord). Los plazos de conservación
 // se cumplen con la purga automática de la migración 20261112020000_retention.sql.
@@ -47,7 +47,9 @@ const PLAZOS: [string, string][] = [
 
 export default function PrivacyPage() {
   return (
-    <article className="mx-auto flex max-w-2xl flex-col gap-6">
+    // Texto legal solo en español (la versión vinculante); en inglés se añade un aviso con un resumen.
+    <article lang="es" className="mx-auto flex max-w-2xl flex-col gap-6">
+      <BindingNotice page="privacy" />
       <h1 className="font-display text-3xl font-semibold">Privacidad</h1>
       <LegalVersion />
 

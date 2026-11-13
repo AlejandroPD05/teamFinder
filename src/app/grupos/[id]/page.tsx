@@ -1,11 +1,11 @@
-import type { Metadata } from "next";
+import { getLocale, getTranslations } from "next-intl/server";
+import { titled } from "@/lib/i18n/metadata";
 import Image from "next/image";
 import Link from "next/link";
 import { notFound, redirect } from "next/navigation";
 import { z } from "zod";
-import { formatStart, REQUEST_LABEL, STATUS_LABEL } from "@/lib/lobbies/format";
+import { formatStart } from "@/lib/lobbies/format";
 import { loadLobby, loadNames } from "@/lib/lobbies/queries";
-import { GOALS, LANGUAGES } from "@/lib/profile/options";
 import { loadCatalog } from "@/lib/profile/queries";
 import { createClient } from "@/lib/supabase/server";
 import { ActionForm } from "./action-form";
@@ -15,7 +15,7 @@ import { LobbyChat } from "./lobby-chat";
 import { KarmaVote } from "../../confianza/forms";
 import { RankBadge, RoleIcon } from "@/components/game-icons";
 
-export const metadata: Metadata = { title: "Grupo" };
+export const generateMetadata = titled("lobby");
 
 /** ¿Se cerró hace menos de `days` días? (fuera del render para que la regla de pureza no se queje). */
 function closedWithin(iso: string | null, days: number) {
@@ -46,7 +46,8 @@ export default async function LobbyPage({ params }: PageProps<"/grupos/[id]">) {
   const catalog = await loadCatalog(supabase, data.lobby.game_id);
   const { lobby, members, neededRoles, requests } = data;
   const names = await loadNames(supabase, [lobby.owner_id, ...members.map((m) => m.user_id), ...requests.map((r) => r.user_id)]);
-  const name = (uid: string) => names.get(uid)?.name ?? "Jugador";
+  const [t, to, ts, locale] = await Promise.all([getTranslations("lobby"), getTranslations("options"), getTranslations("shared"), getLocale()]);
+  const name = (uid: string) => names.get(uid)?.name ?? t("player");
 
   const isOwner = lobby.owner_id === me;
   const isMember = members.some((m) => m.user_id === me);
@@ -79,29 +80,29 @@ export default async function LobbyPage({ params }: PageProps<"/grupos/[id]">) {
         <div>
           <p className="text-sm text-muted">
             <Link href="/grupos" className="underline underline-offset-4">
-              Grupos
+              {t("breadcrumb")}
             </Link>{" "}
             / {modeName}
           </p>
           <h1 className="font-display text-3xl font-semibold">
-            {modeName} de {name(lobby.owner_id)}
+            {t("title", { mode: modeName, owner: name(lobby.owner_id) })}
           </h1>
           {lobby.note && <p className="mt-1">{lobby.note}</p>}
         </div>
         <span
           className={`text-sm font-medium ${lobby.status === "open" ? "text-success" : "text-muted"}`}
         >
-          {STATUS_LABEL[lobby.status]} · {members.length}/{lobby.slots} plazas
+          {to(`lobbyStatus.${lobby.status}`)} · {t("slots", { taken: members.length, slots: lobby.slots })}
         </span>
       </header>
 
       <section aria-labelledby="detalles" className="surface p-5">
         <h2 id="detalles" className="font-semibold">
-          Detalles
+          {t("details")}
         </h2>
         <dl className="mt-3 grid gap-2 text-sm sm:grid-cols-2">
           <div>
-            <dt className="text-muted">Buscan</dt>
+            <dt className="text-muted">{t("looking")}</dt>
             <dd className="mt-1 flex flex-wrap gap-1.5">
               {neededRoles.length
                 ? neededRoles.map((r) => (
@@ -110,34 +111,34 @@ export default async function LobbyPage({ params }: PageProps<"/grupos/[id]">) {
                       {roleOf(r)?.name}
                     </span>
                   ))
-                : "Cualquier rol"}
+                : ts("anyRole")}
             </dd>
           </div>
           <div>
-            <dt className="text-muted">Rango</dt>
+            <dt className="text-muted">{t("rank")}</dt>
             <dd>
               {lobby.rank_min_id || lobby.rank_max_id ? (
                 <span className="inline-flex flex-wrap items-center gap-2">
                   {rankRow(lobby.rank_min_id) ? <RankBadge {...rankRow(lobby.rank_min_id)!} manual={false} size={20} /> : "—"}
-                  <span className="text-muted">a</span>
+                  <span className="text-muted">{t("to")}</span>
                   {rankRow(lobby.rank_max_id) ? <RankBadge {...rankRow(lobby.rank_max_id)!} manual={false} size={20} /> : "—"}
                 </span>
               ) : (
-                "Cualquiera"
+                ts("anyRank")
               )}
             </dd>
           </div>
           <div>
-            <dt className="text-muted">Cuándo</dt>
-            <dd>{formatStart(lobby.starts_at)}</dd>
+            <dt className="text-muted">{t("when")}</dt>
+            <dd>{formatStart(lobby.starts_at, locale)}</dd>
           </div>
           <div>
-            <dt className="text-muted">Servidor · idioma · objetivo</dt>
+            <dt className="text-muted">{t("extras")}</dt>
             <dd>
               {[
-                catalog.regions.find((r) => r.id === lobby.region_id)?.name ?? "Cualquier servidor",
-                lobby.language ? LANGUAGES[lobby.language as keyof typeof LANGUAGES] : "Cualquier idioma",
-                lobby.goal ? GOALS[lobby.goal as keyof typeof GOALS] : "Cualquier objetivo",
+                catalog.regions.find((r) => r.id === lobby.region_id)?.name ?? t("anyRegion"),
+                lobby.language ? to(`languages.${lobby.language}` as never) : t("anyLanguage"),
+                lobby.goal ? to(`goals.${lobby.goal}` as never) : t("anyGoal"),
               ].join(" · ")}
             </dd>
           </div>
@@ -146,7 +147,7 @@ export default async function LobbyPage({ params }: PageProps<"/grupos/[id]">) {
 
       <section aria-labelledby="miembros" className="surface p-5">
         <h2 id="miembros" className="font-semibold">
-          Miembros ({members.length}/{lobby.slots})
+          {t("members", { taken: members.length, slots: lobby.slots })}
         </h2>
         <ul className="mt-3 flex flex-col gap-2">
           {members.map((m) => (
@@ -155,13 +156,13 @@ export default async function LobbyPage({ params }: PageProps<"/grupos/[id]">) {
               <Link href={`/jugador/${m.user_id}`} className="underline underline-offset-4">
                 {name(m.user_id)}
               </Link>
-              {m.user_id === lobby.owner_id && <span className="text-xs text-muted">creador</span>}
+              {m.user_id === lobby.owner_id && <span className="text-xs text-muted">{t("creator")}</span>}
             </li>
           ))}
           {Array.from({ length: Math.max(0, free) }).map((_, i) => (
             <li key={`free-${i}`} className="flex items-center gap-3 text-sm text-muted">
               <span aria-hidden="true" className="size-9 rounded-full border border-dashed border-line" />
-              Plaza libre
+              {t("freeSlot")}
             </li>
           ))}
         </ul>
@@ -180,37 +181,37 @@ export default async function LobbyPage({ params }: PageProps<"/grupos/[id]">) {
       {canVote && (
         <section aria-labelledby="valorar" className="flex flex-col gap-4 surface p-5">
           <h2 id="valorar" className="font-semibold">
-            Reconoce a tus compañeros
+            {t("voteTitle")}
           </h2>
           {toVote.length === 0 ? (
-            <p className="text-sm text-muted">Ya has reconocido a todos. ¡Gracias!</p>
+            <p className="text-sm text-muted">{t("votedAll")}</p>
           ) : (
             toVote.map((m) => <KarmaVote key={m.user_id} lobbyId={lobby.id} targetId={m.user_id} name={name(m.user_id)} />)
           )}
-          <p className="text-xs text-muted">Opcional: un reconocimiento por compañero y grupo. Solo positivo; aquí no se puntúa mal a nadie.</p>
+          <p className="text-xs text-muted">{t("voteNote")}</p>
         </section>
       )}
 
       {!isOwner && !isMember && lobby.status === "open" && (
         <section aria-labelledby="unirse" className="surface p-5">
           <h2 id="unirse" className="font-semibold">
-            Unirse
+            {t("join")}
           </h2>
           <div className="mt-3">
             {myRequest ? (
               <div className="flex flex-col gap-3">
-                <p className="text-sm">Tu solicitud está pendiente de respuesta.</p>
-                <ActionForm lobbyId={lobby.id} intent="withdraw" label="Retirar solicitud" />
+                <p className="text-sm">{t("pendingRequest")}</p>
+                <ActionForm lobbyId={lobby.id} intent="withdraw" label={t("withdraw")} />
               </div>
             ) : (
-              <ActionForm lobbyId={lobby.id} intent="request" label="Solicitar unirme" variant="primary" withMessage />
+              <ActionForm lobbyId={lobby.id} intent="request" label={t("request")} variant="primary" withMessage />
             )}
           </div>
         </section>
       )}
 
       {!isOwner && !isMember && lobby.status !== "open" && (
-        <p className="text-sm text-muted">Este grupo no admite solicitudes ahora mismo.</p>
+        <p className="text-sm text-muted">{t("noRequests")}</p>
       )}
 
       {isOwner && lobby.status !== "closed" && (
@@ -220,10 +221,10 @@ export default async function LobbyPage({ params }: PageProps<"/grupos/[id]">) {
       {isOwner && (
         <section aria-labelledby="solicitudes" className="surface p-5">
           <h2 id="solicitudes" className="font-semibold">
-            Solicitudes pendientes ({pending.length})
+            {t("pendingTitle", { count: pending.length })}
           </h2>
           {pending.length === 0 ? (
-            <p className="mt-2 text-sm text-muted">Aún no hay solicitudes.</p>
+            <p className="mt-2 text-sm text-muted">{t("noPending")}</p>
           ) : (
             <ul className="mt-3 flex flex-col gap-4">
               {pending.map((r) => (
@@ -236,8 +237,8 @@ export default async function LobbyPage({ params }: PageProps<"/grupos/[id]">) {
                   </div>
                   {r.message && <p className="text-sm">«{r.message}»</p>}
                   <div className="flex flex-wrap gap-3">
-                    <ActionForm lobbyId={lobby.id} intent="accept" requestId={r.id} label="Aceptar" variant="primary" />
-                    <ActionForm lobbyId={lobby.id} intent="reject" requestId={r.id} label="Rechazar" />
+                    <ActionForm lobbyId={lobby.id} intent="accept" requestId={r.id} label={t("accept")} variant="primary" />
+                    <ActionForm lobbyId={lobby.id} intent="reject" requestId={r.id} label={t("reject")} />
                   </div>
                 </li>
               ))}
@@ -246,7 +247,7 @@ export default async function LobbyPage({ params }: PageProps<"/grupos/[id]">) {
 
           {neededRoles.length > 0 && lobby.status === "open" && (
             <div className="mt-5 border-t border-line pt-4">
-              <p className="text-sm text-muted">Sugerencias (orientativas): jugadores que cubren los roles que buscáis.</p>
+              <p className="text-sm text-muted">{t("suggestions")}</p>
               <ul className="mt-2 flex flex-wrap gap-2">
                 {neededRoles.map((rid) => {
                   const role = roleOf(rid);
@@ -255,7 +256,7 @@ export default async function LobbyPage({ params }: PageProps<"/grupos/[id]">) {
                   return (
                     <li key={rid}>
                       <Link href={`/buscar?${qs}`} className="btn-ghost">
-                        Buscar {role.name}
+                        {t("searchRole", { role: role.name })}
                       </Link>
                     </li>
                   );
@@ -266,13 +267,13 @@ export default async function LobbyPage({ params }: PageProps<"/grupos/[id]">) {
 
           {requests.some((r) => r.status !== "pending") && (
             <details className="mt-5 border-t border-line pt-4 text-sm">
-              <summary className="min-h-11 cursor-pointer py-2 text-muted">Historial de solicitudes</summary>
+              <summary className="min-h-11 cursor-pointer py-2 text-muted">{t("history")}</summary>
               <ul className="mt-2 flex flex-col gap-1">
                 {requests
                   .filter((r) => r.status !== "pending")
                   .map((r) => (
                     <li key={r.id}>
-                      {name(r.user_id)}: {REQUEST_LABEL[r.status]}
+                      {name(r.user_id)}: {to(`requestStatus.${r.status}`)}
                     </li>
                   ))}
               </ul>
@@ -283,15 +284,15 @@ export default async function LobbyPage({ params }: PageProps<"/grupos/[id]">) {
 
       <div className="flex flex-wrap gap-3">
         {isMember && !isOwner && (
-          <ActionForm lobbyId={lobby.id} intent="leave" label="Salir del grupo" variant="danger" confirm="¿Seguro que quieres salir del grupo?" />
+          <ActionForm lobbyId={lobby.id} intent="leave" label={t("leave")} variant="danger" confirm={t("leaveConfirm")} />
         )}
         {isOwner && lobby.status !== "closed" && (
           <ActionForm
             lobbyId={lobby.id}
             intent="close"
-            label="Cerrar grupo"
+            label={t("close")}
             variant="danger"
-            confirm="¿Cerrar el grupo? Las solicitudes pendientes se rechazarán."
+            confirm={t("closeConfirm")}
           />
         )}
       </div>

@@ -1,3 +1,5 @@
+import type { AppLocale } from "@/lib/i18n/locale";
+import { translator } from "@/lib/i18n/translator";
 import { AVAILABILITY, CHARACTER_STATUS, GOALS, LANGUAGES, VOICE } from "@/lib/profile/options";
 
 // Filtros de búsqueda: viven en la URL (compartibles) con slugs legibles.
@@ -127,18 +129,19 @@ export function advancedCount(f: Filters): number {
 }
 
 /** Sugerencias para ampliar la búsqueda cuando no hay resultados: quitar un filtro cada vez. */
-export function widenSuggestions(f: Filters): { label: string; filters: Filters }[] {
+export function widenSuggestions(f: Filters, locale: AppLocale = "es"): { label: string; filters: Filters }[] {
+  const t = translator(locale, "search.widen");
   const base = { ...f, page: 1 };
   const out: { label: string; filters: Filters }[] = [];
-  if (f.now) out.push({ label: "No solo disponibles ahora", filters: { ...base, now: false } });
-  if (f.rmin || f.rmax) out.push({ label: "Cualquier rango", filters: { ...base, rmin: undefined, rmax: undefined } });
-  if (f.agent) out.push({ label: "Cualquier agente", filters: { ...base, agent: undefined, astatus: [] } });
-  if (f.role) out.push({ label: "Cualquier rol", filters: { ...base, role: undefined } });
-  if (f.slot.length) out.push({ label: "Cualquier horario", filters: { ...base, slot: [] } });
-  if (f.lang) out.push({ label: "Cualquier idioma", filters: { ...base, lang: undefined } });
-  if (f.mode) out.push({ label: "Cualquier modo", filters: { ...base, mode: undefined } });
-  if (f.region) out.push({ label: "Cualquier servidor", filters: { ...base, region: undefined } });
+  if (f.now) out.push({ label: t("now"), filters: { ...base, now: false } });
+  if (f.rmin || f.rmax) out.push({ label: t("rank"), filters: { ...base, rmin: undefined, rmax: undefined } });
+  if (f.agent) out.push({ label: t("agent"), filters: { ...base, agent: undefined, astatus: [] } });
+  if (f.role) out.push({ label: t("role"), filters: { ...base, role: undefined } });
+  if (f.slot.length) out.push({ label: t("slot"), filters: { ...base, slot: [] } });
+  if (f.lang) out.push({ label: t("lang"), filters: { ...base, lang: undefined } });
+  if (f.mode) out.push({ label: t("mode"), filters: { ...base, mode: undefined } });
+  if (f.region) out.push({ label: t("region"), filters: { ...base, region: undefined } });
   if (f.goal || f.voice || f.flex)
-    out.push({ label: "Sin preferencias de estilo", filters: { ...base, goal: undefined, voice: undefined, flex: false } });
+    out.push({ label: t("style"), filters: { ...base, goal: undefined, voice: undefined, flex: false } });
   return out;
 }

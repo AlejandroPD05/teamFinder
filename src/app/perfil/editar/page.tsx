@@ -1,12 +1,13 @@
 import { currentGame } from "@/lib/games";
-import type { Metadata } from "next";
+import { getTranslations } from "next-intl/server";
+import { titled } from "@/lib/i18n/metadata";
 import Link from "next/link";
 import { redirect } from "next/navigation";
 import { loadCatalog, loadOwnProfile } from "@/lib/profile/queries";
 import { createClient } from "@/lib/supabase/server";
 import { ProfileForm } from "./profile-form";
 
-export const metadata: Metadata = { title: "Editar perfil" };
+export const generateMetadata = titled("editProfile");
 
 export default async function EditProfilePage() {
   const supabase = await createClient();
@@ -17,16 +18,17 @@ export default async function EditProfilePage() {
   const { game: active } = await currentGame();
   const [catalog, own] = await Promise.all([loadCatalog(supabase, active.id), loadOwnProfile(supabase, userId, active.id)]);
   const { profile, game, roles, characters } = own;
+  const t = await getTranslations("profileForm");
 
   return (
     <section className="flex flex-col gap-6">
       <div className="flex flex-wrap items-end justify-between gap-3">
         <div>
-          <h1 className="font-display text-3xl font-semibold">Editar perfil</h1>
-          <p className="text-muted">Ningún campo es obligatorio: complétalo a tu ritmo.</p>
+          <h1 className="font-display text-3xl font-semibold">{t("title")}</h1>
+          <p className="text-muted">{t("lead")}</p>
         </div>
         <Link href={`/jugador/${userId}`} className="min-h-11 py-3 text-sm text-accent-soft underline underline-offset-4">
-          Ver mi perfil público
+          {t("publicProfile")}
         </Link>
       </div>
       <ProfileForm

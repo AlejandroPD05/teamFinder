@@ -1,7 +1,9 @@
 "use client";
 
 import Link from "next/link";
+import { useLocale, useTranslations } from "next-intl";
 import { useActionState, useRef } from "react";
+import { INTL_LOCALE } from "@/lib/i18n/locale";
 import { createEventAction, deleteEventAction, eventLobbyAction, rsvpAction, type TeamState } from "../../mis-equipos/actions";
 
 export type TeamEvent = {
@@ -13,9 +15,8 @@ export type TeamEvent = {
   rsvps: { user_id: string; answer: "yes" | "maybe" | "no" }[];
 };
 
-const when = new Intl.DateTimeFormat("es-ES", { timeZone: "Europe/Madrid", weekday: "long", day: "numeric", month: "long", hour: "2-digit", minute: "2-digit" });
 const control = "min-h-11 rounded-md border border-line bg-bg px-3 text-text focus:border-accent";
-const ANSWERS = { yes: "Voy", maybe: "Quizá", no: "No puedo" } as const;
+const ANSWERS = ["yes", "maybe", "no"] as const;
 
 function Status({ state }: { state: TeamState }) {
   return (
@@ -29,6 +30,7 @@ function Status({ state }: { state: TeamState }) {
 export function CreateEventForm({ teamId }: { teamId: string }) {
   const [state, action, pending] = useActionState<TeamState, FormData>(createEventAction, null);
   const isoRef = useRef<HTMLInputElement>(null);
+  const t = useTranslations("teamEvents");
   return (
     <form
       action={action}
@@ -42,15 +44,15 @@ export function CreateEventForm({ teamId }: { teamId: string }) {
       <input ref={isoRef} type="hidden" name="starts_at" />
       <div className="flex flex-wrap items-end gap-3">
         <label className="flex flex-col gap-1.5 text-sm">
-          <span className="font-medium">Día y hora</span>
+          <span className="font-medium">{t("dateTime")}</span>
           <input name="local_start" type="datetime-local" required className={control} />
         </label>
         <label className="flex min-w-0 flex-1 flex-col gap-1.5 text-sm">
-          <span className="font-medium">Nota (opcional)</span>
-          <input name="note" maxLength={200} placeholder="Ranked, scrim, wingman…" className={`${control} w-full`} />
+          <span className="font-medium">{t("note")}</span>
+          <input name="note" maxLength={200} placeholder={t("notePlaceholder")} className={`${control} w-full`} />
         </label>
         <button type="submit" disabled={pending} className="btn-primary">
-          Proponer quedada
+          {t("propose")}
         </button>
       </div>
       <Status state={state} />
@@ -60,11 +62,12 @@ export function CreateEventForm({ teamId }: { teamId: string }) {
 
 function Rsvp({ event, teamId, mine }: { event: TeamEvent; teamId: string; mine: string | undefined }) {
   const [state, action, pending] = useActionState<TeamState, FormData>(rsvpAction, null);
+  const t = useTranslations("teamEvents");
   return (
     <form action={action} className="flex flex-wrap items-center gap-2">
       <input type="hidden" name="event_id" value={event.id} />
       <input type="hidden" name="team_id" value={teamId} />
-      {(Object.keys(ANSWERS) as (keyof typeof ANSWERS)[]).map((a) => (
+      {ANSWERS.map((a) => (
         <button
           key={a}
           type="submit"
@@ -74,7 +77,7 @@ function Rsvp({ event, teamId, mine }: { event: TeamEvent; teamId: string; mine:
           aria-pressed={mine === a}
           className={`min-h-11 rounded-md border px-3 text-sm ${mine === a ? "border-accent bg-panel-hover font-medium" : "border-line hover:bg-panel-hover"}`}
         >
-          {ANSWERS[a]}
+          {t(`answers.${a}`)}
         </button>
       ))}
       {state && !state.ok && <Status state={state} />}
@@ -84,11 +87,12 @@ function Rsvp({ event, teamId, mine }: { event: TeamEvent; teamId: string; mine:
 
 function MakeLobby({ eventId, modes }: { eventId: string; modes: { slug: string; name: string }[] }) {
   const [state, action, pending] = useActionState<TeamState, FormData>(eventLobbyAction, null);
+  const t = useTranslations("teamEvents");
   return (
     <form action={action} className="flex flex-wrap items-center gap-2">
       <input type="hidden" name="event_id" value={eventId} />
       <label htmlFor={`mode-${eventId}`} className="sr-only">
-        Modo del grupo
+        {t("lobbyMode")}
       </label>
       <select id={`mode-${eventId}`} name="mode" className={control}>
         {modes.map((m) => (
@@ -98,7 +102,7 @@ function MakeLobby({ eventId, modes }: { eventId: string; modes: { slug: string;
         ))}
       </select>
       <button type="submit" disabled={pending} className="btn-ghost">
-        Crear grupo con los que van
+        {t("makeLobby")}
       </button>
       {state && !state.ok && <Status state={state} />}
     </form>
@@ -107,12 +111,13 @@ function MakeLobby({ eventId, modes }: { eventId: string; modes: { slug: string;
 
 function DeleteEvent({ eventId, teamId }: { eventId: string; teamId: string }) {
   const [state, action, pending] = useActionState<TeamState, FormData>(deleteEventAction, null);
+  const t = useTranslations("teamEvents");
   return (
     <form action={action}>
       <input type="hidden" name="event_id" value={eventId} />
       <input type="hidden" name="team_id" value={teamId} />
       <button type="submit" disabled={pending} className="min-h-11 rounded-md px-3 text-sm text-muted hover:bg-panel-hover hover:text-text">
-        Borrar quedada
+        {t("delete")}
       </button>
       {state && !state.ok && <Status state={state} />}
     </form>
@@ -134,15 +139,17 @@ export function TeamEvents({
   names: Record<string, string>;
   modes: { slug: string; name: string }[];
 }) {
+  const t = useTranslations("teamEvents");
+  const when = new Intl.DateTimeFormat(INTL_LOCALE[useLocale()], { timeZone: "Europe/Madrid", weekday: "long", day: "numeric", month: "long", hour: "2-digit", minute: "2-digit" });
   return (
     <section aria-labelledby="quedadas" className="flex flex-col gap-3 surface p-5">
       <h2 id="quedadas" className="font-semibold">
-        Quedadas
+        {t("title")}
       </h2>
-      <p className="text-sm text-muted">Propón día y hora, cada cual responde y, cuando estéis, se crea el grupo con los que van.</p>
+      <p className="text-sm text-muted">{t("lead")}</p>
       <CreateEventForm teamId={teamId} />
       {events.length === 0 ? (
-        <p className="text-sm text-muted">No hay quedadas próximas.</p>
+        <p className="text-sm text-muted">{t("none")}</p>
       ) : (
         <ul className="flex flex-col gap-3">
           {events.map((e) => {
@@ -154,14 +161,14 @@ export function TeamEvents({
                 <p className="font-semibold first-letter:uppercase">{when.format(new Date(e.starts_at))}</p>
                 {e.note && <p className="text-sm">{e.note}</p>}
                 <p className="text-sm text-muted">
-                  {going.length} {going.length === 1 ? "va" : "van"}
-                  {going.length > 0 && `: ${going.map((r) => (r.user_id === me ? "tú" : (names[r.user_id] ?? "Jugador"))).join(", ")}`}
-                  {maybe > 0 && ` · ${maybe} quizá`}
+                  {t("going", { count: going.length })}
+                  {going.length > 0 && `: ${going.map((r) => (r.user_id === me ? t("you") : (names[r.user_id] ?? t("player")))).join(", ")}`}
+                  {maybe > 0 && ` · ${t("maybe", { count: maybe })}`}
                 </p>
                 <Rsvp event={e} teamId={teamId} mine={e.rsvps.find((r) => r.user_id === me)?.answer} />
                 {e.lobby_id ? (
                   <Link href={`/grupos/${e.lobby_id}`} className="text-sm text-accent-soft underline underline-offset-4">
-                    Ir al grupo de esta quedada
+                    {t("goToLobby")}
                   </Link>
                 ) : (
                   canManage && <MakeLobby eventId={e.id} modes={modes} />
