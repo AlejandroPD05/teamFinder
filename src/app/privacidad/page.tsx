@@ -1,7 +1,7 @@
 import type { Metadata } from "next";
 import Link from "next/link";
 import { LEGAL } from "@/lib/legal";
-import { ContactEmail, DraftNotice, Section } from "../legal-draft";
+import { ContactEmail, LegalVersion, Section } from "../legal-parts";
 
 export const metadata: Metadata = { title: "Privacidad", alternates: { canonical: "/privacidad" } };
 
@@ -11,7 +11,10 @@ const BASES: [string, string][] = [
   ["Tu cuenta: correo, identificador y, si entras con Discord, su nombre y avatar", "Contrato: prestarte el servicio que pides al registrarte (art. 6.1.b RGPD)."],
   ["Tu perfil y tus datos por juego (rango, roles, personajes, idiomas, horarios…)", "Contrato. Son opcionales y puedes borrarlos cuando quieras."],
   ["Grupos, solicitudes, chat, mensajes privados, notificaciones, karma, ranking semanal, clips, emblemas, comentarios, misiones y cartas", "Contrato: son las funciones de la web."],
+  ["Equipos (nombre, miembros, invitaciones) y su chat", "Contrato: son funciones de la web que usas si quieres."],
+  ["Partidas que apuntas a mano (fecha, modo, mapa, personaje, resultado y tus números)", "Contrato. Son opcionales; tú eliges quién las ve (por defecto, solo tú)."],
   ["Enlaces a tus redes (Twitch, YouTube, X)", "Contrato. Son opcionales; tú eliges quién los ve."],
+  ["Resumen de avisos por correo", "Consentimiento: solo si lo activas en Ajustes, y lo puedes desactivar cuando quieras (art. 6.1.a)."],
   ["Fanart que envías (imagen, título, nombre artístico y la aceptación del permiso)", "Consentimiento: el permiso que das al enviarlo, que puedes retirar cuando quieras (art. 6.1.a)."],
   ["Bloqueos, denuncias (con copia del contenido denunciado), restricciones temporales y registro de moderación", "Interés legítimo en mantener la comunidad segura y defendernos de reclamaciones (art. 6.1.f)."],
   ["Registros técnicos de seguridad y límites anti-abuso", "Interés legítimo en la seguridad del servicio (art. 6.1.f)."],
@@ -24,6 +27,9 @@ const PLAZOS: [string, string][] = [
   ["Mensajes del chat de un grupo", "30 días desde que se cierra el grupo."],
   ["Mensajes privados", "Mientras existan las dos cuentas. Si una se borra, se borra la conversación entera."],
   ["Notificaciones", "60 días."],
+  ["Partidas apuntadas a mano", "Hasta que las borres o borres tu cuenta."],
+  ["Equipos y mensajes de equipo", "Mientras exista el equipo. Si su dueño lo borra o borra su cuenta, se borra con todo su chat."],
+  ["Registro de correos de avisos enviados (fecha y número de avisos)", "30 días."],
   ["Puestos del ranking semanal (Top 10)", "Mientras exista tu cuenta: son insignias permanentes."],
   ["Fanart", "Hasta que lo retires o borres tu cuenta; entonces se borra también la imagen."],
   ["Restricciones temporales", "12 meses desde que terminan, para detectar reincidencias."],
@@ -38,7 +44,7 @@ export default function PrivacyPage() {
   return (
     <article className="mx-auto flex max-w-2xl flex-col gap-6">
       <h1 className="font-display text-3xl font-semibold">Privacidad</h1>
-      <DraftNotice />
+      <LegalVersion />
 
       <Section title="Quién es el responsable">
         <p>
@@ -60,15 +66,19 @@ export default function PrivacyPage() {
             servidor, roles, modos y personajes). El rango lo introduces tú: no está verificado con ningún juego.
           </li>
           <li>
-            <strong>Actividad:</strong> grupos, solicitudes, mensajes del chat de grupo, reconocimientos de karma, clips
-            (solo el enlace al vídeo), emblemas, comentarios, misiones, cartas, bloqueos y denuncias.
+            <strong>Actividad:</strong> grupos, solicitudes, mensajes del chat de grupo, mensajes privados, equipos y su
+            chat, partidas que apuntas a mano, reconocimientos de karma, clips (solo el enlace al vídeo), emblemas,
+            comentarios, misiones, cartas, bloqueos y denuncias.
           </li>
           <li>
             <strong>Datos técnicos:</strong> los proveedores registran la dirección IP y el navegador de las peticiones por
             seguridad.
           </li>
         </ul>
-        <p>No hay integración con Riot, Valve ni EA, ni leemos estadísticas de partidas. No hay publicidad, analítica ni perfiles automáticos.</p>
+        <p>
+          No hay integración con Riot, Valve ni EA, ni leemos estadísticas de partidas: las partidas que ves son las que cada
+          cual apunta a mano. No hay publicidad, analítica ni perfiles automáticos.
+        </p>
       </Section>
 
       <Section title="Para qué y con qué base legal">
@@ -97,7 +107,8 @@ export default function PrivacyPage() {
         <ul>
           <li>Tu nombre y avatar son siempre visibles para identificarte en tarjetas, grupos y clips.</li>
           <li>Del resto de tu perfil decides tú, campo a campo: todo el mundo, solo usuarios con cuenta o solo tú.</li>
-          <li>Los mensajes de una sala solo los ven los miembros de ese grupo.</li>
+          <li>Los mensajes de una sala solo los ven los miembros de ese grupo, y los de un equipo, solo sus miembros.</li>
+          <li>El nombre, la descripción y los miembros de un equipo los ve cualquiera con cuenta.</li>
           <li>Del karma solo se publican el total y los motivos, nunca quién los dio.</li>
           <li>Los clips, emblemas y comentarios los ven los usuarios con cuenta, salvo quienes te hayan bloqueado o hayas bloqueado.</li>
           <li>Las denuncias solo las ven quien denuncia y moderación.</li>
@@ -108,7 +119,7 @@ export default function PrivacyPage() {
         <ul>
           <li>Supabase: base de datos, autenticación, chat en tiempo real y almacenamiento de las imágenes de fanart. Datos alojados en la UE (París).</li>
           <li>Vercel: alojamiento de la web y registros de peticiones. Funciones en la UE (París).</li>
-          <li>Brevo (Sendinblue SAS, Francia): envío del correo con el enlace para entrar.</li>
+          <li>Brevo (Sendinblue SAS, Francia): envío del correo con el enlace para entrar y, si lo activas, del resumen de avisos.</li>
         </ul>
         <p>
           Vercel y Supabase son empresas con matriz en EE. UU. y pueden acceder a datos desde fuera de la UE; esas

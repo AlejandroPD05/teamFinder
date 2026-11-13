@@ -1,0 +1,192 @@
+"use client";
+
+import { useActionState } from "react";
+import {
+  cancelInviteAction,
+  createTeamAction,
+  deleteTeamAction,
+  inviteAction,
+  leaveTeamAction,
+  respondInviteAction,
+  updateTeamAction,
+  type TeamState,
+} from "./actions";
+
+const control = "min-h-11 w-full rounded-md border border-line bg-bg px-3 text-text focus:border-accent";
+const btn = "min-h-11 rounded-md px-4 text-sm disabled:opacity-60";
+
+function Status({ state }: { state: TeamState }) {
+  return (
+    <p role="status" aria-live="polite" className={`text-sm ${state?.ok ? "text-success" : "text-danger"}`}>
+      {state?.message}
+    </p>
+  );
+}
+
+function TeamFields({ name = "", description = "" }: { name?: string; description?: string }) {
+  return (
+    <>
+      <div className="flex flex-col gap-1.5">
+        <label htmlFor="team-name" className="text-sm font-medium">
+          Nombre del equipo
+        </label>
+        <input id="team-name" name="name" required minLength={3} maxLength={32} defaultValue={name} className={control} />
+      </div>
+      <div className="flex flex-col gap-1.5">
+        <label htmlFor="team-description" className="text-sm font-medium">
+          Descripción (opcional)
+        </label>
+        <input id="team-description" name="description" maxLength={200} defaultValue={description} className={control} />
+      </div>
+    </>
+  );
+}
+
+export function CreateTeamForm({ gameName }: { gameName: string }) {
+  const [state, action, pending] = useActionState<TeamState, FormData>(createTeamAction, null);
+  return (
+    <form action={action} className="flex flex-col gap-3 surface p-5">
+      <h2 className="font-semibold">Crear un equipo de {gameName}</h2>
+      <TeamFields />
+      <div className="flex flex-wrap items-center gap-3">
+        <button type="submit" disabled={pending} className="btn-primary">
+          Crear equipo
+        </button>
+        <Status state={state} />
+      </div>
+    </form>
+  );
+}
+
+export function EditTeamForm({ teamId, name, description }: { teamId: string; name: string; description: string }) {
+  const [state, action, pending] = useActionState<TeamState, FormData>(updateTeamAction, null);
+  return (
+    <details className="text-sm">
+      <summary className="min-h-11 cursor-pointer py-2 text-muted hover:text-text">Editar nombre y descripción</summary>
+      <form action={action} className="mt-2 flex flex-col gap-3 rounded-md border border-line bg-bg p-3">
+        <input type="hidden" name="team_id" value={teamId} />
+        <TeamFields name={name} description={description} />
+        <div className="flex flex-wrap items-center gap-3">
+          <button type="submit" disabled={pending} className={`${btn} border border-line hover:bg-panel-hover`}>
+            Guardar
+          </button>
+          <Status state={state} />
+        </div>
+      </form>
+    </details>
+  );
+}
+
+/** En el perfil de un jugador: invitarle a uno de tus equipos de este juego. */
+export function InviteToTeam({ userId, teams }: { userId: string; teams: { id: string; name: string }[] }) {
+  const [state, action, pending] = useActionState<TeamState, FormData>(inviteAction, null);
+  if (state?.ok) return <Status state={state} />;
+  return (
+    <form action={action} className="flex flex-wrap items-end gap-2">
+      <input type="hidden" name="user_id" value={userId} />
+      <div className="flex flex-col gap-1.5">
+        <label htmlFor="invite-team" className="text-sm font-medium">
+          Invitar a mi equipo
+        </label>
+        <select id="invite-team" name="team_id" className="min-h-11 rounded-md border border-line bg-bg px-3 text-text focus:border-accent">
+          {teams.map((t) => (
+            <option key={t.id} value={t.id}>
+              {t.name}
+            </option>
+          ))}
+        </select>
+      </div>
+      <button type="submit" disabled={pending} className={`${btn} border border-line hover:bg-panel-hover`}>
+        Invitar
+      </button>
+      <Status state={state} />
+    </form>
+  );
+}
+
+export function RespondInvite({ inviteId, teamName }: { inviteId: string; teamName: string }) {
+  const [state, action, pending] = useActionState<TeamState, FormData>(respondInviteAction, null);
+  if (state?.ok) return <Status state={state} />;
+  return (
+    <form action={action} className="flex flex-wrap items-center gap-2">
+      <input type="hidden" name="invite_id" value={inviteId} />
+      <button
+        type="submit"
+        name="decision"
+        value="accept"
+        disabled={pending}
+        aria-label={`Aceptar la invitación a ${teamName}`}
+        className={`${btn} bg-accent font-semibold text-bg`}
+      >
+        Aceptar
+      </button>
+      <button
+        type="submit"
+        name="decision"
+        value="decline"
+        disabled={pending}
+        aria-label={`Rechazar la invitación a ${teamName}`}
+        className={`${btn} border border-line hover:bg-panel-hover`}
+      >
+        Rechazar
+      </button>
+      <Status state={state} />
+    </form>
+  );
+}
+
+export function CancelInvite({ inviteId, teamId, name }: { inviteId: string; teamId: string; name: string }) {
+  const [state, action, pending] = useActionState<TeamState, FormData>(cancelInviteAction, null);
+  if (state?.ok) return <Status state={state} />;
+  return (
+    <form action={action}>
+      <input type="hidden" name="invite_id" value={inviteId} />
+      <input type="hidden" name="team_id" value={teamId} />
+      <button type="submit" disabled={pending} aria-label={`Cancelar la invitación a ${name}`} className={`${btn} text-muted hover:bg-panel-hover`}>
+        Cancelar
+      </button>
+    </form>
+  );
+}
+
+/** Salir del equipo, o (con `userId`, para el dueño) sacar a alguien. */
+export function LeaveTeam({ teamId, userId, name }: { teamId: string; userId?: string; name?: string }) {
+  const [state, action, pending] = useActionState<TeamState, FormData>(leaveTeamAction, null);
+  if (state?.ok) return <Status state={state} />;
+  const label = userId ? `Sacar a ${name}` : "Salir del equipo";
+  return (
+    <form
+      action={action}
+      onSubmit={(e) => {
+        if (!window.confirm(userId ? `¿Sacar a ${name} del equipo?` : "¿Salir del equipo?")) e.preventDefault();
+      }}
+    >
+      <input type="hidden" name="team_id" value={teamId} />
+      {userId && <input type="hidden" name="user_id" value={userId} />}
+      <button type="submit" disabled={pending} className={`${btn} border border-line hover:bg-panel-hover`}>
+        {userId ? "Sacar" : label}
+        {userId && <span className="sr-only"> a {name}</span>}
+      </button>
+      {state && <Status state={state} />}
+    </form>
+  );
+}
+
+export function DeleteTeam({ teamId, name }: { teamId: string; name: string }) {
+  const [state, action, pending] = useActionState<TeamState, FormData>(deleteTeamAction, null);
+  return (
+    <form
+      action={action}
+      onSubmit={(e) => {
+        if (!window.confirm(`¿Borrar el equipo «${name}»? Se borra también su chat. No se puede deshacer.`)) e.preventDefault();
+      }}
+      className="flex flex-wrap items-center gap-2"
+    >
+      <input type="hidden" name="team_id" value={teamId} />
+      <button type="submit" disabled={pending} className={`${btn} border border-danger text-danger hover:bg-panel-hover`}>
+        Borrar equipo
+      </button>
+      {state && <Status state={state} />}
+    </form>
+  );
+}

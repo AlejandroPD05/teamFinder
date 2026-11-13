@@ -10,10 +10,12 @@ import { KARMA_TAGS } from "@/lib/trust/options";
 import { CharacterIcon } from "@/components/game-icons";
 import { NumberRoll } from "@/components/number-roll";
 import { rankTier, TIER_LABEL, weekLabel } from "@/lib/ranking";
+import { MATCH_RESULTS, matchSummary } from "@/lib/matches";
 import { createClient } from "@/lib/supabase/server";
 import { SOCIALS } from "@/lib/profile/schema";
 import { BlockButton, ReportForm } from "../../confianza/forms";
 import { StartConversationButton } from "../../mensajes/start-button";
+import { InviteToTeam } from "../../mis-equipos/forms";
 
 type Badges = {
   cards: { game_id: string; owned: number; total: number; legendary: string[] }[];
@@ -60,11 +62,31 @@ export default async function PlayerPage({ params }: PageProps<"/jugador/[id]">)
   const { profile, game, roles, characters } = data;
   const viewer = claims?.claims?.sub;
   const isOwner = viewer === id;
-  const [{ data: karma }, { data: myBlock }, { data: badgeData }] = await Promise.all([
+  const [{ data: karma }, { data: myBlock }, { data: badgeData }, { data: matches }, { data: teams }] = await Promise.all([
     viewer ? supabase.rpc("karma_summary", { p_user: id }) : Promise.resolve({ data: null }),
     viewer && !isOwner ? supabase.from("user_blocks").select("blocked_id").eq("blocked_id", id).maybeSingle() : Promise.resolve({ data: null }),
     viewer ? supabase.rpc("player_badges", { p_user: id }) : Promise.resolve({ data: null }),
+    // La RLS solo devuelve las partidas si su dueño las deja ver a quien mira.
+    supabase
+      .from("manual_matches")
+      .select("id, played_on, map_name, result, placement, kills, deaths, assists")
+      .eq("user_id", id)
+      .eq("game_id", catalog.game.id)
+      .order("played_on", { ascending: false })
+      .limit(50),
+    viewer
+      ? supabase.from("team_members").select("team_id, role, teams(id, name, game_id)").eq("user_id", id)
+      : Promise.resolve({ data: null }),
   ]);
+  // Mis equipos de este juego a los que puedo invitarle (soy el dueño y aún no es miembro).
+  const { data: ownTeams } =
+    viewer && !isOwner && !myBlock
+      ? await supabase.from("teams").select("id, name").eq("owner_id", viewer).eq("game_id", catalog.game.id)
+      : { data: null };
+  const theirTeams = new Set((teams ?? []).map((t) => t.team_id));
+  const invitable = (ownTeams ?? []).filter((t) => !theirTeams.has(t.id));
+  const matchList = matches ?? [];
+  const ms = matchSummary(matchList);
   const badges = badgeData as Badges | null;
   const gameName = (gid: string) => games.find((g) => g.id === gid)?.name ?? gid;
   const socials = (Object.keys(SOCIALS) as (keyof typeof SOCIALS)[]).flatMap((key) => {
@@ -311,12 +333,74 @@ export default async function PlayerPage({ params }: PageProps<"/jugador/[id]">)
         )}
       </section>
 
+      {(matchList.length > 0 || isOwner) && (
+        <section aria-labelledby="partidas" className="surface p-5">
+          <div className="flex flex-wrap items-baseline justify-between gap-2">
+            <h2 id="partidas" className="font-semibold">
+              Partidas de {catalog.game.name}
+            </h2>
+            {isOwner && (
+              <Link href="/perfil/partidas" className="text-sm text-accent-soft underline underline-offset-4">
+                Apuntar partidas
+              </Link>
+            )}
+          </div>
+          {matchList.length === 0 ? (
+            <p className="mt-2 text-sm text-muted">Aún no has apuntado partidas. Solo tú decides quién las ve.</p>
+          ) : (
+            <>
+              <p className="mt-2 text-sm">
+                {ms.total} {ms.total === 1 ? "partida" : "partidas"}
+                {ms.winRate != null && ` · ${ms.winRate}% de victorias`}
+                {ms.kd != null && ` · K/D ${ms.kd.toLocaleString("es")}`}
+              </p>
+              <ul className="mt-2 flex flex-col gap-1 text-sm text-muted">
+                {matchList.slice(0, 5).map((m) => (
+                  <li key={m.id}>
+                    {m.played_on} · {m.result ? MATCH_RESULTS[m.result] : m.placement ? `puesto ${m.placement}` : "sin resultado"}
+                    {m.map_name && ` · ${m.map_name}`}
+                    {m.kills != null && ` · ${m.kills}/${m.deaths ?? "–"}/${m.assists ?? "–"}`}
+                  </li>
+                ))}
+              </ul>
+            </>
+          )}
+          <p className="mt-3 inline-block rounded border border-line px-2 py-1 text-xs text-muted">
+            Introducido manualmente · sin verificar · no cuenta para rankings
+          </p>
+        </section>
+      )}
+
+      {teams && teams.length > 0 && (
+        <section aria-labelledby="equipos" className="surface p-5">
+          <h2 id="equipos" className="font-semibold">
+            Equipos
+          </h2>
+          <ul className="mt-2 flex flex-wrap gap-2">
+            {teams.map((t) =>
+              t.teams ? (
+                <li key={t.team_id}>
+                  <Link href={`/equipo/${t.team_id}`} className="btn-ghost">
+                    {t.teams.name}
+                    <span className="text-xs text-muted">
+                      {gameName(t.teams.game_id)}
+                      {t.role === "owner" ? " · dueño" : ""}
+                    </span>
+                  </Link>
+                </li>
+              ) : null,
+            )}
+          </ul>
+        </section>
+      )}
+
       {viewer && !isOwner && (
         <section aria-labelledby="seguridad" className="flex flex-col gap-2 surface p-5">
           <h2 id="seguridad" className="font-semibold">
             Seguridad
           </h2>
           {myBlock && <p className="text-sm text-muted">Has bloqueado a este jugador: no os veréis en búsquedas ni grupos.</p>}
+          {invitable.length > 0 && <InviteToTeam userId={id} teams={invitable} />}
           <BlockButton userId={id} blocked={Boolean(myBlock)} name={name} />
           <ReportForm targetId={id} label="Denunciar a este jugador" />
         </section>

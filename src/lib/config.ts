@@ -1,8 +1,8 @@
-// Nombre provisional: la marca no está aprobada (ver PROGRESS.md). Cambiar solo aquí.
+// Nombre de la web, aprobado por el usuario el 2026-11-13 (ver PROGRESS.md). Cambiar solo aquí.
 export const APP_NAME = "TeamFinder";
 
 // Rutas que exigen sesión. El proxy redirige a /entrar si no la hay.
-export const PROTECTED_PREFIXES = ["/inicio", "/perfil", "/buscar", "/grupos", "/mensajes", "/ajustes", "/moderacion", "/misiones", "/coleccion", "/clips", "/notificaciones", "/ranking"] as const;
+export const PROTECTED_PREFIXES = ["/inicio", "/perfil", "/buscar", "/grupos", "/mensajes", "/ajustes", "/moderacion", "/misiones", "/coleccion", "/clips", "/notificaciones", "/ranking", "/mis-equipos", "/equipo"] as const;
 
 export const DEFAULT_AFTER_LOGIN = "/inicio";
 

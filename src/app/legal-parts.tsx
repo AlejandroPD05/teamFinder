@@ -1,11 +1,11 @@
 import { LEGAL } from "@/lib/legal";
 
-/** Aviso honesto: texto basado en la normativa, sin revisión de un abogado. */
-export function DraftNotice() {
+/** Versión vigente del texto (Normas y Privacidad). */
+export function LegalVersion() {
   return (
-    <p role="note" className="rounded-md border border-warning bg-panel p-3 text-sm">
-      <strong>Beta.</strong> Este texto se ha redactado a partir de la normativa española y europea (RGPD, LOPDGDD, LSSI y
-      Reglamento de Servicios Digitales), pero no lo ha revisado un abogado. Última actualización: {LEGAL.updated}.
+    <p role="note" className="text-sm text-muted">
+      Versión {LEGAL.version}, en vigor desde el {LEGAL.updated}. Si la cambiamos de forma importante, lo avisaremos en la
+      web antes de aplicarla.
     </p>
   );
 }

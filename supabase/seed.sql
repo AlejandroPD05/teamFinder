@@ -137,3 +137,14 @@ insert into public.missions (game_id, slug, title, description, kind, target, so
 values ('valorant', 'llenar-grupos', 'Llena 10 grupos',
   'Crea grupos de VALORANT, llénalos y ciérralos al terminar de jugar. Cuenta uno al día.', 'fill_lobbies', 10, 1)
 on conflict (game_id, slug) do nothing;
+
+-- Mapas de VALORANT (sugerencias del registro manual de partidas; migración 20261117000000).
+insert into public.game_maps (game_id, slug, name, sort) values
+  ('valorant', 'abyss', 'Abyss', 1), ('valorant', 'ascent', 'Ascent', 2), ('valorant', 'bind', 'Bind', 3),
+  ('valorant', 'breeze', 'Breeze', 4), ('valorant', 'corrode', 'Corrode', 5), ('valorant', 'fracture', 'Fracture', 6),
+  ('valorant', 'haven', 'Haven', 7), ('valorant', 'icebox', 'Icebox', 8), ('valorant', 'lotus', 'Lotus', 9),
+  ('valorant', 'pearl', 'Pearl', 10), ('valorant', 'split', 'Split', 11), ('valorant', 'summit', 'Summit', 12),
+  ('valorant', 'sunset', 'Sunset', 13),
+  ('valorant', 'district', 'District', 20), ('valorant', 'drift', 'Drift', 21), ('valorant', 'glitch', 'Glitch', 22),
+  ('valorant', 'kasbah', 'Kasbah', 23), ('valorant', 'piazza', 'Piazza', 24)
+on conflict (game_id, slug) do nothing;

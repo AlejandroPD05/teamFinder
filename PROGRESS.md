@@ -25,7 +25,7 @@ Cada fase se cierra con gate (`lint`, `test`, `build` en verde), commit y actual
   - *Hecho cuando:* un usuario real nuevo completa el recorrido entero en producción desde el móvil.
 
 ### Después de la beta (sin fecha)
-RSO de Riot si aprueban la clave (rango y estadísticas verificados), bot de Discord, registro manual de partidas, equipos persistentes. Hechos: ranking semanal comunitario (2026-11-13), Clip Zone, otros juegos, mensajes privados, notificaciones, restricciones temporales, insignias, enlaces sociales, anuncio de ganadores en Discord y fanart con permiso (2026-11-13).
+RSO de Riot si aprueban la clave (rango y estadísticas verificados), bot de Discord, rating propio y ligas, sección «Conecta». Hechos: registro manual de partidas, equipos persistentes y avisos por correo (2026-11-13), ranking semanal comunitario (2026-11-13), Clip Zone, otros juegos, mensajes privados, notificaciones, restricciones temporales, insignias, enlaces sociales, anuncio de ganadores en Discord y fanart con permiso (2026-11-13).
 
 ## Decisiones
 - 2026-11-04 — Proyecto creado a partir de `docs/PROMPT.md`.
@@ -88,6 +88,10 @@ RSO de Riot si aprueban la clave (rango y estadísticas verificados), bot de Dis
 - 2026-11-15 — Favicon = el logo de la web (dos chevrones) con el acento del juego elegido: `/icono/<juego>` (SVG) y `/icono/<juego>/apple` (PNG 180×180), enlazados desde `generateMetadata` del layout; cambia al elegir otro juego. `/favicon.ico` redirige al de VALORANT. Tests e2e más robustos: el inicio de sesión espera a la hidratación y las auditorías esperan a que no quede ninguna animación finita en marcha.
 - 2026-11-15 — Iconos de juego rehechos (los de trazo fino no convencían): rellenos y con volumen. VALORANT: la spike dibujada fiel a partir de referencias (permitido por «Legal Jibber Jabber»; no es un logotipo). Apex: el cráneo de carnero del rango Depredador, fiel a la forma (EA permite contenido de fans sin ánimo de lucro; su insignia solo aparece en una captura de su web de ayuda, a poca resolución). CS2: C4 genérico detallado (Valve no permite reutilizar su arte).
 - 2026-11-13 — Ranking semanal comunitario (prompt §5.1), reglas elegidas por el usuario («Compañerismo»): por juego, semana de lunes a domingo (hora de España), puntos = 3 × reconocimientos de karma recibidos (compañeros distintos, cuentas de más de un día) + 1 × grupos terminados (llenos y cerrados con todos dentro, como mucho uno al día, demás miembros con cuentas de más de un día). Mínimo 3 grupos terminados; quien estuvo restringido esa semana no entra; desempate por reconocimientos y por quién llegó antes. Página `/ranking` (provisional en directo, tu posición o lo que te falta, reglas y archivo). Cierre los lunes 00:10 UTC (`private.close_weekly_ranking`, pg_cron): guarda el Top 10 en `weekly_rank_awards` como insignia permanente (Top 1, Podio, Top 10), avisa a cada premiado y se ve en el perfil. No es un rango oficial ni un rating competitivo.
+- 2026-11-13 — Registro manual de partidas (prompt §4.6) en `/perfil/partidas`: fecha, modo, mapa (sugerencias de VALORANT desde valorant-api.com; en CS2 y Apex se escribe), personaje, resultado, puesto, bajas/muertes/asistencias y nota. Siempre «introducido manualmente», sin verificar y sin contar para el ranking ni para ningún rating. Visibilidad propia (por defecto solo tú), oculto si hay bloqueo, 30 al día como máximo.
+- 2026-11-13 — Equipos persistentes (`/mis-equipos`, `/equipo/<id>`): por juego, nombre único por juego, hasta 10 miembros (contando invitaciones pendientes), 3 equipos por dueño. El dueño invita desde el perfil del jugador (nunca con bloqueo), saca miembros, edita y borra; los demás pueden salir. Chat del equipo en tiempo real, solo para miembros, con límite de ritmo y denuncia con copia. Avisos `team_invite` y `team_joined`; al aceptar se va al equipo.
+- 2026-11-13 — Avisos por correo: opt-in en Ajustes (vienen desactivados). Cada 15 min, `private.send_email_digests()` manda un correo corto con el recuento de avisos y mensajes privados sin leer y el enlace, sin nombres ni textos de nadie; como mucho uno por hora y persona y 250 al día en total (Brevo gratis: 300). Registro de envíos 30 días. Sin clave de Brevo no se envía nada.
+- 2026-11-13 — Textos legales definitivos (versión 1.0 en vigor desde el 13-11-2026): fuera el aviso de borrador; Privacidad y Normas recogen equipos, partidas y avisos por correo.
 - 2026-11-04 — Botón principal: fondo `#8B5CF6` con texto `#0B0C12` (4,6:1). Blanco sobre `#8B5CF6` no llega a AA (4,2:1).
 
 ## Acciones del usuario
@@ -101,6 +105,7 @@ RSO de Riot si aprueban la clave (rango y estadísticas verificados), bot de Dis
 - [x] Contratos de encargado (DPA): Supabase y Brevo los incluyen en sus términos, aceptados al registrarse. Vercel solo ofrece DPA en los planes Pro y Enterprise (de pago): riesgo residual aceptado, porque Vercel solo guarda registros técnicos (IP y navegador) y está certificada en el Marco de Privacidad UE-EE. UU. Alternativa sin coste si hiciera falta: un alojamiento con DPA en su plan gratuito.
 - [ ] ~~Revisión de un abogado~~: descartada por ahora por coste (2026-11-13). Riesgo aceptado: los textos siguen marcados como borrador; se basan en la normativa y en las guías gratuitas de la AEPD (Facilita RGPD hecho). Revisar si la web genera ingresos o crece.
 - [x] Anuncio de ganadores en Discord (comprobado el 2026-11-13: webhook guardado en `private.app_settings` con formato válido de discord.com y tarea `announce-clip-winners` activa; aún sin envíos: el primero será el lunes a las 09:00 UTC si la semana tiene ganadores). Pasos por si hay que cambiarlo: en el servidor, Ajustes del canal → Integraciones → Webhooks → Nuevo webhook → Copiar URL. Después, en el SQL Editor de Supabase cloud: `insert into private.app_settings (key, value) values ('discord_winners_webhook', '<URL del webhook>');` (es un secreto: no va al repositorio). Sin webhook el anuncio no hace nada.
+- [ ] Avisos por correo (para activarlos de verdad): en Brevo, «SMTP & API» → «API Keys» → «Generate a new API key» y copiarla. Después, en el SQL Editor de Supabase cloud: `insert into private.app_settings (key, value) values ('brevo_api_key', '<clave>'), ('email_sender', '<remitente verificado en Brevo>');` (secretos: no van al repositorio). Sin clave, la tarea no envía nada.
 - [x] Moderador: la cuenta 1Cut1Kill está en `app_admins` (más moderadores: `insert into public.app_admins (user_id) values ('<uuid>');` en el SQL Editor).
 - [x] Prueba final: un usuario nuevo completa el recorrido entero en producción desde el móvil (2026-11-13).
 - [x] Docker instalado y en marcha.
@@ -112,9 +117,11 @@ RSO de Riot si aprueban la clave (rango y estadísticas verificados), bot de Dis
 - Límites de los planes gratuitos de Supabase/Vercel → suficientes para la beta; revisar al crecer.
 
 ## Pendiente de definir
-- Nombre, dominio, logo e identidad final («DUELINK» y «TeamFinder» son provisionales).
-- Textos legales definitivos (privacidad, normas, retención de datos).
-- Subida/hosting de clips y límites (post-beta).
-- Plataformas sociales enlazadas al inicio (post-beta).
+- Subida/hosting propio de clips (de momento se enlazan de YouTube, Twitch y Streamable).
 - Reglas y controles de la sección de e-dating (post-beta).
-- Financiación y costes.
+
+## Decisiones cerradas el 2026-11-13
+- Identidad: nombre «TeamFinder» y logo de los dos chevrones aprobados por el usuario. Dominio: `teamfinder-seven.vercel.app` (gratuito) mientras los costes sean 0.
+- Financiación y costes: 0 €. Todo en planes gratuitos (Vercel Hobby, Supabase Free, Brevo Free 300 correos/día).
+- Textos legales: versión definitiva 1.0 en vigor desde el 2026-11-13, sin revisión de abogado (descartada por coste).
+- Plataformas sociales enlazadas: Twitch, YouTube y X (ya en el perfil).

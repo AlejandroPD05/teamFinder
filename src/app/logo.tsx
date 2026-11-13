@@ -1,7 +1,7 @@
 import { LOGO_BOTTOM, LOGO_TOP } from "@/lib/brand";
 import { APP_NAME } from "@/lib/config";
 
-/** Marca provisional: dos chevrones encajados (un stack de jugadores). Geométrica y propia, sin parecerse a ningún juego. */
+/** Logo de TeamFinder (aprobado el 2026-11-13): dos chevrones encajados, un stack de jugadores. Geométrico y propio. */
 export function Logo() {
   return (
     <span className="flex items-center gap-2.5">

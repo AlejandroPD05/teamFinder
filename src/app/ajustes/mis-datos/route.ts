@@ -38,6 +38,10 @@ export async function GET() {
     fanart,
     restrictions,
     rankAwards,
+    matchesManual,
+    teamMemberships,
+    teamMessages,
+    teamInvites,
   ] = await Promise.all([
     own("profiles", "id"),
     own("game_profiles"),
@@ -60,6 +64,10 @@ export async function GET() {
     own("fanart_submissions"),
     own("user_restrictions"),
     own("weekly_rank_awards"),
+    own("manual_matches"),
+    own("team_members"),
+    own("team_messages"),
+    own("team_invites"),
   ]);
 
   const body = {
@@ -88,6 +96,10 @@ export async function GET() {
     fanart_submissions: fanart,
     restrictions,
     weekly_rank_awards: rankAwards,
+    manual_matches: matchesManual,
+    team_memberships: teamMemberships,
+    team_messages: teamMessages,
+    team_invites_received: teamInvites,
   };
   return new NextResponse(JSON.stringify(body, null, 2), {
     headers: {

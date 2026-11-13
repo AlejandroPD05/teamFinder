@@ -1,4 +1,4 @@
-// Marca provisional (ver src/app/logo.tsx): dos chevrones encajados. Compartida por el logo de la web y el favicon.
+// Logo de TeamFinder (aprobado el 2026-11-13, ver src/app/logo.tsx): dos chevrones encajados. Compartida por el logo de la web y el favicon.
 export const LOGO_TOP = "M4 6 L16 14 L28 6 L28 12 L16 20 L4 12 Z";
 export const LOGO_BOTTOM = "M4 16 L16 24 L28 16 L28 22 L16 30 L4 22 Z";
 export const LOGO_MUTED = "#9ca0b4";

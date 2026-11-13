@@ -4,6 +4,7 @@ import { redirect } from "next/navigation";
 import { loadNames } from "@/lib/lobbies/queries";
 import { createClient } from "@/lib/supabase/server";
 import { BlockButton, DeleteAccountForm } from "../confianza/forms";
+import { EmailNotificationsForm } from "./email-form";
 
 export const metadata: Metadata = { title: "Ajustes" };
 
@@ -12,7 +13,10 @@ export default async function SettingsPage() {
   const { data: claims } = await supabase.auth.getClaims();
   if (!claims?.claims?.sub) redirect("/entrar?next=/ajustes");
 
-  const { data: blocks } = await supabase.from("user_blocks").select("blocked_id, created_at").order("created_at", { ascending: false });
+  const [{ data: blocks }, { data: me }] = await Promise.all([
+    supabase.from("user_blocks").select("blocked_id, created_at").order("created_at", { ascending: false }),
+    supabase.from("profiles").select("email_notifications").eq("id", claims.claims.sub).single(),
+  ]);
   const names = await loadNames(supabase, (blocks ?? []).map((b) => b.blocked_id));
 
   return (
@@ -27,6 +31,18 @@ export default async function SettingsPage() {
           .
         </p>
       </div>
+
+      <section aria-labelledby="correo" className="surface flex flex-col items-start gap-3 p-5">
+        <h2 id="correo" className="font-semibold">
+          Avisos por correo
+        </h2>
+        <p className="text-sm text-muted">
+          Si los activas, cuando tengas avisos o mensajes privados sin leer te mandamos un correo corto con el recuento y el
+          enlace (como mucho uno por hora, sin nombres ni textos de nadie). Usamos Brevo para enviarlos. Puedes desactivarlos
+          cuando quieras.
+        </p>
+        <EmailNotificationsForm enabled={me?.email_notifications ?? false} />
+      </section>
 
       <section aria-labelledby="datos" className="surface flex flex-col items-start gap-3 p-5">
         <h2 id="datos" className="font-semibold">
