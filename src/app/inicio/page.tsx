@@ -104,7 +104,11 @@ export default async function Dashboard() {
         )}
       </div>
 
-      <nav aria-label="Misiones y colección" className="grid gap-4 sm:grid-cols-2">
+      <nav aria-label="Ranking, misiones y colección" className="grid gap-4 sm:grid-cols-3">
+        <Link href="/ranking" className="surface surface-interactive flex min-h-11 flex-col gap-1 p-5">
+          <span className="font-display text-lg font-semibold">Ranking semanal</span>
+          <span className="text-sm text-muted">Los mejores compañeros de {current.name} esta semana.</span>
+        </Link>
         <Link href="/misiones" className="surface surface-interactive flex min-h-11 flex-col gap-1 p-5">
           <span className="font-display text-lg font-semibold">Misiones</span>
           <span className="text-sm text-muted">Llena grupos y gana cartas de {current.name}.</span>

@@ -161,7 +161,7 @@ describe("redes, insignias y fanart", () => {
   it("las insignias solo con sesión", async () => {
     const { data, error } = await b.client.rpc("player_badges", { p_user: a.id });
     expect(error).toBeNull();
-    expect(data).toEqual({ cards: [], clip_awards: [] });
+    expect(data).toEqual({ cards: [], clip_awards: [], rank_awards: [] });
     expect((await anon().rpc("player_badges", { p_user: a.id })).error).not.toBeNull();
   });
 

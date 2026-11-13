@@ -37,6 +37,7 @@ export async function GET() {
     notifications,
     fanart,
     restrictions,
+    rankAwards,
   ] = await Promise.all([
     own("profiles", "id"),
     own("game_profiles"),
@@ -58,6 +59,7 @@ export async function GET() {
     own("notifications"),
     own("fanart_submissions"),
     own("user_restrictions"),
+    own("weekly_rank_awards"),
   ]);
 
   const body = {
@@ -85,6 +87,7 @@ export async function GET() {
     notifications,
     fanart_submissions: fanart,
     restrictions,
+    weekly_rank_awards: rankAwards,
   };
   return new NextResponse(JSON.stringify(body, null, 2), {
     headers: {
