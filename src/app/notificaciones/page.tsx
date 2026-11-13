@@ -17,7 +17,7 @@ export default async function NotificationsPage() {
 
   const { data } = await supabase
     .from("notifications")
-    .select("id, kind, actor_id, lobby_id, clip_id, body, created_at, read_at")
+    .select("id, kind, actor_id, lobby_id, clip_id, team_id, body, created_at, read_at")
     .order("created_at", { ascending: false })
     .limit(60);
   const list = data ?? [];

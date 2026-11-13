@@ -7,6 +7,8 @@ import { es } from "@/lib/i18n/es";
 import { loadOwnProfile } from "@/lib/profile/queries";
 import { profileCompletion } from "@/lib/profile/schema";
 import { ProfileSteps } from "@/components/profile-steps";
+import { loadCatalog } from "@/lib/profile/queries";
+import { AvailableNow } from "./available-now";
 import { activeRestriction, untilFormat } from "@/lib/restrictions";
 import { createClient } from "@/lib/supabase/server";
 
@@ -19,11 +21,14 @@ export default async function Dashboard() {
   if (!userId) redirect("/entrar?next=/inicio");
 
   const { game: current } = await currentGame();
-  const [{ profile, game, roles, characters }, { data: isAdmin }, restriction] = await Promise.all([
+  const [{ profile, game, roles, characters }, { data: isAdmin }, restriction, { modes }] = await Promise.all([
     loadOwnProfile(supabase, userId, current.id),
     supabase.rpc("is_admin"),
     activeRestriction(supabase, userId),
+    loadCatalog(supabase, current.id),
   ]);
+  // Cuenta nueva: primero la guía de bienvenida (juego → rol → rango).
+  if (!profile.onboarded_at) redirect("/bienvenida");
   const name = profile.display_name;
   const completion = profileCompletion({
     languages: profile.languages,
@@ -66,6 +71,15 @@ export default async function Dashboard() {
           <p className="text-muted">{es.dashboard.lead}</p>
         </div>
       </div>
+
+      {game ? (
+        <AvailableNow
+          until={game.available_until}
+          mode={game.available_mode}
+          modes={modes}
+          gameName={current.name}
+        />
+      ) : null}
 
       <div className="surface hud p-5">
         <div className="flex flex-wrap items-center justify-between gap-3">

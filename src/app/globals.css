@@ -591,3 +591,18 @@ html[data-game="apex"] {
 }
 
 /* Las animaciones se muestran siempre, también con «reducir movimiento» activado (decisión del usuario, PROGRESS.md). */
+
+/* Punto verde que late: «disponible ahora» (pulso suave e infinito, solo en ese estado). */
+.live-dot {
+  width: 0.5rem;
+  height: 0.5rem;
+  border-radius: 999px;
+  background: var(--color-success);
+  box-shadow: 0 0 0 0 color-mix(in srgb, var(--color-success) 60%, transparent);
+  animation: live-pulse 2s var(--ease-out) infinite;
+}
+@keyframes live-pulse {
+  70% {
+    box-shadow: 0 0 0 6px transparent;
+  }
+}

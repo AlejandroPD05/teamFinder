@@ -42,6 +42,8 @@ export async function GET() {
     teamMemberships,
     teamMessages,
     teamInvites,
+    teamEventRsvps,
+    pushSubscriptions,
   ] = await Promise.all([
     own("profiles", "id"),
     own("game_profiles"),
@@ -68,6 +70,8 @@ export async function GET() {
     own("team_members"),
     own("team_messages"),
     own("team_invites"),
+    own("team_event_rsvps"),
+    own("push_subscriptions"),
   ]);
 
   const body = {
@@ -100,6 +104,8 @@ export async function GET() {
     team_memberships: teamMemberships,
     team_messages: teamMessages,
     team_invites_received: teamInvites,
+    team_event_answers: teamEventRsvps,
+    push_subscriptions: pushSubscriptions,
   };
   return new NextResponse(JSON.stringify(body, null, 2), {
     headers: {

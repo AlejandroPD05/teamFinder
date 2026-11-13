@@ -121,3 +121,59 @@ export async function reportTeamMessageAction(_p: TeamState, fd: FormData): Prom
   if (error) return { ok: false, message: teamError(error.hint) };
   return { ok: true, message: "Denuncia enviada. La revisará el equipo de moderación." };
 }
+
+// ---------- Quedadas ----------
+
+export async function createEventAction(_p: TeamState, fd: FormData): Promise<TeamState> {
+  const supabase = await session();
+  const team = uuid.safeParse(fd.get("team_id"));
+  const startsAt = z.iso.datetime({ offset: true }).safeParse(fd.get("starts_at"));
+  const note = z.string().trim().max(200, "La nota: como mucho 200 caracteres.").regex(/^[^<>]*$/, "Sin < ni >.").safeParse(fd.get("note") ?? "");
+  if (!team.success) return { ok: false, message: teamError() };
+  if (!startsAt.success) return { ok: false, message: "Elige día y hora." };
+  if (!note.success) return { ok: false, message: note.error.issues[0].message };
+  const { error } = await supabase.rpc("create_team_event", { p_team: team.data, p_starts_at: startsAt.data, p_note: note.data });
+  if (error) {
+    const message =
+      error.hint === "invalid" ? "La fecha tiene que ser entre ahora y dentro de 30 días." : error.hint === "limit_events" ? "Ya hay 5 quedadas pendientes." : teamError(error.hint);
+    return { ok: false, message };
+  }
+  return done([`/equipo/${team.data}`], "Quedada propuesta. Se ha avisado al equipo.");
+}
+
+export async function rsvpAction(_p: TeamState, fd: FormData): Promise<TeamState> {
+  const supabase = await session();
+  const event = uuid.safeParse(fd.get("event_id"));
+  const team = uuid.safeParse(fd.get("team_id"));
+  const answer = z.enum(["yes", "maybe", "no"]).safeParse(fd.get("answer"));
+  if (!event.success || !team.success || !answer.success) return { ok: false, message: teamError() };
+  const { error } = await supabase.rpc("rsvp_team_event", { p_event: event.data, p_answer: answer.data });
+  if (error) return { ok: false, message: teamError(error.hint) };
+  return done([`/equipo/${team.data}`], "Respuesta guardada.");
+}
+
+export async function deleteEventAction(_p: TeamState, fd: FormData): Promise<TeamState> {
+  const supabase = await session();
+  const event = uuid.safeParse(fd.get("event_id"));
+  const team = uuid.safeParse(fd.get("team_id"));
+  if (!event.success || !team.success) return { ok: false, message: teamError() };
+  const { error } = await supabase.rpc("delete_team_event", { p_event: event.data });
+  if (error) return { ok: false, message: teamError(error.hint) };
+  return done([`/equipo/${team.data}`], "Quedada borrada.");
+}
+
+/** Crear el grupo con los que van y llevar a él. */
+export async function eventLobbyAction(_p: TeamState, fd: FormData): Promise<TeamState> {
+  const supabase = await session();
+  const event = uuid.safeParse(fd.get("event_id"));
+  const mode = z.string().regex(/^[a-z0-9-]{1,32}$/).safeParse(fd.get("mode"));
+  if (!event.success) return { ok: false, message: teamError() };
+  if (!mode.success) return { ok: false, message: "Elige el modo." };
+  const { data, error } = await supabase.rpc("team_event_lobby", { p_event: event.data, p_mode: mode.data });
+  if (error || !data) {
+    const { lobbyError } = await import("@/lib/lobbies/schema");
+    return { ok: false, message: error?.hint === "duplicate" ? "Esta quedada ya tiene grupo." : lobbyError(error?.hint) };
+  }
+  revalidatePath("/grupos");
+  redirect(`/grupos/${data}`);
+}

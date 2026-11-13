@@ -10,12 +10,21 @@ const OPS = { gte: "gte", lte: "lte", eq: "eq", contains: "cs", overlaps: "ov" }
 const encode = (c: Condition) => (Array.isArray(c.value) ? `{${c.value.join(",")}}` : String(c.value));
 
 /** Busca jugadores en la vista `player_search` (la privacidad ya viene aplicada en la vista). */
-export async function searchPlayers(supabase: Client, viewerId: string, conditions: Condition[], page: number, gameId: string) {
+export async function searchPlayers(
+  supabase: Client,
+  viewerId: string,
+  conditions: Condition[],
+  page: number,
+  gameId: string,
+  /** Si se indica, solo estos jugadores (p. ej. los disponibles ahora). */
+  onlyIds?: string[],
+) {
   let q = supabase
     .from("player_search")
     .select("*", { count: "exact" })
     .eq("game_id", gameId)
     .neq("user_id", viewerId);
+  if (onlyIds) q = q.in("user_id", onlyIds.length ? onlyIds : ["00000000-0000-0000-0000-000000000000"]);
   for (const c of conditions) q = q.filter(c.column, OPS[c.op], encode(c));
   const from = (page - 1) * PAGE_SIZE;
   const { data, count, error } = await q

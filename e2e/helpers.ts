@@ -27,6 +27,11 @@ export async function signIn(page: Page, email: string) {
   await page.getByRole("button", { name: "Enviarme el enlace" }).click();
   await expect(page.getByRole("main").getByRole("status")).toContainText("Enlace enviado");
   await page.goto(await latestMagicLink(email));
+  // Las cuentas nuevas pasan por la guía de bienvenida: en las pruebas se salta (tiene su propio test).
+  await expect(page).toHaveURL(/\/(inicio|bienvenida)$/);
+  if (new URL(page.url()).pathname === "/bienvenida") {
+    await page.getByRole("button", { name: "Saltar por ahora" }).click();
+  }
   await expect(page).toHaveURL(/\/inicio$/);
 }
 

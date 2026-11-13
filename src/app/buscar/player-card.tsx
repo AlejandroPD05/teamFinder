@@ -17,6 +17,7 @@ function ago(iso: string | null) {
 }
 
 const STATUS_ORDER = ["main", "comfort", "playable", "flexible"] as const;
+const untilFmt = new Intl.DateTimeFormat("es-ES", { timeZone: "Europe/Madrid", hour: "2-digit", minute: "2-digit" });
 
 export function PlayerCard({
   p,
@@ -24,6 +25,7 @@ export function PlayerCard({
   profileHref,
   characterLabel = "Agentes",
   index = 0,
+  available = null,
 }: {
   p: PlayerRow;
   catalog: Catalog;
@@ -31,6 +33,8 @@ export function PlayerCard({
   characterLabel?: string | null;
   /** Posición en la lista, para escalonar la entrada. */
   index?: number;
+  /** Si se ha marcado «disponible ahora» (hasta cuándo y en qué modo). */
+  available?: { available_until: string; mode_slug: string | null } | null;
 }) {
   const name = p.display_name ?? "Jugador";
   const rank = catalog.ranks.find((r) => r.id === p.rank_id);
@@ -68,6 +72,16 @@ export function PlayerCard({
         </div>
         {p.flex && <span className="text-sm font-medium text-info-soft">Flex</span>}
       </div>
+      {available && (
+        <p className="flex items-center gap-2 text-sm font-medium text-success">
+          <span aria-hidden="true" className="live-dot" />
+          Disponible ahora
+          {available.mode_slug && (
+            <span className="font-normal text-muted">· {catalog.modes.find((m) => m.slug === available.mode_slug)?.name ?? available.mode_slug}</span>
+          )}
+          <span className="font-normal text-muted">· hasta las {untilFmt.format(new Date(available.available_until))}</span>
+        </p>
+      )}
 
       {roles.length > 0 && (
         <ul aria-label="Roles" className="flex flex-wrap gap-1.5">

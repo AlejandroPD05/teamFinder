@@ -70,7 +70,17 @@ export default async function SearchPage({ searchParams }: PageProps<"/buscar">)
     Object.entries(raw).flatMap(([k, v]) => (Array.isArray(v) ? v : [v ?? ""]).map((x) => [k, x])),
   ).toString();
   if (current !== toSearchParams(filters).toString()) redirect(href(filters));
-  const { players, total } = await searchPlayers(supabase, userId, toConditions(filters, catalog), filters.page, game.id);
+  // Quién está disponible ahora (para el filtro y para marcarlo en las tarjetas).
+  const { data: availableRows } = await supabase.rpc("available_now", { p_game: game.id });
+  const available = new Map((availableRows ?? []).map((a) => [a.user_id, a]));
+  const { players, total } = await searchPlayers(
+    supabase,
+    userId,
+    toConditions(filters, catalog),
+    filters.page,
+    game.id,
+    filters.now ? [...available.keys()] : undefined,
+  );
   const pages = Math.max(1, Math.ceil(total / PAGE_SIZE));
   const n = activeCount(filters);
   const advanced = advancedCount(filters);
@@ -96,6 +106,10 @@ export default async function SearchPage({ searchParams }: PageProps<"/buscar">)
           <Select name="region" label="Servidor" value={filters.region} options={catalog.regions.map((r) => [r.slug, r.name])} />
           <Select name="mode" label="Modo" value={filters.mode} options={catalog.modes.map((m) => [m.slug, m.name])} />
           <Select name="role" label="Rol" value={filters.role} options={catalog.roles.map((r) => [r.slug, r.name])} />
+          <label className="col-span-2 flex min-h-11 items-center gap-2 self-end rounded-md border border-line px-3 text-sm has-[:checked]:border-accent sm:col-span-1">
+            <input type="checkbox" name="now" value="1" defaultChecked={filters.now} className="size-4 accent-accent" />
+            Solo disponibles ahora
+          </label>
           {/* Ley de Hick: a la vista solo los filtros principales; el resto, plegado (abierto si alguno está activo). */}
           <details open={advanced > 0} className="col-span-2 lg:col-span-4">
             <summary className="min-h-11 cursor-pointer py-2 text-sm font-medium text-accent-soft">
@@ -159,7 +173,14 @@ export default async function SearchPage({ searchParams }: PageProps<"/buscar">)
       {players.length > 0 ? (
         <ul className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
           {players.map((p, i) => (
-            <PlayerCard key={p.user_id} p={p} index={i} catalog={catalog} characterLabel={game.character_label} />
+            <PlayerCard
+              key={p.user_id}
+              p={p}
+              index={i}
+              catalog={catalog}
+              characterLabel={game.character_label}
+              available={available.get(p.user_id!) ?? null}
+            />
           ))}
         </ul>
       ) : (

@@ -9,8 +9,14 @@ import { createClient } from "@/lib/supabase/server";
 import { TEAM_MAX_MEMBERS } from "@/lib/teams";
 import { CancelInvite, DeleteTeam, EditTeamForm, LeaveTeam } from "../../mis-equipos/forms";
 import { TeamChat } from "./team-chat";
+import { TeamEvents, type TeamEvent } from "./team-events";
 
 export const metadata: Metadata = { title: "Equipo", robots: { index: false } };
+
+/** Instante de hace `h` horas, en ISO (fuera del componente: la página se pinta en cada petición). */
+function hoursAgo(h: number) {
+  return new Date(Date.now() - h * 3_600_000).toISOString();
+}
 
 export default async function TeamPage({ params }: PageProps<"/equipo/[id]">) {
   const { id } = await params;
@@ -22,12 +28,21 @@ export default async function TeamPage({ params }: PageProps<"/equipo/[id]">) {
 
   const { data: team } = await supabase.from("teams").select("id, name, description, game_id, owner_id, created_at").eq("id", id).maybeSingle();
   if (!team) notFound();
-  const [{ data: members }, { data: invites }, { data: msgs }, games] = await Promise.all([
+  // Quedadas desde hace 3 horas (la que está en marcha sigue visible).
+  const since = hoursAgo(3);
+  const [{ data: members }, { data: invites }, { data: msgs }, games, { data: events }, { data: modes }] = await Promise.all([
     supabase.from("team_members").select("user_id, role, joined_at").eq("team_id", id).order("joined_at"),
     // La RLS solo enseña las invitaciones a los miembros.
     supabase.from("team_invites").select("id, user_id").eq("team_id", id).eq("status", "pending"),
     supabase.from("team_messages").select("id, user_id, body, created_at").eq("team_id", id).order("id", { ascending: false }).limit(100),
     loadGames(),
+    supabase
+      .from("team_events")
+      .select("id, starts_at, note, created_by, lobby_id, team_event_rsvps(user_id, answer)")
+      .eq("team_id", id)
+      .gte("starts_at", since)
+      .order("starts_at"),
+    supabase.from("game_modes").select("slug, name").eq("game_id", team.game_id).eq("active", true).order("sort"),
   ]);
   const list = members ?? [];
   const isMember = list.some((m) => m.user_id === me);
@@ -86,6 +101,24 @@ export default async function TeamPage({ params }: PageProps<"/equipo/[id]">) {
         )}
         {isOwner && <p className="text-xs text-muted">Para invitar a alguien, abre su perfil y pulsa «Invitar a mi equipo».</p>}
       </section>
+
+      {isMember && (
+        <TeamEvents
+          teamId={id}
+          me={me}
+          isOwner={isOwner}
+          modes={modes ?? []}
+          names={Object.fromEntries([...names].map(([k, v]) => [k, v.name]))}
+          events={(events ?? []).map((e) => ({
+            id: e.id,
+            starts_at: e.starts_at,
+            note: e.note,
+            created_by: e.created_by,
+            lobby_id: e.lobby_id,
+            rsvps: e.team_event_rsvps as TeamEvent["rsvps"],
+          }))}
+        />
+      )}
 
       {isMember ? (
         <TeamChat
