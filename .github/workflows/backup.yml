@@ -1,0 +1,102 @@
+# Copia de seguridad semanal CIFRADA de la base de datos de producción (Supabase).
+#
+# El repo es público y cualquiera puede descargar los artefactos: por eso solo se sube el
+# fichero .gpg (AES-256 con BACKUP_PASSPHRASE). Los .sql en claro nunca salen del runner.
+# Se guarda 30 días en Actions → este workflow → ejecución → Artifacts.
+#
+# Secretos (Settings → Secrets and variables → Actions). Si falta alguno, el job se salta
+# con un aviso, sin fallar:
+#   SUPABASE_DB_URL    cadena de conexión de Supabase → Connect → «Session pooler»
+#                      (postgresql://postgres.<ref>:<contraseña>@aws-…pooler.supabase.com:5432/postgres)
+#   BACKUP_PASSPHRASE  frase larga y aleatoria; guárdala fuera de GitHub (sin ella no hay restauración).
+#
+# Restaurar (en una base de datos vacía, p. ej. un proyecto nuevo de Supabase):
+#   unzip supabase-backup-<fecha>.zip              # el artefacto descargado
+#   gpg --decrypt supabase-backup-<fecha>.tar.gz.gpg | tar -xz   # pide la frase
+#   psql --single-transaction --variable ON_ERROR_STOP=1 \
+#     --file roles.sql --file schema.sql \
+#     --command 'SET session_replication_role = replica' \
+#     --file data.sql --dbname "<URL de la base de datos destino>"
+# (Solo el esquema, sin datos: gpg --decrypt … | tar -xzO schema.sql | psql "<URL>")
+name: Backup BD (cifrado)
+
+on:
+  schedule:
+    - cron: "41 3 * * 1"
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: backup
+  cancel-in-progress: false
+
+jobs:
+  backup:
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    env:
+      SUPABASE_DB_URL: ${{ secrets.SUPABASE_DB_URL }}
+      BACKUP_PASSPHRASE: ${{ secrets.BACKUP_PASSPHRASE }}
+    steps:
+      - name: Comprobar secretos
+        id: check
+        run: |
+          if [ -z "$SUPABASE_DB_URL" ] || [ -z "$BACKUP_PASSPHRASE" ]; then
+            echo "::notice title=Backup omitido::Faltan los secretos SUPABASE_DB_URL y/o BACKUP_PASSPHRASE; no se hace copia."
+            echo "enabled=false" >> "$GITHUB_OUTPUT"
+            exit 0
+          fi
+          # GitHub enmascara el secreto completo, pero no la contraseña suelta si alguna
+          # herramienta la imprimiera por separado: se enmascara también.
+          password="$(python3 -c 'import os, urllib.parse as u; print(u.unquote(u.urlsplit(os.environ["SUPABASE_DB_URL"]).password or ""))')"
+          if [ -n "$password" ]; then echo "::add-mask::$password"; fi
+          echo "enabled=true" >> "$GITHUB_OUTPUT"
+
+      # config.toml fija la versión de Postgres (17) con la que el CLI hace el pg_dump.
+      - uses: actions/checkout@v4
+        if: steps.check.outputs.enabled == 'true'
+      - uses: actions/setup-node@v4
+        if: steps.check.outputs.enabled == 'true'
+        with:
+          node-version: 24
+
+      - name: Volcar roles, esquema y datos
+        if: steps.check.outputs.enabled == 'true'
+        run: |
+          umask 077
+          out="$RUNNER_TEMP/backup"
+          mkdir -p "$out"
+          # Con --workdir, las rutas relativas de -f se resuelven desde el repo: van absolutas.
+          cli() { npx --yes supabase@3 --workdir "$GITHUB_WORKSPACE" "$@"; }
+          cli db dump --remote="$SUPABASE_DB_URL" --role-only -f "$out/roles.sql"
+          cli db dump --remote="$SUPABASE_DB_URL" -f "$out/schema.sql"
+          cli db dump --remote="$SUPABASE_DB_URL" --data-only --use-copy -f "$out/data.sql"
+          ls -l "$out"
+
+      - name: Comprimir y cifrar
+        if: steps.check.outputs.enabled == 'true'
+        id: encrypt
+        run: |
+          umask 077
+          cd "$RUNNER_TEMP/backup"
+          name="supabase-backup-$(date -u +%Y-%m-%d)"
+          tar -czf "$name.tar.gz" roles.sql schema.sql data.sql
+          # La frase va por un descriptor, no como argumento (no aparece en la lista de procesos).
+          gpg --batch --yes --pinentry-mode loopback \
+            --symmetric --cipher-algo AES256 \
+            --passphrase-file <(printf '%s' "$BACKUP_PASSPHRASE") \
+            --output "$name.tar.gz.gpg" "$name.tar.gz"
+          rm -f roles.sql schema.sql data.sql "$name.tar.gz"
+          ls -l
+          echo "name=$name" >> "$GITHUB_OUTPUT"
+          echo "file=$RUNNER_TEMP/backup/$name.tar.gz.gpg" >> "$GITHUB_OUTPUT"
+
+      - uses: actions/upload-artifact@v4
+        if: steps.check.outputs.enabled == 'true'
+        with:
+          name: ${{ steps.encrypt.outputs.name }}
+          path: ${{ steps.encrypt.outputs.file }}
+          if-no-files-found: error
+          retention-days: 30
