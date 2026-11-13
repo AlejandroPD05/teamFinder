@@ -1279,5 +1279,108 @@
     "binding": "Esta es la versión en español, la vinculante.",
     "rules": "Resumen: respeto, juego limpio y nada de acoso, odio, contenido sexual, trampas, spam ni estafas.",
     "privacy": "Resumen: qué datos guardamos, para qué, cuánto tiempo y cómo ejercer tus derechos."
+  },
+  "rolePage": {
+    "metaTitle": "Busco {role} en {game}: encuentra compañeros",
+    "metaDescription": "Encuentra jugadores de {role} para tu equipo de {game}: filtra por rango, idioma y horario y forma tu grupo. Gratis.",
+    "breadcrumb": "Ruta de navegación",
+    "title": "Busco {role} en {game}",
+    "lead": "Encuentra jugadores que juegan de {role} con tu rango, tu idioma y tus horarios, o añade ese rol a tu perfil para que te encuentren.",
+    "searchSignedIn": "Buscar jugadores de {role}",
+    "searchSignIn": "Entrar y buscar jugadores de {role}",
+    "backToGame": "Equipo para {game}",
+    "roleTitle": "El rol en el equipo",
+    "lookForTitle": "Qué buscar en un compañero",
+    "charactersTitle": "{label} de {role}",
+    "statsTitle": "En {app} ahora mismo",
+    "statRole": "perfiles públicos que juegan de {role}",
+    "statPlayers": "jugadores con perfil de {game}",
+    "statNow": "disponibles ahora en {game}",
+    "statsNote": "Cifras reales y en directo. Solo cuentan como públicos los perfiles que su dueño muestra a todo el mundo: por defecto, los perfiles solo se ven con sesión, igual que los grupos abiertos.",
+    "emptyRole": "Todavía no hay perfiles públicos con este rol. Crea el tuyo para que te encuentren.",
+    "siblingsTitle": "Otros roles en {game}",
+    "fallback": {
+      "what": "{role} es uno de los roles de {game}. En {app} cada jugador indica los roles que juega, así sabes qué aporta cada uno antes de jugar juntos.",
+      "lookFor": "Busca a alguien que encaje con tu forma de jugar, con tu idioma y con los roles que ya cubre tu equipo."
+    },
+    "roles": {
+      "valorant": {
+        "duelist": {
+          "what": "El duelista abre el combate: entra primero en el sitio, busca los primeros duelos y crea espacio para que el resto del equipo avance. Suele apoyarse en la utilidad de sus compañeros para entrar con ventaja.",
+          "lookFor": "Busca a alguien que coordine sus entradas con los destellos y los humos del equipo y que pida apoyo antes de entrar, no después."
+        },
+        "initiator": {
+          "what": "El iniciador prepara las jugadas: revela posiciones enemigas, saca a los defensores de sus esquinas y deja el camino listo para que entren los demás. Su utilidad marca el ritmo de cada ataque y de cada retake.",
+          "lookFor": "Busca a alguien que cante lo que revela su utilidad y que la use al compás de la entrada del duelista."
+        },
+        "controller": {
+          "what": "El controlador decide qué ve cada equipo: corta líneas de visión con humos y otras habilidades para que el equipo ataque o defienda con seguridad. Suele pensar el mapa a largo plazo y muchas veces es quien dirige.",
+          "lookFor": "Busca a alguien que coloque los humos a tiempo, que sepa cuándo guardarlos y que no tenga problema en llevar la voz cantante."
+        },
+        "sentinel": {
+          "what": "El centinela protege: asegura un sitio o un flanco con trampas y utilidad defensiva, frena los empujes y avisa cuando alguien rodea al equipo. Es el ancla que da tranquilidad al resto.",
+          "lookFor": "Busca a alguien paciente, que aguante su posición, que avise al instante y que no deje el flanco sin cubrir."
+        }
+      },
+      "cs2": {
+        "entry": {
+          "what": "El entry fragger es el primero en entrar al punto: busca el primer contacto para abrir la ronda y ganar espacio, sabiendo que muchas veces cae para que el equipo cambie la baja.",
+          "lookFor": "Busca a alguien decidido, que entre a la vez que las granadas de apoyo y que cante lo que ha visto aunque caiga."
+        },
+        "awper": {
+          "what": "El AWPer maneja el rifle de francotirador: controla ángulos largos, consigue bajas de apertura y obliga al rival a pensarse cada paso. Es el arma más cara, así que el equipo suele organizar la economía en torno a ella.",
+          "lookFor": "Busca a alguien paciente y con buen posicionamiento, que sepa cambiar de ángulo y entienda cuándo el equipo puede permitirse el AWP."
+        },
+        "igl": {
+          "what": "El IGL (líder dentro de la partida) dirige al equipo: elige las estrategias, lee al rival, gestiona la economía y adapta el plan a mitad de ronda.",
+          "lookFor": "Busca a alguien que hable con calma, que explique el plan en pocas palabras y que escuche la información del resto."
+        },
+        "support": {
+          "what": "El soporte hace que las jugadas funcionen: lanza los humos, flashes y molotovs que necesitan los demás, cubre al entry y, cuando hace falta, deja su arma a un compañero.",
+          "lookFor": "Busca a alguien que se sepa las granadas de los mapas que jugáis y que piense primero en el equipo."
+        },
+        "lurker": {
+          "what": "El lurker juega lejos del grupo: presiona otra zona del mapa, corta rotaciones y castiga por la espalda mientras el rival mira hacia el ataque principal.",
+          "lookFor": "Busca a alguien con buen sentido del tiempo, que informe de las rotaciones rivales y que sepa cuándo volver con el equipo."
+        },
+        "rifler": {
+          "what": "El rifler es la base del equipo: juega con fusil, gana duelos, cambia bajas y se adapta a lo que pida cada ronda, en ataque o en defensa.",
+          "lookFor": "Busca a alguien constante, con buena puntería, que juegue cerca de sus compañeros para poder cambiar las bajas."
+        },
+        "anchor": {
+          "what": "El ancla defiende un punto, a menudo en solitario: aguanta lo justo para que llegue la rotación, retrasa el ataque con utilidad y da información desde el primer segundo.",
+          "lookFor": "Busca a alguien sereno bajo presión, que no se precipite y que cante cuántos rivales vienen en cuanto los vea."
+        }
+      },
+      "apex": {
+        "assault": {
+          "what": "Las leyendas de asalto buscan el combate directo: abren las peleas, presionan al escuadrón rival y rematan cuando el equipo gana ventaja.",
+          "lookFor": "Busca a alguien que entre cuando el escuadrón está listo para seguirle, no en solitario, y que avise de a quién ha dañado."
+        },
+        "skirmisher": {
+          "what": "Las leyendas hostigadoras viven de la movilidad: entran y salen de las peleas, buscan ángulos que el rival no espera y ayudan al equipo a retirarse cuando toca.",
+          "lookFor": "Busca a alguien que use su movilidad para el escuadrón, no solo para escapar, y que no se aleje demasiado."
+        },
+        "recon": {
+          "what": "Las leyendas de reconocimiento consiguen información: localizan escuadrones y ayudan a decidir dónde y cuándo pelear y cómo moverse por el mapa.",
+          "lookFor": "Busca a alguien que comparta al momento lo que detecta y que ayude a planear las rotaciones."
+        },
+        "support": {
+          "what": "Las leyendas de apoyo mantienen vivo al escuadrón: curan, reaniman, protegen y consiguen los recursos que permiten volver a la pelea.",
+          "lookFor": "Busca a alguien atento al estado del equipo, que priorice reanimar a tiempo."
+        },
+        "controller": {
+          "what": "Las leyendas controladoras dominan el terreno: fortifican posiciones, cierran accesos y convierten un edificio o una zona en un sitio difícil de asaltar.",
+          "lookFor": "Busca a alguien que prepare la posición con antelación y que sepa cuándo hay que abandonarla."
+        }
+      }
+    }
+  },
+  "changelog": {
+    "metaTitle": "Novedades",
+    "metaDescription": "Qué ha cambiado en {app}, fecha a fecha: nuevas funciones y mejoras para encontrar equipo y jugar.",
+    "title": "Novedades",
+    "lead": "Lo que ha cambiado en {app}, de lo más reciente a lo más antiguo. Solo aparecen cambios que ya están en la web.",
+    "footerLink": "Novedades"
   }
 }

@@ -1279,5 +1279,108 @@
     "binding": "This is the binding Spanish version. It is only available in Spanish.",
     "rules": "Summary: be respectful and play fair. No harassment, hate, sexual content, cheating, spam or scams, and no sharing other people's private data. You must be 16 or older. Reports are anonymous; moderation can hide content and temporarily restrict accounts, and you can appeal by email. If the English summary and the Spanish text differ, the Spanish text applies.",
     "privacy": "Summary: we store the data you give us (account, profile, groups, messages, clips and so on) only to run the service, never to sell it or show ads. You choose who sees each part of your profile. Data is kept while your account exists, with shorter limits for chats and logs; you can download or delete everything from Settings, and exercise your GDPR rights by writing to the contact email below. If the English summary and the Spanish text differ, the Spanish text applies."
+  },
+  "rolePage": {
+    "metaTitle": "Looking for a {role} in {game}? Find teammates",
+    "metaDescription": "Find {role} players for your {game} team: filter by rank, language and schedule and build your group. Free.",
+    "breadcrumb": "Breadcrumb",
+    "title": "Looking for a {role} in {game}",
+    "lead": "Find players who play {role} with your rank, language and schedule, or add the role to your profile so others can find you.",
+    "searchSignedIn": "Search for {role} players",
+    "searchSignIn": "Sign in and search for {role} players",
+    "backToGame": "Team for {game}",
+    "roleTitle": "The role in a team",
+    "lookForTitle": "What to look for in a teammate",
+    "charactersTitle": "{label} – {role}",
+    "statsTitle": "On {app} right now",
+    "statRole": "public profiles that play {role}",
+    "statPlayers": "players with a {game} profile",
+    "statNow": "available now in {game}",
+    "statsNote": "Real, live figures. Only profiles their owners show to everyone count as public: by default, profiles are only visible when signed in, and so are open groups.",
+    "emptyRole": "There are no public profiles with this role yet. Create yours so others can find you.",
+    "siblingsTitle": "Other roles in {game}",
+    "fallback": {
+      "what": "{role} is one of the roles in {game}. On {app} every player lists the roles they play, so you know what each person brings before you team up.",
+      "lookFor": "Look for someone who fits your playstyle, speaks your language and complements the roles your team already covers."
+    },
+    "roles": {
+      "valorant": {
+        "duelist": {
+          "what": "Duelists open the fight: they enter the site first, take the opening duels and create space for the rest of the team to move in. They usually rely on their teammates' utility to enter with an advantage.",
+          "lookFor": "Look for someone who times their entries with the team's flashes and smokes and asks for support before going in, not after."
+        },
+        "initiator": {
+          "what": "Initiators set up plays: they reveal enemy positions, push defenders out of their corners and clear the way for the rest of the team. Their utility sets the pace of every attack and every retake.",
+          "lookFor": "Look for someone who calls out what their utility reveals and uses it in step with the duelist's entry."
+        },
+        "controller": {
+          "what": "Controllers decide what each team can see: they cut sightlines with smokes and other abilities so the team can attack or defend safely. They tend to think about the map in the long run and often lead the team.",
+          "lookFor": "Look for someone who places smokes on time, knows when to save them and is comfortable making the calls."
+        },
+        "sentinel": {
+          "what": "Sentinels protect: they lock down a site or a flank with traps and defensive utility, slow down pushes and warn the team when someone is going around them. They are the anchor that lets everyone else play with confidence.",
+          "lookFor": "Look for someone patient who holds their position, gives instant callouts and never leaves the flank open."
+        }
+      },
+      "cs2": {
+        "entry": {
+          "what": "The entry fragger is the first one onto the bombsite: they look for first contact to open the round and gain space, often knowing they may die so the team can trade the kill.",
+          "lookFor": "Look for someone decisive who goes in together with the support grenades and calls out what they saw even if they die."
+        },
+        "awper": {
+          "what": "The AWPer handles the sniper rifle: they hold long angles, get opening kills and make the enemy think twice about every step. It's the most expensive weapon, so teams usually plan their economy around it.",
+          "lookFor": "Look for someone patient with good positioning, who knows when to reposition and when the team can afford the AWP."
+        },
+        "igl": {
+          "what": "The IGL (in-game leader) runs the team: they choose strategies, read the opponents, manage the economy and adapt the plan mid-round.",
+          "lookFor": "Look for someone who stays calm on comms, explains the plan in a few words and listens to the information from the rest."
+        },
+        "support": {
+          "what": "The support player makes plays work: they throw the smokes, flashes and molotovs the others need, back up the entry fragger and, when needed, drop a weapon for a teammate.",
+          "lookFor": "Look for someone who knows the grenade lineups for the maps you play and puts the team first."
+        },
+        "lurker": {
+          "what": "The lurker plays away from the group: they pressure another part of the map, cut off rotations and punish from behind while the enemy focuses on the main attack.",
+          "lookFor": "Look for someone with good timing who reports enemy rotations and knows when to regroup with the team."
+        },
+        "rifler": {
+          "what": "The rifler is the backbone of the team: they play with a rifle, win duels, trade kills and adapt to whatever each round needs, on attack or defence.",
+          "lookFor": "Look for someone consistent with solid aim who plays close to their teammates so kills can be traded."
+        },
+        "anchor": {
+          "what": "The anchor defends a bombsite, often alone: they hold long enough for the rotation to arrive, delay the attack with utility and give information from the very first second.",
+          "lookFor": "Look for someone calm under pressure who doesn't rush and calls out how many enemies are coming as soon as they see them."
+        }
+      },
+      "apex": {
+        "assault": {
+          "what": "Assault legends go for direct combat: they start fights, pressure the enemy squad and finish them off once the team has the upper hand.",
+          "lookFor": "Look for someone who pushes when the squad is ready to follow, not alone, and calls out who they've damaged."
+        },
+        "skirmisher": {
+          "what": "Skirmisher legends live on mobility: they get in and out of fights, find angles the enemy doesn't expect and help the team get away when it's time to back off.",
+          "lookFor": "Look for someone who uses their mobility for the squad, not just to escape, and doesn't drift too far away."
+        },
+        "recon": {
+          "what": "Recon legends gather information: they track down squads and help decide where and when to fight and how to move around the map.",
+          "lookFor": "Look for someone who shares what they detect right away and helps plan rotations."
+        },
+        "support": {
+          "what": "Support legends keep the squad alive: they heal, revive, protect and secure the resources that get the team back into the fight.",
+          "lookFor": "Look for someone who keeps an eye on the team's state and makes revives a priority."
+        },
+        "controller": {
+          "what": "Controller legends own the terrain: they fortify positions, lock down entrances and turn a building or an area into a hard place to attack.",
+          "lookFor": "Look for someone who sets up the position ahead of time and knows when it's time to leave it."
+        }
+      }
+    }
+  },
+  "changelog": {
+    "metaTitle": "What's new",
+    "metaDescription": "What has changed on {app}, date by date: new features and improvements to find a team and play.",
+    "title": "What's new",
+    "lead": "What has changed on {app}, newest first. Only changes that are already live on the site are listed.",
+    "footerLink": "What's new"
   }
 }

@@ -69,9 +69,15 @@ export default async function GameTeamsPage({ params }: PageProps<"/equipos/[jue
           <h3 className="font-display text-lg font-semibold">{t("roles")}</h3>
           <ul className="flex flex-wrap gap-x-4 gap-y-2">
             {catalog.roles.map((r) => (
-              <li key={r.id} className="chip">
-                <RoleIcon slug={r.slug} className="size-4 text-muted" />
-                {r.name}
+              <li key={r.id}>
+                {/* Cada rol tiene su página pública (/equipos/<juego>/<rol>). */}
+                <Link
+                  href={`/equipos/${game.id}/${r.slug}`}
+                  className="chip min-h-11 underline underline-offset-4 hover:text-accent"
+                >
+                  <RoleIcon slug={r.slug} className="size-4 text-muted" />
+                  {r.name}
+                </Link>
               </li>
             ))}
           </ul>
