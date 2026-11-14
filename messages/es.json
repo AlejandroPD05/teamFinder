@@ -503,7 +503,8 @@
     "emptyText": "Todavía no hay otros jugadores con perfil de {game} visible. Completa el tuyo para que te encuentren.",
     "pagination": "Paginación",
     "prev": "Anterior",
-    "next": "Siguiente"
+    "next": "Siguiente",
+    "emptySaveHint": "Guarda esta búsqueda arriba y te avisamos cuando alguien que encaje se marque disponible."
   },
   "fanart": {
     "license": "Declaro que soy el autor o la autora de esta obra y que no copia obras de otras personas. Doy permiso, gratis, no exclusivo y revocable, para mostrarla en esta web como carta coleccionable con mi crédito. Las cartas no se venden ni se intercambian. Puedo retirar el permiso cuando quiera desde esta página y la carta dejará de mostrarse.",
@@ -1691,5 +1692,13 @@
     "titleLength": "El título debe tener entre 5 y 80 caracteres.",
     "bodyLength": "La descripción: como mucho 500 caracteres.",
     "chars": "Sin < ni >."
+  },
+  "earlyDays": {
+    "lead": "TeamFinder acaba de empezar y aún somos pocos. Mientras tanto, esto ayuda a que la próxima persona que entre te encuentre:",
+    "available": "Marcarme disponible ahora",
+    "createLobby": "Crear un grupo",
+    "invite": "Invitar a un amigo",
+    "discord": "Pasar por el Discord",
+    "newTab": "(se abre en otra pestaña)"
   }
 }

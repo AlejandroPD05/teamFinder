@@ -1,0 +1,31 @@
+# Actualizaciones automáticas (gratis): una vez por semana, como mucho un PR agrupado de dependencias de npm (parches y
+# menores juntos; las mayores aparte, que pueden romper) y otro de las acciones de GitHub. Las alertas de seguridad
+# abren su PR en cuanto aparecen. Ningún PR se fusiona solo: pasan la CI y se fusionan con el OK del propietario.
+version: 2
+updates:
+  - package-ecosystem: npm
+    directory: /
+    schedule:
+      interval: weekly
+      day: monday
+      time: "07:00"
+      timezone: Europe/Madrid
+    open-pull-requests-limit: 3
+    groups:
+      menores:
+        update-types: [minor, patch]
+    commit-message:
+      prefix: "deps"
+  - package-ecosystem: github-actions
+    directory: /
+    schedule:
+      interval: weekly
+      day: monday
+      time: "07:00"
+      timezone: Europe/Madrid
+    open-pull-requests-limit: 2
+    groups:
+      acciones:
+        patterns: ["*"]
+    commit-message:
+      prefix: "ci"

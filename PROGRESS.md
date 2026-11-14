@@ -124,6 +124,8 @@ RSO de Riot si aprueban la clave (rango y estadísticas verificados), bot de Dis
 - 2026-11-14 — Revisión de producción con el conector de Supabase (solo lectura): 24 h sin errores en Postgres, API, Auth, Realtime ni Storage, y todas las tareas de pg_cron correctas. Asesor de rendimiento: solo índices sin usar (poco tráfico).
 - 2026-11-14 — Ideas públicas (`/ideas`, docs/PROMPT.md §7.2): moderación publica ideas (desde cero o desde una sugerencia del buzón, reescrita y sin autor) con estado pendiente, en desarrollo, completada o descartada. Cualquiera las ve; con sesión se apoyan las abiertas. Solo se publica el recuento. Al cambiar de estado se avisa a quien la apoya y a quien envió la sugerencia (`idea_status`). Privacidad 1.4.
 - 2026-11-14 — Novedades en Discord sin bot: `.github/workflows/announce-news.yml` publica en #novedades-web las novedades nuevas de `src/lib/changelog.ts` al llegar a main, cuando la web ya las muestra. Secreto `DISCORD_NEWS_WEBHOOK`; sin él no hace nada.
+- 2026-11-14 — Primeros días (3 cuentas en producción): las pantallas vacías de búsqueda y grupos dicen que aún somos pocos y proponen marcarse disponible, crear un grupo, invitar o ir al Discord; con filtros, guardar la búsqueda con alerta.
+- 2026-11-14 — Mantenimiento automático: Dependabot (`.github/dependabot.yml`, PR semanales agrupados, nada se fusiona solo) y comprobación de producción tras cada fusión (`.github/workflows/smoke.yml` + `scripts/smoke.mjs`: espera al commit nuevo en `/api/version` y revisa páginas públicas, CSP y redirecciones).
 - 2026-11-04 — Botón principal: fondo `#8B5CF6` con texto `#0B0C12` (4,6:1). Blanco sobre `#8B5CF6` no llega a AA (4,2:1).
 
 ## Acciones del usuario

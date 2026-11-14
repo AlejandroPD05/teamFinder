@@ -1,0 +1,31 @@
+# Comprobación de producción tras cada fusión en main (gratis, sin iniciar sesión): espera a que Vercel sirva el commit
+# nuevo (/api/version) y revisa páginas públicas, cabeceras de seguridad y que las privadas pidan entrar.
+# Si algo falla, el job termina en rojo (GitHub avisa por correo a quien fusionó).
+name: Producción tras desplegar
+
+on:
+  push:
+    branches: [main]
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: smoke
+  cancel-in-progress: true
+
+jobs:
+  smoke:
+    runs-on: ubuntu-latest
+    timeout-minutes: 25
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 24
+      - name: Comprobar producción
+        env:
+          SITE_URL: https://teamfinder-seven.vercel.app
+          EXPECTED_SHA: ${{ github.sha }}
+        run: node scripts/smoke.mjs
