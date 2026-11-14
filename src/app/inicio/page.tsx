@@ -9,6 +9,7 @@ import { profileCompletion } from "@/lib/profile/schema";
 import { ProfileSteps } from "@/components/profile-steps";
 import { loadCatalog } from "@/lib/profile/queries";
 import { AvailableNow } from "./available-now";
+import { Suggestions } from "./suggestions";
 import { activeRestriction, formatUntil } from "@/lib/restrictions";
 import { createClient } from "@/lib/supabase/server";
 
@@ -21,7 +22,7 @@ export default async function Dashboard() {
   if (!userId) redirect("/entrar?next=/inicio");
 
   const { game: current } = await currentGame();
-  const [{ profile, game, roles, characters }, { data: isAdmin }, restriction, { modes }] = await Promise.all([
+  const [{ profile, game, roles, characters }, { data: isAdmin }, restriction, catalog] = await Promise.all([
     loadOwnProfile(supabase, userId, current.id),
     supabase.rpc("is_admin"),
     activeRestriction(supabase, userId),
@@ -29,6 +30,7 @@ export default async function Dashboard() {
   ]);
   // Cuenta nueva: primero la guía de bienvenida (juego → rol → rango).
   if (!profile.onboarded_at) redirect("/bienvenida");
+  const { modes } = catalog;
   const name = profile.display_name;
   const [t, locale] = await Promise.all([getTranslations("dashboard"), getLocale()]);
   const link = (chunks: React.ReactNode) => (
@@ -78,6 +80,10 @@ export default async function Dashboard() {
           modes={modes}
           gameName={current.name}
         />
+      ) : null}
+
+      {game ? (
+        <Suggestions supabase={supabase} userId={userId} gameId={current.id} catalog={catalog} characterLabel={current.character_label} />
       ) : null}
 
       <div className="surface hud p-5">
@@ -139,6 +145,12 @@ export default async function Dashboard() {
       <nav aria-label={t("accountLabel")} className="flex flex-wrap gap-3 text-sm">
         <Link href="/ajustes" className="inline-flex min-h-11 items-center rounded-md border border-line px-4 hover:bg-panel-hover">
           {t("settings")}
+        </Link>
+        <Link href="/amigos" className="inline-flex min-h-11 items-center rounded-md border border-line px-4 hover:bg-panel-hover">
+          {t("friends")}
+        </Link>
+        <Link href="/sugerencias?desde=/inicio" className="inline-flex min-h-11 items-center rounded-md border border-line px-4 hover:bg-panel-hover">
+          {t("feedback")}
         </Link>
         {isAdmin && (
           <Link href="/moderacion" className="inline-flex min-h-11 items-center rounded-md border border-line px-4 hover:bg-panel-hover">

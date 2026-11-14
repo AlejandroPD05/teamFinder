@@ -11,6 +11,31 @@ export type ChangelogEntry = {
 
 export const CHANGELOG: ChangelogEntry[] = [
   {
+    date: "2026-11-14",
+    items: [
+      {
+        es: "«Te pueden encajar»: en Inicio, jugadores con varias cosas en común contigo y el motivo de cada uno.",
+        en: "“Players who might fit”: on your dashboard, players with several things in common with you and why.",
+      },
+      {
+        es: "Fiabilidad en el perfil: qué parte de sus grupos termina cada jugador y cuánto tarda en responder (últimos 90 días).",
+        en: "Reliability on profiles: how many of their groups each player finishes and how fast they answer (last 90 days).",
+      },
+      {
+        es: "Grupo en un clic: guarda un grupo como plantilla o repite el último.",
+        en: "One-click groups: save a group as a template or repeat your last one.",
+      },
+      {
+        es: "Horario del equipo: mira cuándo podéis jugar más miembros a la vez.",
+        en: "Team schedule: see when most members can play at the same time.",
+      },
+      {
+        es: "Tarjeta para compartir tu perfil (se activa a mano), invitar amigos con tu enlace y buzón de sugerencias.",
+        en: "A shareable profile card (opt-in), inviting friends with your link, and a feedback inbox.",
+      },
+    ],
+  },
+  {
     date: "2026-11-13",
     items: [
       {

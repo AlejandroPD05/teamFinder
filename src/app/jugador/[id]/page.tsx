@@ -13,10 +13,14 @@ import { NumberRoll } from "@/components/number-roll";
 import { rankTier, weekLabel } from "@/lib/ranking";
 import { matchSummary } from "@/lib/matches";
 import { createClient } from "@/lib/supabase/server";
+import { siteUrl } from "@/lib/supabase/env";
 import { SOCIALS } from "@/lib/profile/schema";
 import { BlockButton, ReportForm } from "../../confianza/forms";
 import { StartConversationButton } from "../../mensajes/start-button";
 import { InviteToTeam } from "../../mis-equipos/forms";
+import { parseReliability } from "@/lib/reliability";
+import { ReliabilitySection } from "./reliability";
+import { ShareCardLink } from "./share-card";
 
 type Badges = {
   cards: { game_id: string; owned: number; total: number; legendary: string[] }[];
@@ -63,7 +67,7 @@ export default async function PlayerPage({ params }: PageProps<"/jugador/[id]">)
   const { profile, game, roles, characters } = data;
   const viewer = claims?.claims?.sub;
   const isOwner = viewer === id;
-  const [{ data: karma }, { data: myBlock }, { data: badgeData }, { data: matches }, { data: teams }] = await Promise.all([
+  const [{ data: karma }, { data: myBlock }, { data: badgeData }, { data: matches }, { data: teams }, { data: reliabilityRaw }] = await Promise.all([
     viewer ? supabase.rpc("karma_summary", { p_user: id }) : Promise.resolve({ data: null }),
     viewer && !isOwner ? supabase.from("user_blocks").select("blocked_id").eq("blocked_id", id).maybeSingle() : Promise.resolve({ data: null }),
     viewer ? supabase.rpc("player_badges", { p_user: id }) : Promise.resolve({ data: null }),
@@ -78,12 +82,20 @@ export default async function PlayerPage({ params }: PageProps<"/jugador/[id]">)
     viewer
       ? supabase.from("team_members").select("team_id, role, teams(id, name, game_id)").eq("user_id", id)
       : Promise.resolve({ data: null }),
+    viewer ? supabase.rpc("player_reliability", { p_user: id }) : Promise.resolve({ data: null }),
   ]);
   // Mis equipos de este juego a los que puedo invitarle (soy el dueño y aún no es miembro).
   const { data: ownTeams } =
     viewer && !isOwner && !myBlock
       ? await supabase.from("teams").select("id, name").eq("owner_id", viewer).eq("game_id", catalog.game.id)
       : { data: null };
+  // Tarjeta para compartir (solo la gestiona su dueño).
+  const [{ data: own }, { data: ownGame }] = isOwner
+    ? await Promise.all([
+        supabase.from("profiles").select("share_card").eq("id", id).single(),
+        supabase.from("game_profiles").select("visibility").eq("user_id", id).eq("game_id", catalog.game.id).maybeSingle(),
+      ])
+    : [{ data: null }, { data: null }];
   const theirTeams = new Set((teams ?? []).map((t) => t.team_id));
   const invitable = (ownTeams ?? []).filter((t) => !theirTeams.has(t.id));
   const matchList = matches ?? [];
@@ -248,6 +260,16 @@ export default async function PlayerPage({ params }: PageProps<"/jugador/[id]">)
         )}
         <p className="mt-3 text-xs text-muted">{t("karmaNote")}</p>
       </section>
+
+      <ReliabilitySection data={parseReliability(reliabilityRaw)} signedIn={Boolean(viewer)} />
+
+      {isOwner && own && (
+        <ShareCardLink
+          enabled={own.share_card}
+          gamePublic={ownGame?.visibility === "public"}
+          url={`${siteUrl()}/tarjeta/${id}/${catalog.game.id}`}
+        />
+      )}
 
       <section aria-labelledby="valorant" className="surface p-5">
         <h2 id="valorant" className="font-semibold">

@@ -33,7 +33,8 @@
     "demo": "Demo",
     "rules": "Normas",
     "privacy": "Privacidad",
-    "discord": "Discord de la comunidad"
+    "discord": "Discord de la comunidad",
+    "feedback": "Sugerencias"
   },
   "legal": {
     "riot": "TeamFinder was created under Riot Games' \"Legal Jibber Jabber\" policy using assets owned by Riot Games. Riot Games does not endorse or sponsor this project.",
@@ -270,6 +271,11 @@
       "collection_complete": "Ya tienes todas las cartas de este juego.",
       "not_found": "Esa misión ya no existe.",
       "fallback": "No se pudo reclamar. Inténtalo de nuevo."
+    },
+    "feedback": {
+      "rate_limited": "Ya has enviado 5 sugerencias hoy. Gracias: vuelve mañana si tienes más.",
+      "restricted": "Tu cuenta está restringida temporalmente: no puedes hacer esto hasta que termine.",
+      "fallback": "No se pudo enviar. Inténtalo de nuevo."
     }
   },
   "validation": {
@@ -345,7 +351,8 @@
       "team_invite": "{who} te invita a su equipo",
       "team_joined": "{who} se ha unido a tu equipo",
       "team_event": "{who} propone una quedada",
-      "team_lobby": "Tu equipo ha creado un grupo y estás dentro"
+      "team_lobby": "Tu equipo ha creado un grupo y estás dentro",
+      "friend_joined": "{who} se ha unido con tu invitación"
     }
   },
   "lobbies": {
@@ -551,7 +558,9 @@
     "profile": "Mi perfil",
     "matches": "Mis partidas",
     "privacy": "Privacidad",
-    "ranking": "Ranking semanal"
+    "ranking": "Ranking semanal",
+    "feedback": "Sugerencias",
+    "friends": "Invitar amigos"
   },
   "login": {
     "title": "Entrar en {app}",
@@ -589,7 +598,9 @@
     "collectionText": "Las cartas que has conseguido.",
     "accountLabel": "Cuenta",
     "settings": "Ajustes, bloqueados y borrar cuenta",
-    "moderation": "Moderación"
+    "moderation": "Moderación",
+    "friends": "Invitar amigos",
+    "feedback": "Enviar una sugerencia"
   },
   "availableNow": {
     "active": "Estás disponible",
@@ -1185,7 +1196,9 @@
     "byArtist": "de {artist}",
     "account": "cuenta:",
     "portfolio": "Portfolio",
-    "check": "Comprueba que no es arte oficial ni de otra persona (búsqueda inversa de imagen)."
+    "check": "Comprueba que no es arte oficial ni de otra persona (búsqueda inversa de imagen).",
+    "feedback": "Buzón de sugerencias",
+    "noFeedback": "No hay sugerencias."
   },
   "welcome": {
     "kicker": "Bienvenida · paso {step} de 3",
@@ -1279,6 +1292,142 @@
     "binding": "Esta es la versión en español, la vinculante.",
     "rules": "Resumen: respeto, juego limpio y nada de acoso, odio, contenido sexual, trampas, spam ni estafas.",
     "privacy": "Resumen: qué datos guardamos, para qué, cuánto tiempo y cómo ejercer tus derechos."
+  },
+  "fit": {
+    "title": "Te pueden encajar",
+    "lead": "Jugadores con varias cosas en común contigo. Te decimos por qué; no hay puntuación oculta.",
+    "more": "Buscar más",
+    "empty": "Aún no hay sugerencias. Completa tu perfil (rol, servidor, rango, idiomas y horario) para verlas.",
+    "because": "Encaja por:",
+    "reason": {
+      "role": "Rol que te falta",
+      "region": "Mismo servidor",
+      "schedule": "Mismo horario",
+      "rank": "Rango cercano",
+      "language": "Idioma en común"
+    }
+  },
+  "reliability": {
+    "title": "Fiabilidad",
+    "signIn": "Entra para ver la fiabilidad de este jugador.",
+    "notEnough": "Aún no hay datos suficientes (hacen falta al menos 3 grupos o solicitudes en los últimos 90 días).",
+    "completion": "Termina el {pct} % de sus grupos ({finished} de {total} en 90 días).",
+    "response": "Responde al {pct} % de las solicitudes a sus grupos.",
+    "responseTime": {
+      "min": "Suele responder en {value} min.",
+      "h": "Suele responder en {value} h.",
+      "d": "Suele responder en {value} d."
+    },
+    "note": "Datos de los últimos 90 días: grupos llenados y cerrados frente a salidas antes de cerrarse, y solicitudes respondidas. No es una sanción ni una nota."
+  },
+  "templates": {
+    "saveTitle": "Guardar como plantilla",
+    "saveLead": "Guarda modo, rango, servidor, idioma, objetivo, roles y nota para crear este grupo otra vez en un clic.",
+    "name": "Nombre de la plantilla",
+    "save": "Guardar plantilla",
+    "saved": "Plantilla guardada. La tienes en «Crear grupo».",
+    "nameInvalid": "El nombre debe tener entre 2 y 40 caracteres, sin < ni >.",
+    "limit": "Ya tienes 5 plantillas de este juego. Borra alguna para guardar otra.",
+    "quickTitle": "En un clic",
+    "repeatLast": "Repetir mi último grupo",
+    "create": "Crear",
+    "createFrom": "Crear con la plantilla {name}",
+    "deleteNamed": "Borrar la plantilla {name}",
+    "deleted": "Plantilla borrada.",
+    "hint": "Guarda un grupo como plantilla desde su página para tenerlo aquí.",
+    "error": "No se pudo completar la acción. Inténtalo de nuevo."
+  },
+  "teamSchedule": {
+    "title": "Cuándo podéis jugar",
+    "empty": "Nadie del equipo ha indicado su horario (o no lo deja ver). Se rellena en «Editar perfil».",
+    "best": "Mejor franja: {slots} ({count} de {total}).",
+    "noOverlap": "Aún no coincidís en ninguna franja.",
+    "caption": "Miembros que pueden jugar en cada franja",
+    "of": "de {total}",
+    "hidden": "{count, plural, one {# miembro no indica su horario o no lo deja ver} other {# miembros no indican su horario o no lo dejan ver}}.",
+    "day": {
+      "weekday": "Entre semana",
+      "weekend": "Fin de semana"
+    },
+    "part": {
+      "morning": "Mañana",
+      "afternoon": "Tarde",
+      "evening": "Noche",
+      "night": "Madrugada"
+    }
+  },
+  "playerShare": {
+    "title": "Tarjeta para compartir",
+    "lead": "Un enlace con tu nombre, rango, roles y mains de este juego, con vista previa para Discord o redes. Viene desactivada.",
+    "notPublic": "Tu perfil de este juego no es público, así que la tarjeta no se ve. Cámbialo en «Editar perfil».",
+    "label": "Enlace de tu tarjeta",
+    "copy": "Copiar enlace",
+    "copied": "Copiado",
+    "enable": "Activar tarjeta",
+    "disable": "Desactivar tarjeta",
+    "error": "No se pudo guardar. Inténtalo de nuevo.",
+    "unavailable": "Tarjeta no disponible",
+    "pageTitle": "{name} en {game}",
+    "ogAlt": "Tarjeta de jugador de {name}",
+    "rank": "Rango",
+    "roles": "Roles",
+    "mains": "Mains",
+    "mainsLine": "Mains: {mains}",
+    "region": "Servidor",
+    "unset": "Sin indicar",
+    "viewProfile": "Ver perfil completo",
+    "discover": "Qué es TeamFinder",
+    "rankNote": "Rango introducido manualmente por el jugador; no está verificado."
+  },
+  "invite": {
+    "title": "Invitar amigos",
+    "lead": "Comparte tu enlace. Quien cree su cuenta con él aparecerá aquí para que le invites a tus equipos.",
+    "linkTitle": "Tu enlace",
+    "linkLabel": "Tu enlace de invitación",
+    "linkNote": "Solo cuenta para cuentas nuevas (creadas hace menos de 7 días). No hay premios ni puntos por invitar.",
+    "copy": "Copiar enlace",
+    "copied": "Copiado",
+    "error": "No se pudo crear tu enlace. Recarga la página.",
+    "inviteesTitle": "{count, plural, =0 {Tus invitados} other {Tus invitados (#)}}",
+    "none": "Aún no ha entrado nadie con tu enlace.",
+    "joined": "entró el {date}",
+    "player": "Jugador",
+    "viewProfile": "Ver perfil",
+    "teamHint": "Desde su perfil puedes invitarle a un equipo tuyo.",
+    "pageTitle": "{name} te invita a {app}",
+    "pageLead": "{app} sirve para encontrar compañeros de partida por rol, rango, idioma y horario, y jugar con ellos.",
+    "pageNote": "Al entrar aceptas las Normas y la Privacidad. Quien te invita solo verá tu nombre visible.",
+    "signIn": "Entrar o crear cuenta",
+    "accept": "Aceptar la invitación",
+    "invalid": "Invitación no válida",
+    "notAccepted": "No se pudo aceptar: la invitación es para cuentas nuevas y solo se acepta una vez."
+  },
+  "feedback": {
+    "title": "Sugerencias",
+    "lead": "¿Una idea, algo que falla u otra cosa? Lo leemos todo.",
+    "kindLabel": "Tipo",
+    "kind": {
+      "idea": "Idea",
+      "bug": "Algo falla",
+      "other": "Otra cosa"
+    },
+    "bodyLabel": "Cuéntanos",
+    "bodyHint": "Entre 10 y 1000 caracteres. No pongas datos personales.",
+    "send": "Enviar",
+    "sent": "¡Gracias! Hemos recibido tu sugerencia.",
+    "checkFields": "Revisa los campos marcados.",
+    "error": "No se pudo completar la acción. Inténtalo de nuevo.",
+    "marked": "Hecho.",
+    "markDone": "Marcar como atendida",
+    "reopen": "Volver a abrir",
+    "done": "Atendida",
+    "privacy": "Se guarda 12 meses. Moderación ve el texto; si hay aviso en Discord, va sin tu nombre.",
+    "validation": {
+      "kind": "Elige un tipo.",
+      "short": "Escribe al menos 10 caracteres.",
+      "long": "Máximo 1000 caracteres.",
+      "chars": "Sin < ni >."
+    }
   },
   "rolePage": {
     "metaTitle": "Busco {role} en {game}: encuentra compañeros",

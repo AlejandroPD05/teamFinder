@@ -7,6 +7,7 @@ import { loadNames } from "@/lib/lobbies/queries";
 import { createClient } from "@/lib/supabase/server";
 import { LiftRestrictionButton, ResolveForm, RestrictForm } from "../confianza/forms";
 import { ReviewFanart } from "../coleccion/fanart/forms";
+import { FeedbackStatus } from "../sugerencias/forms";
 
 export const generateMetadata = titled("moderation", { robots: { index: false } });
 
@@ -24,7 +25,7 @@ export default async function ModerationPage() {
     .order("created_at")
     .limit(100);
   const list = reports ?? [];
-  const [{ data: restrictions }, { data: fanart }] = await Promise.all([
+  const [{ data: restrictions }, { data: fanart }, { data: feedback }] = await Promise.all([
     supabase
       .from("user_restrictions")
       .select("id, user_id, until, reason")
@@ -37,13 +38,14 @@ export default async function ModerationPage() {
       .eq("status", "pending")
       .order("created_at")
       .limit(50),
+    supabase.from("feedback").select("id, kind, body, page, status, created_at").order("status").order("created_at", { ascending: false }).limit(50),
   ]);
   const names = await loadNames(supabase, [
     ...(list.map((r) => r.target_user_id).filter(Boolean) as string[]),
     ...(restrictions ?? []).map((r) => r.user_id),
     ...(fanart ?? []).map((f) => f.user_id),
   ]);
-  const [t, to, locale] = await Promise.all([getTranslations("moderation"), getTranslations("options.reportReasons"), getLocale()]);
+  const [t, to, tf, locale] = await Promise.all([getTranslations("moderation"), getTranslations("options.reportReasons"), getTranslations("feedback"), getLocale()]);
   const when = new Intl.DateTimeFormat(INTL_LOCALE[locale], { timeZone: "Europe/Madrid", dateStyle: "medium", timeStyle: "short" });
   const fanartUrl = (path: string) => supabase.storage.from("fanart").getPublicUrl(path).data.publicUrl;
 
@@ -157,6 +159,29 @@ export default async function ModerationPage() {
                   <p className="text-xs text-muted">{t("check")}</p>
                   <ReviewFanart id={f.id} />
                 </div>
+              </li>
+            ))}
+          </ul>
+        )}
+      </section>
+
+      <section aria-labelledby="sugerencias" className="flex flex-col gap-3">
+        <h2 id="sugerencias" className="font-display text-xl font-semibold">
+          {t("feedback")}
+        </h2>
+        {!feedback?.length ? (
+          <p className="text-sm text-muted">{t("noFeedback")}</p>
+        ) : (
+          <ul className="flex flex-col gap-3">
+            {feedback.map((f) => (
+              <li key={f.id} className={`surface flex flex-col gap-2 p-5 ${f.status === "done" ? "opacity-70" : ""}`}>
+                <p className="text-sm text-muted">
+                  {tf(`kind.${f.kind as "idea" | "bug" | "other"}`)} · {when.format(new Date(f.created_at))}
+                  {f.page && <> · {f.page}</>}
+                  {f.status === "done" && <> · {tf("done")}</>}
+                </p>
+                <p className="whitespace-pre-line text-sm">{f.body}</p>
+                <FeedbackStatus id={f.id} status={f.status as "new" | "done"} />
               </li>
             ))}
           </ul>
