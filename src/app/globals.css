@@ -155,6 +155,12 @@ html[data-game="apex"] {
   outline: 2px solid var(--color-accent-soft);
   outline-offset: 2px;
 }
+/* Los campos de fecha y hora enfocan sus partes internas (día, mes, hora…): el contorno se pone en el campo entero. */
+input[type^="date"]:focus-within,
+input[type="time"]:focus-within {
+  outline: 2px solid var(--color-accent-soft);
+  outline-offset: 2px;
+}
 
 ::selection {
   background: var(--color-panel-hover);
@@ -242,11 +248,21 @@ html[data-game="apex"] {
   }
 
   /* Bloque de carga (umbral de Doherty: la respuesta se ve al instante aunque los datos tarden). */
+  /* El brillo es una capa que se desplaza con transform (se anima en la GPU, sin repintar el bloque en cada fotograma). */
   .skeleton {
+    position: relative;
+    overflow: hidden;
     border-radius: var(--radius-card);
-    background: linear-gradient(90deg, var(--color-panel) 0%, var(--color-panel-hover) 50%, var(--color-panel) 100%);
-    background-size: 200% 100%;
+    background: var(--color-panel);
+  }
+  .skeleton::after {
+    content: "";
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(90deg, transparent 0%, var(--color-panel-hover) 50%, transparent 100%);
+    transform: translateX(-100%);
     animation: shimmer 1.2s linear infinite;
+    animation-delay: inherit;
   }
 
   /* Botón principal con esquina cortada (detalle propio, sin imitar a ningún juego). */
@@ -448,12 +464,25 @@ html[data-game="apex"] {
     transform: scaleX(0);
   }
 }
+/* El halo es una capa aparte que solo cambia de opacidad y escala (sin repintar la sombra en cada fotograma). */
 .step-current {
+  position: relative;
+}
+.step-current::after {
+  content: "";
+  position: absolute;
+  inset: -2px;
+  border-radius: inherit;
+  box-shadow: 0 0 0 6px color-mix(in srgb, var(--color-accent) 18%, transparent);
+  opacity: 0;
+  transform: scale(0.8);
+  pointer-events: none;
   animation: step-pulse 2.4s var(--ease-in-out) infinite;
 }
 @keyframes step-pulse {
   50% {
-    box-shadow: 0 0 0 6px color-mix(in srgb, var(--color-accent) 18%, transparent);
+    opacity: 1;
+    transform: none;
   }
 }
 
@@ -501,11 +530,8 @@ html[data-game="apex"] {
 }
 
 @keyframes shimmer {
-  from {
-    background-position: 100% 0;
-  }
   to {
-    background-position: -100% 0;
+    transform: translateX(100%);
   }
 }
 
@@ -592,17 +618,29 @@ html[data-game="apex"] {
 
 /* Las animaciones se muestran siempre, también con «reducir movimiento» activado (decisión del usuario, PROGRESS.md). */
 
-/* Punto verde que late: «disponible ahora» (pulso suave e infinito, solo en ese estado). */
+/*
+ * Punto verde que late: «disponible ahora» (pulso suave e infinito, solo en ese estado). La onda es una copia del
+ * punto que crece y se desvanece con transform y opacity (se anima en la GPU, sin repintar).
+ */
 .live-dot {
+  position: relative;
   width: 0.5rem;
   height: 0.5rem;
   border-radius: 999px;
   background: var(--color-success);
-  box-shadow: 0 0 0 0 color-mix(in srgb, var(--color-success) 60%, transparent);
+}
+.live-dot::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  border-radius: inherit;
+  background: var(--color-success);
+  opacity: 0.6;
   animation: live-pulse 2s var(--ease-out) infinite;
 }
 @keyframes live-pulse {
   70% {
-    box-shadow: 0 0 0 6px transparent;
+    opacity: 0;
+    transform: scale(2.5);
   }
 }

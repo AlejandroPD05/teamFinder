@@ -1,7 +1,7 @@
 "use client";
 
 import { useTranslations } from "next-intl";
-import { useActionState, useEffect, useRef, useState } from "react";
+import { startTransition, useActionState, useEffect, useRef, useState } from "react";
 import { GOALS, LANGUAGES, optionKeys } from "@/lib/profile/options";
 import type { Catalog } from "@/lib/profile/queries";
 import { createLobby, type ActionState } from "../actions";
@@ -27,11 +27,28 @@ export function LobbyForm({ catalog }: { catalog: Catalog }) {
     if (tzRef.current) tzRef.current.value = String(new Date().getTimezoneOffset());
   }, []);
   const err = state?.fieldErrors ?? {};
+  const formRef = useRef<HTMLFormElement>(null);
+  // Si falla la validación, el foco va al primer campo con error (el teclado y el lector de pantalla siguen ahí).
+  useEffect(() => {
+    if (state && !state.ok) formRef.current?.querySelector<HTMLElement>('[aria-invalid="true"]')?.focus();
+  }, [state]);
   const t = useTranslations("lobbyForm");
   const to = useTranslations("options");
 
   return (
-    <form action={action} className="flex flex-col gap-6" noValidate>
+    <form
+      ref={formRef}
+      action={action}
+      // Envío a mano: con `action` React vacía el formulario al terminar, también cuando vuelve con errores, y se
+      // perdían el modo, los roles y «Más tarde» (que se quedaba con el campo de fecha a la vista). Sin JS, `action`.
+      onSubmit={(e) => {
+        e.preventDefault();
+        const data = new FormData(e.currentTarget, (e.nativeEvent as SubmitEvent).submitter);
+        startTransition(() => action(data));
+      }}
+      className="flex flex-col gap-6"
+      noValidate
+    >
       <input ref={tzRef} type="hidden" name="tz" defaultValue="0" />
       <fieldset className="surface p-5">
         <legend className="font-semibold">{t("mode")}</legend>

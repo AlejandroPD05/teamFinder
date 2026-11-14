@@ -7,7 +7,6 @@ import { useTranslations } from "next-intl";
 import { useEffect, useRef, useState } from "react";
 import { notificationLink } from "@/lib/notification-links";
 import type { Database } from "@/lib/supabase/database.types";
-import { browserClient } from "@/lib/supabase/client";
 
 type Alert = { id: string; kind: "dm" | "note"; title: string; detail: string | null; href: string | null };
 type NotificationRow = Database["public"]["Tables"]["notifications"]["Row"];
@@ -39,52 +38,59 @@ export function LiveAlerts({ me }: { me: string }) {
   }, [pathname]);
 
   useEffect(() => {
-    const supabase = browserClient();
     let cancelled = false;
-    const names = new Map<string, string>();
-    const nameOf = async (id: string | null) => {
-      if (!id) return null;
-      if (!names.has(id)) {
-        const { data } = await supabase.from("profile_cards").select("display_name").eq("id", id).maybeSingle();
-        names.set(id, data?.display_name ?? text.current.tn("someone"));
-      }
-      return names.get(id)!;
-    };
-    const show = (a: Alert) => {
-      // Se monta recogida y se despliega en el siguiente fotograma, para que se vea la transición.
-      setOpen(false);
-      setAlert(a);
-      requestAnimationFrame(() => requestAnimationFrame(() => setOpen(true)));
-      router.refresh();
-    };
-
-    const channel = supabase.channel(`alerts:${me}`);
-    (async () => {
-      const { data } = await supabase.auth.getSession();
-      if (data.session) supabase.realtime.setAuth(data.session.access_token);
+    let unsubscribe = () => {};
+    // El cliente de Supabase va en un trozo aparte que se descarga solo con sesión iniciada (este componente no se
+    // monta sin ella): las páginas públicas no lo cargan.
+    void import("@/lib/supabase/client").then(({ browserClient }) => {
       if (cancelled) return;
-      channel
-        .on(
-          "postgres_changes",
-          { event: "INSERT", schema: "public", table: "notifications", filter: `user_id=eq.${me}` },
-          async (payload) => {
-            const n = payload.new as NotificationRow;
-            const who = (await nameOf(n.actor_id)) ?? text.current.tn("someone");
-            show({ id: `n${n.id}`, kind: "note", title: text.current.tn(`title.${n.kind}`, { who }), ...notificationLink(n) });
-          },
-        )
-        .on("postgres_changes", { event: "INSERT", schema: "public", table: "direct_messages" }, async (payload) => {
-          const m = payload.new as DirectMessageRow;
-          const href = `/mensajes/${m.conversation_id}`;
-          // Lo mío no se avisa, ni lo que ya estoy leyendo en esa conversación.
-          if (m.sender_id === me || pathRef.current === href) return;
-          show({ id: `m${m.id}`, kind: "dm", title: text.current.t("messageFrom", { name: (await nameOf(m.sender_id)) ?? "" }), detail: m.body, href });
-        })
-        .subscribe();
-    })();
+      const supabase = browserClient();
+      const names = new Map<string, string>();
+      const nameOf = async (id: string | null) => {
+        if (!id) return null;
+        if (!names.has(id)) {
+          const { data } = await supabase.from("profile_cards").select("display_name").eq("id", id).maybeSingle();
+          names.set(id, data?.display_name ?? text.current.tn("someone"));
+        }
+        return names.get(id)!;
+      };
+      const show = (a: Alert) => {
+        // Se monta recogida y se despliega en el siguiente fotograma, para que se vea la transición.
+        setOpen(false);
+        setAlert(a);
+        requestAnimationFrame(() => requestAnimationFrame(() => setOpen(true)));
+        router.refresh();
+      };
+
+      const channel = supabase.channel(`alerts:${me}`);
+      unsubscribe = () => void supabase.removeChannel(channel);
+      (async () => {
+        const { data } = await supabase.auth.getSession();
+        if (data.session) supabase.realtime.setAuth(data.session.access_token);
+        if (cancelled) return;
+        channel
+          .on(
+            "postgres_changes",
+            { event: "INSERT", schema: "public", table: "notifications", filter: `user_id=eq.${me}` },
+            async (payload) => {
+              const n = payload.new as NotificationRow;
+              const who = (await nameOf(n.actor_id)) ?? text.current.tn("someone");
+              show({ id: `n${n.id}`, kind: "note", title: text.current.tn(`title.${n.kind}`, { who }), ...notificationLink(n) });
+            },
+          )
+          .on("postgres_changes", { event: "INSERT", schema: "public", table: "direct_messages" }, async (payload) => {
+            const m = payload.new as DirectMessageRow;
+            const href = `/mensajes/${m.conversation_id}`;
+            // Lo mío no se avisa, ni lo que ya estoy leyendo en esa conversación.
+            if (m.sender_id === me || pathRef.current === href) return;
+            show({ id: `m${m.id}`, kind: "dm", title: text.current.t("messageFrom", { name: (await nameOf(m.sender_id)) ?? "" }), detail: m.body, href });
+          })
+          .subscribe();
+      })();
+    });
     return () => {
       cancelled = true;
-      void supabase.removeChannel(channel);
+      unsubscribe();
     };
   }, [me, router]);
 
