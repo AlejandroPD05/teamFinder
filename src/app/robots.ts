@@ -1,5 +1,5 @@
 import type { MetadataRoute } from "next";
-import { PROTECTED_PREFIXES } from "@/lib/config";
+import { robotsDisallow } from "@/lib/robots-rules";
 import { indexable } from "@/lib/seo";
 import { siteUrl } from "@/lib/supabase/env";
 
@@ -12,7 +12,7 @@ export default function robots(): MetadataRoute.Robots {
     rules: {
       userAgent: "*",
       allow: "/",
-      disallow: [...PROTECTED_PREFIXES, "/jugador/", "/auth/", "/entrar"],
+      disallow: robotsDisallow(),
     },
     sitemap: `${base}/sitemap.xml`,
   };
