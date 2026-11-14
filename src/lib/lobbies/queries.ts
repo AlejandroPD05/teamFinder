@@ -6,7 +6,7 @@ type Client = Awaited<ReturnType<typeof createClient>>;
 export type LobbyFilters = { mode?: string; region?: string; role?: string; lang?: string };
 
 const LOBBY_FIELDS =
-  "id, game_id, owner_id, mode_slug, slots, note, rank_min_id, rank_max_id, region_id, language, goal, starts_at, status, created_at, closed_at, shared_at";
+  "id, game_id, owner_id, mode_slug, slots, note, rank_min_id, rank_max_id, region_id, language, goal, starts_at, status, created_at, closed_at, shared_at, discord_posted_at";
 
 /** Grupos abiertos, más recientes primero. `regionId` y `roleId` ya resueltos desde slugs. */
 export async function listOpenLobbies(

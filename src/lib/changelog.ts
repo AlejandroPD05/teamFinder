@@ -14,6 +14,18 @@ export const CHANGELOG: ChangelogEntry[] = [
     date: "2026-11-14",
     items: [
       {
+        es: "Publica tu grupo en el Discord de TeamFinder desde «Compartir» (solo si tú lo pides).",
+        en: "Post your group on the TeamFinder Discord from “Share” (only if you choose to).",
+      },
+      {
+        es: "«Añadir al calendario» en los grupos con hora y en las quedadas de equipo.",
+        en: "“Add to calendar” for scheduled groups and team meetups.",
+      },
+      {
+        es: "La búsqueda deja de mostrar a quien no entra desde hace 60 días; al volver, aparece otra vez.",
+        en: "Search no longer shows people who haven't visited in 60 days; they reappear when they come back.",
+      },
+      {
         es: "Búsquedas guardadas: guarda hasta 5 por juego y recibe un aviso cuando alguien que encaja se marque disponible.",
         en: "Saved searches: save up to 5 per game and get an alert when someone who fits marks themselves available.",
       },

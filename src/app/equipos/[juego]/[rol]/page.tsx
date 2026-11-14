@@ -48,7 +48,16 @@ export async function generateMetadata({ params }: PageProps<"/equipos/[juego]/[
     title,
     description,
     alternates: { canonical: url },
-    openGraph: { type: "website", siteName: APP_NAME, locale: OG_LOCALE[locale], title, description, url },
+    openGraph: {
+      type: "website",
+      siteName: APP_NAME,
+      locale: OG_LOCALE[locale],
+      title,
+      description,
+      url,
+      // La imagen es ./opengraph-image.tsx; aquí solo para poner su texto alternativo en el idioma de la página.
+      images: [{ url: `${url}/opengraph-image`, alt: t("ogAlt", { ...vars, app: APP_NAME }), width: 1200, height: 630, type: "image/png" }],
+    },
   };
 }
 

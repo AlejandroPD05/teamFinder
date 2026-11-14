@@ -61,3 +61,13 @@ test("el favicon es el logo de la web con el color del juego", async ({ page, re
   expect(ico.ok()).toBe(true);
   expect(ico.url()).toContain("/icono/");
 });
+
+test("las páginas por rol tienen su propia imagen al compartir", async ({ page, request }) => {
+  await page.goto("/equipos/valorant/controller");
+  const og = await page.locator('meta[property="og:image"]').first().getAttribute("content");
+  expect(og).toContain("/equipos/valorant/controller/opengraph-image");
+  await expect(page.locator('meta[property="og:image:alt"]').first()).toHaveAttribute("content", /Controlador/);
+  const img = await request.get(new URL(og!).pathname);
+  expect(img.status()).toBe(200);
+  expect(img.headers()["content-type"]).toBe("image/png");
+});
