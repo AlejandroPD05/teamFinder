@@ -47,6 +47,7 @@ export async function GET() {
     teamEventRsvps,
     pushSubscriptions,
     lobbyTemplates,
+    savedSearches,
     feedback,
     reliability,
   ] = await Promise.all([
@@ -78,6 +79,7 @@ export async function GET() {
     own("team_event_rsvps"),
     own("push_subscriptions"),
     own("lobby_templates"),
+    own("saved_searches"),
     own("feedback"),
     supabase.rpc("player_reliability", { p_user: userId }).then((r) => r.data ?? null),
   ]);
@@ -115,6 +117,7 @@ export async function GET() {
     team_event_answers: teamEventRsvps,
     push_subscriptions: pushSubscriptions,
     lobby_templates: lobbyTemplates,
+    saved_searches: savedSearches,
     feedback_sent: feedback,
     // Resumen calculado de los últimos 90 días (las salidas de grupos se guardan solo para esto).
     reliability,

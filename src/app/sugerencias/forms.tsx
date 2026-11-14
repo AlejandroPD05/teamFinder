@@ -4,9 +4,11 @@ import { useTranslations } from "next-intl";
 import { useActionState } from "react";
 import { FEEDBACK_KINDS } from "@/lib/feedback";
 import { feedbackStatusAction, sendFeedbackAction, type FeedbackState } from "./actions";
+import { outcomeOf, useStickyForm } from "@/lib/use-sticky-form";
 
 export function FeedbackForm({ page }: { page: string | null }) {
   const [state, action, pending] = useActionState<FeedbackState, FormData>(sendFeedbackAction, null);
+  const form = useStickyForm(action, state, outcomeOf(state));
   const t = useTranslations("feedback");
   if (state?.ok) {
     return (
@@ -17,7 +19,7 @@ export function FeedbackForm({ page }: { page: string | null }) {
   }
   const err = state?.fieldErrors;
   return (
-    <form action={action} className="surface flex flex-col gap-4 p-5" noValidate>
+    <form {...form} className="surface flex flex-col gap-4 p-5" noValidate>
       {page && <input type="hidden" name="page" value={page} />}
       <fieldset className="flex flex-col gap-2">
         <legend className="mb-1 text-sm font-medium">{t("kindLabel")}</legend>

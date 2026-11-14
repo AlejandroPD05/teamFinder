@@ -8,6 +8,7 @@ export type NotificationLike = {
   clip_id: string | null;
   body: string | null;
   team_id?: string | null;
+  actor_id?: string | null;
 };
 
 /**
@@ -42,5 +43,11 @@ export function notificationLink(n: NotificationLike): { detail: string | null; 
       return { detail: n.body, href: lobby ?? "/mis-equipos" };
     case "friend_joined":
       return { detail: null, href: "/amigos" };
+    case "karma_reminder":
+    case "lobby_starting":
+      return { detail: null, href: lobby };
+    case "search_match":
+      // El detalle es el nombre de la búsqueda guardada.
+      return { detail: n.body, href: n.actor_id ? `/jugador/${n.actor_id}` : "/buscar?now=1" };
   }
 }

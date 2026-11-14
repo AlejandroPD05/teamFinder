@@ -1,10 +1,11 @@
 "use client";
 
 import { useTranslations } from "next-intl";
-import { useActionState, useEffect, useRef } from "react";
+import { cloneElement, useActionState } from "react";
 import { MATCH_RESULTS } from "@/lib/limits";
 import { optionKeys, VISIBILITY, type Visibility } from "@/lib/profile/options";
 import { addMatchAction, deleteMatchAction, matchesVisibilityAction, type MatchState } from "./actions";
+import { outcomeOf, useStickyForm } from "@/lib/use-sticky-form";
 
 const control = "min-h-11 w-full rounded-md border border-line bg-bg px-3 text-text focus:border-accent";
 
@@ -16,13 +17,15 @@ function Status({ state }: { state: MatchState }) {
   );
 }
 
-function Field({ id, label, error, children }: { id: string; label: string; error?: string; children: React.ReactNode }) {
+function Field({ id, label, error, children }: { id: string; label: string; error?: string; children: React.ReactElement<Record<string, unknown>> }) {
+  // El campo queda marcado y asociado a su error (lector de pantalla y foco tras enviar).
+  const control = error ? cloneElement(children, { "aria-invalid": true, "aria-describedby": `${id}-error` }) : children;
   return (
     <div className="flex flex-col gap-1.5">
       <label htmlFor={id} className="text-sm font-medium">
         {label}
       </label>
-      {children}
+      {control}
       {error && (
         <p id={`${id}-error`} className="text-sm text-danger">
           {error}
@@ -46,16 +49,12 @@ export function AddMatchForm({
   maps: string[];
 }) {
   const [state, action, pending] = useActionState<MatchState, FormData>(addMatchAction, null);
+  const form = useStickyForm(action, state, outcomeOf(state), { resetOnSuccess: true });
   const err = state?.fieldErrors ?? {};
-  const formRef = useRef<HTMLFormElement>(null);
   const t = useTranslations("matches");
   const to = useTranslations("options.matchResults");
-  // Tras apuntar una partida, el formulario se vacía para la siguiente.
-  useEffect(() => {
-    if (state?.ok) formRef.current?.reset();
-  }, [state]);
   return (
-    <form ref={formRef} action={action} noValidate className="flex flex-col gap-4 surface p-5">
+    <form {...form} noValidate className="flex flex-col gap-4 surface p-5">
       <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
         <Field id="played_on" label={t("date")} error={err.played_on}>
           <input id="played_on" name="played_on" type="date" required max={today} defaultValue={today} className={control} />
@@ -72,12 +71,12 @@ export function AddMatchForm({
         </Field>
         <Field id="map_name" label={t("map")} error={err.map_name}>
           <input id="map_name" name="map_name" list="maps" maxLength={40} autoComplete="off" className={control} />
-          <datalist id="maps">
-            {maps.map((m) => (
-              <option key={m} value={m} />
-            ))}
-          </datalist>
         </Field>
+        <datalist id="maps">
+          {maps.map((m) => (
+            <option key={m} value={m} />
+          ))}
+        </datalist>
         {characterLabel && (
           <Field id="character_id" label={characterLabel.replace(/s$/, "")}>
             <select id="character_id" name="character_id" defaultValue="" className={control}>

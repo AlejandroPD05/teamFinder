@@ -14,6 +14,18 @@ export const CHANGELOG: ChangelogEntry[] = [
     date: "2026-11-14",
     items: [
       {
+        es: "Búsquedas guardadas: guarda hasta 5 por juego y recibe un aviso cuando alguien que encaja se marque disponible.",
+        en: "Saved searches: save up to 5 per game and get an alert when someone who fits marks themselves available.",
+      },
+      {
+        es: "Avisos de grupo: 15 minutos antes de que empiece y, al cerrarlo, un recordatorio para valorar a tus compañeros.",
+        en: "Group alerts: 15 minutes before it starts and, when it closes, a reminder to rate your teammates.",
+      },
+      {
+        es: "Si un formulario tiene un error, ya no pierdes lo escrito y el cursor va al campo que hay que corregir.",
+        en: "If a form has an error, you keep what you typed and the cursor jumps to the field to fix.",
+      },
+      {
         es: "«Te pueden encajar»: en Inicio, jugadores con varias cosas en común contigo y el motivo de cada uno.",
         en: "“Players who might fit”: on your dashboard, players with several things in common with you and why.",
       },

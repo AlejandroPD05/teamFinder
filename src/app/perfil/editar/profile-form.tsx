@@ -16,6 +16,7 @@ import { CharacterIcon, RoleIcon } from "@/components/game-icons";
 import type { Catalog } from "@/lib/profile/queries";
 import { SOCIALS } from "@/lib/limits";
 import { saveProfile, type SaveState } from "./actions";
+import { outcomeOf, useStickyForm } from "@/lib/use-sticky-form";
 
 export type ProfileFormValues = {
   display_name: string;
@@ -110,6 +111,7 @@ export function ProfileForm({
   characterLabel: string | null;
 }) {
   const [state, action, pending] = useActionState<SaveState, FormData>(saveProfile, null);
+  const form = useStickyForm(action, state, outcomeOf(state));
   const t = useTranslations("profileForm");
   const to = useTranslations("options");
   const labels = (group: "languages" | "availability" | "goals", o: Record<string, string>) =>
@@ -124,7 +126,7 @@ export function ProfileForm({
     );
 
   return (
-    <form action={action} className="flex flex-col gap-6" noValidate>
+    <form {...form} className="flex flex-col gap-6" noValidate>
       {/* Ley de Miller: el formulario en tres bloques, con índice para saltar a cada uno. */}
       <nav aria-label={t("partsLabel")} className="flex flex-wrap gap-2 text-sm">
         {[

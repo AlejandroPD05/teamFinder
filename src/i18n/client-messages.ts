@@ -27,6 +27,7 @@ export const CLIENT_NAMESPACES = [
   "playerShare",
   "profileForm",
   "push",
+  "savedSearches",
   "settings",
   "share",
   "teamEvents",
