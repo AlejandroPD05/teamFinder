@@ -1,15 +1,18 @@
 "use client";
 
-import { Check, Copy, Share2 } from "lucide-react";
+import { Check, Copy, Megaphone, Share2 } from "lucide-react";
 import { useTranslations } from "next-intl";
 import { useActionState, useEffect, useState } from "react";
-import { shareLobbyAction, type ShareState } from "../actions";
+import { postLobbyDiscordAction, shareLobbyAction, type DiscordState, type ShareState } from "../actions";
 
 /**
  * Compartir el grupo fuera de la web: crea un enlace público con el resumen del grupo (modo, plazas, roles que
  * faltan, rango…) y una tarjeta de vista previa para Discord. Quien lo abra tiene que entrar para pedir unirse.
  */
-export function ShareLobby({ lobbyId, sharedUrl }: { lobbyId: string; sharedUrl: string | null }) {
+/** «available»: integración conectada y aún sin publicar; «posted»: ya publicado; null: no conectada (no se enseña). */
+type DiscordStatus = "available" | "posted" | null;
+
+export function ShareLobby({ lobbyId, sharedUrl, discord }: { lobbyId: string; sharedUrl: string | null; discord: DiscordStatus }) {
   const [state, action, pending] = useActionState<ShareState, FormData>(shareLobbyAction, null);
   const url = state?.ok ? state.url : sharedUrl;
   const [copied, setCopied] = useState(false);
@@ -59,6 +62,36 @@ export function ShareLobby({ lobbyId, sharedUrl }: { lobbyId: string; sharedUrl:
           {state.message}
         </p>
       )}
+      {url && discord && <PostToDiscord lobbyId={lobbyId} posted={discord === "posted"} />}
     </section>
+  );
+}
+
+/** Publicar el grupo en el canal de Discord de TeamFinder: solo a petición del creador y una vez por grupo. */
+function PostToDiscord({ lobbyId, posted }: { lobbyId: string; posted: boolean }) {
+  const [state, action, pending] = useActionState<DiscordState, FormData>(postLobbyDiscordAction, null);
+  const t = useTranslations("share.discord");
+  const done = posted || state?.ok;
+  return (
+    <div className="flex flex-col gap-2 border-t border-line pt-3">
+      <p className="text-sm text-muted">{t("lead")}</p>
+      {done ? (
+        <p className="inline-flex items-center gap-2 text-sm text-success">
+          <Check aria-hidden="true" className="size-4" />
+          {t("posted")}
+        </p>
+      ) : (
+        <form action={action}>
+          <input type="hidden" name="lobby_id" value={lobbyId} />
+          <button type="submit" disabled={pending} className="btn-ghost">
+            <Megaphone aria-hidden="true" className="size-4" />
+            {t("post")}
+          </button>
+        </form>
+      )}
+      <p role="status" aria-live="polite" className={`text-sm ${state && !state.ok ? "text-danger" : "sr-only"}`}>
+        {state && !state.ok ? state.message : state?.ok ? t("posted") : ""}
+      </p>
+    </div>
   );
 }

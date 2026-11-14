@@ -50,6 +50,7 @@ export async function GET() {
     savedSearches,
     feedback,
     reliability,
+    lastSeen,
   ] = await Promise.all([
     own("profiles", "id"),
     own("game_profiles"),
@@ -82,6 +83,8 @@ export async function GET() {
     own("saved_searches"),
     own("feedback"),
     supabase.rpc("player_reliability", { p_user: userId }).then((r) => r.data ?? null),
+    // Devuelve la fecha guardada de la última visita (y la apunta si tocaba).
+    supabase.rpc("touch_seen").then((r) => r.data ?? null),
   ]);
 
   const body = {
@@ -121,6 +124,8 @@ export async function GET() {
     feedback_sent: feedback,
     // Resumen calculado de los últimos 90 días (las salidas de grupos se guardan solo para esto).
     reliability,
+    // Última visita: solo sirve para no mostrar en la búsqueda a quien no entra en 60 días.
+    last_seen_at: lastSeen,
   };
   return new NextResponse(JSON.stringify(body, null, 2), {
     headers: {
