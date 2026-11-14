@@ -763,6 +763,32 @@ isOneToOne: false
       referencedColumns: ["id"]
     }
                   ]
+                },"lobby_waitlist": {
+                  Row: {
+                    "created_at": string,"lobby_id": string,"user_id": string
+                  }
+                  ComputedFields: never
+                  Insert: {
+                    "created_at"?: string,"lobby_id": string,"user_id": string
+                  }
+                  Update: {
+                    "created_at"?: string,"lobby_id"?: string,"user_id"?: string
+                  }
+                  Relationships: [
+                    {
+      foreignKeyName: "lobby_waitlist_lobby_id_fkey"
+      columns: ["lobby_id"]
+isOneToOne: false
+      referencedRelation: "lobbies"
+      referencedColumns: ["id"]
+    },{
+      foreignKeyName: "lobby_waitlist_user_id_fkey"
+      columns: ["user_id"]
+isOneToOne: false
+      referencedRelation: "profiles"
+      referencedColumns: ["id"]
+    }
+                  ]
                 },"manual_matches": {
                   Row: {
                     "assists": number | null,"character_id": string | null,"created_at": string,"deaths": number | null,"game_id": string,"id": string,"kills": number | null,"map_name": string | null,"mode_id": string | null,"note": string | null,"placement": number | null,"played_on": string,"result": Database["public"]['Enums']["match_result"] | null,"user_id": string
@@ -1149,14 +1175,14 @@ isOneToOne: false
                   ]
                 },"team_events": {
                   Row: {
-                    "created_at": string,"created_by": string | null,"id": string,"lobby_id": string | null,"note": string | null,"starts_at": string,"team_id": string
+                    "created_at": string,"created_by": string | null,"id": string,"lobby_id": string | null,"note": string | null,"repeat_weekly": boolean,"repeated": boolean,"starts_at": string,"team_id": string
                   }
                   ComputedFields: never
                   Insert: {
-                    "created_at"?: string,"created_by"?: string | null,"id"?: string,"lobby_id"?: string | null,"note"?: string | null,"starts_at": string,"team_id": string
+                    "created_at"?: string,"created_by"?: string | null,"id"?: string,"lobby_id"?: string | null,"note"?: string | null,"repeat_weekly"?: boolean,"repeated"?: boolean,"starts_at": string,"team_id": string
                   }
                   Update: {
-                    "created_at"?: string,"created_by"?: string | null,"id"?: string,"lobby_id"?: string | null,"note"?: string | null,"starts_at"?: string,"team_id"?: string
+                    "created_at"?: string,"created_by"?: string | null,"id"?: string,"lobby_id"?: string | null,"note"?: string | null,"repeat_weekly"?: boolean,"repeated"?: boolean,"starts_at"?: string,"team_id"?: string
                   }
                   Relationships: [
                     {
@@ -1503,7 +1529,7 @@ isOneToOne: false
 { Args: { "p_description": string,"p_game": string,"p_name": string }; Returns: string
                            },
 "create_team_event":
-{ Args: { "p_note": string,"p_starts_at": string,"p_team": string }; Returns: string
+{ Args: { "p_note": string,"p_repeat"?: boolean,"p_starts_at": string,"p_team": string }; Returns: string
                            },
 "delete_my_account":
 { Args: Record<PropertyKey, never>; Returns: undefined
@@ -1540,6 +1566,9 @@ isOneToOne: false
 "is_lobby_member":
 { Args: { "p_lobby": string }; Returns: boolean
                            },
+"join_waitlist":
+{ Args: { "p_lobby": string }; Returns: undefined
+                           },
 "karma_summary":
 { Args: { "p_user": string }; Returns: {
               "negatives": number,"positives": number,"top_tags": (string)[]
@@ -1550,6 +1579,9 @@ isOneToOne: false
                            },
 "leave_team":
 { Args: { "p_team": string,"p_user"?: string }; Returns: undefined
+                           },
+"leave_waitlist":
+{ Args: { "p_lobby": string }; Returns: undefined
                            },
 "lift_restriction":
 { Args: { "p_restriction": string }; Returns: undefined
@@ -1683,6 +1715,9 @@ isOneToOne: false
 "start_conversation":
 { Args: { "p_other": string }; Returns: string
                            },
+"stop_team_event_repeat":
+{ Args: { "p_event": string }; Returns: undefined
+                           },
 "submit_fanart":
 { Args: { "p_artist": string,"p_game": string,"p_license": string,"p_path": string,"p_portfolio": string,"p_title": string }; Returns: string
                            },
@@ -1722,7 +1757,7 @@ isOneToOne: false
                            }
           }
           Enums: {
-            "card_rarity": "common"|"rare"|"epic"|"legendary","character_status": "main"|"comfort"|"playable"|"flexible","clip_provider": "youtube"|"twitch"|"streamable","fanart_status": "pending"|"approved"|"rejected"|"withdrawn","lobby_status": "open"|"full"|"closed","match_result": "win"|"loss"|"draw","notification_kind": "join_request"|"request_accepted"|"request_rejected"|"clip_comment"|"karma"|"restriction"|"fanart"|"ranking"|"team_invite"|"team_joined"|"team_event"|"team_lobby"|"friend_joined"|"karma_reminder"|"lobby_starting"|"search_match","report_reason": "spam"|"harassment"|"sexual"|"impersonation"|"cheating"|"other","report_status": "open"|"actioned"|"dismissed","request_status": "pending"|"accepted"|"rejected"|"withdrawn","visibility": "public"|"registered"|"private"
+            "card_rarity": "common"|"rare"|"epic"|"legendary","character_status": "main"|"comfort"|"playable"|"flexible","clip_provider": "youtube"|"twitch"|"streamable","fanart_status": "pending"|"approved"|"rejected"|"withdrawn","lobby_status": "open"|"full"|"closed","match_result": "win"|"loss"|"draw","notification_kind": "join_request"|"request_accepted"|"request_rejected"|"clip_comment"|"karma"|"restriction"|"fanart"|"ranking"|"team_invite"|"team_joined"|"team_event"|"team_lobby"|"friend_joined"|"karma_reminder"|"lobby_starting"|"search_match"|"waitlist_open","report_reason": "spam"|"harassment"|"sexual"|"impersonation"|"cheating"|"other","report_status": "open"|"actioned"|"dismissed","request_status": "pending"|"accepted"|"rejected"|"withdrawn","visibility": "public"|"registered"|"private"
           }
           CompositeTypes: {
             [_ in never]: never
@@ -1842,7 +1877,7 @@ export const Constants = {
           }
         },"public": {
           Enums: {
-            "card_rarity": ["common", "rare", "epic", "legendary"],"character_status": ["main", "comfort", "playable", "flexible"],"clip_provider": ["youtube", "twitch", "streamable"],"fanart_status": ["pending", "approved", "rejected", "withdrawn"],"lobby_status": ["open", "full", "closed"],"match_result": ["win", "loss", "draw"],"notification_kind": ["join_request", "request_accepted", "request_rejected", "clip_comment", "karma", "restriction", "fanart", "ranking", "team_invite", "team_joined", "team_event", "team_lobby", "friend_joined", "karma_reminder", "lobby_starting", "search_match"],"report_reason": ["spam", "harassment", "sexual", "impersonation", "cheating", "other"],"report_status": ["open", "actioned", "dismissed"],"request_status": ["pending", "accepted", "rejected", "withdrawn"],"visibility": ["public", "registered", "private"]
+            "card_rarity": ["common", "rare", "epic", "legendary"],"character_status": ["main", "comfort", "playable", "flexible"],"clip_provider": ["youtube", "twitch", "streamable"],"fanart_status": ["pending", "approved", "rejected", "withdrawn"],"lobby_status": ["open", "full", "closed"],"match_result": ["win", "loss", "draw"],"notification_kind": ["join_request", "request_accepted", "request_rejected", "clip_comment", "karma", "restriction", "fanart", "ranking", "team_invite", "team_joined", "team_event", "team_lobby", "friend_joined", "karma_reminder", "lobby_starting", "search_match", "waitlist_open"],"report_reason": ["spam", "harassment", "sexual", "impersonation", "cheating", "other"],"report_status": ["open", "actioned", "dismissed"],"request_status": ["pending", "accepted", "rejected", "withdrawn"],"visibility": ["public", "registered", "private"]
           }
         }
 } as const

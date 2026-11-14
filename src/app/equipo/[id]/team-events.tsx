@@ -1,12 +1,12 @@
 "use client";
 
-import { CalendarPlus } from "lucide-react";
+import { CalendarPlus, Repeat } from "lucide-react";
 import Link from "next/link";
 import { useLocale, useTranslations } from "next-intl";
 import { useActionState, useRef } from "react";
 import { INTL_LOCALE } from "@/lib/i18n/locale";
 import { outcomeOf, useStickyForm } from "@/lib/use-sticky-form";
-import { createEventAction, deleteEventAction, eventLobbyAction, rsvpAction, type TeamState } from "../../mis-equipos/actions";
+import { createEventAction, deleteEventAction, eventLobbyAction, rsvpAction, stopRepeatAction, type TeamState } from "../../mis-equipos/actions";
 
 export type TeamEvent = {
   id: string;
@@ -14,6 +14,7 @@ export type TeamEvent = {
   note: string | null;
   created_by: string | null;
   lobby_id: string | null;
+  repeat_weekly: boolean;
   rsvps: { user_id: string; answer: "yes" | "maybe" | "no" }[];
 };
 
@@ -60,6 +61,10 @@ export function CreateEventForm({ teamId }: { teamId: string }) {
           {t("propose")}
         </button>
       </div>
+      <label className="inline-flex min-h-11 items-center gap-2 self-start text-sm">
+        <input type="checkbox" name="repeat" value="1" className="size-5 accent-accent" />
+        {t("repeatWeekly")}
+      </label>
       <Status state={state} />
     </form>
   );
@@ -108,6 +113,21 @@ function MakeLobby({ eventId, modes }: { eventId: string; modes: { slug: string;
       </select>
       <button type="submit" disabled={pending} className="btn-ghost">
         {t("makeLobby")}
+      </button>
+      {state && !state.ok && <Status state={state} />}
+    </form>
+  );
+}
+
+function StopRepeat({ eventId, teamId, label }: { eventId: string; teamId: string; label: string }) {
+  const [state, action, pending] = useActionState<TeamState, FormData>(stopRepeatAction, null);
+  const t = useTranslations("teamEvents");
+  return (
+    <form action={action}>
+      <input type="hidden" name="event_id" value={eventId} />
+      <input type="hidden" name="team_id" value={teamId} />
+      <button type="submit" disabled={pending} aria-label={t("stopRepeatLabel", { when: label })} className="min-h-11 rounded-md px-3 text-sm text-muted hover:bg-panel-hover hover:text-text">
+        {t("stopRepeat")}
       </button>
       {state && !state.ok && <Status state={state} />}
     </form>
@@ -169,7 +189,15 @@ export function TeamEvents({
             const canManage = isOwner || e.created_by === me;
             return (
               <li key={e.id} className="flex flex-col gap-2 rounded-md border border-line p-3">
-                <p className="font-semibold first-letter:uppercase">{when.format(new Date(e.starts_at))}</p>
+                <p className="flex flex-wrap items-center gap-2 font-semibold">
+                  <span className="first-letter:uppercase">{when.format(new Date(e.starts_at))}</span>
+                  {e.repeat_weekly && (
+                    <span className="chip text-xs font-normal text-accent-soft">
+                      <Repeat aria-hidden="true" className="size-3.5" />
+                      {t("weekly")}
+                    </span>
+                  )}
+                </p>
                 {e.note && <p className="text-sm">{e.note}</p>}
                 <p className="text-sm text-muted">
                   {t("going", { count: going.length })}
@@ -184,7 +212,12 @@ export function TeamEvents({
                 ) : (
                   canManage && <MakeLobby eventId={e.id} modes={modes} />
                 )}
-                {canManage && <DeleteEvent eventId={e.id} teamId={teamId} label={when.format(new Date(e.starts_at))} />}
+                {canManage && (
+                  <div className="flex flex-wrap gap-2">
+                    {e.repeat_weekly && <StopRepeat eventId={e.id} teamId={teamId} label={when.format(new Date(e.starts_at))} />}
+                    <DeleteEvent eventId={e.id} teamId={teamId} label={when.format(new Date(e.starts_at))} />
+                  </div>
+                )}
               </li>
             );
           })}

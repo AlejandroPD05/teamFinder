@@ -156,7 +156,12 @@ export async function createEventAction(_p: TeamState, fd: FormData): Promise<Te
   if (!team.success) return { ok: false, message: teamError() };
   if (!startsAt.success) return { ok: false, message: t("chooseTime") };
   if (!note.success) return { ok: false, message: note.error.issues[0].message };
-  const { error } = await supabase.rpc("create_team_event", { p_team: team.data, p_starts_at: startsAt.data, p_note: note.data });
+  const { error } = await supabase.rpc("create_team_event", {
+    p_team: team.data,
+    p_starts_at: startsAt.data,
+    p_note: note.data,
+    p_repeat: fd.get("repeat") === "1",
+  });
   if (error) {
     const message =
       error.hint === "invalid" ? t("eventRange") : error.hint === "limit_events" ? t("eventLimit") : teamError(error.hint);
@@ -186,6 +191,18 @@ export async function deleteEventAction(_p: TeamState, fd: FormData): Promise<Te
   const { error } = await supabase.rpc("delete_team_event", { p_event: event.data });
   if (error) return { ok: false, message: teamError(error.hint) };
   return done([`/equipo/${team.data}`], t("eventDeleted"));
+}
+
+/** Dejar de repetir una quedada semanal (quien la propuso o el dueño). La de esta semana se mantiene. */
+export async function stopRepeatAction(_p: TeamState, fd: FormData): Promise<TeamState> {
+  const supabase = await session();
+  const { t, teamError } = await messages();
+  const event = uuid.safeParse(fd.get("event_id"));
+  const team = uuid.safeParse(fd.get("team_id"));
+  if (!event.success || !team.success) return { ok: false, message: teamError() };
+  const { error } = await supabase.rpc("stop_team_event_repeat", { p_event: event.data });
+  if (error) return { ok: false, message: teamError(error.hint) };
+  return done([`/equipo/${team.data}`], t("repeatStopped"));
 }
 
 /** Crear el grupo con los que van y llevar a él. */

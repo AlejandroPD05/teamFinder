@@ -119,6 +119,9 @@ RSO de Riot si aprueban la clave (rango y estadísticas verificados), bot de Dis
 - 2026-11-14 — Perfiles inactivos: la última visita se apunta como mucho cada 12 h en `private.user_activity` (no la lee la API); quien no entra en 60 días deja de salir en la búsqueda y en «Te pueden encajar», salvo que esté «disponible ahora». Al volver, sale otra vez. Privacidad pasa a la versión 1.2.
 - 2026-11-14 — Uso de los planes gratuitos en Estadísticas: base de datos, archivos, usuarios activos en 30 días y correos de avisos de hoy frente a los límites (Supabase 500 MB, 1 GB y 50 000; Brevo 300 al día; consultados el 14-11-2026, en `src/lib/admin-stats.ts`). Aviso a partir del 80 %. El tráfico de salida solo se ve en el panel de Supabase.
 - 2026-11-14 — Las páginas por rol tienen su propia imagen al compartir («Busco Controlador en VALORANT», con el color de TeamFinder para el juego, sin arte de terceros).
+- 2026-11-14 — Lista de espera en grupos llenos (`lobby_waitlist`): quien podría pedir unirse se apunta (10 como mucho); al liberarse una plaza se avisa a todos a la vez (`waitlist_open`) y la lista se vacía. Nadie ve quién espera, tampoco el creador. Respeta bloqueos y restricciones.
+- 2026-11-14 — Quedadas semanales: al proponer una quedada se puede marcar «Repetir cada semana»; cuando empieza, pg_cron (`roll-team-events`, cada hora) crea la de la semana siguiente y avisa al equipo. Quien la propuso o el dueño pueden dejar de repetirla; si quien la propuso sale del equipo, deja de repetirse.
+- 2026-11-14 — Revisión de producción con el conector de Supabase (solo lectura): 24 h sin errores en Postgres, API, Auth, Realtime ni Storage, y todas las tareas de pg_cron correctas. Asesor de rendimiento: solo índices sin usar (poco tráfico).
 - 2026-11-04 — Botón principal: fondo `#8B5CF6` con texto `#0B0C12` (4,6:1). Blanco sobre `#8B5CF6` no llega a AA (4,2:1).
 
 ## Acciones del usuario

@@ -49,6 +49,7 @@ export async function GET() {
     lobbyTemplates,
     savedSearches,
     feedback,
+    waitlist,
     reliability,
     lastSeen,
   ] = await Promise.all([
@@ -82,6 +83,7 @@ export async function GET() {
     own("lobby_templates"),
     own("saved_searches"),
     own("feedback"),
+    own("lobby_waitlist"),
     supabase.rpc("player_reliability", { p_user: userId }).then((r) => r.data ?? null),
     // Devuelve la fecha guardada de la última visita (y la apunta si tocaba).
     supabase.rpc("touch_seen").then((r) => r.data ?? null),
@@ -122,6 +124,7 @@ export async function GET() {
     lobby_templates: lobbyTemplates,
     saved_searches: savedSearches,
     feedback_sent: feedback,
+    lobby_waitlist: waitlist,
     // Resumen calculado de los últimos 90 días (las salidas de grupos se guardan solo para esto).
     reliability,
     // Última visita: solo sirve para no mostrar en la búsqueda a quien no entra en 60 días.

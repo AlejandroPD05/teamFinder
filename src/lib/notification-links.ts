@@ -45,6 +45,7 @@ export function notificationLink(n: NotificationLike): { detail: string | null; 
       return { detail: null, href: "/amigos" };
     case "karma_reminder":
     case "lobby_starting":
+    case "waitlist_open":
       return { detail: null, href: lobby };
     case "search_match":
       // El detalle es el nombre de la búsqueda guardada.
