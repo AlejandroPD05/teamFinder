@@ -5,6 +5,9 @@ test("robots, sitemap y metadatos para buscadores", async ({ page, request }) =>
   const robots = await (await request.get("/robots.txt")).text();
   expect(robots).toContain("Disallow: /jugador/");
   expect(robots).toContain("Disallow: /perfil");
+  // Las rutas privadas no son prefijos sueltos: «/equipo» bloqueaba también las páginas públicas «/equipos/…».
+  expect(robots).toContain("Disallow: /equipo$");
+  expect(robots.split(/\s*\n/).map((l) => l.trim())).not.toContain("Disallow: /equipo");
   expect(robots).toMatch(/Sitemap: .*\/sitemap\.xml/);
 
   const sitemap = await (await request.get("/sitemap.xml")).text();
