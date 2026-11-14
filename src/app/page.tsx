@@ -1,11 +1,13 @@
 import { Gamepad2, HeartHandshake, MessagesSquare, ShieldCheck, SlidersHorizontal, Swords, UsersRound } from "lucide-react";
 import Link from "next/link";
 import type { Metadata } from "next";
+import { headers } from "next/headers";
 import { redirect } from "next/navigation";
 import { GamePicker } from "./game-switcher";
 import { currentGame } from "@/lib/games";
 import { APP_NAME } from "@/lib/config";
 import { siteUrl } from "@/lib/supabase/env";
+import { NONCE_HEADER } from "@/lib/csp";
 import { getLocale, getTranslations } from "next-intl/server";
 import { createClient } from "@/lib/supabase/server";
 
@@ -37,7 +39,7 @@ export default async function Home({ searchParams }: PageProps<"/">) {
     supabase.rpc("game_player_counts"),
     supabase.rpc("available_counts"),
   ]);
-  const [t, tm, locale] = await Promise.all([getTranslations("home"), getTranslations("meta"), getLocale()]);
+  const [t, tm, locale, head] = await Promise.all([getTranslations("home"), getTranslations("meta"), getLocale(), headers()]);
   const signedIn = Boolean(claims?.claims?.sub);
   const cta = signedIn ? { href: "/buscar", text: t("ctaSignedIn") } : { href: "/entrar", text: t("cta") };
 
@@ -75,6 +77,7 @@ export default async function Home({ searchParams }: PageProps<"/">) {
 
       <script
         type="application/ld+json"
+        nonce={head.get(NONCE_HEADER) ?? undefined}
         // Datos estructurados para buscadores: el sitio y lo que ofrece.
         dangerouslySetInnerHTML={{
           __html: JSON.stringify({

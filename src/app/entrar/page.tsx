@@ -33,7 +33,7 @@ export default async function LoginPage({ searchParams }: PageProps<"/entrar">) 
       </div>
 
       {error && (
-        <p role="alert" className="rounded-md border border-danger bg-panel p-3 text-sm text-danger">
+        <p id="login-error" role="alert" className="rounded-md border border-danger bg-panel p-3 text-sm text-danger">
           {error}
         </p>
       )}
@@ -73,7 +73,8 @@ export default async function LoginPage({ searchParams }: PageProps<"/entrar">) 
           autoComplete="email"
           required
           maxLength={254}
-          aria-describedby="email-hint"
+          // Con el correo mal escrito, el lector de pantalla lee el error al volver al campo.
+          aria-describedby={code === "invalid_email" ? "login-error email-hint" : "email-hint"}
           aria-invalid={code === "invalid_email" || undefined}
           className="min-h-11 rounded-md border border-line bg-panel px-3 text-text placeholder:text-muted focus:border-accent"
         />

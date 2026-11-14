@@ -1,0 +1,105 @@
+# Monitor de disponibilidad (gratis): cada 15 minutos pide unas cuantas URL públicas de producción.
+# Si alguna falla, el job termina en rojo (se ve en la pestaña Actions) y avisa por Discord.
+#
+# Aviso sin spam: solo se manda la alerta en el primer fallo de una racha, es decir, cuando la ejecución anterior
+# de este mismo workflow terminó bien (o no hay ninguna anterior). Mientras la web siga caída, las siguientes
+# ejecuciones fallan en rojo pero no vuelven a avisar. Cuando se recupera (esta va bien y la anterior falló) se
+# manda un único aviso de «recuperada».
+# La ejecución anterior se consulta con `gh run list` usando el GITHUB_TOKEN del propio workflow
+# (por eso `permissions: actions: read`). Se ignoran las ejecuciones canceladas o en curso.
+#
+# Secreto opcional UPTIME_WEBHOOK_URL: URL de un webhook de Discord (Ajustes del canal → Integraciones → Webhooks).
+# Si no está configurado, no se avisa, pero el job sigue fallando en rojo cuando la web no responde.
+# Ojo: GitHub puede retrasar los cron unos minutos y desactiva los programados de un repo público tras 60 días
+# sin commits; si pasa, se reactiva desde la pestaña Actions.
+name: Uptime
+
+on:
+  schedule:
+    - cron: "*/15 * * * *"
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  actions: read
+
+# Nunca dos comprobaciones a la vez: así «la ejecución anterior» está siempre terminada.
+concurrency:
+  group: uptime
+  cancel-in-progress: false
+
+jobs:
+  check:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    env:
+      BASE: https://teamfinder-seven.vercel.app
+      PATHS: "/ /equipos/valorant /entrar /manifest.webmanifest"
+    steps:
+      - name: Comprobar las URL de producción
+        id: check
+        run: |
+          failed=""
+          for path in $PATHS; do
+            # --fail: un 4xx/5xx cuenta como fallo. Reintentos con espera por si es un fallo pasajero.
+            if out=$(curl --fail --silent --show-error --location \
+                --retry 2 --retry-delay 15 --retry-all-errors \
+                --connect-timeout 10 --max-time 30 \
+                --output /dev/null \
+                --write-out "HTTP %{http_code} en %{time_total}s" \
+                "$BASE$path" 2>&1); then
+              echo "OK   $path → $out"
+            else
+              echo "FALLO $path → $out"
+              failed="$failed $path"
+            fi
+          done
+          echo "failed=${failed# }" >> "$GITHUB_OUTPUT"
+
+      - name: Estado de la ejecución anterior
+        id: previous
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          # La ejecución terminada más reciente de este workflow que no sea esta (sin canceladas ni en curso).
+          prev=$(gh run list --repo "$GITHUB_REPOSITORY" --workflow uptime.yml --limit 20 \
+            --json databaseId,status,conclusion \
+            --jq "[.[] | select(.databaseId != $GITHUB_RUN_ID and .status == \"completed\" and .conclusion != \"cancelled\" and .conclusion != \"skipped\")][0].conclusion // \"none\"") || prev="unknown"
+          echo "Ejecución anterior: $prev"
+          echo "conclusion=$prev" >> "$GITHUB_OUTPUT"
+
+      - name: Avisar por Discord
+        env:
+          WEBHOOK: ${{ secrets.UPTIME_WEBHOOK_URL }}
+          FAILED: ${{ steps.check.outputs.failed }}
+          PREV: ${{ steps.previous.outputs.conclusion }}
+          RUN_URL: ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}
+        run: |
+          msg=""
+          if [ -n "$FAILED" ]; then
+            # Primer fallo de la racha: la anterior fue bien, no hay anterior o no se pudo saber (mejor avisar de más).
+            if [ "$PREV" != "failure" ]; then
+              msg="[CAÍDA] TeamFinder no responde: $FAILED ($BASE). Detalles: $RUN_URL"
+            else
+              echo "Sigue caída; ya se avisó en una ejecución anterior."
+            fi
+          elif [ "$PREV" = "failure" ]; then
+            msg="[RECUPERADA] TeamFinder vuelve a responder ($BASE)."
+          fi
+          if [ -z "$msg" ]; then exit 0; fi
+          if [ -z "$WEBHOOK" ]; then
+            echo "::warning::Falta el secreto UPTIME_WEBHOOK_URL: no se envía el aviso."
+            exit 0
+          fi
+          jq -n --arg content "$msg" '{content: $content}' \
+            | curl --fail --silent --show-error --max-time 15 \
+                -H "Content-Type: application/json" --data @- "$WEBHOOK" \
+            || echo "::warning::No se pudo enviar el aviso a Discord."
+
+      - name: Marcar el job como fallido si la web no responde
+        if: steps.check.outputs.failed != ''
+        env:
+          FAILED: ${{ steps.check.outputs.failed }}
+        run: |
+          echo "::error::No responden: $FAILED"
+          exit 1

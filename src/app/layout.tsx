@@ -4,7 +4,9 @@ import { Bell, ExternalLink, LogIn, LogOut } from "lucide-react";
 import Link from "next/link";
 import { APP_NAME, discordInvite, GOOGLE_SITE_VERIFICATION } from "@/lib/config";
 import { NextIntlClientProvider } from "next-intl";
-import { getLocale, getTranslations } from "next-intl/server";
+import { getLocale, getMessages, getTranslations } from "next-intl/server";
+import { clientMessages } from "@/i18n/client-messages";
+import type { Messages } from "@/lib/i18n/translator";
 import { OG_LOCALE } from "@/lib/i18n/locale";
 import { LanguageSwitcher } from "./language-switcher";
 import { createClient } from "@/lib/supabase/server";
@@ -57,7 +59,12 @@ export const viewport: Viewport = { themeColor: "#0b0c12" };
 
 export default async function RootLayout({ children }: LayoutProps<"/">) {
   const supabase = await createClient();
-  const [{ data }, locale, t] = await Promise.all([supabase.auth.getClaims(), getLocale(), getTranslations()]);
+  const [{ data }, locale, t, messages] = await Promise.all([
+    supabase.auth.getClaims(),
+    getLocale(),
+    getTranslations(),
+    getMessages(),
+  ]);
   const signedIn = Boolean(data?.claims?.sub);
   const { game, games, saved } = await currentGame();
   // Sin leer: salas de grupo + mensajes privados (pestaña Mensajes) y notificaciones (campana).
@@ -76,7 +83,8 @@ export default async function RootLayout({ children }: LayoutProps<"/">) {
   return (
     <html lang={locale} data-game={game?.id} style={themeStyle(game)} className={`${geistSans.variable} ${chakra.variable} h-full antialiased`}>
       <body className="flex min-h-full flex-col font-sans">
-        <NextIntlClientProvider>
+        {/* Al navegador solo van los textos que usan los componentes de cliente (src/i18n/client-messages.ts). */}
+        <NextIntlClientProvider messages={clientMessages(messages as Messages)}>
         <SpotlightTracker />
         <ServiceWorkerRegister />
         {signedIn && <LiveAlerts me={data!.claims!.sub as string} />}

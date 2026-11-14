@@ -2,10 +2,20 @@ import { createServerClient } from "@supabase/ssr";
 import { NextResponse, type NextRequest } from "next/server";
 import { isProtectedPath } from "@/lib/auth";
 import { gameFromPath, PATH_GAME_HEADER } from "@/lib/config";
+import { contentSecurityPolicy, createNonce, NONCE_HEADER } from "@/lib/csp";
 import { supabaseEnv } from "@/lib/supabase/env";
 
-// Refresca la sesión en cada petición y protege las rutas privadas.
+// Refresca la sesión en cada petición, protege las rutas privadas y pone la CSP con un nonce nuevo.
 export async function proxy(request: NextRequest) {
+  // CSP con nonce: va también en la petición para que Next lo lea y lo ponga en sus scripts (y `headers()` en los
+  // nuestros, p. ej. el JSON-LD de la portada). Todas las páginas son dinámicas (dependen de la sesión).
+  const nonce = createNonce();
+  const csp = contentSecurityPolicy(nonce, {
+    supabaseUrl: process.env.NEXT_PUBLIC_SUPABASE_URL,
+    dev: process.env.NODE_ENV === "development",
+  });
+  request.headers.set(NONCE_HEADER, nonce);
+  request.headers.set("Content-Security-Policy", csp);
   // En /equipos/<juego> la página se pinta con ese juego (también para quien llega desde un buscador) sin tocar la
   // cookie: aquí no se distingue una visita de una precarga de enlace (Next quita esas cabeceras antes del proxy), y
   // guardar la elección en una precarga cambiaba el juego al pasar por la portada. El selector la guarda en el cliente.
@@ -46,6 +56,7 @@ export async function proxy(request: NextRequest) {
     home.search = "";
     return NextResponse.redirect(home);
   }
+  response.headers.set("Content-Security-Policy", csp);
   return response;
 }
 
