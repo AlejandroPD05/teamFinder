@@ -93,7 +93,12 @@ test("karma tras cerrar el grupo y denuncia de mensaje revisada por moderación"
     await owner.page.getByRole("button", { name: "Cerrar grupo" }).click();
     await expect(owner.page.getByText(/Cerrado · 2\/2 plazas/)).toBeVisible();
     await guest.page.goto(url);
-    await guest.page.getByLabel("Comunicativo").check();
+    // Al cerrar el grupo llega en directo el aviso «Valora a tus compañeros»: su notificación flotante puede tapar un
+    // momento la casilla en móvil, así que se reintenta hasta que quede marcada.
+    await expect(async () => {
+      await guest.page.getByLabel("Comunicativo").check({ timeout: 2_000 });
+      await expect(guest.page.getByLabel("Comunicativo")).toBeChecked({ timeout: 500 });
+    }).toPass({ timeout: 15_000 });
     await guest.page.getByRole("button", { name: "Dar reconocimiento" }).click();
     await expect(guest.page.getByText("Ya has reconocido a todos")).toBeVisible();
     await guest.page.reload();

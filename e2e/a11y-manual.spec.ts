@@ -11,7 +11,7 @@ import { signIn } from "./helpers";
  * - El título y el texto principal (el LCP) se pintan sin esperar a una animación de entrada.
  */
 
-const PUBLIC = ["/", "/entrar", "/equipos/valorant", "/equipos/valorant/controller", "/demo", "/novedades", "/normas", "/privacidad"];
+const PUBLIC = ["/", "/entrar", "/equipos/valorant", "/equipos/valorant/controller", "/demo", "/novedades", "/ideas", "/normas", "/privacidad"];
 const SESSION = [
   "/inicio",
   "/perfil",

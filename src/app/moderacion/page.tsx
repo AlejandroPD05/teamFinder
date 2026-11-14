@@ -184,7 +184,12 @@ export default async function ModerationPage() {
                   {f.status === "done" && <> · {tf("done")}</>}
                 </p>
                 <p className="whitespace-pre-line text-sm">{f.body}</p>
-                <FeedbackStatus id={f.id} status={f.status as "new" | "done"} />
+                <div className="flex flex-wrap items-center gap-3">
+                  <FeedbackStatus id={f.id} status={f.status as "new" | "done"} />
+                  <Link href={`/ideas?desde=${f.id}#nueva-idea`} className="inline-flex min-h-11 items-center text-sm text-accent-soft underline underline-offset-4">
+                    {t("publishIdea")}
+                  </Link>
+                </div>
               </li>
             ))}
           </ul>

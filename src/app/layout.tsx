@@ -168,6 +168,9 @@ export default async function RootLayout({ children }: LayoutProps<"/">) {
               <Link href="/sugerencias" className="inline-flex min-h-11 min-w-11 items-center hover:text-text">
                 {t("footer.feedback")}
               </Link>
+              <Link href="/ideas" className="inline-flex min-h-11 min-w-11 items-center hover:text-text">
+                {t("footer.ideas")}
+              </Link>
               <Link href="/novedades" className="inline-flex min-h-11 min-w-11 items-center hover:text-text">
                 {t("changelog.footerLink")}
               </Link>
