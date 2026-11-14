@@ -37,7 +37,7 @@ export default async function ClipPage({ params }: PageProps<"/clips/[id]">) {
 
   return (
     <article className="flex max-w-3xl flex-col gap-6">
-      <Link href="/clips" className="text-sm text-muted underline underline-offset-4 hover:text-text">
+      <Link href="/clips" className="inline-flex min-h-11 items-center text-sm text-muted underline underline-offset-4 hover:text-text">
         {t("back")}
       </Link>
       {clip.hidden && (
@@ -114,19 +114,27 @@ export default async function ClipPage({ params }: PageProps<"/clips/[id]">) {
                   <form action={deleteComment}>
                     <input type="hidden" name="clip" value={clip.id} />
                     <input type="hidden" name="comment" value={c.id} />
-                    <button type="submit" className="min-h-11 text-sm text-muted hover:text-text">
+                    <button
+                      type="submit"
+                      aria-label={t("deleteCommentLabel", { date: dateFmt.format(new Date(c.created_at)) })}
+                      className="min-h-11 text-sm text-muted hover:text-text"
+                    >
                       {t("delete")}
                     </button>
                   </form>
                 ) : (
-                  <ClipReportForm clipId={clip.id} commentId={c.id} label={t("reportComment")} />
+                  <ClipReportForm clipId={clip.id} commentId={c.id} label={t("reportCommentFrom", { name: c.author.name })} />
                 )}
                 {isAdmin && (
                   <form action={moderateClip}>
                     <input type="hidden" name="clip" value={clip.id} />
                     <input type="hidden" name="comment" value={c.id} />
                     <input type="hidden" name="hidden" value={c.hidden ? "0" : "1"} />
-                    <button type="submit" className="min-h-11 text-sm text-muted hover:text-text">
+                    <button
+                      type="submit"
+                      aria-label={`${c.hidden ? t("show") : t("hide")}: ${t("commentBy", { name: c.author.name })}`}
+                      className="min-h-11 text-sm text-muted hover:text-text"
+                    >
                       {c.hidden ? t("show") : t("hide")}
                     </button>
                   </form>

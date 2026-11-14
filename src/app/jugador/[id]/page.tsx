@@ -361,7 +361,7 @@ export default async function PlayerPage({ params }: PageProps<"/jugador/[id]">)
               {t("matches", { game: catalog.game.name })}
             </h2>
             {isOwner && (
-              <Link href="/perfil/partidas" className="text-sm text-accent-soft underline underline-offset-4">
+              <Link href="/perfil/partidas" className="inline-flex min-h-11 items-center text-sm text-accent-soft underline underline-offset-4">
                 {t("logMatches")}
               </Link>
             )}

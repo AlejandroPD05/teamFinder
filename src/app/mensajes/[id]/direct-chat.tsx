@@ -14,7 +14,7 @@ export type DirectMessage = { id: number; sender_id: string; body: string; creat
 
 const control = "min-h-11 rounded-md border border-line bg-bg px-3 text-sm text-text focus:border-accent";
 
-function ReportMessage({ messageId }: { messageId: number }) {
+function ReportMessage({ messageId, author }: { messageId: number; author: string }) {
   const [state, action, pending] = useActionState<DmState, FormData>(reportDirectMessageAction, null);
   const t = useTranslations("trust");
   const tc = useTranslations("chat");
@@ -27,7 +27,7 @@ function ReportMessage({ messageId }: { messageId: number }) {
     );
   return (
     <details className="text-xs">
-      <summary className="min-h-11 cursor-pointer py-2 text-muted hover:text-text">{tc("reportMessage")}</summary>
+      <summary className="min-h-11 cursor-pointer py-2 text-muted hover:text-text">{tc("reportMessageFrom", { name: author })}</summary>
       <form action={action} className="mt-1 flex flex-col gap-2 rounded-md border border-line bg-bg p-3 text-sm">
         <input type="hidden" name="message_id" value={messageId} />
         <label htmlFor={`dm-r-${messageId}`} className="font-medium">
@@ -184,7 +184,7 @@ export function DirectChat({
             >
               {m.body}
             </p>
-            {m.sender_id !== me && <ReportMessage messageId={m.id} />}
+            {m.sender_id !== me && <ReportMessage messageId={m.id} author={otherName} />}
           </li>
         ))}
       </ol>

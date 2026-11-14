@@ -64,7 +64,7 @@ export function PlayerCard({
   const goals = (p.goals ?? []).map((g) => opt("goals", g));
 
   return (
-    <li className="surface surface-interactive spotlight enter flex flex-col gap-4 p-4" style={{ "--i": index } as CSSProperties}>
+    <li className="surface surface-interactive spotlight enter flex min-w-0 flex-col gap-4 p-4" style={{ "--i": index } as CSSProperties}>
       <div className="flex items-start gap-3">
         {p.avatar_url ? (
           <Image src={p.avatar_url} alt="" width={48} height={48} className="rounded-full ring-1 ring-line" />

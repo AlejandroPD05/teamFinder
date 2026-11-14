@@ -114,18 +114,24 @@ export default async function RankingPage() {
                       {p.name.charAt(0).toUpperCase()}
                     </span>
                   )}
-                  <span className="min-w-0 flex-1">
-                    {p.link ? (
-                      <Link href={`/jugador/${r.user_id}`} className="block truncate font-semibold hover:underline">
-                        {p.name}
+                  {(() => {
+                    // Con enlace, el nombre y su línea forman un solo objetivo de 44 px.
+                    const body = (
+                      <>
+                        <span className={`block truncate ${p.link ? "font-semibold group-hover:underline" : "text-muted"}`}>{p.name}</span>
+                        <span className="block text-xs text-muted">
+                          {t("recognitions", { count: r.recognitions })} · {t("finished", { count: r.finished })}
+                        </span>
+                      </>
+                    );
+                    return p.link ? (
+                      <Link href={`/jugador/${r.user_id}`} className="group flex min-h-11 min-w-0 flex-1 flex-col justify-center">
+                        {body}
                       </Link>
                     ) : (
-                      <span className="block truncate text-muted">{p.name}</span>
-                    )}
-                    <span className="block text-xs text-muted">
-                      {t("recognitions", { count: r.recognitions })} · {t("finished", { count: r.finished })}
-                    </span>
-                  </span>
+                      <span className="min-w-0 flex-1">{body}</span>
+                    );
+                  })()}
                   {rt !== "top10" && <Icon aria-label={tier(rt)} className="size-5 text-accent-soft" />}
                   <span className="text-right font-display font-semibold">
                     <NumberRoll value={r.points} /> <span className="text-xs font-normal text-muted">{t("pts")}</span>
@@ -168,11 +174,11 @@ export default async function RankingPage() {
                   .map((a) => {
                     const p = who(a.user_id);
                     return (
-                      <li key={a.user_id} className="flex gap-2">
+                      <li key={a.user_id} className="flex items-center gap-2">
                         <span className="w-6 text-right tabular-nums text-muted">{a.pos}.</span>
                         {p.link ? (
-                          <Link href={`/jugador/${a.user_id}`} className="truncate hover:underline">
-                            {p.name}
+                          <Link href={`/jugador/${a.user_id}`} className="flex min-h-11 min-w-0 items-center hover:underline">
+                            <span className="truncate">{p.name}</span>
                           </Link>
                         ) : (
                           <span className="truncate text-muted">{p.name}</span>

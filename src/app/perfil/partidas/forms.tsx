@@ -156,14 +156,14 @@ export function MatchesVisibility({ value }: { value: Visibility }) {
       <label htmlFor="matches-visibility" className="text-muted">
         {t("whoSees")}
       </label>
-      <select id="matches-visibility" name="visibility" defaultValue={value} className="min-h-9 rounded-md border border-line bg-bg px-3 text-sm text-text focus:border-accent">
+      <select id="matches-visibility" name="visibility" defaultValue={value} className="min-h-11 rounded-md border border-line bg-bg px-3 text-sm text-text focus:border-accent">
         {optionKeys(VISIBILITY).map((k) => (
           <option key={k} value={k}>
             {to(k)}
           </option>
         ))}
       </select>
-      <button type="submit" disabled={pending} className="btn-ghost min-h-9">
+      <button type="submit" disabled={pending} className="btn-ghost">
         {t("save")}
       </button>
       <Status state={state} />

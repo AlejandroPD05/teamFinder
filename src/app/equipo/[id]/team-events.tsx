@@ -171,7 +171,7 @@ export function TeamEvents({
                 </p>
                 <Rsvp event={e} teamId={teamId} mine={e.rsvps.find((r) => r.user_id === me)?.answer} />
                 {e.lobby_id ? (
-                  <Link href={`/grupos/${e.lobby_id}`} className="text-sm text-accent-soft underline underline-offset-4">
+                  <Link href={`/grupos/${e.lobby_id}`} className="inline-flex min-h-11 items-center text-sm text-accent-soft underline underline-offset-4">
                     {t("goToLobby")}
                   </Link>
                 ) : (

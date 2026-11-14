@@ -35,6 +35,9 @@ export function ShareCardLink({ enabled, url, gamePublic }: { enabled: boolean; 
             {copied ? <Check aria-hidden="true" className="size-4" /> : <Copy aria-hidden="true" className="size-4" />}
             {copied ? t("copied") : t("copy")}
           </button>
+          <span role="status" className="sr-only">
+            {copied ? t("copied") : ""}
+          </span>
         </div>
       )}
       <form action={action}>

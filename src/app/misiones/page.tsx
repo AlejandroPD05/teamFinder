@@ -60,7 +60,7 @@ export default async function MissionsPage() {
               </div>
               <div className="flex flex-wrap items-end justify-between gap-4">
                 <ClaimReward missionId={m.id} claimable={m.claimable} />
-                <Link href="/coleccion" className="text-sm text-muted underline underline-offset-4 hover:text-text">
+                <Link href="/coleccion" className="inline-flex min-h-11 items-center text-sm text-muted underline underline-offset-4 hover:text-text">
                   {t("collection", { owned: m.cards_owned, total: m.cards_total })}
                 </Link>
               </div>

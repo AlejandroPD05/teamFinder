@@ -24,7 +24,7 @@ export function ClaimReward({ missionId, claimable }: { missionId: string; claim
           <div className="flex flex-col items-start gap-3">
             <p className="text-sm text-success">{t("newCard", { name: state.card.name })}</p>
             <CollectibleCard card={state.card} className="card-reveal w-44" priority />
-            <Link href="/coleccion" className="text-sm text-muted underline underline-offset-4 hover:text-text">
+            <Link href="/coleccion" className="inline-flex min-h-11 items-center text-sm text-muted underline underline-offset-4 hover:text-text">
               {t("viewCollection")}
             </Link>
           </div>
