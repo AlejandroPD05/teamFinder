@@ -23,8 +23,17 @@ import { indexable } from "@/lib/seo";
 import { siteUrl } from "@/lib/supabase/env";
 import "./globals.css";
 
-const geistSans = Geist({ variable: "--font-geist-sans", subsets: ["latin"] });
-const chakra = Chakra_Petch({ variable: "--font-chakra", subsets: ["latin"], weight: ["500", "600", "700"] });
+// Rendimiento en móvil: solo se precarga Geist (un archivo variable, el texto de casi todo). Los tres pesos de
+// Chakra Petch (títulos) llegan cuando el CSS los pide: con `swap`, el título se pinta antes con la fuente de
+// reserva ajustada y no compite por la red con el HTML y el CSS en conexiones lentas.
+const geistSans = Geist({ variable: "--font-geist-sans", subsets: ["latin"], display: "swap" });
+const chakra = Chakra_Petch({
+  variable: "--font-chakra",
+  subsets: ["latin"],
+  weight: ["500", "600", "700"],
+  display: "swap",
+  preload: false,
+});
 
 // El favicon es el logo de la web con el color del juego elegido (src/app/icono/[juego]). Títulos en el idioma elegido.
 export async function generateMetadata(): Promise<Metadata> {
@@ -145,19 +154,19 @@ export default async function RootLayout({ children }: LayoutProps<"/">) {
           <div className="mx-auto flex max-w-6xl flex-col gap-3 px-4 py-6 text-sm text-muted">
             <nav aria-label={t("footer.label")} className="flex flex-wrap items-center gap-x-5">
               <span className="font-display text-text">{t("footer.beta", { app: APP_NAME })}</span>
-              <Link href="/demo" className="inline-flex min-h-11 items-center hover:text-text">
+              <Link href="/demo" className="inline-flex min-h-11 min-w-11 items-center hover:text-text">
                 {t("footer.demo")}
               </Link>
-              <Link href="/normas" className="inline-flex min-h-11 items-center hover:text-text">
+              <Link href="/normas" className="inline-flex min-h-11 min-w-11 items-center hover:text-text">
                 {t("footer.rules")}
               </Link>
-              <Link href="/privacidad" className="inline-flex min-h-11 items-center hover:text-text">
+              <Link href="/privacidad" className="inline-flex min-h-11 min-w-11 items-center hover:text-text">
                 {t("footer.privacy")}
               </Link>
-              <Link href="/sugerencias" className="inline-flex min-h-11 items-center hover:text-text">
+              <Link href="/sugerencias" className="inline-flex min-h-11 min-w-11 items-center hover:text-text">
                 {t("footer.feedback")}
               </Link>
-              <Link href="/novedades" className="inline-flex min-h-11 items-center hover:text-text">
+              <Link href="/novedades" className="inline-flex min-h-11 min-w-11 items-center hover:text-text">
                 {t("changelog.footerLink")}
               </Link>
               {discordInvite() && (

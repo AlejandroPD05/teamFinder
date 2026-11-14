@@ -240,8 +240,8 @@ export default async function LobbyPage({ params }: PageProps<"/grupos/[id]">) {
                   </div>
                   {r.message && <p className="text-sm">«{r.message}»</p>}
                   <div className="flex flex-wrap gap-3">
-                    <ActionForm lobbyId={lobby.id} intent="accept" requestId={r.id} label={t("accept")} variant="primary" />
-                    <ActionForm lobbyId={lobby.id} intent="reject" requestId={r.id} label={t("reject")} />
+                    <ActionForm lobbyId={lobby.id} intent="accept" requestId={r.id} label={t("accept")} ariaLabel={t("acceptNamed", { name: name(r.user_id) })} variant="primary" />
+                    <ActionForm lobbyId={lobby.id} intent="reject" requestId={r.id} label={t("reject")} ariaLabel={t("rejectNamed", { name: name(r.user_id) })} />
                   </div>
                 </li>
               ))}

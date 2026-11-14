@@ -138,7 +138,7 @@ export function LobbyChat({
             >
               {m.body}
             </p>
-            {m.user_id !== me && <ReportForm targetId={m.user_id} messageId={m.id} lobbyId={lobbyId} label={t("reportMessage")} />}
+            {m.user_id !== me && <ReportForm targetId={m.user_id} messageId={m.id} lobbyId={lobbyId} label={t("reportMessageFrom", { name: names[m.user_id] ?? player })} />}
           </li>
         ))}
       </ol>

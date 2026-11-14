@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import Link from "next/link";
-import { getTranslations } from "next-intl/server";
+import { getLocale, getTranslations } from "next-intl/server";
+import { catalogLang } from "@/lib/i18n/locale";
 import { notFound } from "next/navigation";
 import { CharacterIcon, RoleIcon } from "@/components/game-icons";
 import { loadGames, themeStyle } from "@/lib/games";
@@ -42,7 +43,8 @@ export default async function GameTeamsPage({ params }: PageProps<"/equipos/[jue
   const last = catalog.ranks.at(-1)?.name;
   const characters = game.character_label?.toLowerCase();
   const others = games.filter((g) => g.id !== game.id);
-  const [t, th] = await Promise.all([getTranslations("gamePage"), getTranslations("home")]);
+  const [t, th, locale] = await Promise.all([getTranslations("gamePage"), getTranslations("home"), getLocale()]);
+  const lang = catalogLang(locale);
 
   return (
     <article className="flex flex-col gap-12" style={themeStyle(game)}>
@@ -73,10 +75,10 @@ export default async function GameTeamsPage({ params }: PageProps<"/equipos/[jue
                 {/* Cada rol tiene su página pública (/equipos/<juego>/<rol>). */}
                 <Link
                   href={`/equipos/${game.id}/${r.slug}`}
-                  className="chip min-h-11 underline underline-offset-4 hover:text-accent"
+                  className="chip min-h-11 underline underline-offset-4 hover:text-accent-soft"
                 >
                   <RoleIcon slug={r.slug} className="size-4 text-muted" />
-                  {r.name}
+                  <span lang={lang}>{r.name}</span>
                 </Link>
               </li>
             ))}
@@ -84,7 +86,7 @@ export default async function GameTeamsPage({ params }: PageProps<"/equipos/[jue
         </div>
         <div className="surface flex flex-col gap-3 p-5">
           <h3 className="font-display text-lg font-semibold">{t("modes")}</h3>
-          <p className="text-sm">{catalog.modes.map((m) => `${m.name} (${t("players", { count: m.party_size })})`).join(" · ")}</p>
+          <p lang={lang} className="text-sm">{catalog.modes.map((m) => `${m.name} (${t("players", { count: m.party_size })})`).join(" · ")}</p>
         </div>
         <div className="surface flex flex-col gap-3 p-5">
           <h3 className="font-display text-lg font-semibold">{t("ranks")}</h3>
@@ -94,7 +96,7 @@ export default async function GameTeamsPage({ params }: PageProps<"/equipos/[jue
         </div>
         <div className="surface flex flex-col gap-3 p-5">
           <h3 className="font-display text-lg font-semibold">{t("regions")}</h3>
-          <p className="text-sm">{catalog.regions.map((r) => r.name).join(" · ")}</p>
+          <p lang={lang} className="text-sm">{catalog.regions.map((r) => r.name).join(" · ")}</p>
         </div>
       </section>
 
@@ -116,7 +118,7 @@ export default async function GameTeamsPage({ params }: PageProps<"/equipos/[jue
       {others.length > 0 && (
         <nav aria-label={t("others")} className="flex flex-wrap gap-x-6 gap-y-2 text-sm">
           {others.map((g) => (
-            <Link key={g.id} href={`/equipos/${g.id}`} className="text-muted underline underline-offset-4 hover:text-text">
+            <Link key={g.id} href={`/equipos/${g.id}`} className="inline-flex min-h-11 items-center text-muted underline underline-offset-4 hover:text-text">
               {th("teamFor", { game: g.name })}
             </Link>
           ))}

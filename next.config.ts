@@ -11,6 +11,9 @@ const securityHeaders = [
 
 const nextConfig: NextConfig = {
   poweredByHeader: false,
+  // El CSS (Tailwind, ~12 KB comprimido) va dentro del HTML: sin la petición que bloqueaba el primer pintado, el
+  // título o el texto principal (el LCP) se pintan una ida y vuelta antes en móvil. Solo afecta al build de producción.
+  experimental: { inlineCss: true },
   turbopack: {
     rules: {
       "*.css": {

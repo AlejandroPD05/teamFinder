@@ -13,7 +13,7 @@ export type TeamMessage = { id: number; user_id: string; body: string; created_a
 
 const control = "min-h-11 rounded-md border border-line bg-bg px-3 text-sm text-text focus:border-accent";
 
-function ReportMessage({ messageId }: { messageId: number }) {
+function ReportMessage({ messageId, author }: { messageId: number; author: string }) {
   const [state, action, pending] = useActionState<TeamState, FormData>(reportTeamMessageAction, null);
   const t = useTranslations("trust");
   const tc = useTranslations("chat");
@@ -26,7 +26,7 @@ function ReportMessage({ messageId }: { messageId: number }) {
     );
   return (
     <details className="text-xs">
-      <summary className="min-h-11 cursor-pointer py-2 text-muted hover:text-text">{tc("reportMessage")}</summary>
+      <summary className="min-h-11 cursor-pointer py-2 text-muted hover:text-text">{tc("reportMessageFrom", { name: author })}</summary>
       <form action={action} className="mt-1 flex flex-col gap-2 rounded-md border border-line bg-bg p-3 text-sm">
         <input type="hidden" name="message_id" value={messageId} />
         <label htmlFor={`tm-r-${messageId}`} className="font-medium">
@@ -157,7 +157,7 @@ export function TeamChat({ teamId, me, initial, names: initialNames }: { teamId:
             <p className={`max-w-[85%] whitespace-pre-wrap break-words rounded-lg px-3 py-2 text-sm ${m.user_id === me ? "bg-panel-hover" : "bg-bg-raised"}`}>
               {m.body}
             </p>
-            {m.user_id !== me && <ReportMessage messageId={m.id} />}
+            {m.user_id !== me && <ReportMessage messageId={m.id} author={names[m.user_id] ?? player} />}
           </li>
         ))}
       </ol>

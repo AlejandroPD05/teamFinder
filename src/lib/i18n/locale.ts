@@ -40,3 +40,11 @@ export function localeFromAcceptLanguage(header: string | null | undefined): App
 export function pickLocale(cookie: string | null | undefined, acceptLanguage: string | null | undefined): AppLocale {
   return isLocale(cookie) ? cookie : localeFromAcceptLanguage(acceptLanguage);
 }
+
+/**
+ * Idioma de los nombres del catálogo de los juegos (roles, modos, regiones): están en español también en la versión
+ * inglesa. Con la página en otro idioma se marcan con `lang="es"` para que el lector de pantalla los pronuncie bien.
+ */
+export function catalogLang(locale: string): "es" | undefined {
+  return locale === "es" ? undefined : "es";
+}

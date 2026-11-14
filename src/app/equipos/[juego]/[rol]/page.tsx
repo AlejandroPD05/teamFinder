@@ -7,7 +7,7 @@ import { cache } from "react";
 import { CharacterIcon, RoleIcon } from "@/components/game-icons";
 import { APP_NAME } from "@/lib/config";
 import { loadGames, themeStyle } from "@/lib/games";
-import { INTL_LOCALE, OG_LOCALE } from "@/lib/i18n/locale";
+import { catalogLang, INTL_LOCALE, OG_LOCALE } from "@/lib/i18n/locale";
 import { loadCatalog } from "@/lib/profile/queries";
 import {
   breadcrumbJsonLd,
@@ -76,6 +76,7 @@ export default async function RolePage({ params }: PageProps<"/equipos/[juego]/[
   const characters = catalog.characters.filter((c) => c.role_id === role.id);
   const siblings = siblingRoles(catalog.roles, role.slug);
   const number = new Intl.NumberFormat(INTL_LOCALE[locale]);
+  const lang = catalogLang(locale);
   const figures = [
     { value: stats.publicWithRole, label: t("statRole", vars) },
     { value: stats.players, label: t("statPlayers", vars) },
@@ -103,11 +104,11 @@ export default async function RolePage({ params }: PageProps<"/equipos/[juego]/[
               <li key={c.path} className="flex items-center gap-2">
                 {i > 0 && <span aria-hidden="true">/</span>}
                 {i < crumbs.length - 1 ? (
-                  <Link href={c.path} className="underline underline-offset-4 hover:text-text">
+                  <Link href={c.path} className="inline-flex min-h-11 items-center underline underline-offset-4 hover:text-text">
                     {c.name}
                   </Link>
                 ) : (
-                  <span aria-current="page" className="text-text">
+                  <span aria-current="page" lang={lang} className="text-text">
                     {c.name}
                   </span>
                 )}
@@ -190,7 +191,7 @@ export default async function RolePage({ params }: PageProps<"/equipos/[juego]/[
                   className="inline-flex min-h-11 items-center gap-2 underline underline-offset-4 hover:text-text"
                 >
                   <RoleIcon slug={r.slug} className="size-4 text-muted" />
-                  {r.name}
+                  <span lang={lang}>{r.name}</span>
                 </Link>
               </li>
             ))}

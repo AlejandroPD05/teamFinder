@@ -109,7 +109,7 @@ export function GamePicker({
                   "--tile-text": g.theme_accent_soft ?? g.theme_accent ?? "var(--color-text)",
                 } as CSSProperties
               }
-              className={`flex aspect-square min-h-28 flex-col items-center justify-center gap-1.5 rounded-xl border-2 bg-[linear-gradient(180deg,rgb(255_255_255/0.05),transparent_50%)] p-3 transition-[border-color,background-color,transform,box-shadow] duration-200 ease-out active:scale-[0.97] sm:gap-3 ${
+              className={`flex min-h-28 flex-col min-[25rem]:aspect-square items-center justify-center gap-1.5 rounded-xl border-2 bg-[linear-gradient(180deg,rgb(255_255_255/0.05),transparent_50%)] p-3 transition-[border-color,background-color,transform,box-shadow] duration-200 ease-out active:scale-[0.97] sm:gap-3 ${
                 on
                   ? "border-[var(--tile)] bg-[color-mix(in_srgb,var(--tile)_14%,var(--color-panel))] shadow-[inset_0_1px_0_rgb(255_255_255/0.08),0_18px_44px_-16px_var(--tile)]"
                   : "border-line bg-panel shadow-[inset_0_1px_0_rgb(255_255_255/0.05),0_10px_24px_-18px_black] hover:-translate-y-0.5 hover:border-[color-mix(in_srgb,var(--tile)_60%,var(--color-line))]"

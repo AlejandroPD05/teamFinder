@@ -20,6 +20,7 @@ export function ActionForm({
   requestId,
   withMessage = false,
   confirm,
+  ariaLabel,
 }: {
   lobbyId: string;
   intent: "request" | "withdraw" | "accept" | "reject" | "leave" | "close";
@@ -29,6 +30,8 @@ export function ActionForm({
   requestId?: string;
   withMessage?: boolean;
   confirm?: string;
+  /** Nombre accesible con contexto cuando hay varios botones iguales («Aceptar a Ana»). Empieza por el texto visible. */
+  ariaLabel?: string;
 }) {
   const [state, action, pending] = useActionState<ActionState, FormData>(lobbyAction, null);
   const t = useTranslations("lobby");
@@ -58,7 +61,7 @@ export function ActionForm({
         </>
       )}
       <div className="flex flex-wrap items-center gap-3">
-        <button type="submit" disabled={pending} className={`min-h-11 rounded-md px-4 text-sm disabled:opacity-60 ${styles[variant]}`}>
+        <button type="submit" disabled={pending} aria-label={pending ? undefined : ariaLabel} className={`min-h-11 rounded-md px-4 text-sm disabled:opacity-60 ${styles[variant]}`}>
           {pending ? (pendingLabel ?? t("wait")) : label}
         </button>
         <p role="status" aria-live="polite" className={`text-sm ${state?.ok ? "text-success" : "text-danger"}`}>
