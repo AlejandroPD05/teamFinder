@@ -14,6 +14,10 @@ export const CHANGELOG: ChangelogEntry[] = [
     date: "2026-11-14",
     items: [
       {
+        es: "Si la búsqueda o los grupos están vacíos, te proponemos qué hacer para que te encuentren: marcarte disponible, crear un grupo o invitar a un amigo.",
+        en: "If search or groups are empty, we suggest what to do so others find you: mark yourself available, create a group or invite a friend.",
+      },
+      {
         es: "Ideas de la comunidad: mira qué estamos haciendo y apoya las ideas que quieres ver antes.",
         en: "Community ideas: see what we're working on and support the ideas you want sooner.",
       },

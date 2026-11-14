@@ -2,6 +2,7 @@ import { currentGame } from "@/lib/games";
 import { getLocale, getTranslations } from "next-intl/server";
 import { titled } from "@/lib/i18n/metadata";
 import Link from "next/link";
+import { EarlyDays } from "@/components/early-days";
 import { redirect } from "next/navigation";
 import { formatStart } from "@/lib/lobbies/format";
 import { listOpenLobbies, loadNames } from "@/lib/lobbies/queries";
@@ -86,7 +87,9 @@ export default async function LobbiesPage({ searchParams }: PageProps<"/grupos">
         </div>
       </form>
 
-      {lobbies.length === 0 ? (
+      {lobbies.length === 0 && !filtered ? (
+        <EarlyDays heading={t("empty")} text={t("emptyText")} />
+      ) : lobbies.length === 0 ? (
         <div className="rounded-lg border border-dashed border-line p-6 text-center">
           <h2 className="font-semibold">{filtered ? t("emptyFiltered") : t("empty")}</h2>
           <p className="mt-1 text-sm text-muted">{t("emptyText")}</p>

@@ -503,7 +503,8 @@
     "emptyText": "There are no other players with a visible {game} profile yet. Complete yours so people can find you.",
     "pagination": "Pagination",
     "prev": "Previous",
-    "next": "Next"
+    "next": "Next",
+    "emptySaveHint": "Save this search above and we'll let you know when someone who fits marks themselves available."
   },
   "fanart": {
     "license": "I declare that I am the author of this work and that it doesn't copy anyone else's work. I grant free, non-exclusive and revocable permission to show it on this website as a collectible card with my credit. Cards are not sold or traded. I can withdraw the permission at any time from this page and the card will stop being shown.",
@@ -1691,5 +1692,13 @@
     "titleLength": "The title must be 5 to 80 characters.",
     "bodyLength": "Description: 500 characters at most.",
     "chars": "No < or >."
+  },
+  "earlyDays": {
+    "lead": "TeamFinder has just started and there aren't many of us yet. Meanwhile, this helps the next person who joins find you:",
+    "available": "Mark me available now",
+    "createLobby": "Create a group",
+    "invite": "Invite a friend",
+    "discord": "Join the Discord",
+    "newTab": "(opens in a new tab)"
   }
 }

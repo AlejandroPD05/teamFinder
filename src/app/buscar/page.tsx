@@ -20,6 +20,7 @@ import { createClient } from "@/lib/supabase/server";
 import { PlayerCard } from "./player-card";
 import { SavedSearches } from "./saved-searches";
 import { savedSearchFrom } from "@/lib/search/saved";
+import { EarlyDays } from "@/components/early-days";
 
 export const generateMetadata = titled("search");
 
@@ -81,6 +82,7 @@ export default async function SearchPage({ searchParams }: PageProps<"/buscar">)
     .eq("game_id", game.id)
     .order("created_at");
   const toSave = savedSearchFrom(filters, catalog);
+  const canSave = toSave.query !== "" && (saved ?? []).length < 5 && !(saved ?? []).some((x) => x.query === toSave.query);
   const available = new Map((availableRows ?? []).map((a) => [a.user_id, a]));
   const { players, total } = await searchPlayers(
     supabase,
@@ -181,7 +183,7 @@ export default async function SearchPage({ searchParams }: PageProps<"/buscar">)
       <SavedSearches
         saved={saved ?? []}
         query={toSave.query}
-        canSave={toSave.query !== "" && (saved ?? []).length < 5 && !(saved ?? []).some((x) => x.query === toSave.query)}
+        canSave={canSave}
         alertIgnores={toSave.alertIgnores}
       />
 
@@ -203,27 +205,23 @@ export default async function SearchPage({ searchParams }: PageProps<"/buscar">)
             />
           ))}
         </ul>
+      ) : n === 0 ? (
+        <EarlyDays heading={t("empty")} text={t("emptyText", { game: game.name })} />
       ) : (
         <div className="rounded-lg border border-dashed border-line p-6 text-center">
-          <h2 className="font-semibold">{n > 0 ? t("emptyFiltered") : t("empty")}</h2>
-          {n > 0 ? (
-            <>
-              <p className="mt-1 text-sm text-muted">{t("widenHint")}</p>
-              <ul className="mt-3 flex flex-wrap justify-center gap-2">
-                {widenSuggestions(filters, locale).map((s) => (
-                  <li key={s.label}>
-                    <Link href={href(s.filters)} className="btn-ghost">
-                      {s.label}
-                    </Link>
-                  </li>
-                ))}
-              </ul>
-            </>
-          ) : (
-            <p className="mt-1 text-sm text-muted">
-              {t("emptyText", { game: game.name })}
-            </p>
-          )}
+          <h2 className="font-semibold">{t("emptyFiltered")}</h2>
+          {/* La alerta de la búsqueda guardada avisa cuando alguien que encaja se marque disponible. */}
+          {canSave && <p className="mt-1 text-sm">{t("emptySaveHint")}</p>}
+          <p className="mt-1 text-sm text-muted">{t("widenHint")}</p>
+          <ul className="mt-3 flex flex-wrap justify-center gap-2">
+            {widenSuggestions(filters, locale).map((s) => (
+              <li key={s.label}>
+                <Link href={href(s.filters)} className="btn-ghost">
+                  {s.label}
+                </Link>
+              </li>
+            ))}
+          </ul>
         </div>
       )}
 

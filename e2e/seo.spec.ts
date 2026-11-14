@@ -71,3 +71,10 @@ test("las páginas por rol tienen su propia imagen al compartir", async ({ page,
   expect(img.status()).toBe(200);
   expect(img.headers()["content-type"]).toBe("image/png");
 });
+
+test("la versión desplegada se puede consultar sin datos de nadie", async ({ request }) => {
+  const res = await request.get("/api/version");
+  expect(res.status()).toBe(200);
+  expect(res.headers()["cache-control"]).toContain("no-store");
+  expect(Object.keys(await res.json())).toEqual(["commit"]);
+});
