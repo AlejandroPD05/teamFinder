@@ -18,6 +18,8 @@ import {
 import { searchPlayers } from "@/lib/search/query";
 import { createClient } from "@/lib/supabase/server";
 import { PlayerCard } from "./player-card";
+import { SavedSearches } from "./saved-searches";
+import { savedSearchFrom } from "@/lib/search/saved";
 
 export const generateMetadata = titled("search");
 
@@ -73,6 +75,12 @@ export default async function SearchPage({ searchParams }: PageProps<"/buscar">)
   if (current !== toSearchParams(filters).toString()) redirect(href(filters));
   // Quién está disponible ahora (para el filtro y para marcarlo en las tarjetas).
   const { data: availableRows } = await supabase.rpc("available_now", { p_game: game.id });
+  const { data: saved } = await supabase
+    .from("saved_searches")
+    .select("id, name, query, alerts")
+    .eq("game_id", game.id)
+    .order("created_at");
+  const toSave = savedSearchFrom(filters, catalog);
   const available = new Map((availableRows ?? []).map((a) => [a.user_id, a]));
   const { players, total } = await searchPlayers(
     supabase,
@@ -169,6 +177,13 @@ export default async function SearchPage({ searchParams }: PageProps<"/buscar">)
           </div>
         </form>
       </details>
+
+      <SavedSearches
+        saved={saved ?? []}
+        query={toSave.query}
+        canSave={toSave.query !== "" && (saved ?? []).length < 5 && !(saved ?? []).some((x) => x.query === toSave.query)}
+        alertIgnores={toSave.alertIgnores}
+      />
 
       <p role="status" className="text-sm text-muted">
         {t("total", { count: total })}

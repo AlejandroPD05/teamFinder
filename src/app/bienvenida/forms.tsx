@@ -4,6 +4,7 @@ import { useTranslations } from "next-intl";
 import { useActionState } from "react";
 import { RoleIcon } from "@/components/game-icons";
 import { saveWelcomeRank, saveWelcomeRoles, type WelcomeState } from "./actions";
+import { outcomeOf, useStickyForm } from "@/lib/use-sticky-form";
 
 const control = "min-h-11 w-full rounded-md border border-line bg-bg px-3 text-text focus:border-accent";
 const chip = "flex min-h-11 cursor-pointer items-center gap-2 rounded-md border border-line px-3 text-sm has-[:checked]:border-accent has-[:checked]:bg-panel-hover";
@@ -18,9 +19,10 @@ function Status({ state }: { state: WelcomeState }) {
 
 export function RolesStep({ roles, selected, primary }: { roles: { id: string; slug: string; name: string }[]; selected: string[]; primary: string | null }) {
   const [state, action, pending] = useActionState<WelcomeState, FormData>(saveWelcomeRoles, null);
+  const form = useStickyForm(action, state, outcomeOf(state));
   const t = useTranslations("welcome");
   return (
-    <form action={action} className="flex flex-col gap-5">
+    <form {...form} className="flex flex-col gap-5">
       <fieldset className="flex flex-col gap-2">
         <legend className="mb-2 font-medium">{t("rolesQuestion")}</legend>
         <div className="grid gap-2 sm:grid-cols-2">
@@ -66,9 +68,10 @@ export function RankStep({
   regionId: string | null;
 }) {
   const [state, action, pending] = useActionState<WelcomeState, FormData>(saveWelcomeRank, null);
+  const form = useStickyForm(action, state, outcomeOf(state));
   const t = useTranslations("welcome");
   return (
-    <form action={action} className="flex flex-col gap-4">
+    <form {...form} className="flex flex-col gap-4">
       <div className="flex flex-col gap-1.5">
         <label htmlFor="welcome-name" className="font-medium">
           {t("name")}

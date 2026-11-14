@@ -352,7 +352,10 @@
       "team_joined": "{who} se ha unido a tu equipo",
       "team_event": "{who} propone una quedada",
       "team_lobby": "Tu equipo ha creado un grupo y estás dentro",
-      "friend_joined": "{who} se ha unido con tu invitación"
+      "friend_joined": "{who} se ha unido con tu invitación",
+      "karma_reminder": "Valora a tus compañeros del grupo",
+      "lobby_starting": "Tu grupo empieza en 15 minutos",
+      "search_match": "{who} está disponible y encaja con tu búsqueda"
     }
   },
   "lobbies": {
@@ -528,7 +531,9 @@
     "noteMax": "Máximo 300 caracteres.",
     "chars": "Sin < ni >.",
     "approved": "Aprobada: ya es una carta.",
-    "rejected": "Rechazada. Se ha avisado a la persona."
+    "rejected": "Rechazada. Se ha avisado a la persona.",
+    "approveLabel": "Aprobar «{title}» como carta",
+    "rejectLabel": "Rechazar «{title}»"
   },
   "titles": {
     "login": "Entrar",
@@ -560,7 +565,8 @@
     "privacy": "Privacidad",
     "ranking": "Ranking semanal",
     "feedback": "Sugerencias",
-    "friends": "Invitar amigos"
+    "friends": "Invitar amigos",
+    "stats": "Estadísticas"
   },
   "login": {
     "title": "Entrar en {app}",
@@ -1170,7 +1176,8 @@
     "you": "tú",
     "player": "Jugador",
     "maybe": "{count} quizá",
-    "goToLobby": "Ir al grupo de esta quedada"
+    "goToLobby": "Ir al grupo de esta quedada",
+    "deleteLabel": "Borrar la quedada del {when}"
   },
   "moderation": {
     "title": "Moderación",
@@ -1198,7 +1205,8 @@
     "portfolio": "Portfolio",
     "check": "Comprueba que no es arte oficial ni de otra persona (búsqueda inversa de imagen).",
     "feedback": "Buzón de sugerencias",
-    "noFeedback": "No hay sugerencias."
+    "noFeedback": "No hay sugerencias.",
+    "stats": "Ver estadísticas"
   },
   "welcome": {
     "kicker": "Bienvenida · paso {step} de 3",
@@ -1531,5 +1539,58 @@
     "title": "Novedades",
     "lead": "Lo que ha cambiado en {app}, de lo más reciente a lo más antiguo. Solo aparecen cambios que ya están en la web.",
     "footerLink": "Novedades"
+  },
+  "savedSearches": {
+    "title": "Búsquedas guardadas",
+    "name": "Guardar esta búsqueda como",
+    "placeholder": "p. ej. Controlador Oro+",
+    "save": "Guardar",
+    "hint": "Con la alerta activada te avisamos cuando alguien que encaja (rol, rango, servidor e idioma) se marque «disponible ahora». Como mucho un aviso cada 3 horas por búsqueda.",
+    "ignores": "El resto de filtros solo se aplican al abrir la búsqueda.",
+    "saved": "Búsqueda guardada, con alerta activada.",
+    "nameInvalid": "El nombre debe tener entre 2 y 40 caracteres, sin < ni >.",
+    "limit": "Ya tienes 5 búsquedas guardadas en este juego. Borra alguna para guardar otra.",
+    "alertOn": "Alerta activada",
+    "alertOff": "Alerta desactivada",
+    "alertsLabel": "Alerta de la búsqueda {name}",
+    "alertsOn": "Alerta activada.",
+    "alertsOff": "Alerta desactivada.",
+    "deleteNamed": "Borrar la búsqueda {name}",
+    "deleted": "Búsqueda borrada.",
+    "error": "No se pudo completar la acción. Inténtalo de nuevo."
+  },
+  "stats": {
+    "back": "Moderación",
+    "title": "Estadísticas",
+    "lead": "Recuentos agregados para saber qué funciona. No muestran datos de nadie.",
+    "people": "Personas",
+    "users": "Cuentas",
+    "newUsers": "+{week} esta semana · +{month} en 30 días",
+    "active": "Activas en 7 días",
+    "activeNote": "Han iniciado sesión esta semana.",
+    "onboarded": "Han hecho la bienvenida",
+    "onboardedNote": "Del total de cuentas.",
+    "reach": "Con avisos push",
+    "reachNote": "{email} con avisos por correo",
+    "groups": "Grupos",
+    "lobbies": "Grupos en 30 días",
+    "lobbiesNote": "{week} esta semana",
+    "filled": "Se llenan",
+    "filledNote": "{count} grupos completos en 30 días",
+    "requests": "Solicitudes",
+    "karma": "Valoraciones de karma",
+    "last30": "Últimos 30 días.",
+    "last7": "Últimos 7 días.",
+    "community": "Comunidad",
+    "teams": "Equipos",
+    "clips": "Clips",
+    "messages": "Mensajes privados",
+    "savedSearches": "Búsquedas guardadas",
+    "feedback": "{count, plural, one {# sugerencia sin atender} other {# sugerencias sin atender}}",
+    "byGame": "Por juego",
+    "game": "Juego",
+    "profiles": "Perfiles",
+    "lobbies30": "Grupos (30 días)",
+    "privacy": "Solo recuentos calculados al abrir la página; no se guarda ni se envía nada a terceros."
   }
 }

@@ -54,6 +54,9 @@ export default async function ModerationPage() {
       <div>
         <h1 className="font-display text-3xl font-semibold">{t("title")}</h1>
         <p className="text-muted">{t("lead")}</p>
+        <Link href="/moderacion/estadisticas" className="btn-ghost mt-3">
+          {t("stats")}
+        </Link>
       </div>
       {list.length === 0 ? (
         <p className="rounded-lg border border-dashed border-line p-6 text-center text-muted">{t("none")}</p>
@@ -157,7 +160,7 @@ export default async function ModerationPage() {
                     </a>
                   )}
                   <p className="text-xs text-muted">{t("check")}</p>
-                  <ReviewFanart id={f.id} />
+                  <ReviewFanart id={f.id} title={f.title} />
                 </div>
               </li>
             ))}

@@ -521,14 +521,14 @@ isOneToOne: false
                   ]
                 },"lobbies": {
                   Row: {
-                    "closed_at": string | null,"created_at": string,"filled_at": string | null,"game_id": string,"goal": string | null,"id": string,"language": string | null,"mode_slug": string,"note": string | null,"owner_id": string,"rank_max_id": string | null,"rank_min_id": string | null,"region_id": string | null,"shared_at": string | null,"slots": number,"starts_at": string | null,"status": Database["public"]['Enums']["lobby_status"],"updated_at": string
+                    "closed_at": string | null,"created_at": string,"filled_at": string | null,"game_id": string,"goal": string | null,"id": string,"language": string | null,"mode_slug": string,"note": string | null,"owner_id": string,"rank_max_id": string | null,"rank_min_id": string | null,"region_id": string | null,"reminded_at": string | null,"shared_at": string | null,"slots": number,"starts_at": string | null,"status": Database["public"]['Enums']["lobby_status"],"updated_at": string
                   }
                   ComputedFields: never
                   Insert: {
-                    "closed_at"?: string | null,"created_at"?: string,"filled_at"?: string | null,"game_id": string,"goal"?: string | null,"id"?: string,"language"?: string | null,"mode_slug": string,"note"?: string | null,"owner_id": string,"rank_max_id"?: string | null,"rank_min_id"?: string | null,"region_id"?: string | null,"shared_at"?: string | null,"slots": number,"starts_at"?: string | null,"status"?: Database["public"]['Enums']["lobby_status"],"updated_at"?: string
+                    "closed_at"?: string | null,"created_at"?: string,"filled_at"?: string | null,"game_id": string,"goal"?: string | null,"id"?: string,"language"?: string | null,"mode_slug": string,"note"?: string | null,"owner_id": string,"rank_max_id"?: string | null,"rank_min_id"?: string | null,"region_id"?: string | null,"reminded_at"?: string | null,"shared_at"?: string | null,"slots": number,"starts_at"?: string | null,"status"?: Database["public"]['Enums']["lobby_status"],"updated_at"?: string
                   }
                   Update: {
-                    "closed_at"?: string | null,"created_at"?: string,"filled_at"?: string | null,"game_id"?: string,"goal"?: string | null,"id"?: string,"language"?: string | null,"mode_slug"?: string,"note"?: string | null,"owner_id"?: string,"rank_max_id"?: string | null,"rank_min_id"?: string | null,"region_id"?: string | null,"shared_at"?: string | null,"slots"?: number,"starts_at"?: string | null,"status"?: Database["public"]['Enums']["lobby_status"],"updated_at"?: string
+                    "closed_at"?: string | null,"created_at"?: string,"filled_at"?: string | null,"game_id"?: string,"goal"?: string | null,"id"?: string,"language"?: string | null,"mode_slug"?: string,"note"?: string | null,"owner_id"?: string,"rank_max_id"?: string | null,"rank_min_id"?: string | null,"region_id"?: string | null,"reminded_at"?: string | null,"shared_at"?: string | null,"slots"?: number,"starts_at"?: string | null,"status"?: Database["public"]['Enums']["lobby_status"],"updated_at"?: string
                   }
                   Relationships: [
                     {
@@ -1083,6 +1083,44 @@ isOneToOne: false
       referencedColumns: ["id"]
     }
                   ]
+                },"saved_searches": {
+                  Row: {
+                    "alerts": boolean,"created_at": string,"game_id": string,"id": string,"language": string | null,"last_alert_at": string | null,"name": string,"query": string,"rank_max_tier": number | null,"rank_min_tier": number | null,"region_id": string | null,"role_id": string | null,"user_id": string
+                  }
+                  ComputedFields: never
+                  Insert: {
+                    "alerts"?: boolean,"created_at"?: string,"game_id": string,"id"?: string,"language"?: string | null,"last_alert_at"?: string | null,"name": string,"query"?: string,"rank_max_tier"?: number | null,"rank_min_tier"?: number | null,"region_id"?: string | null,"role_id"?: string | null,"user_id": string
+                  }
+                  Update: {
+                    "alerts"?: boolean,"created_at"?: string,"game_id"?: string,"id"?: string,"language"?: string | null,"last_alert_at"?: string | null,"name"?: string,"query"?: string,"rank_max_tier"?: number | null,"rank_min_tier"?: number | null,"region_id"?: string | null,"role_id"?: string | null,"user_id"?: string
+                  }
+                  Relationships: [
+                    {
+      foreignKeyName: "saved_searches_game_id_fkey"
+      columns: ["game_id"]
+isOneToOne: false
+      referencedRelation: "games"
+      referencedColumns: ["id"]
+    },{
+      foreignKeyName: "saved_searches_region_id_fkey"
+      columns: ["region_id"]
+isOneToOne: false
+      referencedRelation: "game_regions"
+      referencedColumns: ["id"]
+    },{
+      foreignKeyName: "saved_searches_role_id_fkey"
+      columns: ["role_id"]
+isOneToOne: false
+      referencedRelation: "game_roles"
+      referencedColumns: ["id"]
+    },{
+      foreignKeyName: "saved_searches_user_id_fkey"
+      columns: ["user_id"]
+isOneToOne: false
+      referencedRelation: "profiles"
+      referencedColumns: ["id"]
+    }
+                  ]
                 },"team_event_rsvps": {
                   Row: {
                     "answer": string,"event_id": string,"updated_at": string,"user_id": string
@@ -1422,6 +1460,9 @@ isOneToOne: false
             "accept_invite":
 { Args: { "p_code": string }; Returns: boolean
                            },
+"admin_stats":
+{ Args: Record<PropertyKey, never>; Returns: Json
+                           },
 "available_counts":
 { Args: Record<PropertyKey, never>; Returns: {
               "game_id": string,"players": number
@@ -1604,6 +1645,9 @@ isOneToOne: false
 "save_lobby_template":
 { Args: { "p_lobby": string,"p_name": string }; Returns: string
                            },
+"save_search":
+{ Args: { "p_game": string,"p_language": string,"p_name": string,"p_query": string,"p_rank_max": string,"p_rank_min": string,"p_region": string,"p_role": string }; Returns: string
+                           },
 "send_direct_message":
 { Args: { "p_body": string,"p_conversation": string }; Returns: number
                            },
@@ -1669,7 +1713,7 @@ isOneToOne: false
                            }
           }
           Enums: {
-            "card_rarity": "common"|"rare"|"epic"|"legendary","character_status": "main"|"comfort"|"playable"|"flexible","clip_provider": "youtube"|"twitch"|"streamable","fanart_status": "pending"|"approved"|"rejected"|"withdrawn","lobby_status": "open"|"full"|"closed","match_result": "win"|"loss"|"draw","notification_kind": "join_request"|"request_accepted"|"request_rejected"|"clip_comment"|"karma"|"restriction"|"fanart"|"ranking"|"team_invite"|"team_joined"|"team_event"|"team_lobby"|"friend_joined","report_reason": "spam"|"harassment"|"sexual"|"impersonation"|"cheating"|"other","report_status": "open"|"actioned"|"dismissed","request_status": "pending"|"accepted"|"rejected"|"withdrawn","visibility": "public"|"registered"|"private"
+            "card_rarity": "common"|"rare"|"epic"|"legendary","character_status": "main"|"comfort"|"playable"|"flexible","clip_provider": "youtube"|"twitch"|"streamable","fanart_status": "pending"|"approved"|"rejected"|"withdrawn","lobby_status": "open"|"full"|"closed","match_result": "win"|"loss"|"draw","notification_kind": "join_request"|"request_accepted"|"request_rejected"|"clip_comment"|"karma"|"restriction"|"fanart"|"ranking"|"team_invite"|"team_joined"|"team_event"|"team_lobby"|"friend_joined"|"karma_reminder"|"lobby_starting"|"search_match","report_reason": "spam"|"harassment"|"sexual"|"impersonation"|"cheating"|"other","report_status": "open"|"actioned"|"dismissed","request_status": "pending"|"accepted"|"rejected"|"withdrawn","visibility": "public"|"registered"|"private"
           }
           CompositeTypes: {
             [_ in never]: never
@@ -1789,7 +1833,7 @@ export const Constants = {
           }
         },"public": {
           Enums: {
-            "card_rarity": ["common", "rare", "epic", "legendary"],"character_status": ["main", "comfort", "playable", "flexible"],"clip_provider": ["youtube", "twitch", "streamable"],"fanart_status": ["pending", "approved", "rejected", "withdrawn"],"lobby_status": ["open", "full", "closed"],"match_result": ["win", "loss", "draw"],"notification_kind": ["join_request", "request_accepted", "request_rejected", "clip_comment", "karma", "restriction", "fanart", "ranking", "team_invite", "team_joined", "team_event", "team_lobby", "friend_joined"],"report_reason": ["spam", "harassment", "sexual", "impersonation", "cheating", "other"],"report_status": ["open", "actioned", "dismissed"],"request_status": ["pending", "accepted", "rejected", "withdrawn"],"visibility": ["public", "registered", "private"]
+            "card_rarity": ["common", "rare", "epic", "legendary"],"character_status": ["main", "comfort", "playable", "flexible"],"clip_provider": ["youtube", "twitch", "streamable"],"fanart_status": ["pending", "approved", "rejected", "withdrawn"],"lobby_status": ["open", "full", "closed"],"match_result": ["win", "loss", "draw"],"notification_kind": ["join_request", "request_accepted", "request_rejected", "clip_comment", "karma", "restriction", "fanart", "ranking", "team_invite", "team_joined", "team_event", "team_lobby", "friend_joined", "karma_reminder", "lobby_starting", "search_match"],"report_reason": ["spam", "harassment", "sexual", "impersonation", "cheating", "other"],"report_status": ["open", "actioned", "dismissed"],"request_status": ["pending", "accepted", "rejected", "withdrawn"],"visibility": ["public", "registered", "private"]
           }
         }
 } as const

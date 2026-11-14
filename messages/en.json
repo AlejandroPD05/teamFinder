@@ -352,7 +352,10 @@
       "team_joined": "{who} joined your team",
       "team_event": "{who} proposed a session",
       "team_lobby": "Your team created a group and you're in",
-      "friend_joined": "{who} joined with your invite"
+      "friend_joined": "{who} joined with your invite",
+      "karma_reminder": "Rate your group teammates",
+      "lobby_starting": "Your group starts in 15 minutes",
+      "search_match": "{who} is available and fits your search"
     }
   },
   "lobbies": {
@@ -528,7 +531,9 @@
     "noteMax": "300 characters at most.",
     "chars": "No < or >.",
     "approved": "Approved: it's now a card.",
-    "rejected": "Rejected. The person has been notified."
+    "rejected": "Rejected. The person has been notified.",
+    "approveLabel": "Approve “{title}” as a card",
+    "rejectLabel": "Reject “{title}”"
   },
   "titles": {
     "login": "Sign in",
@@ -560,7 +565,8 @@
     "privacy": "Privacy",
     "ranking": "Weekly ranking",
     "feedback": "Feedback",
-    "friends": "Invite friends"
+    "friends": "Invite friends",
+    "stats": "Stats"
   },
   "login": {
     "title": "Sign in to {app}",
@@ -1170,7 +1176,8 @@
     "you": "you",
     "player": "Player",
     "maybe": "{count} maybe",
-    "goToLobby": "Go to this session's group"
+    "goToLobby": "Go to this session's group",
+    "deleteLabel": "Delete the meetup on {when}"
   },
   "moderation": {
     "title": "Moderation",
@@ -1198,7 +1205,8 @@
     "portfolio": "Portfolio",
     "check": "Check it isn't official art or someone else's (reverse image search).",
     "feedback": "Feedback inbox",
-    "noFeedback": "No feedback."
+    "noFeedback": "No feedback.",
+    "stats": "View stats"
   },
   "welcome": {
     "kicker": "Welcome · step {step} of 3",
@@ -1531,5 +1539,58 @@
     "title": "What's new",
     "lead": "What has changed on {app}, newest first. Only changes that are already live on the site are listed.",
     "footerLink": "What's new"
+  },
+  "savedSearches": {
+    "title": "Saved searches",
+    "name": "Save this search as",
+    "placeholder": "e.g. Gold+ Controller",
+    "save": "Save",
+    "hint": "With the alert on, we'll let you know when someone who fits (role, rank, server and language) marks themselves “available now”. At most one alert every 3 hours per search.",
+    "ignores": "The other filters only apply when you open the search.",
+    "saved": "Search saved, with the alert on.",
+    "nameInvalid": "The name must be 2 to 40 characters, without < or >.",
+    "limit": "You already have 5 saved searches for this game. Delete one to save another.",
+    "alertOn": "Alert on",
+    "alertOff": "Alert off",
+    "alertsLabel": "Alert for the search {name}",
+    "alertsOn": "Alert turned on.",
+    "alertsOff": "Alert turned off.",
+    "deleteNamed": "Delete the search {name}",
+    "deleted": "Search deleted.",
+    "error": "The action couldn't be completed. Please try again."
+  },
+  "stats": {
+    "back": "Moderation",
+    "title": "Stats",
+    "lead": "Aggregate counts to see what works. They don't show anyone's data.",
+    "people": "People",
+    "users": "Accounts",
+    "newUsers": "+{week} this week · +{month} in 30 days",
+    "active": "Active in 7 days",
+    "activeNote": "Signed in this week.",
+    "onboarded": "Completed the welcome",
+    "onboardedNote": "Out of all accounts.",
+    "reach": "With push alerts",
+    "reachNote": "{email} with email alerts",
+    "groups": "Groups",
+    "lobbies": "Groups in 30 days",
+    "lobbiesNote": "{week} this week",
+    "filled": "Get filled",
+    "filledNote": "{count} full groups in 30 days",
+    "requests": "Requests",
+    "karma": "Karma ratings",
+    "last30": "Last 30 days.",
+    "last7": "Last 7 days.",
+    "community": "Community",
+    "teams": "Teams",
+    "clips": "Clips",
+    "messages": "Private messages",
+    "savedSearches": "Saved searches",
+    "feedback": "{count, plural, one {# unhandled suggestion} other {# unhandled suggestions}}",
+    "byGame": "By game",
+    "game": "Game",
+    "profiles": "Profiles",
+    "lobbies30": "Groups (30 days)",
+    "privacy": "Counts only, calculated when the page opens; nothing is stored or sent to third parties."
   }
 }

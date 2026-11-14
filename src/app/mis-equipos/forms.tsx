@@ -1,4 +1,5 @@
 "use client";
+import { outcomeOf, useStickyForm } from "@/lib/use-sticky-form";
 
 import { useTranslations } from "next-intl";
 import { useActionState } from "react";
@@ -46,9 +47,10 @@ function TeamFields({ name = "", description = "" }: { name?: string; descriptio
 
 export function CreateTeamForm({ gameName }: { gameName: string }) {
   const [state, action, pending] = useActionState<TeamState, FormData>(createTeamAction, null);
+  const form = useStickyForm(action, state, outcomeOf(state));
   const t = useTranslations("teams");
   return (
-    <form action={action} className="flex flex-col gap-3 surface p-5">
+    <form {...form} className="flex flex-col gap-3 surface p-5">
       <h2 className="font-semibold">{t("createTitle", { game: gameName })}</h2>
       <TeamFields />
       <div className="flex flex-wrap items-center gap-3">
@@ -63,11 +65,12 @@ export function CreateTeamForm({ gameName }: { gameName: string }) {
 
 export function EditTeamForm({ teamId, name, description }: { teamId: string; name: string; description: string }) {
   const [state, action, pending] = useActionState<TeamState, FormData>(updateTeamAction, null);
+  const form = useStickyForm(action, state, outcomeOf(state));
   const t = useTranslations("teams");
   return (
     <details className="text-sm">
       <summary className="min-h-11 cursor-pointer py-2 text-muted hover:text-text">{t("edit")}</summary>
-      <form action={action} className="mt-2 flex flex-col gap-3 rounded-md border border-line bg-bg p-3">
+      <form {...form} className="mt-2 flex flex-col gap-3 rounded-md border border-line bg-bg p-3">
         <input type="hidden" name="team_id" value={teamId} />
         <TeamFields name={name} description={description} />
         <div className="flex flex-wrap items-center gap-3">
@@ -84,10 +87,11 @@ export function EditTeamForm({ teamId, name, description }: { teamId: string; na
 /** En el perfil de un jugador: invitarle a uno de tus equipos de este juego. */
 export function InviteToTeam({ userId, teams }: { userId: string; teams: { id: string; name: string }[] }) {
   const [state, action, pending] = useActionState<TeamState, FormData>(inviteAction, null);
+  const form = useStickyForm(action, state, outcomeOf(state));
   const t = useTranslations("teams");
   if (state?.ok) return <Status state={state} />;
   return (
-    <form action={action} className="flex flex-wrap items-end gap-2">
+    <form {...form} className="flex flex-wrap items-end gap-2">
       <input type="hidden" name="user_id" value={userId} />
       <div className="flex flex-col gap-1.5">
         <label htmlFor="invite-team" className="text-sm font-medium">

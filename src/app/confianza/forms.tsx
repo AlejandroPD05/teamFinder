@@ -1,4 +1,5 @@
 "use client";
+import { outcomeOf, useStickyForm } from "@/lib/use-sticky-form";
 
 import { useTranslations } from "next-intl";
 import { useActionState } from "react";
@@ -59,6 +60,7 @@ export function ReportForm({
   label?: string;
 }) {
   const [state, action, pending] = useActionState<TrustState, FormData>(reportAction, null);
+  const form = useStickyForm(action, state, outcomeOf(state));
   const t = useTranslations("trust");
   const to = useTranslations("options.reportReasons");
   const id = `rep-${targetId}-${messageId ?? "u"}`;
@@ -66,7 +68,7 @@ export function ReportForm({
   return (
     <details className="text-sm">
       <summary className="min-h-11 cursor-pointer py-2 text-muted hover:text-text">{label ?? t("report")}</summary>
-      <form action={action} className="mt-2 flex flex-col gap-2 rounded-md border border-line bg-bg p-3">
+      <form {...form} className="mt-2 flex flex-col gap-2 rounded-md border border-line bg-bg p-3">
         <input type="hidden" name="target" value={targetId} />
         {messageId != null && <input type="hidden" name="message_id" value={messageId} />}
         {lobbyId && <input type="hidden" name="lobby_id" value={lobbyId} />}
@@ -101,11 +103,12 @@ export function ReportForm({
 
 export function KarmaVote({ lobbyId, targetId, name }: { lobbyId: string; targetId: string; name: string }) {
   const [state, action, pending] = useActionState<TrustState, FormData>(voteAction, null);
+  const form = useStickyForm(action, state, outcomeOf(state));
   const t = useTranslations("trust");
   const to = useTranslations("options.karmaTags");
   if (state?.ok) return <Status state={state} />;
   return (
-    <form action={action} className="flex flex-col gap-2">
+    <form {...form} className="flex flex-col gap-2">
       <input type="hidden" name="lobby_id" value={lobbyId} />
       <input type="hidden" name="target" value={targetId} />
       <input type="hidden" name="value" value="1" />
@@ -133,10 +136,11 @@ export function KarmaVote({ lobbyId, targetId, name }: { lobbyId: string; target
 
 export function ResolveForm({ reportId }: { reportId: string }) {
   const [state, action, pending] = useActionState<TrustState, FormData>(resolveAction, null);
+  const form = useStickyForm(action, state, outcomeOf(state));
   const t = useTranslations("trust");
   if (state?.ok) return <Status state={state} />;
   return (
-    <form action={action} className="flex flex-col gap-2">
+    <form {...form} className="flex flex-col gap-2">
       <input type="hidden" name="report_id" value={reportId} />
       <label htmlFor={`note-${reportId}`} className="text-sm font-medium">
         {t("modNote")}
@@ -177,13 +181,14 @@ export function DeleteAccountForm() {
 /** Moderación: restricción temporal (no puede crear grupos, pedir unirse, escribir, publicar clips ni dar emblemas). */
 export function RestrictForm({ userId, reportId }: { userId: string; reportId?: string }) {
   const [state, action, pending] = useActionState<TrustState, FormData>(restrictAction, null);
+  const form = useStickyForm(action, state, outcomeOf(state));
   const id = `res-${reportId ?? userId}`;
   const t = useTranslations("trust");
   if (state?.ok) return <Status state={state} />;
   return (
     <details className="text-sm">
       <summary className="min-h-11 cursor-pointer py-2 text-muted hover:text-text">{t("restrictTitle")}</summary>
-      <form action={action} className="mt-2 flex flex-col gap-2 rounded-md border border-line bg-bg p-3">
+      <form {...form} className="mt-2 flex flex-col gap-2 rounded-md border border-line bg-bg p-3">
         <input type="hidden" name="user_id" value={userId} />
         {reportId && <input type="hidden" name="report_id" value={reportId} />}
         <label htmlFor={`${id}-days`} className="font-medium">

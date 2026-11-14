@@ -4,6 +4,7 @@ import Link from "next/link";
 import { useLocale, useTranslations } from "next-intl";
 import { useActionState, useRef } from "react";
 import { INTL_LOCALE } from "@/lib/i18n/locale";
+import { outcomeOf, useStickyForm } from "@/lib/use-sticky-form";
 import { createEventAction, deleteEventAction, eventLobbyAction, rsvpAction, type TeamState } from "../../mis-equipos/actions";
 
 export type TeamEvent = {
@@ -30,13 +31,16 @@ function Status({ state }: { state: TeamState }) {
 export function CreateEventForm({ teamId }: { teamId: string }) {
   const [state, action, pending] = useActionState<TeamState, FormData>(createEventAction, null);
   const isoRef = useRef<HTMLInputElement>(null);
+  const { ref: formRef, onSubmit: send } = useStickyForm(action, state, outcomeOf(state), { resetOnSuccess: true });
   const t = useTranslations("teamEvents");
   return (
     <form
+      ref={formRef}
       action={action}
       onSubmit={(e) => {
         const local = (e.currentTarget.elements.namedItem("local_start") as HTMLInputElement).value;
         if (isoRef.current) isoRef.current.value = local ? new Date(local).toISOString() : "";
+        send(e);
       }}
       className="flex flex-col gap-3 rounded-md border border-line bg-bg p-4"
     >
@@ -109,14 +113,14 @@ function MakeLobby({ eventId, modes }: { eventId: string; modes: { slug: string;
   );
 }
 
-function DeleteEvent({ eventId, teamId }: { eventId: string; teamId: string }) {
+function DeleteEvent({ eventId, teamId, label }: { eventId: string; teamId: string; label: string }) {
   const [state, action, pending] = useActionState<TeamState, FormData>(deleteEventAction, null);
   const t = useTranslations("teamEvents");
   return (
     <form action={action}>
       <input type="hidden" name="event_id" value={eventId} />
       <input type="hidden" name="team_id" value={teamId} />
-      <button type="submit" disabled={pending} className="min-h-11 rounded-md px-3 text-sm text-muted hover:bg-panel-hover hover:text-text">
+      <button type="submit" disabled={pending} aria-label={t("deleteLabel", { when: label })} className="min-h-11 rounded-md px-3 text-sm text-muted hover:bg-panel-hover hover:text-text">
         {t("delete")}
       </button>
       {state && !state.ok && <Status state={state} />}
@@ -173,7 +177,7 @@ export function TeamEvents({
                 ) : (
                   canManage && <MakeLobby eventId={e.id} modes={modes} />
                 )}
-                {canManage && <DeleteEvent eventId={e.id} teamId={teamId} />}
+                {canManage && <DeleteEvent eventId={e.id} teamId={teamId} label={when.format(new Date(e.starts_at))} />}
               </li>
             );
           })}

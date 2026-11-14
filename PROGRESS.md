@@ -109,6 +109,10 @@ RSO de Riot si aprueban la clave (rango y estadísticas verificados), bot de Dis
 - 2026-11-14 — Páginas por rol (PR #38, hecha por un agente): `/equipos/<juego>/<rol>` («Busco Controlador en VALORANT») con texto propio del rol, personajes, cifras reales agregadas para visitantes sin sesión (perfiles públicos con ese rol, jugadores del juego, disponibles ahora) y migas en JSON-LD; en el sitemap. Los nombres de rol salen del catálogo (en español también en la versión inglesa).
 - 2026-11-14 — Novedades (`/novedades`, enlace en el pie): cambios visibles por fecha en `src/lib/changelog.ts`. Al publicar algo nuevo, se añade ahí.
 - 2026-11-14 — Calidad (PR #40, hecha por un agente): CSP estricta con nonce por petición en `src/proxy.ts` (`script-src 'self' 'nonce-…' 'strict-dynamic'`; la de `next.config.ts` se quitó); comprobada en producción. Rendimiento: el cliente de Supabase de los avisos en directo solo se carga con sesión y al navegador solo viajan los textos de los componentes de cliente (`src/i18n/client-messages.ts`: si un componente de cliente usa un espacio de nombres nuevo, añadirlo; un test avisa). Unos 30 % menos de JS en las páginas públicas. Pruebas solo con teclado (`e2e/keyboard.spec.ts`); arreglado que el formulario de crear grupo se vaciaba al volver con errores. Monitor de disponibilidad cada 15 min (`.github/workflows/uptime.yml`).
+- 2026-11-14 — Avisos de grupo: al cerrarse un grupo de 2 o más, cada miembro recibe «Valora a tus compañeros» (`karma_reminder`); 15 minutos antes de la hora de un grupo «Más tarde», aviso a sus miembros (`lobby_starting`, pg_cron cada 5 min, una vez por grupo).
+- 2026-11-14 — Búsquedas guardadas en /buscar (5 por juego) con alerta opcional: cuando alguien que encaja en rol, rango, servidor e idioma se marca «disponible ahora», aviso `search_match` (una vez cada 3 h por búsqueda). Respeta perfiles de juego privados, idiomas ocultos, bloqueos y restricciones. Los demás filtros solo se aplican al abrir la búsqueda.
+- 2026-11-14 — Estadísticas para moderación (`/moderacion/estadisticas`): solo recuentos agregados (cuentas, activas, grupos y % que se llenan, solicitudes, karma, equipos, clips, mensajes, alcance de push y correo, por juego). Nada se guarda ni sale a terceros.
+- 2026-11-14 — Formularios que no pierden lo escrito: `useStickyForm` (`src/lib/use-sticky-form.ts`) envía con `onSubmit` + `startTransition` y lleva el foco al primer campo con error; aplicado a perfil, bienvenida, denuncias, karma, moderación, equipos, partidas, clips, plantillas, sugerencias y quedadas.
 - 2026-11-04 — Botón principal: fondo `#8B5CF6` con texto `#0B0C12` (4,6:1). Blanco sobre `#8B5CF6` no llega a AA (4,2:1).
 
 ## Acciones del usuario
@@ -132,9 +136,6 @@ RSO de Riot si aprueban la clave (rango y estadísticas verificados), bot de Dis
 - [x] Prueba final: un usuario nuevo completa el recorrido entero en producción desde el móvil (2026-11-13).
 - [x] Docker instalado y en marcha.
 - [ ] Clave de producción de Riot: solicitada el 2026-11-05 (app 902996), sin respuesta a 2026-11-13 («Pending Review»; URL verificada con `public/riot.txt`; demo pública en `/demo`). Si se aprueba: implementar RSO en menos de 30 días o se pierde la clave.
-
-## Pendiente (técnico)
-- Revisar los formularios con `<form action>` + `useActionState` que pueden vaciarse al volver con un error (bienvenida, ajustes de correo, confianza, equipo, fanart, sugerencias), como se arregló en crear grupo.
 
 ## Riesgos
 - Riot rechaza la clave → el rango sigue siendo manual (ya contemplado).

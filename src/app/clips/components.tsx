@@ -2,11 +2,12 @@
 
 import { Play } from "lucide-react";
 import { useTranslations } from "next-intl";
-import { useActionState, useEffect, useRef, useState } from "react";
+import { useActionState, useState } from "react";
 import { optionKeys } from "@/lib/profile/options";
 import { embedUrl, PROVIDER_NAMES, sourceUrl, type ClipRef } from "@/lib/clips/links";
 import { REPORT_REASONS } from "@/lib/trust/options";
 import { addComment, postClip, reportClip, type ClipState } from "./actions";
+import { outcomeOf, useStickyForm } from "@/lib/use-sticky-form";
 
 const control = "min-h-11 w-full rounded-md border border-line bg-bg px-3 text-text focus:border-accent";
 
@@ -175,14 +176,10 @@ export function PostClipForm({ emblems, gameName }: { emblems: { id: string; nam
 
 export function CommentForm({ clipId }: { clipId: string }) {
   const [state, action, pending] = useActionState<ClipState, FormData>(addComment, null);
-  const form = useRef<HTMLFormElement>(null);
+  const form = useStickyForm(action, state, outcomeOf(state), { resetOnSuccess: true });
   const t = useTranslations("clips");
-  // Tras publicar, se vacía el campo.
-  useEffect(() => {
-    if (state?.ok) form.current?.reset();
-  }, [state]);
   return (
-    <form ref={form} action={action} className="flex flex-col gap-2">
+    <form {...form} className="flex flex-col gap-2">
       <input type="hidden" name="clip" value={clipId} />
       <label htmlFor="body" className="text-sm font-medium">
         {t("comment")}
@@ -200,6 +197,7 @@ export function CommentForm({ clipId }: { clipId: string }) {
 
 export function ClipReportForm({ clipId, commentId, label }: { clipId: string; commentId?: number; label?: string }) {
   const [state, action, pending] = useActionState<ClipState, FormData>(reportClip, null);
+  const form = useStickyForm(action, state, outcomeOf(state));
   const id = `rep-${clipId}-${commentId ?? "clip"}`;
   const tt = useTranslations("trust");
   const to = useTranslations("options.reportReasons");
@@ -207,7 +205,7 @@ export function ClipReportForm({ clipId, commentId, label }: { clipId: string; c
   return (
     <details className="text-sm">
       <summary className="min-h-11 cursor-pointer py-2 text-muted hover:text-text">{label ?? tt("report")}</summary>
-      <form action={action} className="mt-2 flex flex-col gap-2 rounded-md border border-line bg-bg p-3">
+      <form {...form} className="mt-2 flex flex-col gap-2 rounded-md border border-line bg-bg p-3">
         <input type="hidden" name="clip" value={clipId} />
         {commentId != null && <input type="hidden" name="comment" value={commentId} />}
         <label htmlFor={`${id}-reason`} className="font-medium">

@@ -5,6 +5,7 @@ import { useActionState, useRef, useState, useTransition } from "react";
 import { FANART_MAX_BYTES, FANART_TYPES } from "@/lib/limits";
 import { browserClient } from "@/lib/supabase/client";
 import { reviewFanartAction, submitFanartAction, withdrawFanartAction, type FanartState } from "./actions";
+import { outcomeOf, useStickyForm } from "@/lib/use-sticky-form";
 
 const control = "min-h-11 w-full rounded-md border border-line bg-bg px-3 text-text focus:border-accent";
 const btn = "min-h-11 rounded-md px-4 text-sm disabled:opacity-60";
@@ -131,13 +132,14 @@ export function WithdrawFanart({ id }: { id: string }) {
   );
 }
 
-export function ReviewFanart({ id }: { id: string }) {
+export function ReviewFanart({ id, title }: { id: string; title: string }) {
   const [state, action, pending] = useActionState<FanartState, FormData>(reviewFanartAction, null);
+  const form = useStickyForm(action, state, outcomeOf(state));
   const t = useTranslations("fanart");
   const tr = useTranslations("options.rarity");
   if (state?.ok) return <Status state={state} />;
   return (
-    <form action={action} className="flex flex-col gap-2">
+    <form {...form} className="flex flex-col gap-2">
       <input type="hidden" name="id" value={id} />
       <div className="grid gap-2 sm:grid-cols-2">
         <label className="flex flex-col gap-1 text-sm">
@@ -156,10 +158,10 @@ export function ReviewFanart({ id }: { id: string }) {
         </label>
       </div>
       <div className="flex flex-wrap items-center gap-2">
-        <button type="submit" name="decision" value="approve" disabled={pending} className={`${btn} bg-accent font-semibold text-bg`}>
+        <button type="submit" name="decision" value="approve" disabled={pending} aria-label={t("approveLabel", { title })} className={`${btn} bg-accent font-semibold text-bg`}>
           {t("approve")}
         </button>
-        <button type="submit" name="decision" value="reject" disabled={pending} className={`${btn} border border-line hover:bg-panel-hover`}>
+        <button type="submit" name="decision" value="reject" disabled={pending} aria-label={t("rejectLabel", { title })} className={`${btn} border border-line hover:bg-panel-hover`}>
           {t("reject")}
         </button>
         <Status state={state} />
