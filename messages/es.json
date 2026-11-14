@@ -892,7 +892,8 @@
     "closeConfirm": "¿Cerrar el grupo? Las solicitudes pendientes se rechazarán.",
     "requestMessage": "Mensaje para el grupo (opcional)",
     "requestPlaceholder": "Ej.: juego Omen y Clove, Oro 2",
-    "wait": "Un momento…"
+    "wait": "Un momento…",
+    "addToCalendar": "Añadir al calendario"
   },
   "share": {
     "title": "Compartir en Discord",
@@ -900,7 +901,17 @@
     "label": "Enlace para compartir",
     "copied": "Copiado",
     "copy": "Copiar enlace",
-    "create": "Crear enlace para compartir"
+    "create": "Crear enlace para compartir",
+    "discord": {
+      "lead": "También puedes publicarlo en el canal «buscar partida» del Discord de TeamFinder. Solo sale el juego, el modo, las plazas, los roles, el rango, el servidor, el idioma y el enlace (ni tu nombre ni la nota).",
+      "post": "Publicar en el Discord de TeamFinder",
+      "posted": "Publicado en el Discord de TeamFinder.",
+      "not_connected": "La publicación en Discord no está conectada todavía.",
+      "closed": "Solo se publican grupos abiertos.",
+      "not_shared": "Primero crea el enlace para compartir.",
+      "already_posted": "Este grupo ya está publicado en Discord.",
+      "limit_discord": "Como mucho 3 grupos al día en Discord. Prueba mañana."
+    }
   },
   "playerCard": {
     "player": "Jugador",
@@ -1183,7 +1194,8 @@
     "player": "Jugador",
     "maybe": "{count} quizá",
     "goToLobby": "Ir al grupo de esta quedada",
-    "deleteLabel": "Borrar la quedada del {when}"
+    "deleteLabel": "Borrar la quedada del {when}",
+    "addToCalendar": "Añadir las próximas quedadas al calendario"
   },
   "moderation": {
     "title": "Moderación",
@@ -1537,7 +1549,9 @@
           "lookFor": "Busca a alguien que prepare la posición con antelación y que sepa cuándo hay que abandonarla."
         }
       }
-    }
+    },
+    "ogLead": "Rango, idioma y horarios: forma tu grupo gratis",
+    "ogAlt": "Busco {role} en {game}, en {app}"
   },
   "changelog": {
     "metaTitle": "Novedades",
@@ -1597,6 +1611,22 @@
     "game": "Juego",
     "profiles": "Perfiles",
     "lobbies30": "Grupos (30 días)",
-    "privacy": "Solo recuentos calculados al abrir la página; no se guarda ni se envía nada a terceros."
+    "privacy": "Solo recuentos calculados al abrir la página; no se guarda ni se envía nada a terceros.",
+    "plans": "Planes gratuitos",
+    "dbSize": "Base de datos",
+    "storage": "Archivos (fanart, avatares)",
+    "monthlyUsers": "Usuarios activos (30 días)",
+    "emailsToday": "Correos de avisos hoy",
+    "nearLimit": "cerca del límite",
+    "plansNote": "Límites de Supabase (base de datos, archivos y usuarios activos al mes) y de Brevo (300 correos al día) consultados el 14-11-2026. Los correos de inicio de sesión también cuentan para Brevo y no salen aquí; el tráfico de salida (5 GB) solo se ve en el panel de Supabase.",
+    "inactive": "{count, plural, one {# cuenta sin entrar en 60 días (fuera de la búsqueda)} other {# cuentas sin entrar en 60 días (fuera de la búsqueda)}}",
+    "discordLobbies": "{count, plural, one {# grupo publicado en Discord esta semana} other {# grupos publicados en Discord esta semana}}"
+  },
+  "calendar": {
+    "lobbyTitle": "{mode} de {game} · {app}",
+    "lobbyDescription": "Grupo de TeamFinder: {url}",
+    "teamTitle": "Quedada de {team}",
+    "teamDescription": "Equipo en TeamFinder: {url}",
+    "teamCalendar": "Quedadas de {team}"
   }
 }

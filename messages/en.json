@@ -892,7 +892,8 @@
     "closeConfirm": "Close the group? Pending requests will be declined.",
     "requestMessage": "Message for the group (optional)",
     "requestPlaceholder": "E.g. I play Omen and Clove, Gold 2",
-    "wait": "One moment…"
+    "wait": "One moment…",
+    "addToCalendar": "Add to calendar"
   },
   "share": {
     "title": "Share on Discord",
@@ -900,7 +901,17 @@
     "label": "Link to share",
     "copied": "Copied",
     "copy": "Copy link",
-    "create": "Create a share link"
+    "create": "Create a share link",
+    "discord": {
+      "lead": "You can also post it in the “looking for a match” channel of the TeamFinder Discord. Only the game, mode, slots, roles, rank, server, language and link are shown (not your name or the note).",
+      "post": "Post on the TeamFinder Discord",
+      "posted": "Posted on the TeamFinder Discord.",
+      "not_connected": "Posting to Discord isn't connected yet.",
+      "closed": "Only open groups can be posted.",
+      "not_shared": "Create the share link first.",
+      "already_posted": "This group is already posted on Discord.",
+      "limit_discord": "At most 3 groups a day on Discord. Try again tomorrow."
+    }
   },
   "playerCard": {
     "player": "Player",
@@ -1183,7 +1194,8 @@
     "player": "Player",
     "maybe": "{count} maybe",
     "goToLobby": "Go to this session's group",
-    "deleteLabel": "Delete the meetup on {when}"
+    "deleteLabel": "Delete the meetup on {when}",
+    "addToCalendar": "Add upcoming meetups to your calendar"
   },
   "moderation": {
     "title": "Moderation",
@@ -1537,7 +1549,9 @@
           "lookFor": "Look for someone who sets up the position ahead of time and knows when it's time to leave it."
         }
       }
-    }
+    },
+    "ogLead": "Rank, language and schedule: build your group for free",
+    "ogAlt": "Looking for a {role} in {game}, on {app}"
   },
   "changelog": {
     "metaTitle": "What's new",
@@ -1597,6 +1611,22 @@
     "game": "Game",
     "profiles": "Profiles",
     "lobbies30": "Groups (30 days)",
-    "privacy": "Counts only, calculated when the page opens; nothing is stored or sent to third parties."
+    "privacy": "Counts only, calculated when the page opens; nothing is stored or sent to third parties.",
+    "plans": "Free plans",
+    "dbSize": "Database",
+    "storage": "Files (fanart, avatars)",
+    "monthlyUsers": "Active users (30 days)",
+    "emailsToday": "Alert emails today",
+    "nearLimit": "close to the limit",
+    "plansNote": "Supabase limits (database, files and monthly active users) and Brevo's (300 emails a day), checked on 2026-11-14. Sign-in emails also count for Brevo and aren't shown here; outbound traffic (5 GB) is only visible in the Supabase dashboard.",
+    "inactive": "{count, plural, one {# account not signed in for 60 days (hidden from search)} other {# accounts not signed in for 60 days (hidden from search)}}",
+    "discordLobbies": "{count, plural, one {# group posted on Discord this week} other {# groups posted on Discord this week}}"
+  },
+  "calendar": {
+    "lobbyTitle": "{mode} in {game} · {app}",
+    "lobbyDescription": "TeamFinder group: {url}",
+    "teamTitle": "{team} meetup",
+    "teamDescription": "Team on TeamFinder: {url}",
+    "teamCalendar": "{team} meetups"
   }
 }

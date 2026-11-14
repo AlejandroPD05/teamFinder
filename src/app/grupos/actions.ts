@@ -115,3 +115,23 @@ export async function shareLobbyAction(_prev: ShareState, fd: FormData): Promise
   if (error) return { ok: false, message: error.hint === "closed" ? t("isClosed") : lobbyError(error.hint) };
   return { ok: true, url: `${siteUrl()}/unete/${id.data}` };
 }
+
+export type DiscordState = { ok: boolean; message: string } | null;
+
+/** El creador publica el grupo ya compartido en el canal de Discord de TeamFinder (si la integración está conectada). */
+export async function postLobbyDiscordAction(_prev: DiscordState, fd: FormData): Promise<DiscordState> {
+  const supabase = await session();
+  const { locale, lobbyError } = await messages();
+  const t = translator(locale, "share");
+  const id = lobbyId.safeParse(fd.get("lobby_id"));
+  if (!id.success) return { ok: false, message: lobbyError() };
+  const { error } = await supabase.rpc("post_lobby_discord", { p_lobby: id.data });
+  if (error) {
+    const known = ["not_connected", "closed", "not_shared", "already_posted", "limit_discord"] as const;
+    const hint = known.find((h) => h === error.hint);
+    return { ok: false, message: hint ? t(`discord.${hint}`) : lobbyError(error.hint) };
+  }
+  revalidatePath(`/grupos/${id.data}`);
+  return { ok: true, message: t("discord.posted") };
+}
+

@@ -97,7 +97,8 @@ test("enviar fanart y verlo pendiente; una restricción se avisa en el inicio", 
   await expect(page.getByRole("main").getByRole("alert")).toContainText("Tu cuenta está restringida hasta el");
   await expect(page.getByRole("main").getByRole("alert")).toContainText("Motivo: Prueba e2e");
   await page.getByRole("link", { name: /^Notificaciones, \d+ sin leer$/ }).click();
-  await expect(page.getByText("Tu cuenta está restringida temporalmente")).toBeVisible();
+  // En la lista (el aviso en directo puede salir a la vez como notificación flotante, fuera de main).
+  await expect(page.getByRole("main").getByText("Tu cuenta está restringida temporalmente")).toBeVisible();
 
   // Y no puede publicar fanart mientras dure.
   await page.goto("/coleccion/fanart");

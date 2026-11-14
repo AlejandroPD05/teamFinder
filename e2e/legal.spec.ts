@@ -7,7 +7,7 @@ test("normas y privacidad recogen lo que exige la normativa", async ({ page }) =
     await expect(page.getByRole("heading", { level: 2, name: section })).toBeVisible();
   }
   // Texto definitivo: con versión y fecha, sin aviso de borrador.
-  await expect(page.getByText(/Versión 1\.1, en vigor desde el/)).toBeVisible();
+  await expect(page.getByText(/Versión 1\.2, en vigor desde el/)).toBeVisible();
   await expect(page.getByText("no lo ha revisado un abogado", { exact: false })).toHaveCount(0);
   // La escala de medidas incluye las restricciones temporales (ya existen).
   await expect(page.getByText("Restricción temporal de 1 a 30 días", { exact: false })).toBeVisible();

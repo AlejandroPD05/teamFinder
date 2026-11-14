@@ -82,8 +82,10 @@ export default async function RootLayout({ children }: LayoutProps<"/">) {
         supabase.rpc("my_rooms"),
         supabase.rpc("my_conversations"),
         supabase.from("notifications").select("id", { count: "exact", head: true }).is("read_at", null),
+        // Última visita (como mucho una escritura cada 12 h): quien no entra en 60 días deja de salir en la búsqueda.
+        supabase.rpc("touch_seen"),
       ])
-    : [null, null, null];
+    : [null, null, null, null];
   const unread =
     (rooms?.data ?? []).reduce((n, r) => n + Number(r.unread ?? 0), 0) +
     (dms?.data ?? []).reduce((n, c) => n + (c.blocked ? 0 : Number(c.unread ?? 0)), 0);

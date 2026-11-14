@@ -1,7 +1,7 @@
 import { getLocale, getTranslations } from "next-intl/server";
 import Link from "next/link";
 import { notFound, redirect } from "next/navigation";
-import { pct, type AdminStats } from "@/lib/admin-stats";
+import { FREE_LIMITS, formatBytes, pct, usage, type AdminStats } from "@/lib/admin-stats";
 import { INTL_LOCALE } from "@/lib/i18n/locale";
 import { titled } from "@/lib/i18n/metadata";
 import { createClient } from "@/lib/supabase/server";
@@ -14,6 +14,26 @@ function Stat({ label, value, note }: { label: string; value: string; note?: str
       <dt className="text-sm text-muted">{label}</dt>
       <dd className="font-display text-2xl font-semibold tabular-nums">{value}</dd>
       {note && <dd className="text-xs text-muted">{note}</dd>}
+    </div>
+  );
+}
+
+/** Uso de un plan gratuito: barra con el porcentaje y aviso en texto (no solo color) a partir del 80 %. */
+function Usage({ label, used, limit, percent, warn, warning }: { label: string; used: string; limit: string; percent: number; warn: boolean; warning: string }) {
+  return (
+    <div className="surface flex flex-col gap-2 p-4">
+      <dt className="text-sm text-muted">{label}</dt>
+      <dd className="flex flex-col gap-2">
+        <span className="font-display text-xl font-semibold tabular-nums">
+          {used} <span className="text-sm font-normal text-muted">/ {limit}</span>
+        </span>
+        <span aria-hidden="true" className="h-2 overflow-hidden rounded-full bg-bg">
+          <span className={`block h-full ${warn ? "bg-danger" : "bg-accent"}`} style={{ width: `${Math.min(100, Math.max(percent, 1))}%` }} />
+        </span>
+        <span className={`text-xs ${warn ? "font-semibold text-danger" : "text-muted"}`}>
+          {percent} %{warn ? ` · ${warning}` : ""}
+        </span>
+      </dd>
     </div>
   );
 }
@@ -109,6 +129,22 @@ export default async function StatsPage() {
           </tbody>
         </table>
       </section>
+      <section aria-labelledby="st-planes" className="flex flex-col gap-3">
+        <h2 id="st-planes" className="font-display text-xl font-semibold">
+          {t("plans")}
+        </h2>
+        <dl className="grid gap-3 sm:grid-cols-2 lg:grid-cols-4">
+          <Usage label={t("dbSize")} used={formatBytes(s.db_bytes, INTL_LOCALE[locale])} limit={formatBytes(FREE_LIMITS.dbBytes, INTL_LOCALE[locale])} warning={t("nearLimit")} {...usage(s.db_bytes, FREE_LIMITS.dbBytes)} />
+          <Usage label={t("storage")} used={formatBytes(s.storage_bytes, INTL_LOCALE[locale])} limit={formatBytes(FREE_LIMITS.storageBytes, INTL_LOCALE[locale])} warning={t("nearLimit")} {...usage(s.storage_bytes, FREE_LIMITS.storageBytes)} />
+          <Usage label={t("monthlyUsers")} used={n.format(s.seen_30d)} limit={n.format(FREE_LIMITS.monthlyUsers)} warning={t("nearLimit")} {...usage(s.seen_30d, FREE_LIMITS.monthlyUsers)} />
+          <Usage label={t("emailsToday")} used={n.format(s.emails_today)} limit={n.format(FREE_LIMITS.emailsPerDay)} warning={t("nearLimit")} {...usage(s.emails_today, FREE_LIMITS.emailsPerDay)} />
+        </dl>
+        <p className="text-xs text-muted">{t("plansNote")}</p>
+        <p className="text-sm text-muted">
+          {t("inactive", { count: s.inactive_60d })} · {t("discordLobbies", { count: s.discord_lobbies_7d })}
+        </p>
+      </section>
+
       <p className="text-xs text-muted">{t("privacy")}</p>
     </section>
   );

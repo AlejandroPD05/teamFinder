@@ -1,3 +1,4 @@
+import { CalendarPlus } from "lucide-react";
 import { getLocale, getTranslations } from "next-intl/server";
 import { titled } from "@/lib/i18n/metadata";
 import Image from "next/image";
@@ -52,6 +53,8 @@ export default async function LobbyPage({ params }: PageProps<"/grupos/[id]">) {
 
   const isOwner = lobby.owner_id === me;
   const isMember = members.some((m) => m.user_id === me);
+  // Solo se ofrece publicar en Discord si la integración está conectada (el webhook no sale de la base de datos).
+  const discordEnabled = isOwner && lobby.status === "open" && !lobby.discord_posted_at ? Boolean((await supabase.rpc("discord_lobbies_enabled")).data) : false;
   // Últimos 50 mensajes (la RLS solo los devuelve a miembros).
   const messages = isMember
     ? ((await supabase.from("lobby_messages").select("id, user_id, body, created_at").eq("lobby_id", id).order("id", { ascending: false }).limit(50)).data ?? []).reverse()
@@ -132,6 +135,15 @@ export default async function LobbyPage({ params }: PageProps<"/grupos/[id]">) {
           <div>
             <dt className="text-muted">{t("when")}</dt>
             <dd>{formatStart(lobby.starts_at, locale)}</dd>
+            {(isMember || isOwner) && lobby.status !== "closed" && lobby.starts_at && new Date(lobby.starts_at) > new Date() && (
+              <dd>
+                {/* Archivo .ics (no es una página): enlace normal con descarga. */}
+                <a href={`/grupos/${lobby.id}/calendario`} download className="inline-flex min-h-11 items-center gap-1.5 text-accent-soft underline underline-offset-4">
+                  <CalendarPlus aria-hidden="true" className="size-4" />
+                  {t("addToCalendar")}
+                </a>
+              </dd>
+            )}
           </div>
           <div>
             <dt className="text-muted">{t("extras")}</dt>
@@ -216,7 +228,11 @@ export default async function LobbyPage({ params }: PageProps<"/grupos/[id]">) {
       )}
 
       {isOwner && lobby.status !== "closed" && (
-        <ShareLobby lobbyId={lobby.id} sharedUrl={lobby.shared_at ? `${siteUrl()}/unete/${lobby.id}` : null} />
+        <ShareLobby
+          lobbyId={lobby.id}
+          sharedUrl={lobby.shared_at ? `${siteUrl()}/unete/${lobby.id}` : null}
+          discord={lobby.discord_posted_at ? "posted" : lobby.status === "open" && discordEnabled ? "available" : null}
+        />
       )}
 
       {isOwner && <SaveTemplate lobbyId={lobby.id} defaultName={modeName} />}

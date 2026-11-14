@@ -1,5 +1,6 @@
 "use client";
 
+import { CalendarPlus } from "lucide-react";
 import Link from "next/link";
 import { useLocale, useTranslations } from "next-intl";
 import { useActionState, useRef } from "react";
@@ -152,6 +153,12 @@ export function TeamEvents({
       </h2>
       <p className="text-sm text-muted">{t("lead")}</p>
       <CreateEventForm teamId={teamId} />
+      {events.some((e) => new Date(e.starts_at) > new Date()) && (
+        <a href={`/equipo/${teamId}/calendario`} download className="inline-flex min-h-11 items-center gap-1.5 self-start text-sm text-accent-soft underline underline-offset-4">
+          <CalendarPlus aria-hidden="true" className="size-4" />
+          {t("addToCalendar")}
+        </a>
+      )}
       {events.length === 0 ? (
         <p className="text-sm text-muted">{t("none")}</p>
       ) : (

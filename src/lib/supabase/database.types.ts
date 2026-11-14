@@ -521,14 +521,14 @@ isOneToOne: false
                   ]
                 },"lobbies": {
                   Row: {
-                    "closed_at": string | null,"created_at": string,"filled_at": string | null,"game_id": string,"goal": string | null,"id": string,"language": string | null,"mode_slug": string,"note": string | null,"owner_id": string,"rank_max_id": string | null,"rank_min_id": string | null,"region_id": string | null,"reminded_at": string | null,"shared_at": string | null,"slots": number,"starts_at": string | null,"status": Database["public"]['Enums']["lobby_status"],"updated_at": string
+                    "closed_at": string | null,"created_at": string,"discord_posted_at": string | null,"filled_at": string | null,"game_id": string,"goal": string | null,"id": string,"language": string | null,"mode_slug": string,"note": string | null,"owner_id": string,"rank_max_id": string | null,"rank_min_id": string | null,"region_id": string | null,"reminded_at": string | null,"shared_at": string | null,"slots": number,"starts_at": string | null,"status": Database["public"]['Enums']["lobby_status"],"updated_at": string
                   }
                   ComputedFields: never
                   Insert: {
-                    "closed_at"?: string | null,"created_at"?: string,"filled_at"?: string | null,"game_id": string,"goal"?: string | null,"id"?: string,"language"?: string | null,"mode_slug": string,"note"?: string | null,"owner_id": string,"rank_max_id"?: string | null,"rank_min_id"?: string | null,"region_id"?: string | null,"reminded_at"?: string | null,"shared_at"?: string | null,"slots": number,"starts_at"?: string | null,"status"?: Database["public"]['Enums']["lobby_status"],"updated_at"?: string
+                    "closed_at"?: string | null,"created_at"?: string,"discord_posted_at"?: string | null,"filled_at"?: string | null,"game_id": string,"goal"?: string | null,"id"?: string,"language"?: string | null,"mode_slug": string,"note"?: string | null,"owner_id": string,"rank_max_id"?: string | null,"rank_min_id"?: string | null,"region_id"?: string | null,"reminded_at"?: string | null,"shared_at"?: string | null,"slots": number,"starts_at"?: string | null,"status"?: Database["public"]['Enums']["lobby_status"],"updated_at"?: string
                   }
                   Update: {
-                    "closed_at"?: string | null,"created_at"?: string,"filled_at"?: string | null,"game_id"?: string,"goal"?: string | null,"id"?: string,"language"?: string | null,"mode_slug"?: string,"note"?: string | null,"owner_id"?: string,"rank_max_id"?: string | null,"rank_min_id"?: string | null,"region_id"?: string | null,"reminded_at"?: string | null,"shared_at"?: string | null,"slots"?: number,"starts_at"?: string | null,"status"?: Database["public"]['Enums']["lobby_status"],"updated_at"?: string
+                    "closed_at"?: string | null,"created_at"?: string,"discord_posted_at"?: string | null,"filled_at"?: string | null,"game_id"?: string,"goal"?: string | null,"id"?: string,"language"?: string | null,"mode_slug"?: string,"note"?: string | null,"owner_id"?: string,"rank_max_id"?: string | null,"rank_min_id"?: string | null,"region_id"?: string | null,"reminded_at"?: string | null,"shared_at"?: string | null,"slots"?: number,"starts_at"?: string | null,"status"?: Database["public"]['Enums']["lobby_status"],"updated_at"?: string
                   }
                   Relationships: [
                     {
@@ -1520,6 +1520,9 @@ isOneToOne: false
 "delete_team_event":
 { Args: { "p_event": string }; Returns: undefined
                            },
+"discord_lobbies_enabled":
+{ Args: Record<PropertyKey, never>; Returns: boolean
+                           },
 "game_player_counts":
 { Args: Record<PropertyKey, never>; Returns: {
               "game_id": string,"players": number
@@ -1597,6 +1600,9 @@ isOneToOne: false
                            },
 "post_clip":
 { Args: { "p_emblem": string,"p_game": string,"p_provider": Database["public"]['Enums']["clip_provider"],"p_title": string,"p_video": string }; Returns: string
+                           },
+"post_lobby_discord":
+{ Args: { "p_lobby": string }; Returns: undefined
                            },
 "prune_push_subscriptions":
 { Args: { "p_endpoints": (string)[],"p_secret": string }; Returns: number
@@ -1690,6 +1696,9 @@ isOneToOne: false
                            },
 "toggle_clip_vote":
 { Args: { "p_clip": string,"p_emblem": string }; Returns: boolean
+                           },
+"touch_seen":
+{ Args: Record<PropertyKey, never>; Returns: string
                            },
 "unblock_user":
 { Args: { "p_user": string }; Returns: undefined
