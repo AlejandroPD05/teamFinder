@@ -35,7 +35,7 @@ async function audit(page: Page, path: string) {
 }
 
 test("páginas públicas sin infracciones WCAG A/AA", async ({ page }) => {
-  for (const path of ["/", "/entrar", "/privacidad", "/normas", "/demo", "/equipos/valorant", "/equipos/apex"]) await audit(page, path);
+  for (const path of ["/", "/entrar", "/privacidad", "/normas", "/demo", "/equipos/valorant", "/equipos/apex", "/equipos/valorant/controller", "/equipos/cs2/awper", "/novedades"]) await audit(page, path);
 });
 
 test("páginas con sesión sin infracciones WCAG A/AA", async ({ page }, info) => {
