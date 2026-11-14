@@ -40,7 +40,7 @@ export default async function TeamPage({ params }: PageProps<"/equipo/[id]">) {
     loadGames(),
     supabase
       .from("team_events")
-      .select("id, starts_at, note, created_by, lobby_id, team_event_rsvps(user_id, answer)")
+      .select("id, starts_at, note, created_by, lobby_id, repeat_weekly, team_event_rsvps(user_id, answer)")
       .eq("team_id", id)
       .gte("starts_at", since)
       .order("starts_at"),
@@ -124,6 +124,7 @@ export default async function TeamPage({ params }: PageProps<"/equipo/[id]">) {
             note: e.note,
             created_by: e.created_by,
             lobby_id: e.lobby_id,
+            repeat_weekly: e.repeat_weekly,
             rsvps: e.team_event_rsvps as TeamEvent["rsvps"],
           }))}
         />

@@ -93,6 +93,14 @@ export async function lobbyAction(_prev: ActionState, fd: FormData): Promise<Act
       result = await supabase.rpc("close_lobby", { p_lobby: id.data });
       ok = t("closed");
       break;
+    case "waitlist":
+      result = await supabase.rpc("join_waitlist", { p_lobby: id.data });
+      ok = t("waitlisted");
+      break;
+    case "unwaitlist":
+      result = await supabase.rpc("leave_waitlist", { p_lobby: id.data });
+      ok = t("unwaitlisted");
+      break;
     default:
       return { ok: false, message: lobbyError() };
   }

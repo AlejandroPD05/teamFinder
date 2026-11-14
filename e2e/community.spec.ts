@@ -81,10 +81,11 @@ test("compartir un grupo: enlace público con resumen y tarjeta para Discord", a
   await anon.close();
 });
 
-test("quedadas: proponer, responder y crear el grupo con los que van", async ({ browser }, info) => {
+test("quedadas: proponer (semanal), responder, crear el grupo con los que van y lista de espera", async ({ browser }, info) => {
+  test.setTimeout(90_000);
   const stamp = `${info.project.name}-${Date.now()}`;
-  const [aCtx, bCtx] = await Promise.all([browser.newContext(), browser.newContext()]);
-  const [a, b] = await Promise.all([aCtx.newPage(), bCtx.newPage()]);
+  const [aCtx, bCtx, cCtx] = await Promise.all([browser.newContext(), browser.newContext(), browser.newContext()]);
+  const [a, b, c] = await Promise.all([aCtx.newPage(), bCtx.newPage(), cCtx.newPage()]);
   try {
     const bEmail = `e2e-quedada-b-${stamp}@example.test`;
     await signIn(a, `e2e-quedada-a-${stamp}@example.test`);
@@ -107,8 +108,12 @@ test("quedadas: proponer, responder y crear el grupo con los que van", async ({ 
     const local = new Date(soon.getTime() - soon.getTimezoneOffset() * 60_000).toISOString().slice(0, 16);
     await a.getByLabel("Día y hora").fill(local);
     await a.getByLabel("Nota (opcional)").last().fill("Ranked");
+    await a.getByLabel("Repetir cada semana a la misma hora").check();
     await a.getByRole("button", { name: "Proponer quedada" }).click();
     await expect(a.getByText("Quedada propuesta. Se ha avisado al equipo.")).toBeVisible();
+    await expect(a.getByText("Cada semana", { exact: true })).toBeVisible();
+    await expect(a.getByRole("button", { name: /^Dejar de repetir la quedada del/ })).toBeVisible();
+    await expect(a.getByRole("link", { name: "Añadir las próximas quedadas al calendario" })).toBeVisible();
 
     await b.goto(teamUrl);
     await b.getByRole("button", { name: "Voy" }).click();
@@ -119,8 +124,18 @@ test("quedadas: proponer, responder y crear el grupo con los que van", async ({ 
     await a.getByRole("button", { name: "Crear grupo con los que van" }).click();
     await expect(a).toHaveURL(/\/grupos\/[0-9a-f-]{36}$/);
     await expect(a.getByText("Completo · 2/2 plazas")).toBeVisible();
+
+    // Alguien de fuera ve el grupo lleno y se apunta a la lista de espera.
+    const lobbyUrl = a.url();
+    await signIn(c, `e2e-quedada-c-${stamp}@example.test`);
+    await c.goto(lobbyUrl);
+    await expect(c.getByRole("heading", { name: "Grupo lleno" })).toBeVisible();
+    await c.getByRole("button", { name: "Avisarme si se libera una plaza" }).click();
+    await expect(c.getByText("Estás en la lista de espera: te avisaremos si se libera una plaza.")).toBeVisible();
+    await c.getByRole("button", { name: "Salir de la lista de espera" }).click();
+    await expect(c.getByRole("button", { name: "Avisarme si se libera una plaza" })).toBeVisible();
   } finally {
-    await Promise.all([aCtx.close(), bCtx.close()]);
+    await Promise.all([aCtx.close(), bCtx.close(), cCtx.close()]);
   }
 });
 

@@ -23,7 +23,7 @@ export function ActionForm({
   ariaLabel,
 }: {
   lobbyId: string;
-  intent: "request" | "withdraw" | "accept" | "reject" | "leave" | "close";
+  intent: "request" | "withdraw" | "accept" | "reject" | "leave" | "close" | "waitlist" | "unwaitlist";
   label: string;
   pendingLabel?: string;
   variant?: keyof typeof styles;

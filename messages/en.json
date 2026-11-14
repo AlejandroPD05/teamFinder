@@ -230,7 +230,8 @@
       "not_pending": "That request has already been answered.",
       "owner": "As the creator, close the group instead of leaving it.",
       "restricted": "Your account is temporarily restricted: you can't do this until the restriction ends.",
-      "fallback": "The action couldn't be completed. Please try again."
+      "fallback": "The action couldn't be completed. Please try again.",
+      "not_full": "The group has free slots: ask to join directly."
     },
     "fanart": {
       "rate_limited": "You've submitted 5 artworks this week. Try again later.",
@@ -355,7 +356,8 @@
       "friend_joined": "{who} joined with your invite",
       "karma_reminder": "Rate your group teammates",
       "lobby_starting": "Your group starts in 15 minutes",
-      "search_match": "{who} is available and fits your search"
+      "search_match": "{who} is available and fits your search",
+      "waitlist_open": "A slot freed up in a group you were waiting for"
     }
   },
   "lobbies": {
@@ -390,7 +392,9 @@
       "rejected": "Request declined.",
       "left": "You've left the group.",
       "closed": "Group closed.",
-      "isClosed": "The group is closed."
+      "isClosed": "The group is closed.",
+      "waitlisted": "We'll let you know if a slot frees up.",
+      "unwaitlisted": "You left the waitlist."
     }
   },
   "ranking": {
@@ -893,7 +897,12 @@
     "requestMessage": "Message for the group (optional)",
     "requestPlaceholder": "E.g. I play Omen and Clove, Gold 2",
     "wait": "One moment…",
-    "addToCalendar": "Add to calendar"
+    "addToCalendar": "Add to calendar",
+    "waitlistTitle": "Group full",
+    "waitlistLead": "Join the waitlist and we'll let you know if a slot frees up. Everyone waiting is notified at once: whoever asks to join first has the best chance.",
+    "waitlistJoin": "Notify me if a slot frees up",
+    "waitlistOn": "You're on the waitlist: we'll let you know if a slot frees up.",
+    "waitlistLeave": "Leave the waitlist"
   },
   "share": {
     "title": "Share on Discord",
@@ -1170,7 +1179,8 @@
       "rsvpSaved": "Answer saved.",
       "eventDeleted": "Session deleted.",
       "chooseMode": "Choose the mode.",
-      "eventHasLobby": "This session already has a group."
+      "eventHasLobby": "This session already has a group.",
+      "repeatStopped": "It won't repeat anymore. This week's stays."
     }
   },
   "teamEvents": {
@@ -1195,7 +1205,11 @@
     "maybe": "{count} maybe",
     "goToLobby": "Go to this session's group",
     "deleteLabel": "Delete the meetup on {when}",
-    "addToCalendar": "Add upcoming meetups to your calendar"
+    "addToCalendar": "Add upcoming meetups to your calendar",
+    "repeatWeekly": "Repeat every week at the same time",
+    "weekly": "Every week",
+    "stopRepeat": "Stop repeating",
+    "stopRepeatLabel": "Stop repeating the meetup on {when}"
   },
   "moderation": {
     "title": "Moderation",

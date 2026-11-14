@@ -14,6 +14,14 @@ export const CHANGELOG: ChangelogEntry[] = [
     date: "2026-11-14",
     items: [
       {
+        es: "Lista de espera en los grupos llenos: te avisamos si se libera una plaza.",
+        en: "Waitlist for full groups: we'll let you know if a slot frees up.",
+      },
+      {
+        es: "Quedadas de equipo que se repiten cada semana a la misma hora.",
+        en: "Team meetups that repeat every week at the same time.",
+      },
+      {
         es: "Publica tu grupo en el Discord de TeamFinder desde «Compartir» (solo si tú lo pides).",
         en: "Post your group on the TeamFinder Discord from “Share” (only if you choose to).",
       },

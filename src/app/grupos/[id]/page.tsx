@@ -69,6 +69,11 @@ export default async function LobbyPage({ params }: PageProps<"/grupos/[id]">) {
     : new Set<string>();
   const toVote = canVote ? members.filter((m) => m.user_id !== me && !voted.has(m.user_id)) : [];
   const myRequest = requests.find((r) => r.user_id === me && r.status === "pending");
+  // Lista de espera (grupo lleno): la RLS solo devuelve la fila propia.
+  const waiting =
+    !isOwner && !isMember && lobby.status === "full"
+      ? Boolean((await supabase.from("lobby_waitlist").select("lobby_id").eq("lobby_id", id).maybeSingle()).data)
+      : false;
   const pending = requests.filter((r) => r.status === "pending");
   const modeName = catalog.modes.find((m) => m.slug === lobby.mode_slug)?.name ?? lobby.mode_slug;
   const rankRow = (rid: string | null) => {
@@ -223,7 +228,24 @@ export default async function LobbyPage({ params }: PageProps<"/grupos/[id]">) {
         </section>
       )}
 
-      {!isOwner && !isMember && lobby.status !== "open" && (
+      {!isOwner && !isMember && lobby.status === "full" && (
+        <section aria-labelledby="espera" className="surface flex flex-col gap-3 p-5">
+          <h2 id="espera" className="font-semibold">
+            {t("waitlistTitle")}
+          </h2>
+          <p className="text-sm text-muted">{t("waitlistLead")}</p>
+          {waiting ? (
+            <div className="flex flex-col gap-3">
+              <p className="text-sm">{t("waitlistOn")}</p>
+              <ActionForm lobbyId={lobby.id} intent="unwaitlist" label={t("waitlistLeave")} />
+            </div>
+          ) : (
+            <ActionForm lobbyId={lobby.id} intent="waitlist" label={t("waitlistJoin")} variant="primary" />
+          )}
+        </section>
+      )}
+
+      {!isOwner && !isMember && lobby.status === "closed" && (
         <p className="text-sm text-muted">{t("noRequests")}</p>
       )}
 
