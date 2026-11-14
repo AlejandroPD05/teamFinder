@@ -38,7 +38,7 @@ export function ProfileSteps({ missing, characterLabel }: { missing: string[]; c
             <Link
               href={s.href}
               aria-current={state === "current" ? "step" : undefined}
-              className="group flex min-h-11 flex-col items-center gap-1.5 rounded-md px-1 text-xs"
+              className="group flex min-h-11 min-w-11 flex-col items-center gap-1.5 rounded-md px-1 text-xs"
             >
               <span
                 className={`flex size-8 items-center justify-center rounded-full border-2 font-display text-sm font-semibold transition-transform duration-200 ease-out group-hover:scale-110 ${

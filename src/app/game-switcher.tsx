@@ -38,8 +38,9 @@ function useDimWhile(pending: boolean) {
 export function GameSync({ games, current, saved }: { games: PickerGame[]; current: string; saved: string | null }) {
   const pathname = usePathname();
   const [pending, startTransition] = useTransition();
-  useDimWhile(pending);
   const pathGame = gameFromPath(pathname);
+  // Solo se atenúa si cambia lo que se ve; al entrar directo en /equipos/<juego> la página ya es de ese juego.
+  useDimWhile(pending && pathGame !== current);
   useEffect(() => {
     const game = games.find((g) => g.id === pathGame);
     if (!game || game.id === saved) return;

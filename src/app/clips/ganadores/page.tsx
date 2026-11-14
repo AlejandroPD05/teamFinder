@@ -30,7 +30,7 @@ export default async function WinnersPage() {
 
   return (
     <section className="flex max-w-3xl flex-col gap-8">
-      <Link href="/clips" className="text-sm text-muted underline underline-offset-4 hover:text-text">
+      <Link href="/clips" className="inline-flex min-h-11 items-center text-sm text-muted underline underline-offset-4 hover:text-text">
         {t("back")}
       </Link>
       <header className="flex flex-col gap-2">

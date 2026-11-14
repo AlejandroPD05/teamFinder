@@ -101,7 +101,8 @@ async function inspect(page: Page, { targets }: { targets: boolean }): Promise<R
       }
     }
     const duplicates = [...byName.entries()]
-      .filter(([name, hrefs]) => name && hrefs.size > 1)
+      // Dos jugadores (o sus grupos, equipos y clips) pueden llamarse igual: el nombre lo elige cada uno.
+      .filter(([name, hrefs]) => name && hrefs.size > 1 && ![...hrefs].every((h) => /^\/(jugador|grupos|equipo|clips)\/[0-9a-f-]{36}/.test(h)))
       .map(([name, hrefs]) => `«${name}» → ${[...hrefs].join(", ")}`);
 
     const invalid: string[] = [];

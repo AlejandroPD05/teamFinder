@@ -106,7 +106,7 @@ export default async function RootLayout({ children }: LayoutProps<"/">) {
         <header className="site-header sticky top-0 z-40">
           <nav
             aria-label={t("nav.main")}
-            className="mx-auto flex max-w-6xl flex-wrap items-center justify-between px-4 sm:h-16 sm:flex-nowrap sm:gap-4"
+            className="mx-auto flex max-w-6xl flex-wrap items-center justify-between px-4 lg:h-16 lg:flex-nowrap lg:gap-4"
           >
             <Link href="/" className="flex min-h-14 items-center" aria-label={t("nav.home", { app: APP_NAME })}>
               <Logo />

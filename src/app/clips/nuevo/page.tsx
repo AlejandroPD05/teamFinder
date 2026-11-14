@@ -17,7 +17,7 @@ export default async function NewClipPage() {
 
   return (
     <section className="flex max-w-2xl flex-col gap-6">
-      <Link href="/clips" className="text-sm text-muted underline underline-offset-4 hover:text-text">
+      <Link href="/clips" className="inline-flex min-h-11 items-center text-sm text-muted underline underline-offset-4 hover:text-text">
         {t("back")}
       </Link>
       <h1 className="font-display text-3xl font-semibold">{t("postTitle", { game: game.name })}</h1>

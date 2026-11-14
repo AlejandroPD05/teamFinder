@@ -37,7 +37,7 @@ export default async function ClipPage({ params }: PageProps<"/clips/[id]">) {
 
   return (
     <article className="flex max-w-3xl flex-col gap-6">
-      <Link href="/clips" className="text-sm text-muted underline underline-offset-4 hover:text-text">
+      <Link href="/clips" className="inline-flex min-h-11 items-center text-sm text-muted underline underline-offset-4 hover:text-text">
         {t("back")}
       </Link>
       {clip.hidden && (
