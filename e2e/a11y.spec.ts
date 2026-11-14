@@ -35,10 +35,13 @@ async function audit(page: Page, path: string) {
 }
 
 test("páginas públicas sin infracciones WCAG A/AA", async ({ page }) => {
+  test.setTimeout(120_000);
   for (const path of ["/", "/entrar", "/privacidad", "/normas", "/demo", "/equipos/valorant", "/equipos/apex", "/equipos/valorant/controller", "/equipos/cs2/awper", "/novedades"]) await audit(page, path);
 });
 
 test("páginas con sesión sin infracciones WCAG A/AA", async ({ page }, info) => {
+  // Son muchas páginas (cada una espera a que terminen las animaciones): más margen que el de un test normal.
+  test.setTimeout(240_000);
   await signIn(page, `e2e-a11y-${info.project.name}-${Date.now()}@example.test`);
   for (const path of ["/inicio", "/perfil", "/perfil/editar", "/buscar", "/grupos", "/grupos/nuevo", "/mensajes", "/ajustes", "/clips/ganadores", "/misiones", "/coleccion", "/coleccion/fanart", "/notificaciones", "/ranking", "/perfil/partidas", "/mis-equipos", "/amigos", "/sugerencias"]) {
     await audit(page, path);
