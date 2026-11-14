@@ -10,6 +10,7 @@ import { loadCatalog } from "@/lib/profile/queries";
 import { createClient } from "@/lib/supabase/server";
 import { ActionForm } from "./action-form";
 import { ShareLobby } from "./share-lobby";
+import { SaveTemplate } from "./save-template";
 import { siteUrl } from "@/lib/supabase/env";
 import { LobbyChat } from "./lobby-chat";
 import { KarmaVote } from "../../confianza/forms";
@@ -217,6 +218,8 @@ export default async function LobbyPage({ params }: PageProps<"/grupos/[id]">) {
       {isOwner && lobby.status !== "closed" && (
         <ShareLobby lobbyId={lobby.id} sharedUrl={lobby.shared_at ? `${siteUrl()}/unete/${lobby.id}` : null} />
       )}
+
+      {isOwner && <SaveTemplate lobbyId={lobby.id} defaultName={modeName} />}
 
       {isOwner && (
         <section aria-labelledby="solicitudes" className="surface p-5">

@@ -7,6 +7,7 @@ import { CharacterIcon, RankBadge, RoleIcon } from "@/components/game-icons";
 import { INTL_LOCALE, type AppLocale } from "@/lib/i18n/locale";
 import type { Catalog } from "@/lib/profile/queries";
 import type { PlayerRow } from "@/lib/search/query";
+import type { FitReason } from "@/lib/fit";
 
 function ago(iso: string | null, locale: AppLocale, today: string) {
   if (!iso) return "";
@@ -26,6 +27,7 @@ export function PlayerCard({
   characterLabel = "Agentes",
   index = 0,
   available = null,
+  reasons = null,
 }: {
   p: PlayerRow;
   catalog: Catalog;
@@ -35,8 +37,11 @@ export function PlayerCard({
   index?: number;
   /** Si se ha marcado «disponible ahora» (hasta cuándo y en qué modo). */
   available?: { available_until: string; mode_slug: string | null } | null;
+  /** Por qué encaja contigo (sugerencias): motivos explícitos, nunca una puntuación. */
+  reasons?: FitReason[] | null;
 }) {
   const t = useTranslations("playerCard");
+  const tf = useTranslations("fit");
   const to = useTranslations("options");
   const locale = useLocale();
   const untilFmt = new Intl.DateTimeFormat(INTL_LOCALE[locale], { timeZone: "Europe/Madrid", hour: "2-digit", minute: "2-digit" });
@@ -86,6 +91,19 @@ export function PlayerCard({
           )}
           <span className="font-normal text-muted">· {t("until", { time: untilFmt.format(new Date(available.available_until)) })}</span>
         </p>
+      )}
+
+      {reasons && reasons.length > 0 && (
+        <div className="text-sm">
+          <p className="text-muted">{tf("because")}</p>
+          <ul className="mt-1 flex flex-wrap gap-1.5">
+            {reasons.map((r) => (
+              <li key={r} className="chip text-accent-soft">
+                {tf(`reason.${r}`)}
+              </li>
+            ))}
+          </ul>
+        </div>
       )}
 
       {roles.length > 0 && (

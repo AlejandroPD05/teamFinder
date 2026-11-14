@@ -33,7 +33,8 @@
     "demo": "Demo",
     "rules": "Normas",
     "privacy": "Privacidad",
-    "discord": "Discord de la comunidad"
+    "discord": "Discord de la comunidad",
+    "feedback": "Sugerencias"
   },
   "legal": {
     "riot": "TeamFinder was created under Riot Games' \"Legal Jibber Jabber\" policy using assets owned by Riot Games. Riot Games does not endorse or sponsor this project.",
@@ -270,6 +271,11 @@
       "collection_complete": "Ya tienes todas las cartas de este juego.",
       "not_found": "Esa misión ya no existe.",
       "fallback": "No se pudo reclamar. Inténtalo de nuevo."
+    },
+    "feedback": {
+      "rate_limited": "Ya has enviado 5 sugerencias hoy. Gracias: vuelve mañana si tienes más.",
+      "restricted": "Tu cuenta está restringida temporalmente: no puedes hacer esto hasta que termine.",
+      "fallback": "No se pudo enviar. Inténtalo de nuevo."
     }
   },
   "validation": {
@@ -345,7 +351,8 @@
       "team_invite": "{who} te invita a su equipo",
       "team_joined": "{who} se ha unido a tu equipo",
       "team_event": "{who} propone una quedada",
-      "team_lobby": "Tu equipo ha creado un grupo y estás dentro"
+      "team_lobby": "Tu equipo ha creado un grupo y estás dentro",
+      "friend_joined": "{who} se ha unido con tu invitación"
     }
   },
   "lobbies": {
@@ -551,7 +558,9 @@
     "profile": "Mi perfil",
     "matches": "Mis partidas",
     "privacy": "Privacidad",
-    "ranking": "Ranking semanal"
+    "ranking": "Ranking semanal",
+    "feedback": "Sugerencias",
+    "friends": "Invitar amigos"
   },
   "login": {
     "title": "Entrar en {app}",
@@ -589,7 +598,9 @@
     "collectionText": "Las cartas que has conseguido.",
     "accountLabel": "Cuenta",
     "settings": "Ajustes, bloqueados y borrar cuenta",
-    "moderation": "Moderación"
+    "moderation": "Moderación",
+    "friends": "Invitar amigos",
+    "feedback": "Enviar una sugerencia"
   },
   "availableNow": {
     "active": "Estás disponible",
@@ -1185,7 +1196,9 @@
     "byArtist": "de {artist}",
     "account": "cuenta:",
     "portfolio": "Portfolio",
-    "check": "Comprueba que no es arte oficial ni de otra persona (búsqueda inversa de imagen)."
+    "check": "Comprueba que no es arte oficial ni de otra persona (búsqueda inversa de imagen).",
+    "feedback": "Buzón de sugerencias",
+    "noFeedback": "No hay sugerencias."
   },
   "welcome": {
     "kicker": "Bienvenida · paso {step} de 3",
@@ -1279,5 +1292,244 @@
     "binding": "Esta es la versión en español, la vinculante.",
     "rules": "Resumen: respeto, juego limpio y nada de acoso, odio, contenido sexual, trampas, spam ni estafas.",
     "privacy": "Resumen: qué datos guardamos, para qué, cuánto tiempo y cómo ejercer tus derechos."
+  },
+  "fit": {
+    "title": "Te pueden encajar",
+    "lead": "Jugadores con varias cosas en común contigo. Te decimos por qué; no hay puntuación oculta.",
+    "more": "Buscar más",
+    "empty": "Aún no hay sugerencias. Completa tu perfil (rol, servidor, rango, idiomas y horario) para verlas.",
+    "because": "Encaja por:",
+    "reason": {
+      "role": "Rol que te falta",
+      "region": "Mismo servidor",
+      "schedule": "Mismo horario",
+      "rank": "Rango cercano",
+      "language": "Idioma en común"
+    }
+  },
+  "reliability": {
+    "title": "Fiabilidad",
+    "signIn": "Entra para ver la fiabilidad de este jugador.",
+    "notEnough": "Aún no hay datos suficientes (hacen falta al menos 3 grupos o solicitudes en los últimos 90 días).",
+    "completion": "Termina el {pct} % de sus grupos ({finished} de {total} en 90 días).",
+    "response": "Responde al {pct} % de las solicitudes a sus grupos.",
+    "responseTime": {
+      "min": "Suele responder en {value} min.",
+      "h": "Suele responder en {value} h.",
+      "d": "Suele responder en {value} d."
+    },
+    "note": "Datos de los últimos 90 días: grupos llenados y cerrados frente a salidas antes de cerrarse, y solicitudes respondidas. No es una sanción ni una nota."
+  },
+  "templates": {
+    "saveTitle": "Guardar como plantilla",
+    "saveLead": "Guarda modo, rango, servidor, idioma, objetivo, roles y nota para crear este grupo otra vez en un clic.",
+    "name": "Nombre de la plantilla",
+    "save": "Guardar plantilla",
+    "saved": "Plantilla guardada. La tienes en «Crear grupo».",
+    "nameInvalid": "El nombre debe tener entre 2 y 40 caracteres, sin < ni >.",
+    "limit": "Ya tienes 5 plantillas de este juego. Borra alguna para guardar otra.",
+    "quickTitle": "En un clic",
+    "repeatLast": "Repetir mi último grupo",
+    "create": "Crear",
+    "createFrom": "Crear con la plantilla {name}",
+    "deleteNamed": "Borrar la plantilla {name}",
+    "deleted": "Plantilla borrada.",
+    "hint": "Guarda un grupo como plantilla desde su página para tenerlo aquí.",
+    "error": "No se pudo completar la acción. Inténtalo de nuevo."
+  },
+  "teamSchedule": {
+    "title": "Cuándo podéis jugar",
+    "empty": "Nadie del equipo ha indicado su horario (o no lo deja ver). Se rellena en «Editar perfil».",
+    "best": "Mejor franja: {slots} ({count} de {total}).",
+    "noOverlap": "Aún no coincidís en ninguna franja.",
+    "caption": "Miembros que pueden jugar en cada franja",
+    "of": "de {total}",
+    "hidden": "{count, plural, one {# miembro no indica su horario o no lo deja ver} other {# miembros no indican su horario o no lo dejan ver}}.",
+    "day": {
+      "weekday": "Entre semana",
+      "weekend": "Fin de semana"
+    },
+    "part": {
+      "morning": "Mañana",
+      "afternoon": "Tarde",
+      "evening": "Noche",
+      "night": "Madrugada"
+    }
+  },
+  "playerShare": {
+    "title": "Tarjeta para compartir",
+    "lead": "Un enlace con tu nombre, rango, roles y mains de este juego, con vista previa para Discord o redes. Viene desactivada.",
+    "notPublic": "Tu perfil de este juego no es público, así que la tarjeta no se ve. Cámbialo en «Editar perfil».",
+    "label": "Enlace de tu tarjeta",
+    "copy": "Copiar enlace",
+    "copied": "Copiado",
+    "enable": "Activar tarjeta",
+    "disable": "Desactivar tarjeta",
+    "error": "No se pudo guardar. Inténtalo de nuevo.",
+    "unavailable": "Tarjeta no disponible",
+    "pageTitle": "{name} en {game}",
+    "ogAlt": "Tarjeta de jugador de {name}",
+    "rank": "Rango",
+    "roles": "Roles",
+    "mains": "Mains",
+    "mainsLine": "Mains: {mains}",
+    "region": "Servidor",
+    "unset": "Sin indicar",
+    "viewProfile": "Ver perfil completo",
+    "discover": "Qué es TeamFinder",
+    "rankNote": "Rango introducido manualmente por el jugador; no está verificado."
+  },
+  "invite": {
+    "title": "Invitar amigos",
+    "lead": "Comparte tu enlace. Quien cree su cuenta con él aparecerá aquí para que le invites a tus equipos.",
+    "linkTitle": "Tu enlace",
+    "linkLabel": "Tu enlace de invitación",
+    "linkNote": "Solo cuenta para cuentas nuevas (creadas hace menos de 7 días). No hay premios ni puntos por invitar.",
+    "copy": "Copiar enlace",
+    "copied": "Copiado",
+    "error": "No se pudo crear tu enlace. Recarga la página.",
+    "inviteesTitle": "{count, plural, =0 {Tus invitados} other {Tus invitados (#)}}",
+    "none": "Aún no ha entrado nadie con tu enlace.",
+    "joined": "entró el {date}",
+    "player": "Jugador",
+    "viewProfile": "Ver perfil",
+    "teamHint": "Desde su perfil puedes invitarle a un equipo tuyo.",
+    "pageTitle": "{name} te invita a {app}",
+    "pageLead": "{app} sirve para encontrar compañeros de partida por rol, rango, idioma y horario, y jugar con ellos.",
+    "pageNote": "Al entrar aceptas las Normas y la Privacidad. Quien te invita solo verá tu nombre visible.",
+    "signIn": "Entrar o crear cuenta",
+    "accept": "Aceptar la invitación",
+    "invalid": "Invitación no válida",
+    "notAccepted": "No se pudo aceptar: la invitación es para cuentas nuevas y solo se acepta una vez."
+  },
+  "feedback": {
+    "title": "Sugerencias",
+    "lead": "¿Una idea, algo que falla u otra cosa? Lo leemos todo.",
+    "kindLabel": "Tipo",
+    "kind": {
+      "idea": "Idea",
+      "bug": "Algo falla",
+      "other": "Otra cosa"
+    },
+    "bodyLabel": "Cuéntanos",
+    "bodyHint": "Entre 10 y 1000 caracteres. No pongas datos personales.",
+    "send": "Enviar",
+    "sent": "¡Gracias! Hemos recibido tu sugerencia.",
+    "checkFields": "Revisa los campos marcados.",
+    "error": "No se pudo completar la acción. Inténtalo de nuevo.",
+    "marked": "Hecho.",
+    "markDone": "Marcar como atendida",
+    "reopen": "Volver a abrir",
+    "done": "Atendida",
+    "privacy": "Se guarda 12 meses. Moderación ve el texto; si hay aviso en Discord, va sin tu nombre.",
+    "validation": {
+      "kind": "Elige un tipo.",
+      "short": "Escribe al menos 10 caracteres.",
+      "long": "Máximo 1000 caracteres.",
+      "chars": "Sin < ni >."
+    }
+  },
+  "rolePage": {
+    "metaTitle": "Busco {role} en {game}: encuentra compañeros",
+    "metaDescription": "Encuentra jugadores de {role} para tu equipo de {game}: filtra por rango, idioma y horario y forma tu grupo. Gratis.",
+    "breadcrumb": "Ruta de navegación",
+    "title": "Busco {role} en {game}",
+    "lead": "Encuentra jugadores que juegan de {role} con tu rango, tu idioma y tus horarios, o añade ese rol a tu perfil para que te encuentren.",
+    "searchSignedIn": "Buscar jugadores de {role}",
+    "searchSignIn": "Entrar y buscar jugadores de {role}",
+    "backToGame": "Equipo para {game}",
+    "roleTitle": "El rol en el equipo",
+    "lookForTitle": "Qué buscar en un compañero",
+    "charactersTitle": "{label} de {role}",
+    "statsTitle": "En {app} ahora mismo",
+    "statRole": "perfiles públicos que juegan de {role}",
+    "statPlayers": "jugadores con perfil de {game}",
+    "statNow": "disponibles ahora en {game}",
+    "statsNote": "Cifras reales y en directo. Solo cuentan como públicos los perfiles que su dueño muestra a todo el mundo: por defecto, los perfiles solo se ven con sesión, igual que los grupos abiertos.",
+    "emptyRole": "Todavía no hay perfiles públicos con este rol. Crea el tuyo para que te encuentren.",
+    "siblingsTitle": "Otros roles en {game}",
+    "fallback": {
+      "what": "{role} es uno de los roles de {game}. En {app} cada jugador indica los roles que juega, así sabes qué aporta cada uno antes de jugar juntos.",
+      "lookFor": "Busca a alguien que encaje con tu forma de jugar, con tu idioma y con los roles que ya cubre tu equipo."
+    },
+    "roles": {
+      "valorant": {
+        "duelist": {
+          "what": "El duelista abre el combate: entra primero en el sitio, busca los primeros duelos y crea espacio para que el resto del equipo avance. Suele apoyarse en la utilidad de sus compañeros para entrar con ventaja.",
+          "lookFor": "Busca a alguien que coordine sus entradas con los destellos y los humos del equipo y que pida apoyo antes de entrar, no después."
+        },
+        "initiator": {
+          "what": "El iniciador prepara las jugadas: revela posiciones enemigas, saca a los defensores de sus esquinas y deja el camino listo para que entren los demás. Su utilidad marca el ritmo de cada ataque y de cada retake.",
+          "lookFor": "Busca a alguien que cante lo que revela su utilidad y que la use al compás de la entrada del duelista."
+        },
+        "controller": {
+          "what": "El controlador decide qué ve cada equipo: corta líneas de visión con humos y otras habilidades para que el equipo ataque o defienda con seguridad. Suele pensar el mapa a largo plazo y muchas veces es quien dirige.",
+          "lookFor": "Busca a alguien que coloque los humos a tiempo, que sepa cuándo guardarlos y que no tenga problema en llevar la voz cantante."
+        },
+        "sentinel": {
+          "what": "El centinela protege: asegura un sitio o un flanco con trampas y utilidad defensiva, frena los empujes y avisa cuando alguien rodea al equipo. Es el ancla que da tranquilidad al resto.",
+          "lookFor": "Busca a alguien paciente, que aguante su posición, que avise al instante y que no deje el flanco sin cubrir."
+        }
+      },
+      "cs2": {
+        "entry": {
+          "what": "El entry fragger es el primero en entrar al punto: busca el primer contacto para abrir la ronda y ganar espacio, sabiendo que muchas veces cae para que el equipo cambie la baja.",
+          "lookFor": "Busca a alguien decidido, que entre a la vez que las granadas de apoyo y que cante lo que ha visto aunque caiga."
+        },
+        "awper": {
+          "what": "El AWPer maneja el rifle de francotirador: controla ángulos largos, consigue bajas de apertura y obliga al rival a pensarse cada paso. Es el arma más cara, así que el equipo suele organizar la economía en torno a ella.",
+          "lookFor": "Busca a alguien paciente y con buen posicionamiento, que sepa cambiar de ángulo y entienda cuándo el equipo puede permitirse el AWP."
+        },
+        "igl": {
+          "what": "El IGL (líder dentro de la partida) dirige al equipo: elige las estrategias, lee al rival, gestiona la economía y adapta el plan a mitad de ronda.",
+          "lookFor": "Busca a alguien que hable con calma, que explique el plan en pocas palabras y que escuche la información del resto."
+        },
+        "support": {
+          "what": "El soporte hace que las jugadas funcionen: lanza los humos, flashes y molotovs que necesitan los demás, cubre al entry y, cuando hace falta, deja su arma a un compañero.",
+          "lookFor": "Busca a alguien que se sepa las granadas de los mapas que jugáis y que piense primero en el equipo."
+        },
+        "lurker": {
+          "what": "El lurker juega lejos del grupo: presiona otra zona del mapa, corta rotaciones y castiga por la espalda mientras el rival mira hacia el ataque principal.",
+          "lookFor": "Busca a alguien con buen sentido del tiempo, que informe de las rotaciones rivales y que sepa cuándo volver con el equipo."
+        },
+        "rifler": {
+          "what": "El rifler es la base del equipo: juega con fusil, gana duelos, cambia bajas y se adapta a lo que pida cada ronda, en ataque o en defensa.",
+          "lookFor": "Busca a alguien constante, con buena puntería, que juegue cerca de sus compañeros para poder cambiar las bajas."
+        },
+        "anchor": {
+          "what": "El ancla defiende un punto, a menudo en solitario: aguanta lo justo para que llegue la rotación, retrasa el ataque con utilidad y da información desde el primer segundo.",
+          "lookFor": "Busca a alguien sereno bajo presión, que no se precipite y que cante cuántos rivales vienen en cuanto los vea."
+        }
+      },
+      "apex": {
+        "assault": {
+          "what": "Las leyendas de asalto buscan el combate directo: abren las peleas, presionan al escuadrón rival y rematan cuando el equipo gana ventaja.",
+          "lookFor": "Busca a alguien que entre cuando el escuadrón está listo para seguirle, no en solitario, y que avise de a quién ha dañado."
+        },
+        "skirmisher": {
+          "what": "Las leyendas hostigadoras viven de la movilidad: entran y salen de las peleas, buscan ángulos que el rival no espera y ayudan al equipo a retirarse cuando toca.",
+          "lookFor": "Busca a alguien que use su movilidad para el escuadrón, no solo para escapar, y que no se aleje demasiado."
+        },
+        "recon": {
+          "what": "Las leyendas de reconocimiento consiguen información: localizan escuadrones y ayudan a decidir dónde y cuándo pelear y cómo moverse por el mapa.",
+          "lookFor": "Busca a alguien que comparta al momento lo que detecta y que ayude a planear las rotaciones."
+        },
+        "support": {
+          "what": "Las leyendas de apoyo mantienen vivo al escuadrón: curan, reaniman, protegen y consiguen los recursos que permiten volver a la pelea.",
+          "lookFor": "Busca a alguien atento al estado del equipo, que priorice reanimar a tiempo."
+        },
+        "controller": {
+          "what": "Las leyendas controladoras dominan el terreno: fortifican posiciones, cierran accesos y convierten un edificio o una zona en un sitio difícil de asaltar.",
+          "lookFor": "Busca a alguien que prepare la posición con antelación y que sepa cuándo hay que abandonarla."
+        }
+      }
+    }
+  },
+  "changelog": {
+    "metaTitle": "Novedades",
+    "metaDescription": "Qué ha cambiado en {app}, fecha a fecha: nuevas funciones y mejoras para encontrar equipo y jugar.",
+    "title": "Novedades",
+    "lead": "Lo que ha cambiado en {app}, de lo más reciente a lo más antiguo. Solo aparecen cambios que ya están en la web.",
+    "footerLink": "Novedades"
   }
 }

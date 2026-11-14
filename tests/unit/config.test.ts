@@ -33,7 +33,9 @@ describe("gameFromPath", () => {
   it("lee el juego de las páginas públicas por juego", () => {
     expect(gameFromPath("/equipos/apex")).toBe("apex");
     expect(gameFromPath("/equipos/cs2")).toBe("cs2");
-    expect(gameFromPath("/equipos/apex/otra")).toBeNull();
+    expect(gameFromPath("/equipos/valorant/controller")).toBe("valorant");
+    expect(gameFromPath("/equipos/apex/otra/mas")).toBeNull();
+    expect(gameFromPath("/equipos/apex/")).toBeNull();
     expect(gameFromPath("/equipos/APEX")).toBeNull();
     expect(gameFromPath("/buscar")).toBeNull();
   });

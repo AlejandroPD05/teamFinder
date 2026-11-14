@@ -40,5 +40,7 @@ export function notificationLink(n: NotificationLike): { detail: string | null; 
       return { detail: n.body, href: team };
     case "team_lobby":
       return { detail: n.body, href: lobby ?? "/mis-equipos" };
+    case "friend_joined":
+      return { detail: null, href: "/amigos" };
   }
 }

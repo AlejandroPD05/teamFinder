@@ -10,6 +10,7 @@ import { createClient } from "@/lib/supabase/server";
 import { TEAM_MAX_MEMBERS } from "@/lib/teams";
 import { CancelInvite, DeleteTeam, EditTeamForm, LeaveTeam } from "../../mis-equipos/forms";
 import { TeamChat } from "./team-chat";
+import { TeamSchedule } from "./team-schedule";
 import { TeamEvents, type TeamEvent } from "./team-events";
 
 export const generateMetadata = titled("team", { robots: { index: false } });
@@ -48,6 +49,10 @@ export default async function TeamPage({ params }: PageProps<"/equipo/[id]">) {
   const list = members ?? [];
   const isMember = list.some((m) => m.user_id === me);
   const isOwner = team.owner_id === me;
+  const { data: cards } = isMember
+    ? await supabase.from("profile_cards").select("id, availability").in("id", list.map((m) => m.user_id))
+    : { data: null };
+  const availability = new Map((cards ?? []).map((c) => [c.id, c.availability]));
   const names = await loadNames(supabase, [...list.map((m) => m.user_id), ...(invites ?? []).map((i) => i.user_id), ...(msgs ?? []).map((m) => m.user_id)]);
   const gameName = games.find((g) => g.id === team.game_id)?.name ?? team.game_id;
   const t = await getTranslations("teams");
@@ -103,6 +108,8 @@ export default async function TeamPage({ params }: PageProps<"/equipo/[id]">) {
         )}
         {isOwner && <p className="text-xs text-muted">{t("howToInvite")}</p>}
       </section>
+
+      {isMember && <TeamSchedule availabilities={list.map((m) => availability.get(m.user_id) ?? null)} />}
 
       {isMember && (
         <TeamEvents
