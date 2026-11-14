@@ -33,7 +33,8 @@
     "demo": "Demo",
     "rules": "Rules",
     "privacy": "Privacy",
-    "discord": "Community Discord"
+    "discord": "Community Discord",
+    "feedback": "Feedback"
   },
   "legal": {
     "riot": "TeamFinder was created under Riot Games' \"Legal Jibber Jabber\" policy using assets owned by Riot Games. Riot Games does not endorse or sponsor this project.",
@@ -270,6 +271,11 @@
       "collection_complete": "You already have every card for this game.",
       "not_found": "That mission no longer exists.",
       "fallback": "Couldn't claim it. Please try again."
+    },
+    "feedback": {
+      "rate_limited": "You've already sent 5 suggestions today. Thanks, come back tomorrow if you have more.",
+      "restricted": "Your account is temporarily restricted: you can't do this until it ends.",
+      "fallback": "Couldn't send it. Please try again."
     }
   },
   "validation": {
@@ -345,7 +351,8 @@
       "team_invite": "{who} invited you to their team",
       "team_joined": "{who} joined your team",
       "team_event": "{who} proposed a session",
-      "team_lobby": "Your team created a group and you're in"
+      "team_lobby": "Your team created a group and you're in",
+      "friend_joined": "{who} joined with your invite"
     }
   },
   "lobbies": {
@@ -551,7 +558,9 @@
     "profile": "My profile",
     "matches": "My matches",
     "privacy": "Privacy",
-    "ranking": "Weekly ranking"
+    "ranking": "Weekly ranking",
+    "feedback": "Feedback",
+    "friends": "Invite friends"
   },
   "login": {
     "title": "Sign in to {app}",
@@ -589,7 +598,9 @@
     "collectionText": "The cards you've earned.",
     "accountLabel": "Account",
     "settings": "Settings, blocked users and account deletion",
-    "moderation": "Moderation"
+    "moderation": "Moderation",
+    "friends": "Invite friends",
+    "feedback": "Send feedback"
   },
   "availableNow": {
     "active": "You're available",
@@ -1185,7 +1196,9 @@
     "byArtist": "by {artist}",
     "account": "account:",
     "portfolio": "Portfolio",
-    "check": "Check it isn't official art or someone else's (reverse image search)."
+    "check": "Check it isn't official art or someone else's (reverse image search).",
+    "feedback": "Feedback inbox",
+    "noFeedback": "No feedback."
   },
   "welcome": {
     "kicker": "Welcome · step {step} of 3",
@@ -1279,5 +1292,141 @@
     "binding": "This is the binding Spanish version. It is only available in Spanish.",
     "rules": "Summary: be respectful and play fair. No harassment, hate, sexual content, cheating, spam or scams, and no sharing other people's private data. You must be 16 or older. Reports are anonymous; moderation can hide content and temporarily restrict accounts, and you can appeal by email. If the English summary and the Spanish text differ, the Spanish text applies.",
     "privacy": "Summary: we store the data you give us (account, profile, groups, messages, clips and so on) only to run the service, never to sell it or show ads. You choose who sees each part of your profile. Data is kept while your account exists, with shorter limits for chats and logs; you can download or delete everything from Settings, and exercise your GDPR rights by writing to the contact email below. If the English summary and the Spanish text differ, the Spanish text applies."
+  },
+  "fit": {
+    "title": "Players who might fit",
+    "lead": "Players with several things in common with you. We tell you why; there's no hidden score.",
+    "more": "Search more",
+    "empty": "No suggestions yet. Complete your profile (role, server, rank, languages and schedule) to see them.",
+    "because": "Fits because:",
+    "reason": {
+      "role": "A role you lack",
+      "region": "Same server",
+      "schedule": "Same schedule",
+      "rank": "Close rank",
+      "language": "Shared language"
+    }
+  },
+  "reliability": {
+    "title": "Reliability",
+    "signIn": "Sign in to see this player's reliability.",
+    "notEnough": "Not enough data yet (it needs at least 3 groups or requests in the last 90 days).",
+    "completion": "Finishes {pct}% of their groups ({finished} of {total} in 90 days).",
+    "response": "Answers {pct}% of requests to their groups.",
+    "responseTime": {
+      "min": "Usually answers within {value} min.",
+      "h": "Usually answers within {value} h.",
+      "d": "Usually answers within {value} d."
+    },
+    "note": "Last 90 days: groups filled and closed versus leaving before they closed, and requests answered. It's not a penalty or a grade."
+  },
+  "templates": {
+    "saveTitle": "Save as template",
+    "saveLead": "Saves mode, rank, server, language, goal, roles and note so you can create this group again in one click.",
+    "name": "Template name",
+    "save": "Save template",
+    "saved": "Template saved. You'll find it under “Create group”.",
+    "nameInvalid": "The name must be 2 to 40 characters, without < or >.",
+    "limit": "You already have 5 templates for this game. Delete one to save another.",
+    "quickTitle": "In one click",
+    "repeatLast": "Repeat my last group",
+    "create": "Create",
+    "createFrom": "Create from the template {name}",
+    "deleteNamed": "Delete the template {name}",
+    "deleted": "Template deleted.",
+    "hint": "Save a group as a template from its page to have it here.",
+    "error": "The action couldn't be completed. Please try again."
+  },
+  "teamSchedule": {
+    "title": "When you can play",
+    "empty": "Nobody on the team has set their schedule (or they keep it hidden). It's set in “Edit profile”.",
+    "best": "Best slot: {slots} ({count} of {total}).",
+    "noOverlap": "You don't overlap in any slot yet.",
+    "caption": "Members who can play in each slot",
+    "of": "of {total}",
+    "hidden": "{count, plural, one {# member hasn't set or doesn't show their schedule} other {# members haven't set or don't show their schedule}}.",
+    "day": {
+      "weekday": "Weekdays",
+      "weekend": "Weekends"
+    },
+    "part": {
+      "morning": "Morning",
+      "afternoon": "Afternoon",
+      "evening": "Evening",
+      "night": "Late night"
+    }
+  },
+  "playerShare": {
+    "title": "Shareable card",
+    "lead": "A link with your name, rank, roles and mains for this game, with a preview for Discord or social media. It's off by default.",
+    "notPublic": "Your profile for this game isn't public, so the card can't be seen. Change it in “Edit profile”.",
+    "label": "Link to your card",
+    "copy": "Copy link",
+    "copied": "Copied",
+    "enable": "Turn on card",
+    "disable": "Turn off card",
+    "error": "Couldn't save. Please try again.",
+    "unavailable": "Card not available",
+    "pageTitle": "{name} in {game}",
+    "ogAlt": "Player card of {name}",
+    "rank": "Rank",
+    "roles": "Roles",
+    "mains": "Mains",
+    "mainsLine": "Mains: {mains}",
+    "region": "Server",
+    "unset": "Not set",
+    "viewProfile": "View full profile",
+    "discover": "What is TeamFinder",
+    "rankNote": "Rank entered manually by the player; it isn't verified."
+  },
+  "invite": {
+    "title": "Invite friends",
+    "lead": "Share your link. Anyone who creates their account with it will show up here so you can invite them to your teams.",
+    "linkTitle": "Your link",
+    "linkLabel": "Your invite link",
+    "linkNote": "It only counts for new accounts (created less than 7 days ago). There are no prizes or points for inviting.",
+    "copy": "Copy link",
+    "copied": "Copied",
+    "error": "Couldn't create your link. Reload the page.",
+    "inviteesTitle": "{count, plural, =0 {Your invitees} other {Your invitees (#)}}",
+    "none": "Nobody has joined with your link yet.",
+    "joined": "joined on {date}",
+    "player": "Player",
+    "viewProfile": "View profile",
+    "teamHint": "You can invite them to one of your teams from their profile.",
+    "pageTitle": "{name} invites you to {app}",
+    "pageLead": "{app} helps you find teammates by role, rank, language and schedule, and play with them.",
+    "pageNote": "By signing in you accept the Rules and the Privacy policy. The person who invited you will only see your display name.",
+    "signIn": "Sign in or create an account",
+    "accept": "Accept the invite",
+    "invalid": "Invalid invite",
+    "notAccepted": "Couldn't accept it: invites are for new accounts and can only be accepted once."
+  },
+  "feedback": {
+    "title": "Feedback",
+    "lead": "An idea, something broken, or something else? We read everything.",
+    "kindLabel": "Type",
+    "kind": {
+      "idea": "Idea",
+      "bug": "Something's broken",
+      "other": "Something else"
+    },
+    "bodyLabel": "Tell us",
+    "bodyHint": "10 to 1000 characters. Don't include personal data.",
+    "send": "Send",
+    "sent": "Thanks! We got your feedback.",
+    "checkFields": "Check the highlighted fields.",
+    "error": "The action couldn't be completed. Please try again.",
+    "marked": "Done.",
+    "markDone": "Mark as handled",
+    "reopen": "Reopen",
+    "done": "Handled",
+    "privacy": "Kept for 12 months. Moderators see the text; if there's a Discord alert, it goes without your name.",
+    "validation": {
+      "kind": "Pick a type.",
+      "short": "Write at least 10 characters.",
+      "long": "1000 characters at most.",
+      "chars": "No < or >."
+    }
   }
 }

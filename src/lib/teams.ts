@@ -28,3 +28,24 @@ export const teamSchema = teamSchemaFor("es");
 
 /** Textos de los códigos de error (errors.team; el de equipo completo repite TEAM_MAX_MEMBERS). */
 export const teamError = (hint?: string | null, locale: AppLocale = "es") => errorMessage("team", hint, locale);
+
+/** Franjas (entre semana / fin de semana × mañana, tarde, noche, madrugada) en el orden de la rejilla. */
+export const SCHEDULE_DAYS = ["weekday", "weekend"] as const;
+export const SCHEDULE_PARTS = ["morning", "afternoon", "evening", "night"] as const;
+
+/**
+ * Horario del equipo: cuántos miembros pueden en cada franja (solo cuenta a quien la indica y la deja ver; el
+ * resto va en `hidden`). `best` son las franjas con más gente (al menos 2), para proponer quedada.
+ */
+export function teamSchedule(availabilities: (readonly string[] | null)[]) {
+  const counts = new Map<string, number>();
+  let shared = 0;
+  for (const a of availabilities) {
+    if (!a || a.length === 0) continue;
+    shared++;
+    for (const slot of new Set(a)) counts.set(slot, (counts.get(slot) ?? 0) + 1);
+  }
+  const max = Math.max(0, ...counts.values());
+  const best = max >= 2 ? [...counts].filter(([, n]) => n === max).map(([s]) => s) : [];
+  return { counts, shared, hidden: availabilities.length - shared, max, best };
+}

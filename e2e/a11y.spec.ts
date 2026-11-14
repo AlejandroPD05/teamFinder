@@ -40,7 +40,7 @@ test("páginas públicas sin infracciones WCAG A/AA", async ({ page }) => {
 
 test("páginas con sesión sin infracciones WCAG A/AA", async ({ page }, info) => {
   await signIn(page, `e2e-a11y-${info.project.name}-${Date.now()}@example.test`);
-  for (const path of ["/inicio", "/perfil", "/perfil/editar", "/buscar", "/grupos", "/grupos/nuevo", "/mensajes", "/ajustes", "/clips/ganadores", "/misiones", "/coleccion", "/coleccion/fanart", "/notificaciones", "/ranking", "/perfil/partidas", "/mis-equipos"]) {
+  for (const path of ["/inicio", "/perfil", "/perfil/editar", "/buscar", "/grupos", "/grupos/nuevo", "/mensajes", "/ajustes", "/clips/ganadores", "/misiones", "/coleccion", "/coleccion/fanart", "/notificaciones", "/ranking", "/perfil/partidas", "/mis-equipos", "/amigos", "/sugerencias"]) {
     await audit(page, path);
   }
 });
