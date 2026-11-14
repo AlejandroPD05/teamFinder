@@ -34,7 +34,8 @@
     "rules": "Rules",
     "privacy": "Privacy",
     "discord": "Community Discord",
-    "feedback": "Feedback"
+    "feedback": "Feedback",
+    "ideas": "Ideas"
   },
   "legal": {
     "riot": "TeamFinder was created under Riot Games' \"Legal Jibber Jabber\" policy using assets owned by Riot Games. Riot Games does not endorse or sponsor this project.",
@@ -357,7 +358,8 @@
       "karma_reminder": "Rate your group teammates",
       "lobby_starting": "Your group starts in 15 minutes",
       "search_match": "{who} is available and fits your search",
-      "waitlist_open": "A slot freed up in a group you were waiting for"
+      "waitlist_open": "A slot freed up in a group you were waiting for",
+      "idea_status": "News about an idea you support"
     }
   },
   "lobbies": {
@@ -570,7 +572,8 @@
     "ranking": "Weekly ranking",
     "feedback": "Feedback",
     "friends": "Invite friends",
-    "stats": "Stats"
+    "stats": "Stats",
+    "ideas": "Ideas"
   },
   "login": {
     "title": "Sign in to {app}",
@@ -1238,7 +1241,8 @@
     "check": "Check it isn't official art or someone else's (reverse image search).",
     "feedback": "Feedback inbox",
     "noFeedback": "No feedback.",
-    "stats": "View stats"
+    "stats": "View stats",
+    "publishIdea": "Publish as an idea"
   },
   "welcome": {
     "kicker": "Welcome · step {step} of 3",
@@ -1467,7 +1471,8 @@
       "short": "Write at least 10 characters.",
       "long": "1000 characters at most.",
       "chars": "No < or >."
-    }
+    },
+    "seeIdeas": "See the ideas already being considered and support the ones you like"
   },
   "rolePage": {
     "metaTitle": "Looking for a {role} in {game}? Find teammates",
@@ -1642,5 +1647,49 @@
     "teamTitle": "{team} meetup",
     "teamDescription": "Team on TeamFinder: {url}",
     "teamCalendar": "{team} meetups"
+  },
+  "ideas": {
+    "metaTitle": "Community ideas",
+    "metaDescription": "What we're working on at {app}: community ideas, their status and how many people support them.",
+    "title": "Community ideas",
+    "lead": "What the community has asked for and where it stands. Support the ones you want sooner: it helps us decide what to do first.",
+    "suggestPrefix": "Have another idea or found a bug?",
+    "suggestLink": "Send it to the inbox",
+    "signInToVote": "Sign in to support ideas",
+    "empty": "No ideas published yet.",
+    "status": {
+      "in_progress": "In progress",
+      "pending": "Pending",
+      "done": "Done",
+      "declined": "Declined"
+    },
+    "voteLabel": "Support “{title}”, {count, plural, one {# vote} other {# votes}}",
+    "votesLabel": "{count, plural, one {# vote} other {# votes}}",
+    "updated": "Updated {date}",
+    "voted": "Thanks for your support.",
+    "unvoted": "You removed your support.",
+    "closedVote": "This idea can no longer be voted on.",
+    "restricted": "Your account is temporarily restricted: you can't vote until it ends.",
+    "error": "The action couldn't be completed. Please try again.",
+    "newIdea": "Publish an idea",
+    "fromFeedback": "Publish this suggestion as an idea",
+    "adminHint": "Write a clear title and remove any personal data: it's published without an author. If it comes from a suggestion, its sender gets an alert.",
+    "titleField": "Title",
+    "bodyField": "Description (optional)",
+    "bodyHint": "Up to 500 characters.",
+    "statusField": "Status",
+    "publish": "Publish",
+    "save": "Save",
+    "edit": "Edit",
+    "delete": "Delete",
+    "deleteLabel": "Delete the idea “{title}”",
+    "deleteConfirm": "Delete this idea and its votes? This can't be undone.",
+    "published": "Idea published.",
+    "saved": "Idea saved. If its status changed, its supporters have been notified.",
+    "deleted": "Idea deleted.",
+    "checkFields": "Check the highlighted fields.",
+    "titleLength": "The title must be 5 to 80 characters.",
+    "bodyLength": "Description: 500 characters at most.",
+    "chars": "No < or >."
   }
 }

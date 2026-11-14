@@ -34,7 +34,8 @@
     "rules": "Normas",
     "privacy": "Privacidad",
     "discord": "Discord de la comunidad",
-    "feedback": "Sugerencias"
+    "feedback": "Sugerencias",
+    "ideas": "Ideas"
   },
   "legal": {
     "riot": "TeamFinder was created under Riot Games' \"Legal Jibber Jabber\" policy using assets owned by Riot Games. Riot Games does not endorse or sponsor this project.",
@@ -357,7 +358,8 @@
       "karma_reminder": "Valora a tus compañeros del grupo",
       "lobby_starting": "Tu grupo empieza en 15 minutos",
       "search_match": "{who} está disponible y encaja con tu búsqueda",
-      "waitlist_open": "Se ha liberado una plaza en un grupo que esperabas"
+      "waitlist_open": "Se ha liberado una plaza en un grupo que esperabas",
+      "idea_status": "Novedades sobre una idea que apoyas"
     }
   },
   "lobbies": {
@@ -570,7 +572,8 @@
     "ranking": "Ranking semanal",
     "feedback": "Sugerencias",
     "friends": "Invitar amigos",
-    "stats": "Estadísticas"
+    "stats": "Estadísticas",
+    "ideas": "Ideas"
   },
   "login": {
     "title": "Entrar en {app}",
@@ -1238,7 +1241,8 @@
     "check": "Comprueba que no es arte oficial ni de otra persona (búsqueda inversa de imagen).",
     "feedback": "Buzón de sugerencias",
     "noFeedback": "No hay sugerencias.",
-    "stats": "Ver estadísticas"
+    "stats": "Ver estadísticas",
+    "publishIdea": "Publicar como idea"
   },
   "welcome": {
     "kicker": "Bienvenida · paso {step} de 3",
@@ -1467,7 +1471,8 @@
       "short": "Escribe al menos 10 caracteres.",
       "long": "Máximo 1000 caracteres.",
       "chars": "Sin < ni >."
-    }
+    },
+    "seeIdeas": "Mira las ideas que ya se están estudiando y apoya las que te gusten"
   },
   "rolePage": {
     "metaTitle": "Busco {role} en {game}: encuentra compañeros",
@@ -1642,5 +1647,49 @@
     "teamTitle": "Quedada de {team}",
     "teamDescription": "Equipo en TeamFinder: {url}",
     "teamCalendar": "Quedadas de {team}"
+  },
+  "ideas": {
+    "metaTitle": "Ideas de la comunidad",
+    "metaDescription": "Qué estamos haciendo en {app}: ideas de la comunidad, su estado y cuánta gente las apoya.",
+    "title": "Ideas de la comunidad",
+    "lead": "Lo que ha pedido la comunidad y en qué punto está. Apoya las que quieras ver antes: nos ayuda a decidir qué hacer primero.",
+    "suggestPrefix": "¿Tienes otra idea o has visto un error?",
+    "suggestLink": "Envíala al buzón",
+    "signInToVote": "Entra para apoyar ideas",
+    "empty": "Todavía no hay ideas publicadas.",
+    "status": {
+      "in_progress": "En desarrollo",
+      "pending": "Pendientes",
+      "done": "Completadas",
+      "declined": "Descartadas"
+    },
+    "voteLabel": "Apoyar «{title}», {count, plural, one {# apoyo} other {# apoyos}}",
+    "votesLabel": "{count, plural, one {# apoyo} other {# apoyos}}",
+    "updated": "Actualizada el {date}",
+    "voted": "Gracias por tu apoyo.",
+    "unvoted": "Has quitado tu apoyo.",
+    "closedVote": "Esta idea ya no se vota.",
+    "restricted": "Tu cuenta está restringida temporalmente: no puedes votar hasta que termine.",
+    "error": "No se pudo completar la acción. Inténtalo de nuevo.",
+    "newIdea": "Publicar una idea",
+    "fromFeedback": "Publicar esta sugerencia como idea",
+    "adminHint": "Escribe un título claro y quita cualquier dato personal: se publica sin autor. Si sale de una sugerencia, quien la envió recibe un aviso.",
+    "titleField": "Título",
+    "bodyField": "Descripción (opcional)",
+    "bodyHint": "Hasta 500 caracteres.",
+    "statusField": "Estado",
+    "publish": "Publicar",
+    "save": "Guardar",
+    "edit": "Editar",
+    "delete": "Borrar",
+    "deleteLabel": "Borrar la idea «{title}»",
+    "deleteConfirm": "¿Borrar esta idea y sus apoyos? No se puede deshacer.",
+    "published": "Idea publicada.",
+    "saved": "Idea guardada. Si ha cambiado de estado, se ha avisado a quien la apoya.",
+    "deleted": "Idea borrada.",
+    "checkFields": "Revisa los campos marcados.",
+    "titleLength": "El título debe tener entre 5 y 80 caracteres.",
+    "bodyLength": "La descripción: como mucho 500 caracteres.",
+    "chars": "Sin < ni >."
   }
 }

@@ -1,3 +1,4 @@
+import Link from "next/link";
 import { getTranslations } from "next-intl/server";
 import { redirect } from "next/navigation";
 import { titled } from "@/lib/i18n/metadata";
@@ -19,6 +20,11 @@ export default async function FeedbackPage({ searchParams }: PageProps<"/sugeren
       <div>
         <h1 className="font-display text-3xl font-semibold">{t("title")}</h1>
         <p className="text-muted">{t("lead")}</p>
+        <p className="mt-2 text-sm">
+          <Link href="/ideas" className="inline-flex min-h-11 items-center text-accent-soft underline underline-offset-4">
+            {t("seeIdeas")}
+          </Link>
+        </p>
       </div>
       <FeedbackForm page={from} />
       <p className="text-xs text-muted">{t("privacy")}</p>

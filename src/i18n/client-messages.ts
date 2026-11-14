@@ -28,6 +28,7 @@ export const CLIENT_NAMESPACES = [
   "profileForm",
   "push",
   "savedSearches",
+  "ideas",
   "settings",
   "share",
   "teamEvents",

@@ -15,6 +15,7 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     ...games.map((id) => ({ url: `${base}/equipos/${id}`, changeFrequency: "weekly" as const, priority: 0.9 })),
     ...roles.map((r) => ({ url: `${base}${rolePagePath(r.game, r.role)}`, changeFrequency: "weekly" as const, priority: 0.8 })),
     { url: `${base}/demo`, changeFrequency: "monthly", priority: 0.6 },
+    { url: `${base}/ideas`, changeFrequency: "weekly", priority: 0.5 },
     { url: `${base}/novedades`, changeFrequency: "weekly", priority: 0.5, ...(latest && { lastModified: latest }) },
     { url: `${base}/normas`, changeFrequency: "yearly", priority: 0.2 },
     { url: `${base}/privacidad`, changeFrequency: "yearly", priority: 0.2 },

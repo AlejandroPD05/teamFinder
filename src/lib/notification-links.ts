@@ -47,6 +47,9 @@ export function notificationLink(n: NotificationLike): { detail: string | null; 
     case "lobby_starting":
     case "waitlist_open":
       return { detail: null, href: lobby };
+    case "idea_status":
+      // El detalle es el título de la idea.
+      return { detail: n.body, href: "/ideas" };
     case "search_match":
       // El detalle es el nombre de la búsqueda guardada.
       return { detail: n.body, href: n.actor_id ? `/jugador/${n.actor_id}` : "/buscar?now=1" };

@@ -1,0 +1,36 @@
+# Novedades en Discord (gratis, sin bot): cuando llega a main un cambio en src/lib/changelog.ts, se publican las
+# novedades nuevas en #novedades-web con un webhook, después de que la web de producción ya las muestre.
+#
+# Secreto opcional DISCORD_NEWS_WEBHOOK: URL de un webhook de Discord del canal de novedades
+# (Ajustes del canal → Integraciones → Webhooks). Sin él, el job termina sin hacer nada.
+name: Novedades en Discord
+
+on:
+  push:
+    branches: [main]
+    paths: ["src/lib/changelog.ts"]
+
+permissions:
+  contents: read
+
+concurrency:
+  group: announce-news
+  cancel-in-progress: false
+
+jobs:
+  announce:
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 24
+      - name: Anunciar las novedades nuevas
+        env:
+          DISCORD_NEWS_WEBHOOK: ${{ secrets.DISCORD_NEWS_WEBHOOK }}
+          SITE_URL: https://teamfinder-seven.vercel.app
+          BEFORE_SHA: ${{ github.event.before }}
+        run: node scripts/announce-news.mjs

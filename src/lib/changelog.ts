@@ -14,6 +14,10 @@ export const CHANGELOG: ChangelogEntry[] = [
     date: "2026-11-14",
     items: [
       {
+        es: "Ideas de la comunidad: mira qué estamos haciendo y apoya las ideas que quieres ver antes.",
+        en: "Community ideas: see what we're working on and support the ideas you want sooner.",
+      },
+      {
         es: "Lista de espera en los grupos llenos: te avisamos si se libera una plaza.",
         en: "Waitlist for full groups: we'll let you know if a slot frees up.",
       },

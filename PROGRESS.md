@@ -122,6 +122,8 @@ RSO de Riot si aprueban la clave (rango y estadísticas verificados), bot de Dis
 - 2026-11-14 — Lista de espera en grupos llenos (`lobby_waitlist`): quien podría pedir unirse se apunta (10 como mucho); al liberarse una plaza se avisa a todos a la vez (`waitlist_open`) y la lista se vacía. Nadie ve quién espera, tampoco el creador. Respeta bloqueos y restricciones.
 - 2026-11-14 — Quedadas semanales: al proponer una quedada se puede marcar «Repetir cada semana»; cuando empieza, pg_cron (`roll-team-events`, cada hora) crea la de la semana siguiente y avisa al equipo. Quien la propuso o el dueño pueden dejar de repetirla; si quien la propuso sale del equipo, deja de repetirse.
 - 2026-11-14 — Revisión de producción con el conector de Supabase (solo lectura): 24 h sin errores en Postgres, API, Auth, Realtime ni Storage, y todas las tareas de pg_cron correctas. Asesor de rendimiento: solo índices sin usar (poco tráfico).
+- 2026-11-14 — Ideas públicas (`/ideas`, docs/PROMPT.md §7.2): moderación publica ideas (desde cero o desde una sugerencia del buzón, reescrita y sin autor) con estado pendiente, en desarrollo, completada o descartada. Cualquiera las ve; con sesión se apoyan las abiertas. Solo se publica el recuento. Al cambiar de estado se avisa a quien la apoya y a quien envió la sugerencia (`idea_status`). Privacidad 1.4.
+- 2026-11-14 — Novedades en Discord sin bot: `.github/workflows/announce-news.yml` publica en #novedades-web las novedades nuevas de `src/lib/changelog.ts` al llegar a main, cuando la web ya las muestra. Secreto `DISCORD_NEWS_WEBHOOK`; sin él no hace nada.
 - 2026-11-04 — Botón principal: fondo `#8B5CF6` con texto `#0B0C12` (4,6:1). Blanco sobre `#8B5CF6` no llega a AA (4,2:1).
 
 ## Acciones del usuario
@@ -141,6 +143,7 @@ RSO de Riot si aprueban la clave (rango y estadísticas verificados), bot de Dis
 - [ ] Avisos del buzón en Discord (opcional): webhook en un canal privado y, en el SQL Editor de Supabase, `insert into private.app_settings (key, value) values ('feedback_webhook', '<URL>') on conflict (key) do update set value = excluded.value;`. Sin él, las sugerencias solo se ven en Moderación.
 - [ ] Monitor de disponibilidad (PR #40): webhook de Discord en un canal privado y, en GitHub → Settings → Secrets and variables → Actions, el secreto `UPTIME_WEBHOOK_URL`. Sin él, el monitor corre pero no avisa.
 - [ ] Grupos en Discord (opcional): webhook en el canal público «buscar partida» y `insert into private.app_settings (key, value) values ('discord_lobbies_webhook', '<URL>') on conflict (key) do update set value = excluded.value;` (bloque 6 de `.claude\configurar-secretos.ps1`). Sin él, el botón no aparece.
+- [ ] Novedades en Discord (opcional): webhook en #novedades-web y secreto `DISCORD_NEWS_WEBHOOK` en GitHub (bloque 7 de `.claude\configurar-secretos.ps1`).
 - [ ] Avisos de errores (PR #35): webhook de Discord en un canal privado y `ERROR_WEBHOOK_URL` en Vercel (Production); redesplegar.
 - [x] Moderador: la cuenta 1Cut1Kill está en `app_admins` (más moderadores: `insert into public.app_admins (user_id) values ('<uuid>');` en el SQL Editor).
 - [x] Prueba final: un usuario nuevo completa el recorrido entero en producción desde el móvil (2026-11-13).
