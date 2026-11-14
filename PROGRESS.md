@@ -1,7 +1,7 @@
 # PROGRESS
 
 ## Estado
-2026-11-13 — Beta lanzada: las fases 1 a 7 están terminadas, fusionadas en `main` y desplegadas en https://teamfinder-seven.vercel.app (Supabase cloud `teamfinder`, pkzgwndwwoyeaozqdpqn, París; migraciones al día). El usuario completó el recorrido entero en producción desde el móvil. Después de la beta se han añadido CS2 y Apex, Clip Zone con ganadores semanales, misiones y cartas, mensajes privados, notificaciones, moderación con restricciones, fanart, rediseño con volumen y el ranking semanal (ver Decisiones). Pendiente externo: la clave de producción de Riot.
+2026-11-14 — Beta lanzada: las fases 1 a 7 están terminadas, fusionadas en `main` y desplegadas en https://teamfinder-seven.vercel.app (Supabase cloud `teamfinder`, pkzgwndwwoyeaozqdpqn, París; migraciones al día). El usuario completó el recorrido entero en producción desde el móvil. Después de la beta se han añadido CS2 y Apex, Clip Zone con ganadores semanales, misiones y cartas, mensajes privados, notificaciones, moderación con restricciones, fanart, rediseño con volumen, ranking semanal, versión en inglés, comunidad (disponible ahora, compartir grupos, quedadas, bienvenida, push), sugerencias de jugadores, fiabilidad, plantillas, invitaciones, buzón, páginas por rol, novedades, CSP con nonce y monitor de disponibilidad (ver Decisiones). Pendiente externo: la clave de producción de Riot.
 
 ## Objetivo de la beta
 Web para encontrar gente con la que hacer stack en VALORANT: perfil → búsqueda con filtros → publicaciones «busco dúo/trío/five» con solicitudes → sala con chat → karma tras jugar. Beta con cuentas reales, público hispanohablante en servidores EU.
@@ -106,6 +106,9 @@ RSO de Riot si aprueban la clave (rango y estadísticas verificados), bot de Dis
 - 2026-11-14 — Tarjeta compartible (opt-in, desactivada por defecto) en `/tarjeta/<id>/<juego>` con vista previa: nombre visible, avatar, rango, roles, mains y servidor, solo si el perfil de ese juego es público. `noindex`.
 - 2026-11-14 — Invitar amigos (`/amigos`): enlace personal `/invitar/<código>`; quien lo acepta con una cuenta de menos de 7 días queda como tu invitado (aviso `friend_joined`) y aparece en tu lista. Sin premios ni puntos.
 - 2026-11-14 — Buzón de sugerencias (`/sugerencias`, enlace en el pie y en Inicio): idea, error u otra cosa; 5 al día; lo ve moderación (marcar atendida). Aviso opcional a Discord sin nombre si se guarda `feedback_webhook` en `private.app_settings`. Se guardan 12 meses. Privacidad pasa a la versión 1.1.
+- 2026-11-14 — Páginas por rol (PR #38, hecha por un agente): `/equipos/<juego>/<rol>` («Busco Controlador en VALORANT») con texto propio del rol, personajes, cifras reales agregadas para visitantes sin sesión (perfiles públicos con ese rol, jugadores del juego, disponibles ahora) y migas en JSON-LD; en el sitemap. Los nombres de rol salen del catálogo (en español también en la versión inglesa).
+- 2026-11-14 — Novedades (`/novedades`, enlace en el pie): cambios visibles por fecha en `src/lib/changelog.ts`. Al publicar algo nuevo, se añade ahí.
+- 2026-11-14 — Calidad (PR #40, hecha por un agente): CSP estricta con nonce por petición en `src/proxy.ts` (`script-src 'self' 'nonce-…' 'strict-dynamic'`; la de `next.config.ts` se quitó); comprobada en producción. Rendimiento: el cliente de Supabase de los avisos en directo solo se carga con sesión y al navegador solo viajan los textos de los componentes de cliente (`src/i18n/client-messages.ts`: si un componente de cliente usa un espacio de nombres nuevo, añadirlo; un test avisa). Unos 30 % menos de JS en las páginas públicas. Pruebas solo con teclado (`e2e/keyboard.spec.ts`); arreglado que el formulario de crear grupo se vaciaba al volver con errores. Monitor de disponibilidad cada 15 min (`.github/workflows/uptime.yml`).
 - 2026-11-04 — Botón principal: fondo `#8B5CF6` con texto `#0B0C12` (4,6:1). Blanco sobre `#8B5CF6` no llega a AA (4,2:1).
 
 ## Acciones del usuario
@@ -123,11 +126,15 @@ RSO de Riot si aprueban la clave (rango y estadísticas verificados), bot de Dis
 - [ ] Notificaciones push: en un terminal, `npx web-push generate-vapid-keys` (da clave pública y privada) y un secreto con `node -e "console.log(require('crypto').randomBytes(32).toString('hex'))"`. En Vercel → Settings → Environment Variables (Production): `NEXT_PUBLIC_VAPID_PUBLIC_KEY`, `VAPID_PRIVATE_KEY`, `VAPID_SUBJECT` (`mailto:` + tu correo de contacto) y `PUSH_WEBHOOK_SECRET`; redesplegar. En el SQL Editor de Supabase: `insert into private.app_settings (key, value) values ('push_webhook_secret', '<el mismo secreto>') on conflict (key) do update set value = excluded.value;`. Sin esto, el botón de Ajustes dice «aún no disponibles».
 - [ ] Copia de seguridad (PR #35): en GitHub → Settings → Secrets and variables → Actions, `SUPABASE_DB_URL` (Supabase → Connect → Session pooler, con la contraseña de la base de datos) y `BACKUP_PASSPHRASE` (frase larga y aleatoria, guardada también fuera de GitHub: sin ella no se restaura). Luego Actions → «Backup BD (cifrado)» → Run workflow.
 - [ ] Avisos del buzón en Discord (opcional): webhook en un canal privado y, en el SQL Editor de Supabase, `insert into private.app_settings (key, value) values ('feedback_webhook', '<URL>') on conflict (key) do update set value = excluded.value;`. Sin él, las sugerencias solo se ven en Moderación.
+- [ ] Monitor de disponibilidad (PR #40): webhook de Discord en un canal privado y, en GitHub → Settings → Secrets and variables → Actions, el secreto `UPTIME_WEBHOOK_URL`. Sin él, el monitor corre pero no avisa.
 - [ ] Avisos de errores (PR #35): webhook de Discord en un canal privado y `ERROR_WEBHOOK_URL` en Vercel (Production); redesplegar.
 - [x] Moderador: la cuenta 1Cut1Kill está en `app_admins` (más moderadores: `insert into public.app_admins (user_id) values ('<uuid>');` en el SQL Editor).
 - [x] Prueba final: un usuario nuevo completa el recorrido entero en producción desde el móvil (2026-11-13).
 - [x] Docker instalado y en marcha.
 - [ ] Clave de producción de Riot: solicitada el 2026-11-05 (app 902996), sin respuesta a 2026-11-13 («Pending Review»; URL verificada con `public/riot.txt`; demo pública en `/demo`). Si se aprueba: implementar RSO en menos de 30 días o se pierde la clave.
+
+## Pendiente (técnico)
+- Revisar los formularios con `<form action>` + `useActionState` que pueden vaciarse al volver con un error (bienvenida, ajustes de correo, confianza, equipo, fanart, sugerencias), como se arregló en crear grupo.
 
 ## Riesgos
 - Riot rechaza la clave → el rango sigue siendo manual (ya contemplado).
