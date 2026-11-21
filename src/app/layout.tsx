@@ -152,44 +152,65 @@ export default async function RootLayout({ children }: LayoutProps<"/">) {
         <main id="contenido" className="mx-auto w-full max-w-6xl flex-1 px-4 py-8 sm:py-12">
           {children}
         </main>
-        <footer className="mt-12 border-t border-line bg-bg-raised">
-          <div className="mx-auto flex max-w-6xl flex-col gap-3 px-4 py-6 text-sm text-muted">
-            <nav aria-label={t("footer.label")} className="flex flex-wrap items-center gap-x-5">
-              <span className="font-display text-text">{t("footer.beta", { app: APP_NAME })}</span>
-              <Link href="/demo" className="inline-flex min-h-11 min-w-11 items-center hover:text-text">
-                {t("footer.demo")}
-              </Link>
-              <Link href="/normas" className="inline-flex min-h-11 min-w-11 items-center hover:text-text">
-                {t("footer.rules")}
-              </Link>
-              <Link href="/privacidad" className="inline-flex min-h-11 min-w-11 items-center hover:text-text">
-                {t("footer.privacy")}
-              </Link>
-              <Link href="/sugerencias" className="inline-flex min-h-11 min-w-11 items-center hover:text-text">
-                {t("footer.feedback")}
-              </Link>
-              <Link href="/ideas" className="inline-flex min-h-11 min-w-11 items-center hover:text-text">
-                {t("footer.ideas")}
-              </Link>
-              <Link href="/novedades" className="inline-flex min-h-11 min-w-11 items-center hover:text-text">
-                {t("changelog.footerLink")}
-              </Link>
-              {discordInvite() && (
-                <a href={discordInvite()!} rel="noopener noreferrer" target="_blank" className="inline-flex min-h-11 items-center gap-1.5 hover:text-text">
-                  {t("footer.discord")}
-                  <ExternalLink aria-hidden="true" className="size-3.5" />
-                  <span className="sr-only"> {t("common.newTab")}</span>
-                </a>
-              )}
-            </nav>
-            <LanguageSwitcher />
-            <p lang="en" className="max-w-3xl text-xs leading-relaxed">
-              {t("legal.riot")}
-            </p>
-            <p lang="en" className="max-w-3xl text-xs leading-relaxed">
-              {t("legal.valve")} {t("legal.ea")}
-            </p>
-            <p className="max-w-3xl text-xs leading-relaxed">{t("legal.fan")}</p>
+        {/* Pie en columnas (Hallmark: footer index columns): la marca y el idioma, y los enlaces por para qué sirven. */}
+        <footer className="mt-24 border-t border-line bg-bg-raised">
+          <div className="mx-auto flex max-w-6xl flex-col gap-10 px-4 pb-10 pt-14 text-sm text-muted">
+            <div className="grid gap-10 sm:grid-cols-2 lg:grid-cols-[minmax(0,2fr)_repeat(3,minmax(0,1fr))]">
+              <div className="flex flex-col items-start gap-4">
+                <Link href="/" className="flex min-h-11 items-center text-text" aria-label={t("nav.home", { app: APP_NAME })}>
+                  <Logo />
+                </Link>
+                <p className="max-w-xs">{t("footer.beta", { app: APP_NAME })}</p>
+                <LanguageSwitcher />
+              </div>
+              <nav aria-labelledby="pie-producto" className="flex flex-col gap-1">
+                <h2 id="pie-producto" className="font-sans text-sm font-semibold text-text">
+                  {t("footer.product")}
+                </h2>
+                <Link href="/demo" className="inline-flex min-h-11 min-w-11 items-center hover:text-text">
+                  {t("footer.demo")}
+                </Link>
+                <Link href="/ideas" className="inline-flex min-h-11 min-w-11 items-center hover:text-text">
+                  {t("footer.ideas")}
+                </Link>
+                <Link href="/novedades" className="inline-flex min-h-11 min-w-11 items-center hover:text-text">
+                  {t("changelog.footerLink")}
+                </Link>
+              </nav>
+              <nav aria-labelledby="pie-comunidad" className="flex flex-col gap-1">
+                <h2 id="pie-comunidad" className="font-sans text-sm font-semibold text-text">
+                  {t("footer.community")}
+                </h2>
+                {discordInvite() && (
+                  <a href={discordInvite()!} rel="noopener noreferrer" target="_blank" className="inline-flex min-h-11 items-center gap-1.5 hover:text-text">
+                    {t("footer.discord")}
+                    <ExternalLink aria-hidden="true" className="size-3.5" />
+                    <span className="sr-only"> {t("common.newTab")}</span>
+                  </a>
+                )}
+                <Link href="/sugerencias" className="inline-flex min-h-11 min-w-11 items-center hover:text-text">
+                  {t("footer.feedback")}
+                </Link>
+              </nav>
+              <nav aria-label={t("footer.label")} className="flex flex-col gap-1">
+                <h2 className="font-sans text-sm font-semibold text-text">{t("footer.legalTitle")}</h2>
+                <Link href="/normas" className="inline-flex min-h-11 min-w-11 items-center hover:text-text">
+                  {t("footer.rules")}
+                </Link>
+                <Link href="/privacidad" className="inline-flex min-h-11 min-w-11 items-center hover:text-text">
+                  {t("footer.privacy")}
+                </Link>
+              </nav>
+            </div>
+            <div className="flex flex-col gap-2 border-t border-line pt-6">
+              <p lang="en" className="max-w-3xl text-xs leading-relaxed">
+                {t("legal.riot")}
+              </p>
+              <p lang="en" className="max-w-3xl text-xs leading-relaxed">
+                {t("legal.valve")} {t("legal.ea")}
+              </p>
+              <p className="max-w-3xl text-xs leading-relaxed">{t("legal.fan")}</p>
+            </div>
           </div>
         </footer>
         </NextIntlClientProvider>

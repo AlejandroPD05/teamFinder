@@ -29,13 +29,16 @@
   },
   "footer": {
     "label": "Footer",
-    "beta": "{app} · beta",
+    "beta": "{app} is in beta: free, ad-free and built with the community.",
     "demo": "Demo",
     "rules": "Rules",
     "privacy": "Privacy",
     "discord": "Community Discord",
     "feedback": "Feedback",
-    "ideas": "Ideas"
+    "ideas": "Ideas",
+    "product": "Product",
+    "community": "Community",
+    "legalTitle": "Rules and privacy"
   },
   "legal": {
     "riot": "TeamFinder was created under Riot Games' \"Legal Jibber Jabber\" policy using assets owned by Riot Games. Riot Games does not endorse or sponsor this project.",
@@ -51,7 +54,7 @@
   "home": {
     "deleted": "Your account and your data have been deleted.",
     "title": "Find people to stack with in {game}",
-    "lead": "Profiles with rank, roles and characters, filters and groups to play as a duo, trio or full stack.",
+    "lead": "Rank, role and characters to play as a duo, trio or full stack.",
     "cta": "Sign in to get started",
     "ctaSignedIn": "Find players",
     "openLobbies": "See open groups",
@@ -78,7 +81,7 @@
         "text": "When the group closes, give props to the teammates who played well."
       }
     },
-    "featuresTitle": "What's included",
+    "featuresTitle": "How you play and who sees it",
     "features": {
       "profiles": {
         "title": "Profiles that show how you play",
@@ -95,7 +98,14 @@
     },
     "readyTitle": "Ready for the next match?",
     "beta": "Beta under testing: there may be bugs.",
-    "readyText": "Sign in with Discord and complete your profile in a minute."
+    "readyText": "Sign in with Discord and complete your profile in a minute.",
+    "nowTitle": "Pick a game and see who's here",
+    "nowText": "Players with a profile in each game, and how many are available right now.",
+    "shots": {
+      "find": "Player search with role, server, rank and language filters, and cards with rank, roles and agents (fictitious demo data).",
+      "coordinate": "An open group with two of three slots filled and its chat room (fictitious demo data).",
+      "play": "Recognitions from teammates after a group closes (fictitious demo data)."
+    }
   },
   "options": {
     "languages": {

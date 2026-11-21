@@ -55,10 +55,9 @@ export function LiveAlerts({ me }: { me: string }) {
         return names.get(id)!;
       };
       const show = (a: Alert) => {
-        // Se monta recogida y se despliega en el siguiente fotograma, para que se vea la transición.
-        setOpen(false);
+        // Entra desplegándose sola (@starting-style en globals.css); visible por defecto.
         setAlert(a);
-        requestAnimationFrame(() => requestAnimationFrame(() => setOpen(true)));
+        setOpen(true);
         router.refresh();
       };
 
@@ -104,8 +103,9 @@ export function LiveAlerts({ me }: { me: string }) {
   const Icon = alert?.kind === "dm" ? MessageSquare : Bell;
   return (
     <div role="status" aria-live="polite" className="pointer-events-none fixed inset-x-0 top-3 z-50 flex justify-center px-4">
-      {alert && (
-        <div key={alert.id} data-open={open || undefined} inert={!open} className="island pointer-events-auto flex items-center gap-3">
+      {/* Solo existe mientras se ve: al cerrarse desaparece (nada queda oculto a medias esperando a un script). */}
+      {alert && open && (
+        <div key={alert.id} className="island pointer-events-auto flex items-center gap-3">
           <span className="flex size-8 shrink-0 items-center justify-center rounded-full bg-accent text-bg">
             <Icon aria-hidden="true" className="size-4" />
           </span>

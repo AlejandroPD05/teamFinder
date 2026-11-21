@@ -124,7 +124,7 @@ export function RankBadge({
       {src && !failed ? (
         <Image src={src} alt="" width={size} height={size} sizes={`${size}px`} onError={() => setFailed(true)} />
       ) : (
-        <span aria-hidden="true" className="inline-block size-2.5 rounded-full" style={{ background: color ?? "#9ca0b4" }} />
+        <span aria-hidden="true" className="inline-block size-2.5 rounded-full" style={{ background: color ?? "var(--color-muted)" }} />
       )}
       <span className="font-medium">{name}</span>
       {manual && <span className="text-xs text-muted">· manual</span>}

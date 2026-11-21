@@ -29,13 +29,16 @@
   },
   "footer": {
     "label": "Pie",
-    "beta": "{app} · beta",
+    "beta": "{app} está en beta: gratis, sin anuncios y hecho con la comunidad.",
     "demo": "Demo",
     "rules": "Normas",
     "privacy": "Privacidad",
     "discord": "Discord de la comunidad",
     "feedback": "Sugerencias",
-    "ideas": "Ideas"
+    "ideas": "Ideas",
+    "product": "Producto",
+    "community": "Comunidad",
+    "legalTitle": "Normas y privacidad"
   },
   "legal": {
     "riot": "TeamFinder was created under Riot Games' \"Legal Jibber Jabber\" policy using assets owned by Riot Games. Riot Games does not endorse or sponsor this project.",
@@ -51,7 +54,7 @@
   "home": {
     "deleted": "Tu cuenta y tus datos se han borrado.",
     "title": "Encuentra con quién hacer stack en {game}",
-    "lead": "Perfiles con rango, roles y personajes, filtros y grupos para jugar en dúo, trío o equipo completo.",
+    "lead": "Rango, rol y personajes para jugar en dúo, trío o equipo completo.",
     "cta": "Entrar para empezar",
     "ctaSignedIn": "Buscar jugadores",
     "openLobbies": "Ver grupos abiertos",
@@ -78,7 +81,7 @@
         "text": "Al cerrar el grupo, reconoce a los compañeros que lo hicieron bien."
       }
     },
-    "featuresTitle": "Qué incluye",
+    "featuresTitle": "Cómo juegas y quién lo ve",
     "features": {
       "profiles": {
         "title": "Perfiles que dicen cómo juegas",
@@ -95,7 +98,14 @@
     },
     "readyTitle": "¿Listo para la próxima partida?",
     "beta": "Beta en pruebas: puede haber errores.",
-    "readyText": "Entra con Discord y completa tu perfil en un minuto."
+    "readyText": "Entra con Discord y completa tu perfil en un minuto.",
+    "nowTitle": "Elige juego y mira quién hay",
+    "nowText": "Jugadores con perfil en cada juego y cuántos están disponibles ahora mismo.",
+    "shots": {
+      "find": "Búsqueda de jugadores con filtros de rol, servidor, rango e idioma, y tarjetas con rango, roles y agentes (datos ficticios de la demo).",
+      "coordinate": "Un grupo abierto con dos de tres plazas y su sala de chat (datos ficticios de la demo).",
+      "play": "Reconocimientos de compañeros al cerrar un grupo (datos ficticios de la demo)."
+    }
   },
   "options": {
     "languages": {

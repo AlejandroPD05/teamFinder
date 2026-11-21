@@ -10,7 +10,7 @@ type GlyphProps = SVGProps<SVGSVGElement>;
 
 function Svg({ children, ...props }: GlyphProps & { children: React.ReactNode }) {
   return (
-    <svg viewBox="0 0 48 48" fill="currentColor" {...props}>
+    <svg viewBox="0 0 48 48" fill="currentColor" aria-hidden={props["aria-label"] ? undefined : true} {...props}>
       {children}
     </svg>
   );

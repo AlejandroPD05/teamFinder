@@ -99,7 +99,7 @@ export default async function Dashboard() {
           aria-valuemax={100}
           className="mt-3 h-2 overflow-hidden rounded-full bg-bg"
         >
-          <div className="h-full rounded-full bg-accent shadow-[0_0_12px_var(--color-accent)]" style={{ width: `${completion.percent}%` }} />
+          <div className="h-full rounded-full bg-accent" style={{ width: `${completion.percent}%` }} />
         </div>
         {completion.missing.length > 0 && (
           <ProfileSteps missing={completion.missing} characterLabel={current.character_label} />

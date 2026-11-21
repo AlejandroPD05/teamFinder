@@ -7,10 +7,10 @@ import type { Card, Rarity } from "@/lib/missions/queries";
 
 // Color de cada rareza; el nombre está en messages/*.json (options.rarity).
 export const RARITY: Record<Rarity, { color: string }> = {
-  common: { color: "#9ca0b4" },
-  rare: { color: "#60a5fa" },
-  epic: { color: "#b794f6" },
-  legendary: { color: "#f5c451" },
+  common: { color: "var(--color-rarity-common)" },
+  rare: { color: "var(--color-rarity-rare)" },
+  epic: { color: "var(--color-rarity-epic)" },
+  legendary: { color: "var(--color-rarity-legendary)" },
 };
 
 /** Carta coleccionable: arte oficial, marco del color de su rareza. Bloqueada, solo muestra nombre y rareza. */
