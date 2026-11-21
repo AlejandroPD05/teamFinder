@@ -30,15 +30,15 @@ const FEATURES = [
 const SHOTS = {
   find: {
     desktop: { src: "/capturas/d-buscar-demo-desktop-part.png", width: 2240, height: 890 },
-    phone: { src: "/capturas/d-buscar-demo-phone-part.png", width: 716, height: 2038 },
+    phone: { src: "/capturas/d-buscar-demo-phone-part.png", width: 716, height: 2318 },
   },
   coordinate: {
     desktop: { src: "/capturas/d-grupo-demo-desktop-part.png", width: 2240, height: 672 },
-    phone: { src: "/capturas/d-grupo-demo-phone-part.png", width: 716, height: 1472 },
+    phone: { src: "/capturas/d-grupo-demo-phone-part.png", width: 716, height: 1488 },
   },
   play: {
     desktop: { src: "/capturas/d-karma-demo-desktop-part.png", width: 1104, height: 416 },
-    phone: { src: "/capturas/d-karma-demo-phone-part.png", width: 716, height: 455 },
+    phone: { src: "/capturas/d-karma-demo-phone-part.png", width: 716, height: 454 },
   },
 } as const;
 
