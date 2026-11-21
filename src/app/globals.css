@@ -2,8 +2,15 @@
  * paper: oklch(14.5% 0.012 280) · accent: oklch(60.6% 0.219 293), per game from src/lib/games.ts · display: Chakra Petch · body: Geist Sans · hero: Banner · nav: kept, the app bar (edge-aligned) · footer: index columns · signature: the live board, each game with its real players and how many are available now
  * axes: dark/geometric-sans/chromatic-violet · posture: restrained · imagery: screenshots 3 (capture.mjs, /demo with fictitious data) · contrast: pass · fold: pass · v2.0.0 */
 /* Hallmark · pre-emit critique: P4 H4 E4 S4 R4 V4 · weakest: S, the hero head fits any matchmaking site; the live board right under it carries real counts per game so the first screen says who is here */
+/* Hallmark · hero-review: fix · 4 findings · 4 resolved (the board moved into the hero with both live counts always shown, its head set small, one row per game on a phone) */
+/* Hallmark · finish-review: subagent · fix · 5 findings · 4 resolved 1 partial (the two-shot row is centred but still uneven) · gap: the demo captures wear the old style until they are retaken after deploy */
 /* Hallmark · waive 74 · --color-accent #8b5cf6 and --color-info #3b82f6 in @theme · the brand colours the owner approved on 2026-11-13 (AGENTS.md), kept on purpose in this redesign */
 /* Hallmark · dismissed 23 · body::before is the per-game pattern at 7% opacity under a mask that fades out by three quarters of the screen, and .beam::after paints a 1.5px ring on a card edge (mask exclude): texture and edge, never a fill */
+/* Hallmark · waive 44c · hero: Banner in the stamp, the live board stacked under the head and the next section's head showing above the fold at 1440 · the board is the first screen's visual on purpose, so it sits under the text, not beside it */
+/* Hallmark · waive 79 · the 234px under the board at 1440 hold the section gap and the head of the next section, visible above the fold · Banner posture on the home page, nothing is padded with copy */
+/* Hallmark · waive 39b · the three game tiles of the home board stand 96 to 128px, each a selection card holding a game and its two live counts · the board's cards, not buttons of the action row (those stand 44px) */
+/* Hallmark · dismissed 77 · the home page holds six sections inside one wrapper (hero with its board, the product shots, what it includes, teams by game, the first match) plus the footer; the counter reads the wrapper as one */
+/* Hallmark · dropped "Elige modo" as a heading · its line became the lead under "De la cola en solitario a tu stack", and the other three step titles now open the captions under their screenshots */
 @import "tailwindcss";
 
 /*

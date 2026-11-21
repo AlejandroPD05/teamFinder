@@ -157,9 +157,10 @@ export default async function RootLayout({ children }: LayoutProps<"/">) {
           <div className="mx-auto flex max-w-6xl flex-col gap-10 px-4 pb-10 pt-14 text-sm text-muted">
             <div className="grid gap-10 sm:grid-cols-2 lg:grid-cols-[minmax(0,2fr)_repeat(3,minmax(0,1fr))]">
               <div className="flex flex-col items-start gap-4">
-                <Link href="/" className="flex min-h-11 items-center text-text" aria-label={t("nav.home", { app: APP_NAME })}>
+                {/* La marca, sin enlace: el de la cabecera ya lleva al inicio (un solo «TeamFinder, inicio» por página). */}
+                <div className="flex min-h-11 items-center text-text">
                   <Logo />
-                </Link>
+                </div>
                 <p className="max-w-xs">{t("footer.beta", { app: APP_NAME })}</p>
                 <LanguageSwitcher />
               </div>
