@@ -49,8 +49,8 @@ export default async function MissionsPage() {
                   className="h-2 overflow-hidden rounded-full bg-bg"
                 >
                   <div
-                    className="h-full bg-accent transition-[width] duration-500 ease-out"
-                    style={{ width: `${(m.progress / m.target) * 100}%` }}
+                    className="h-full origin-left bg-accent transition-transform duration-500 ease-out"
+                    style={{ transform: `scaleX(${m.progress / m.target})` }}
                   />
                 </div>
                 <p className="text-xs text-muted">

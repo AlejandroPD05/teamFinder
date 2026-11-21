@@ -33,3 +33,6 @@ next-env.d.ts
 
 # Configuración local de herramientas
 .claude/
+
+# Hallmark (registros y capturas locales del rediseño)
+.hallmark/

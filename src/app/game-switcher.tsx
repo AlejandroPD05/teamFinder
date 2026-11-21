@@ -88,10 +88,10 @@ export function GamePicker({
   }
 
   return (
-    <form action={selectGame} aria-label={t("label")} className="w-full max-w-2xl">
+    <form action={selectGame} aria-label={t("label")} className="w-full">
       <input type="hidden" name="next" value={pathname} />
-      <fieldset className="grid grid-cols-3 gap-3 sm:gap-4">
-        <legend className="mb-3 w-full text-center text-sm text-muted">{t("legend")}</legend>
+      <fieldset className="grid gap-(--space-sm) sm:grid-cols-3 sm:gap-(--space-md)">
+        <legend className="sr-only">{t("legend")}</legend>
         {games.map((g) => {
           const on = g.id === active;
           const n = counts[g.id] ?? 0;
@@ -110,33 +110,32 @@ export function GamePicker({
                   "--tile-text": g.theme_accent_soft ?? g.theme_accent ?? "var(--color-text)",
                 } as CSSProperties
               }
-              className={`flex min-h-28 flex-col min-[25rem]:aspect-square items-center justify-center gap-1.5 rounded-xl border-2 bg-[linear-gradient(180deg,rgb(255_255_255/0.05),transparent_50%)] p-3 transition-[border-color,background-color,transform,box-shadow] duration-200 ease-out active:scale-[0.97] sm:gap-3 ${
+              className={`grid min-h-24 grid-cols-[auto_minmax(0,1fr)] items-center gap-x-(--space-md) rounded-xl border-2 px-(--space-md) py-(--space-md) text-left sm:min-h-32 sm:px-(--space-lg) bg-[linear-gradient(180deg,var(--color-sheen),transparent_50%)] p-3 transition-[border-color,background-color,transform] duration-200 ease-out active:scale-[0.97] sm:gap-3 ${
                 on
-                  ? "border-[var(--tile)] bg-[color-mix(in_srgb,var(--tile)_14%,var(--color-panel))] shadow-[inset_0_1px_0_rgb(255_255_255/0.08),0_18px_44px_-16px_var(--tile)]"
-                  : "border-line bg-panel shadow-[inset_0_1px_0_rgb(255_255_255/0.05),0_10px_24px_-18px_black] hover:-translate-y-0.5 hover:border-[color-mix(in_srgb,var(--tile)_60%,var(--color-line))]"
+                  ? "border-[var(--tile)] bg-[color-mix(in_srgb,var(--tile)_14%,var(--color-panel))] shadow-[inset_0_1px_0_var(--color-sheen-strong)]"
+                  : "border-line bg-panel shadow-[inset_0_1px_0_var(--color-sheen)] hover:border-[color-mix(in_srgb,var(--tile)_60%,var(--color-line))]"
               }`}
             >
               {(() => {
                 const Glyph = GAME_GLYPHS[g.id] ?? Gamepad2;
-                return <Glyph aria-hidden="true" className="size-11 text-[var(--tile-text)] drop-shadow-[0_4px_12px_color-mix(in_srgb,var(--tile)_45%,transparent)] sm:size-16" />;
+                return <Glyph aria-hidden="true" className="row-span-3 size-12 text-[var(--tile-text)] sm:size-14" />;
               })()}
-              <span className="font-display text-center text-sm font-bold leading-tight tracking-wide sm:text-xl">
+              <span className="font-display text-xl font-bold leading-tight">
                 <ScrambleText text={g.short_name ?? g.name} trigger={on && active} />
               </span>
-              <span className="flex items-center gap-1.5 text-xs text-muted sm:text-sm">
-                <Users aria-hidden="true" className="hidden size-4 sm:block" />
+              <span className="flex items-center gap-1.5 text-sm text-muted">
+                <Users aria-hidden="true" className="size-4" />
                 <span>
                   <NumberRoll value={n} /> {t("players", { count: n })}
                 </span>
               </span>
-              {live > 0 && (
-                <span className="flex items-center gap-1.5 text-xs text-success">
-                  <span aria-hidden="true" className="live-dot" />
-                  <span>
-                    <NumberRoll value={live} /> {t("now")}
-                  </span>
+              {/* Siempre visible, también a cero: es el dato en directo del tablero. El punto solo late si hay alguien. */}
+              <span className={`flex items-center gap-1.5 text-sm ${live > 0 ? "text-success" : "text-muted"}`}>
+                {live > 0 && <span aria-hidden="true" className="live-dot" />}
+                <span>
+                  <NumberRoll value={live} /> {t("now", { count: live })}
                 </span>
-              )}
+              </span>
             </button>
           );
         })}

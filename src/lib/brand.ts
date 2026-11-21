@@ -4,6 +4,17 @@ export const LOGO_BOTTOM = "M4 16 L16 24 L28 16 L28 22 L16 30 L4 22 Z";
 export const LOGO_MUTED = "#9ca0b4";
 export const BRAND_ACCENT = "#8b5cf6";
 
+/**
+ * Colores de la marca para lo que se dibuja fuera del CSS (imágenes de vista previa e iconos generados con
+ * next/og, que no leen variables CSS). Los mismos valores que @theme en src/app/globals.css.
+ */
+export const BRAND = {
+  bg: "#0b0c12",
+  text: "#e7e8ef",
+  muted: LOGO_MUTED,
+  accent: BRAND_ACCENT,
+} as const;
+
 /** Color de acento seguro para incrustarlo en un SVG (solo #rgb o #rrggbb). */
 export function safeHex(value: string | null | undefined): string {
   return value && /^#[0-9a-f]{3}([0-9a-f]{3})?$/i.test(value) ? value : BRAND_ACCENT;

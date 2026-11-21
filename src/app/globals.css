@@ -1,3 +1,16 @@
+/* Hallmark · shape: Marquee Hero, draw 17a9b0 · genre: atmospheric · theme: brand · redesign: full (/), restyle (the other routes) · job: join
+ * paper: oklch(14.5% 0.012 280) · accent: oklch(60.6% 0.219 293), per game from src/lib/games.ts · display: Chakra Petch · body: Geist Sans · hero: Banner · nav: kept, the app bar (edge-aligned) · footer: index columns · signature: the live board, each game with its real players and how many are available now
+ * axes: dark/geometric-sans/chromatic-violet · posture: restrained · imagery: screenshots 3 (capture.mjs, /demo with fictitious data) · contrast: pass · fold: pass · v2.0.0 */
+/* Hallmark · pre-emit critique: P4 H4 E4 S4 R4 V4 · weakest: S, the hero head fits any matchmaking site; the live board right under it carries real counts per game so the first screen says who is here */
+/* Hallmark · hero-review: fix · 4 findings · 4 resolved (the board moved into the hero with both live counts always shown, its head set small, one row per game on a phone) */
+/* Hallmark · finish-review: subagent · fix · 5 findings · 4 resolved 1 partial (the two-shot row is centred but still uneven) · gap: the demo captures wear the old style until they are retaken after deploy */
+/* Hallmark · waive 74 · --color-accent #8b5cf6 and --color-info #3b82f6 in @theme · the brand colours the owner approved on 2026-11-13 (AGENTS.md), kept on purpose in this redesign */
+/* Hallmark · dismissed 23 · body::before is the per-game pattern at 7% opacity under a mask that fades out by three quarters of the screen, and .beam::after paints a 1.5px ring on a card edge (mask exclude): texture and edge, never a fill */
+/* Hallmark · waive 44c · hero: Banner in the stamp, the live board stacked under the head and the next section's head showing above the fold at 1440 · the board is the first screen's visual on purpose, so it sits under the text, not beside it */
+/* Hallmark · waive 79 · the 234px under the board at 1440 hold the section gap and the head of the next section, visible above the fold · Banner posture on the home page, nothing is padded with copy */
+/* Hallmark · waive 39b · the three game tiles of the home board stand 96 to 128px, each a selection card holding a game and its two live counts · the board's cards, not buttons of the action row (those stand 44px) */
+/* Hallmark · dismissed 77 · the home page holds six sections inside one wrapper (hero with its board, the product shots, what it includes, teams by game, the first match) plus the footer; the counter reads the wrapper as one */
+/* Hallmark · dropped "Elige modo" as a heading · its line became the lead under "De la cola en solitario a tu stack", and the other three step titles now open the captions under their screenshots */
 @import "tailwindcss";
 
 /*
@@ -24,13 +37,99 @@
   --color-warning: #fbbf24;
   --font-sans: var(--font-geist-sans), ui-sans-serif, system-ui, sans-serif;
   --font-display: var(--font-chakra), var(--font-geist-sans), ui-sans-serif, sans-serif;
+  --color-accent-ink: #0b0c12; /* texto sobre el acento (el fondo de la marca) */
+  --color-focus: var(--color-accent-soft);
+  /* Efectos: luz cenital, sombra, máscara y brillos. Solo aquí hay colores literales. */
+  --color-sheen: rgb(255 255 255 / 0.04);
+  --color-sheen-strong: rgb(255 255 255 / 0.08);
+  --color-shade: rgb(0 0 0 / 0.3);
+  --color-shade-deep: rgb(0 0 0 / 0.7);
+  --color-ink-deep: #050508;
+  --color-mask: #0b0c12; /* solo en máscaras: cuenta su opacidad, no su color */
+  --color-glint: rgb(255 255 255 / 0.35);
+  --color-glint-strong: rgb(255 255 255 / 0.65);
+  --color-glint-soft: rgb(255 255 255 / 0.15);
+  --color-holo-1: rgb(255 110 210 / 0.5);
+  --color-holo-2: rgb(255 230 120 / 0.5);
+  --color-holo-3: rgb(110 255 200 / 0.5);
+  --color-holo-4: rgb(110 170 255 / 0.5);
+  --color-holo-5: rgb(200 120 255 / 0.5);
+  /* Rarezas de las cartas. */
+  --color-rarity-common: #9ca0b4;
+  --color-rarity-rare: #60a5fa;
+  --color-rarity-epic: #b794f6;
+  --color-rarity-legendary: #f5c451;
+  /* Escala de tipo (Hallmark): roles de portada, sección, título de elemento y entradilla. */
+  --text-display: clamp(2.75rem, 5vw + 1rem, 5.25rem);
+  --text-display-s: clamp(2.25rem, 4vw + 0.5rem, 3.75rem);
+  --text-poster: clamp(3rem, 8vw, 7.5rem);
+  --text-section: clamp(2rem, 2.5vw + 1rem, 3.5rem);
+  --text-title: clamp(1.25rem, 0.75vw + 0.875rem, 1.625rem);
+  --text-lead: clamp(1.125rem, 0.35vw + 1rem, 1.375rem);
   --radius-card: 0.875rem;
   --ease-out: cubic-bezier(0.23, 1, 0.32, 1);
+  --ease-in: cubic-bezier(0.7, 0, 0.84, 0);
   --ease-in-out: cubic-bezier(0.77, 0, 0.175, 1);
 }
 
 :root {
   color-scheme: dark;
+  /* Espacios, ritmo entre secciones y contenedor (Hallmark). */
+  --space-3xs: 2px;
+  --space-2xs: 4px;
+  --space-xs: 8px;
+  --space-sm: 12px;
+  --space-md: 16px;
+  --space-lg: 24px;
+  --space-xl: 40px;
+  --space-2xl: 64px;
+  --space-3xl: 96px;
+  --space-4xl: 144px;
+  --dur-micro: 120ms;
+  --dur-short: 220ms;
+  --dur-long: 420ms;
+  --container: 1440px;
+  --gutter: 64px;
+  --section-gap-s: 120px;
+  --section-gap: 144px;
+  --z-sticky-nav: 300;
+  --z-toast: 500;
+}
+@media (max-width: 60rem) {
+  :root {
+    --gutter: 24px;
+    --section-gap-s: 80px;
+    --section-gap: 96px;
+  }
+}
+@media (max-width: 40rem) {
+  :root {
+    --gutter: 16px;
+    --section-gap-s: 56px;
+    --section-gap: 72px;
+  }
+}
+
+/* Nada se sale de lado (sin romper sticky ni fixed) y las piezas del navegador llevan los colores de la marca. */
+html,
+body {
+  overflow-x: clip;
+}
+html {
+  scrollbar-color: var(--color-line-strong) var(--color-bg);
+}
+body {
+  caret-color: var(--color-accent-soft);
+}
+h1,
+h2,
+h3 {
+  overflow-wrap: break-word;
+  min-width: 0;
+  text-wrap: balance;
+}
+p {
+  text-wrap: pretty;
 }
 
 /*
@@ -112,7 +211,7 @@ body::after {
 body::before {
   background: var(--color-accent);
   opacity: 0.07;
-  mask-image: var(--pattern, none), radial-gradient(ellipse 90% 70% at 50% 0%, #000 0%, transparent 75%);
+  mask-image: var(--pattern, none), radial-gradient(ellipse 90% 70% at 50% 0%, var(--color-mask) 0%, transparent 75%);
   mask-size: var(--pattern-size, 56px 56px), 100% 100%;
   mask-repeat: repeat, no-repeat;
   mask-composite: intersect;
@@ -128,7 +227,7 @@ html[data-game="valorant"] {
 }
 /* CS2: franjas de peligro. */
 html[data-game="cs2"] {
-  --pattern: repeating-linear-gradient(135deg, #000 0 2px, transparent 2px 26px);
+  --pattern: repeating-linear-gradient(135deg, var(--color-mask) 0 2px, transparent 2px 26px);
   --pattern-size: 100% 100%;
 }
 /* Apex: curvas de nivel. */
@@ -152,18 +251,19 @@ html[data-game="apex"] {
 }
 
 :focus-visible {
-  outline: 2px solid var(--color-accent-soft);
+  outline: 2px solid var(--color-focus);
   outline-offset: 2px;
 }
 /* Los campos de fecha y hora enfocan sus partes internas (día, mes, hora…): el contorno se pone en el campo entero. */
 input[type^="date"]:focus-within,
 input[type="time"]:focus-within {
-  outline: 2px solid var(--color-accent-soft);
+  outline: 2px solid var(--color-focus);
   outline-offset: 2px;
 }
 
 ::selection {
-  background: var(--color-panel-hover);
+  background: color-mix(in oklab, var(--color-accent) 30%, transparent);
+  color: var(--color-text);
 }
 
 @layer components {
@@ -181,37 +281,27 @@ input[type="time"]:focus-within {
     position: relative;
     border-radius: var(--radius-card);
     background-color: var(--color-panel);
-    background-image: linear-gradient(180deg, rgb(255 255 255 / 0.04), transparent 42%);
+    background-image: linear-gradient(180deg, var(--color-sheen), transparent 42%);
+    /* Canto iluminado y contorno; la profundidad es un paso de luz, sin sombra ancha. */
     box-shadow:
-      inset 0 1px 0 rgb(255 255 255 / 0.06),
-      0 0 0 1px color-mix(in srgb, var(--color-line) 75%, transparent),
-      0 2px 4px rgb(0 0 0 / 0.3),
-      0 14px 32px -20px color-mix(in srgb, var(--color-accent) 40%, black);
+      inset 0 1px 0 var(--color-sheen-strong),
+      0 0 0 1px color-mix(in srgb, var(--color-line) 75%, transparent);
   }
 
-  /* Tarjetas que llevan a otro sitio: se elevan al pasar por encima (sin animar al pulsar: se usan mucho). */
+  /* Tarjetas que llevan a otro sitio: una sola señal al pasar por encima, un paso de luz con el canto del juego. */
   .surface-interactive,
   a.surface {
     transition:
-      background-color 150ms var(--ease-out),
-      transform 200ms var(--ease-out),
-      box-shadow 200ms var(--ease-out);
+      background-color var(--dur-short) var(--ease-out),
+      box-shadow var(--dur-short) var(--ease-out);
   }
   .surface-interactive:hover,
   .surface-interactive:focus-within,
   a.surface:hover {
     background-color: var(--color-panel-hover);
-  }
-  @media (hover: hover) {
-    .surface-interactive:hover,
-    a.surface:hover {
-      transform: translateY(-2px);
-      box-shadow:
-        inset 0 1px 0 rgb(255 255 255 / 0.08),
-        0 0 0 1px color-mix(in srgb, var(--color-accent) 35%, var(--color-line)),
-        0 4px 8px rgb(0 0 0 / 0.3),
-        0 20px 40px -20px color-mix(in srgb, var(--color-accent) 55%, black);
-    }
+    box-shadow:
+      inset 0 1px 0 var(--color-sheen-strong),
+      0 0 0 1px color-mix(in srgb, var(--color-accent) 35%, var(--color-line));
   }
 
   /* En un fieldset con superficie, la leyenda va dentro de la tarjeta (no montada sobre su borde). */
@@ -237,13 +327,10 @@ input[type="time"]:focus-within {
       linear-gradient(var(--c), var(--c)) bottom right / 2px 16px no-repeat;
   }
 
-  /* Etiqueta corta sobre un título: agrupa la información (ley de Miller) y da ritmo. */
+  /* Dato corto sobre un título (el juego, el paso): la letra del texto un punto más pequeña, sin mayúsculas forzadas. */
   .kicker {
-    font-family: var(--font-display);
-    font-size: 0.75rem;
-    font-weight: 600;
-    letter-spacing: 0.14em;
-    text-transform: uppercase;
+    font-size: 0.875rem;
+    font-weight: 500;
     color: var(--color-accent-soft);
   }
 
@@ -271,12 +358,12 @@ input[type="time"]:focus-within {
     min-height: 2.75rem;
     align-items: center;
     justify-content: center;
-    gap: 0.5rem;
+    gap: var(--space-xs);
     padding-inline: 1.25rem;
     font-family: var(--font-display);
     font-weight: 600;
     letter-spacing: 0.02em;
-    color: var(--color-bg);
+    color: var(--color-accent-ink);
     background: var(--color-accent);
     clip-path: polygon(0 0, calc(100% - 10px) 0, 100% 10px, 100% 100%, 10px 100%, 0 calc(100% - 10px));
     transition:
@@ -286,8 +373,13 @@ input[type="time"]:focus-within {
   .btn-primary:hover {
     background: var(--color-accent-soft);
   }
-  .btn-primary:disabled {
-    opacity: 0.6;
+  /* Deshabilitado por tres vías: relleno apagado, tinta y cursor (y el atributo disabled en el HTML). */
+  .btn-primary:disabled,
+  .btn-primary[aria-disabled="true"] {
+    opacity: 0.55;
+    background: var(--color-line);
+    color: var(--color-text);
+    cursor: not-allowed;
   }
 
   .btn-ghost {
@@ -295,8 +387,8 @@ input[type="time"]:focus-within {
     min-height: 2.75rem;
     align-items: center;
     justify-content: center;
-    gap: 0.5rem;
-    padding-inline: 1rem;
+    gap: var(--space-xs);
+    padding-inline: var(--space-md);
     border: 1px solid var(--color-line-strong);
     border-radius: 0.5rem;
     font-size: 0.875rem;
@@ -307,10 +399,16 @@ input[type="time"]:focus-within {
   .btn-ghost:hover {
     background-color: var(--color-panel-hover);
   }
+  .btn-ghost:disabled,
+  .btn-ghost[aria-disabled="true"] {
+    opacity: 0.55;
+    color: var(--color-muted);
+    cursor: not-allowed;
+  }
 
   /* Al pulsar, el botón cede un poco: confirma el toque sin rebotes. */
   .btn-primary:active:not(:disabled),
-  .btn-ghost:active {
+  .btn-ghost:active:not(:disabled) {
     transform: scale(0.97);
   }
 
@@ -343,7 +441,7 @@ input[type="time"]:focus-within {
   position: absolute;
   inset: 0;
   pointer-events: none;
-  background: linear-gradient(110deg, transparent 35%, rgb(255 255 255 / 0.35) 50%, transparent 65%);
+  background: linear-gradient(110deg, transparent 35%, var(--color-glint) 50%, transparent 65%);
   transform: translateX(-120%);
   animation: shine 700ms 380ms var(--ease-in-out) both;
 }
@@ -408,8 +506,8 @@ input[type="time"]:focus-within {
     transparent 96%
   );
   mask:
-    linear-gradient(#000 0 0) content-box,
-    linear-gradient(#000 0 0);
+    linear-gradient(var(--color-mask) 0 0) content-box,
+    linear-gradient(var(--color-mask) 0 0);
   mask-composite: exclude;
   animation: beam 4s linear infinite;
 }
@@ -427,31 +525,34 @@ input[type="time"]:focus-within {
   max-width: 26rem;
   width: 100%;
   min-height: 3.25rem;
-  padding: 0.375rem 0.375rem 0.375rem 0.5rem;
+  padding: var(--space-xs);
   border-radius: 999px;
-  background: color-mix(in srgb, #050508 92%, var(--color-accent));
+  background: color-mix(in srgb, var(--color-ink-deep) 92%, var(--color-accent));
   box-shadow:
     0 0 0 1px color-mix(in srgb, var(--color-accent) 30%, transparent),
-    0 18px 40px -12px rgb(0 0 0 / 0.7);
+    0 18px 40px -12px var(--color-shade-deep);
   transform-origin: top center;
-  transform: translateY(-140%) scaleX(0.3);
-  opacity: 0;
   transition:
-    transform 420ms cubic-bezier(0.34, 1.4, 0.64, 1),
-    opacity 200ms var(--ease-out);
+    transform var(--dur-long) var(--ease-out),
+    opacity var(--dur-short) var(--ease-out);
 }
-.island[data-open] {
-  transform: none;
-  opacity: 1;
+/* Entra desplegándose desde una píldora pequeña. Visible por defecto; al cerrarse, el componente la quita. */
+@starting-style {
+  .island {
+    transform: translateY(-140%) scaleX(0.3);
+    opacity: 0;
+  }
 }
+
 .island .island-body {
-  opacity: 0;
-  transition: opacity 180ms var(--ease-out);
+  transition: opacity 180ms var(--ease-out) 160ms;
 }
-.island[data-open] .island-body {
-  opacity: 1;
-  transition-delay: 160ms;
+@starting-style {
+  .island .island-body {
+    opacity: 0;
+  }
 }
+
 
 /* Guía de pasos del perfil (src/components/profile-steps.tsx): la línea se rellena y el paso actual late. */
 .steps-fill {
@@ -562,15 +663,15 @@ input[type="time"]:focus-within {
   background:
     repeating-linear-gradient(
       115deg,
-      rgb(255 110 210 / 0.5) 0%,
-      rgb(255 230 120 / 0.5) 7%,
-      rgb(110 255 200 / 0.5) 14%,
-      rgb(110 170 255 / 0.5) 21%,
-      rgb(200 120 255 / 0.5) 28%
+      var(--color-holo-1) 0%,
+      var(--color-holo-2) 7%,
+      var(--color-holo-3) 14%,
+      var(--color-holo-4) 21%,
+      var(--color-holo-5) 28%
     )
     calc(var(--mx, 50%) * 1.5) calc(var(--my, 50%) * 1.5) / 300% 300%;
   mask-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='120' height='120'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.75' numOctaves='1'/%3E%3CfeColorMatrix values='0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 3 -1.2'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E"),
-    linear-gradient(#000 0 0);
+    linear-gradient(var(--color-mask) 0 0);
   mask-composite: add;
   mask-size: 120px 120px, 100% 100%;
 }
@@ -579,8 +680,8 @@ input[type="time"]:focus-within {
   mix-blend-mode: overlay;
   background: radial-gradient(
     circle at var(--mx, 50%) var(--my, 50%),
-    rgb(255 255 255 / 0.65) 0%,
-    rgb(255 255 255 / 0.15) 25%,
+    var(--color-glint-strong) 0%,
+    var(--color-glint-soft) 25%,
     transparent 55%
   );
 }
@@ -616,7 +717,20 @@ input[type="time"]:focus-within {
   }
 }
 
-/* Las animaciones se muestran siempre, también con «reducir movimiento» activado (decisión del usuario, PROGRESS.md). */
+/*
+ * «Reducir movimiento» (decisión del usuario 2026-11-21, sustituye a la del 2026-11-05): quien lo tiene activado ve
+ * cada animación en su estado final al momento y los bucles (pulsos, haces, brillos, halos) se paran. El resto, igual.
+ */
+@media (prefers-reduced-motion: reduce) {
+  *:not(.keep-motion),
+  *:not(.keep-motion)::before,
+  *:not(.keep-motion)::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
+}
 
 /*
  * Punto verde que late: «disponible ahora» (pulso suave e infinito, solo en ese estado). La onda es una copia del
